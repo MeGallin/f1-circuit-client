@@ -227,6 +227,11 @@ export function StandingsPreview({ summary }) {
           Leading entries from the latest published standings. Points are shown
           exactly as supplied.
         </p>
+        <ActionLink
+          to={`/standings?season=${summary.season.year}&kind=${kind}`}
+        >
+          Open full standings
+        </ActionLink>
       </Panel>
     </section>
   );

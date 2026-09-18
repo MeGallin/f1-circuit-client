@@ -19,6 +19,21 @@ export const archiveApi = createApi({
   refetchOnFocus: false,
   tagTypes: ["Seasons", "Season", "Event"],
   endpoints: (builder) => ({
+    getStandings: builder.query({
+      query: ({
+        year,
+        kind,
+        round,
+        cursor,
+        snapshotId,
+        standingSnapshotId,
+      }) => ({
+        url: `/seasons/${year}/standings/${kind}`,
+        params: { round, cursor, snapshotId, standingSnapshotId, limit: 50 },
+      }),
+      transformResponse: collectionResponse,
+      providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
+    }),
     getEvent: builder.query({
       query: ({ eventId, snapshotId }) => ({
         url: `/events/${encodeURIComponent(eventId)}`,
@@ -85,6 +100,7 @@ export function eventResponse(response) {
   return { detail: response.data.eventDetail, meta: response.meta };
 }
 export const {
+  useGetStandingsQuery,
   useGetEventQuery,
   useGetSessionDataQuery,
   useGetSeasonsQuery,

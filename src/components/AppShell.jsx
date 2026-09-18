@@ -19,7 +19,6 @@ const navigation = [
 ];
 function Navigation({ mobile = false }) {
   const { search, pathname } = useLocation();
-  const season = new URLSearchParams(search).get("season");
   let eventId = new URLSearchParams(search).get("event");
   if (pathname.startsWith("/events/")) {
     try {
@@ -28,6 +27,12 @@ function Navigation({ mobile = false }) {
       eventId = null;
     }
   }
+  const navigationParams = new URLSearchParams();
+  for (const key of ["season", "kind", "round"]) {
+    const value = new URLSearchParams(search).get(key);
+    if (value != null) navigationParams.set(key, value);
+  }
+  if (eventId) navigationParams.set("event", eventId);
   return (
     <nav
       aria-label={mobile ? "Mobile navigation" : "Main navigation"}
@@ -37,7 +42,7 @@ function Navigation({ mobile = false }) {
         <NavLink
           end={to === "/"}
           key={to}
-          to={`${to}${season || eventId ? `?${new URLSearchParams({ ...(season ? { season } : {}), ...(eventId ? { event: eventId } : {}) })}` : ""}`}
+          to={`${to}${navigationParams.size ? `?${navigationParams}` : ""}`}
         >
           <Icon aria-hidden size={21} weight="regular" />
           <span>{label}</span>
