@@ -1,0 +1,7 @@
+/* Generated media aliases as documented constants; CSS variables cannot be used in media conditions. */
+/* Small >= 360px; tablet >= 768px; desktop >= 1151px; wide >= 1550px. */
+.apex-layout {--apex-page-gutter:var(--apex-layout-gutter-narrow);--apex-sidebar-width:0px}
+@media(min-width:360px){.apex-layout{--apex-page-gutter:var(--apex-layout-gutter-mobile)}}
+@media(min-width:768px){.apex-layout{--apex-page-gutter:var(--apex-layout-gutter-tablet);--apex-sidebar-width:var(--apex-layout-sidebar-compact)}}
+@media(min-width:1151px){.apex-layout{--apex-page-gutter:var(--apex-layout-gutter-desktop);--apex-sidebar-width:var(--apex-layout-sidebar)}}
+@media(min-width:1550px){.apex-layout{--apex-page-gutter:var(--apex-layout-gutter-wide)}}

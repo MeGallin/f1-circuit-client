@@ -1,0 +1,364 @@
+{
+  "schema": "apex-design-tokens/1",
+  "version": "1.0.0",
+  "defaultTheme": "dark",
+  "defaultBrand": "red",
+  "description": "Apex selected prototype values plus explicitly documented implementation extensions. Edit this JSON; regenerate CSS and JS. Yellow is a demonstration brand option, not the selected identity.",
+  "themes": {
+    "dark": {
+      "canvas": "#0e1013",
+      "surface": "#15191e",
+      "elevated": "#1e252c",
+      "text": "#f0f2f3",
+      "muted": "#a6afb8",
+      "line": "#333d47",
+      "hover": "#282d34",
+      "controlBorder": "#778593",
+      "disabledText": "#a6afb8",
+      "disabledSurface": "#1e252c",
+      "success": "#83c99a",
+      "warning": "#e7bd6d",
+      "danger": "#ff9691",
+      "info": "#87b8de",
+      "series2": "#87b8de",
+      "series3": "#d8c489",
+      "overlay": "#000000b3",
+      "shadow": "0 12px 32px #00000059"
+    },
+    "light": {
+      "canvas": "#f2f4f5",
+      "surface": "#fafbfc",
+      "elevated": "#e6eaee",
+      "text": "#20282e",
+      "muted": "#58636b",
+      "line": "#c6cdd3",
+      "hover": "#e3e7eb",
+      "controlBorder": "#78848e",
+      "disabledText": "#58636b",
+      "disabledSurface": "#e6eaee",
+      "success": "#246d3b",
+      "warning": "#79530e",
+      "danger": "#a62926",
+      "info": "#235a87",
+      "series2": "#235a87",
+      "series3": "#80651c",
+      "overlay": "#0e101380",
+      "shadow": "0 12px 32px #20282e26"
+    }
+  },
+  "brands": {
+    "red": {
+      "dark": {
+        "accent": "#f0524d",
+        "onAccent": "#100f10",
+        "accentHover": "#f36d69",
+        "accentPressed": "#ee514c",
+        "focus": "#f0524d",
+        "accentText": "#ff716b",
+        "accentBorder": "#f0524d"
+      },
+      "light": {
+        "accent": "#ba332f",
+        "onAccent": "#ffffff",
+        "accentHover": "#a62b28",
+        "accentPressed": "#922420",
+        "focus": "#ba332f",
+        "accentText": "#ba332f",
+        "accentBorder": "#ba332f"
+      }
+    },
+    "yellow": {
+      "dark": {
+        "accent": "#e6c65b",
+        "onAccent": "#16140c",
+        "accentHover": "#f0d477",
+        "accentPressed": "#d7b84c",
+        "focus": "#e6c65b",
+        "accentText": "#e6c65b",
+        "accentBorder": "#e6c65b"
+      },
+      "light": {
+        "accent": "#f0cf5a",
+        "onAccent": "#292309",
+        "accentHover": "#e4bf3d",
+        "accentPressed": "#d5af2b",
+        "focus": "#715700",
+        "accentText": "#715700",
+        "accentBorder": "#715700"
+      }
+    }
+  },
+  "typography": {
+    "families": {
+      "display": "\"Barlow Condensed\", \"Arial Narrow\", Arial, sans-serif",
+      "body": "\"IBM Plex Sans\", Arial, sans-serif",
+      "numeric": "\"IBM Plex Mono\", Consolas, monospace"
+    },
+    "weights": {
+      "regular": 400,
+      "bold": 700
+    },
+    "roles": {
+      "body": {
+        "family": "body",
+        "size": 14,
+        "lineHeight": 1.65,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "prose": {
+        "family": "body",
+        "size": 16,
+        "lineHeight": 1.65,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "title": {
+        "family": "display",
+        "size": 46,
+        "lineHeight": 1.12,
+        "weight": 700,
+        "tracking": "-.01em"
+      },
+      "titleMobile": {
+        "family": "display",
+        "size": 34,
+        "lineHeight": 1.08,
+        "weight": 700,
+        "tracking": "-.01em"
+      },
+      "titleNarrow": {
+        "family": "display",
+        "size": 29,
+        "lineHeight": 1.08,
+        "weight": 700,
+        "tracking": "-.01em"
+      },
+      "raceDisplay": {
+        "family": "display",
+        "size": "clamp(3rem, 5.3vw, 5rem)",
+        "lineHeight": 0.95,
+        "weight": 700,
+        "tracking": "-.02em"
+      },
+      "section": {
+        "family": "body",
+        "size": 18,
+        "lineHeight": 1.2,
+        "weight": 700,
+        "tracking": "0"
+      },
+      "subheading": {
+        "family": "body",
+        "size": 24,
+        "lineHeight": 1.2,
+        "weight": 700,
+        "tracking": "0"
+      },
+      "metric": {
+        "family": "display",
+        "size": 29,
+        "lineHeight": 1.1,
+        "weight": 700,
+        "tracking": "0"
+      },
+      "metricMobile": {
+        "family": "display",
+        "size": 27,
+        "lineHeight": 1.1,
+        "weight": 700,
+        "tracking": "0"
+      },
+      "control": {
+        "family": "body",
+        "size": 13,
+        "lineHeight": 1.4,
+        "weight": 700,
+        "tracking": "0"
+      },
+      "controlMobile": {
+        "family": "body",
+        "size": 16,
+        "lineHeight": 1.4,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "label": {
+        "family": "body",
+        "size": 12,
+        "lineHeight": 1.4,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "caption": {
+        "family": "body",
+        "size": 12,
+        "lineHeight": 1.5,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "eyebrow": {
+        "family": "numeric",
+        "size": 10,
+        "lineHeight": 1.6,
+        "weight": 400,
+        "tracking": ".13em"
+      },
+      "table": {
+        "family": "body",
+        "size": 12,
+        "lineHeight": 1.5,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "tableMobile": {
+        "family": "body",
+        "size": 14,
+        "lineHeight": 1.5,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "tableHeader": {
+        "family": "body",
+        "size": 12,
+        "lineHeight": 1.4,
+        "weight": 400,
+        "tracking": ".04em"
+      },
+      "numeric": {
+        "family": "numeric",
+        "size": 12,
+        "lineHeight": 1.5,
+        "weight": 400,
+        "tracking": "0"
+      },
+      "points": {
+        "family": "numeric",
+        "size": 18,
+        "lineHeight": 1.3,
+        "weight": 400,
+        "tracking": "0"
+      }
+    }
+  },
+  "spacing": {
+    "0": 0,
+    "1": 2,
+    "2": 4,
+    "3": 6,
+    "4": 8,
+    "5": 12,
+    "6": 16,
+    "7": 20,
+    "8": 24,
+    "9": 32,
+    "10": 40,
+    "11": 48,
+    "12": 64
+  },
+  "layout": {
+    "maxWidth": 1800,
+    "readingWidth": "65ch",
+    "sidebar": 200,
+    "sidebarCompact": 170,
+    "gutterNarrow": 12,
+    "gutterMobile": 16,
+    "gutterTablet": 25,
+    "gutterDesktop": 38,
+    "gutterWide": 50,
+    "overviewGap": 22,
+    "panelPaddingDesktop": 23,
+    "panelPaddingMobileBlock": 20,
+    "panelPaddingMobileInline": 16,
+    "sectionGap": 20,
+    "racePaddingDesktop": 30,
+    "racePaddingTablet": 24,
+    "racePaddingMobile": 25,
+    "titlePaddingTop": 33,
+    "titlePaddingBottom": 28
+  },
+  "breakpoints": {
+    "mobile": 0,
+    "small": 360,
+    "tablet": 768,
+    "desktop": 1151,
+    "wide": 1550
+  },
+  "shape": {
+    "radius": 3,
+    "border": 1,
+    "activeIndicator": 3,
+    "focusWidth": 3,
+    "focusOffset": 4
+  },
+  "sizes": {
+    "target": 44,
+    "control": 44,
+    "iconSmall": 16,
+    "icon": 20,
+    "iconLarge": 24,
+    "dialogMax": 640,
+    "drawerMax": 420,
+    "tooltipMax": 280,
+    "chartHeight": 300,
+    "emptyMin": 180
+  },
+  "motion": {
+    "instant": 0,
+    "feedback": 120,
+    "disclosure": 180,
+    "easing": "cubic-bezier(0.2, 0, 0, 1)"
+  },
+  "layers": {
+    "base": 0,
+    "sticky": 10,
+    "dropdown": 20,
+    "backdrop": 30,
+    "dialog": 40,
+    "toast": 50,
+    "tooltip": 60,
+    "skipLink": 70
+  },
+  "aliases": {
+    "color-text-primary": "text",
+    "color-text-secondary": "muted",
+    "color-text-muted": "muted",
+    "color-surface-elevated": "elevated",
+    "color-border-subtle": "line",
+    "color-border-control": "controlBorder",
+    "color-action-secondary-hover": "hover",
+    "color-status-verified": "success",
+    "color-status-reconciled": "info",
+    "color-status-stale": "warning",
+    "color-status-conflict": "danger",
+    "color-status-error": "danger",
+    "color-status-unavailable": "muted",
+    "color-data-series-2": "series2",
+    "color-data-series-3": "series3"
+  },
+  "brandAliases": {
+    "color-action-primary-bg": "accent",
+    "color-action-primary-text": "onAccent",
+    "color-action-primary-hover": "accentHover",
+    "color-action-primary-pressed": "accentPressed",
+    "color-focus": "focus",
+    "color-selection-marker": "accentText",
+    "color-data-series-1": "accentText",
+    "color-link": "accentText",
+    "color-action-primary-border": "accentBorder"
+  },
+  "provenance": {
+    "observed": "Core palette, radius, base typography, primary dimensions and responsive boundaries extracted from outputs/gallery/src/styles.css and checked against the Apex browser view.",
+    "extensions": [
+      "semantic status colours",
+      "control boundary colours",
+      "explicit hover/pressed colours",
+      "yellow demonstration option",
+      "minimum 12px functional metadata",
+      "14px mobile data and 16px mobile editable controls",
+      "overlay, focus-layer and motion contracts",
+      "readable red text variant on dark elevated and hover surfaces"
+    ],
+    "sourcePriority": "Selected Apex prototype overrides earlier unapproved visual suggestions, including the technical specification’s proposed 8px radius."
+  }
+}
