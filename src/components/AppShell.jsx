@@ -89,7 +89,7 @@ export default function AppShell({ children }) {
   const location = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.querySelector("main h1")?.focus({ preventScroll: true });
+    document.getElementById("main")?.focus({ preventScroll: true });
   }, [location.pathname]);
   return (
     <div className="app-shell apex-layout">
@@ -126,7 +126,7 @@ export default function AppShell({ children }) {
             <ThemeSelect />
           </div>
         </header>
-        <main id="main" className="page">
+        <main id="main" className="page" tabIndex={-1}>
           {children}
         </main>
         <footer className="footer">

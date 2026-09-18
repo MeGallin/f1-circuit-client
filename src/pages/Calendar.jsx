@@ -181,7 +181,8 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
 export default function Calendar() {
   const [params, setParams] = useSearchParams();
   const review = import.meta.env.DEV ? params.get("reviewState") : null;
-  const simulated = ["loading", "empty", "error"].includes(review);
+  const simulated =
+    import.meta.env.DEV && ["loading", "empty", "error"].includes(review);
   const catalogue = useGetSeasonsQuery(undefined, { skip: simulated });
   const year = selectedSeason(
     catalogue.currentData?.items,

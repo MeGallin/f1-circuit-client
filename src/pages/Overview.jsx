@@ -64,12 +64,13 @@ function SeasonOverview({ year }) {
             </div>
             <div className="season-grid season-grid--data">
               <CalendarPreview
-                key={year}
+                key={`calendar-${year}`}
                 year={year}
                 snapshotId={data.meta.snapshotId}
                 eventId={focusEvent(summary)?.id}
+                onSnapshotReset={query.refetch}
               />
-              <StandingsPreview key={year} summary={summary} />
+              <StandingsPreview key={`standings-${year}`} summary={summary} />
             </div>
             <SourceNote meta={data.meta} />
           </>
@@ -81,7 +82,8 @@ function SeasonOverview({ year }) {
 export default function Overview() {
   const [params, setParams] = useSearchParams();
   const reviewState = import.meta.env.DEV ? params.get("reviewState") : null;
-  const simulated = ["loading", "error", "empty"].includes(reviewState);
+  const simulated =
+    import.meta.env.DEV && ["loading", "error", "empty"].includes(reviewState);
   const catalogue = useGetSeasonsQuery(undefined, { skip: simulated });
   const requested = params.get("season");
   const options = selectSeasonOptions(catalogue.currentData);

@@ -118,11 +118,11 @@ function CalendarRows({ events, selectedId }) {
               : "calendar-row"
           }
         >
-          <span
-            className="round-number"
-            aria-label={`Round ${event.round ?? "not supplied"}`}
-          >
-            {String(event.round ?? "?").padStart(2, "0")}
+          <span className="round-number">
+            <span className="sr-only">Round </span>
+            {event.round == null
+              ? "Not supplied"
+              : String(event.round).padStart(2, "0")}
           </span>
           <div>
             <strong>{event.name}</strong>
@@ -143,7 +143,12 @@ function CalendarRows({ events, selectedId }) {
     </ol>
   );
 }
-export function CalendarPreview({ year, snapshotId, eventId }) {
+export function CalendarPreview({
+  year,
+  snapshotId,
+  eventId,
+  onSnapshotReset,
+}) {
   const query = useGetCalendarQuery({ year, snapshotId });
   const [expanded, setExpanded] = useState(false);
   const events = query.currentData?.items || [];
@@ -162,7 +167,13 @@ export function CalendarPreview({ year, snapshotId, eventId }) {
           </Button>
         }
       >
-        <DataBoundary query={query} empty={query.isSuccess && !events.length}>
+        <DataBoundary
+          query={query}
+          empty={query.isSuccess && !events.length}
+          onRetry={
+            query.error?.status === 409 ? onSnapshotReset : query.refetch
+          }
+        >
           {events.length > 0 && (
             <CalendarRows
               events={expanded ? events : previewCalendar(events, eventId)}

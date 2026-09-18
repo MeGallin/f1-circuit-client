@@ -95,6 +95,7 @@ export function Input({ label, id: supplied, ...props }) {
 }
 export function Tabs({ label, items, value, onChange, children }) {
   const id = useId();
+  const selected = items.some((item) => item.value === value);
   return (
     <>
       <div className="tabs" role="tablist" aria-label={label}>
@@ -106,7 +107,9 @@ export function Tabs({ label, items, value, onChange, children }) {
             type="button"
             aria-selected={value === item.value}
             aria-controls={`${id}-panel`}
-            tabIndex={value === item.value ? 0 : -1}
+            tabIndex={
+              value === item.value || (!selected && index === 0) ? 0 : -1
+            }
             onClick={() => onChange(item.value)}
             onKeyDown={(event) => {
               let next;
@@ -129,7 +132,8 @@ export function Tabs({ label, items, value, onChange, children }) {
       <div
         role="tabpanel"
         id={`${id}-panel`}
-        aria-labelledby={`${id}-${value}`}
+        aria-labelledby={selected ? `${id}-${value}` : undefined}
+        aria-label={selected ? undefined : label}
         tabIndex={0}
       >
         {children}
@@ -193,7 +197,7 @@ export function Skeleton({ label = "Loading historical data" }) {
     <div className="loading">
       <p role="status">
         {slow
-          ? "The archive is waking up. This can take about a minute."
+          ? "The archive is taking longer than usual. It may be waking up; please allow about a minute."
           : label}
       </p>
       <div aria-hidden="true" className="skeleton">
@@ -215,16 +219,20 @@ export function DataBoundary({ query, children, empty, onRetry }) {
         onRetry={onRetry || query.refetch}
       />
     );
-  if (empty) return <EmptyState />;
   return (
     <div aria-busy={query.isFetching || undefined}>
-      {query.isError && <ErrorState onRetry={onRetry || query.refetch} />}
+      {query.isError && (
+        <ErrorState
+          status={query.error?.status}
+          onRetry={onRetry || query.refetch}
+        />
+      )}
       {query.isFetching && (
         <p className="refresh-note" role="status">
           Updating this view…
         </p>
       )}
-      {children}
+      {empty ? <EmptyState /> : children}
     </div>
   );
 }

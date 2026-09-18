@@ -3,14 +3,19 @@ import Overview from "../pages/Overview";
 import Calendar from "../pages/Calendar";
 import RaceDetail from "../pages/RaceDetail";
 import Standings from "../pages/Standings";
+import Sources from "../pages/Sources";
 import { lazy, Suspense } from "react";
 const Design = import.meta.env.DEV
   ? lazy(() => import("../pages/Design"))
   : null;
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useSearchParams } from "react-router-dom";
+const Audit = import.meta.env.DEV
+  ? lazy(() => import("../pages/DevAudit"))
+  : null;
 import { PageHeading, EmptyState, ActionLink } from "../components/ui";
 import "../styles/components.css";
 export default function App() {
+  const [params] = useSearchParams();
   return (
     <AppShell>
       <Routes>
@@ -18,6 +23,7 @@ export default function App() {
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/events/:eventId" element={<RaceDetail />} />
         <Route path="/standings" element={<Standings />} />
+        <Route path="/sources" element={<Sources />} />
         {Design && (
           <Route
             path="/design"
@@ -33,13 +39,13 @@ export default function App() {
           element={
             <>
               <PageHeading
-                eyebrow="CLIENT FOUNDATION"
-                title="The race, in detail."
-                description="The season overview is available. This route is part of the next implementation stage."
+                eyebrow="PAGE NOT FOUND"
+                title="This page is not available."
+                description="Use the main navigation to explore the published archive."
               />
               <EmptyState
-                title="This view is next"
-                description="Explore the live season overview while the dedicated calendar, standings and source routes are prepared."
+                title="No matching page"
+                description="The link may be incomplete or refer to an unavailable page."
                 action={
                   <ActionLink to="/">Return to season overview</ActionLink>
                 }
@@ -48,6 +54,11 @@ export default function App() {
           }
         />
       </Routes>
+      {Audit && params.get("audit") === "1" && (
+        <Suspense fallback={null}>
+          <Audit />
+        </Suspense>
+      )}
     </AppShell>
   );
 }

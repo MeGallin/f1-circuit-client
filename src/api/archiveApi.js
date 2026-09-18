@@ -19,6 +19,13 @@ export const archiveApi = createApi({
   refetchOnFocus: false,
   tagTypes: ["Seasons", "Season", "Event"],
   endpoints: (builder) => ({
+    getSources: builder.query({
+      query: ({ cursor, snapshotId } = {}) => ({
+        url: "/sources/status",
+        params: { limit: 50, cursor, snapshotId },
+      }),
+      transformResponse: collectionResponse,
+    }),
     getStandings: builder.query({
       query: ({
         year,
@@ -100,6 +107,7 @@ export function eventResponse(response) {
   return { detail: response.data.eventDetail, meta: response.meta };
 }
 export const {
+  useGetSourcesQuery,
   useGetStandingsQuery,
   useGetEventQuery,
   useGetSessionDataQuery,

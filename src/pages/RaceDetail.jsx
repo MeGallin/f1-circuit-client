@@ -379,7 +379,8 @@ export default function RaceDetail() {
   const { eventId } = useParams();
   const [params, setParams] = useSearchParams();
   const review = import.meta.env.DEV ? params.get("reviewState") : null;
-  const simulated = ["loading", "empty", "error"].includes(review);
+  const simulated =
+    import.meta.env.DEV && ["loading", "empty", "error"].includes(review);
   const query = useGetEventQuery(
     { eventId, snapshotId: params.get("snapshot") || undefined },
     { skip: simulated },
