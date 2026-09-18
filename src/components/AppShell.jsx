@@ -18,13 +18,19 @@ const navigation = [
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
 function Navigation({ mobile = false }) {
+  const { search } = useLocation();
+  const season = new URLSearchParams(search).get("season");
   return (
     <nav
       aria-label={mobile ? "Mobile navigation" : "Main navigation"}
       className={mobile ? "mobile-nav" : "rail-nav"}
     >
       {navigation.map(({ to, label, icon: Icon }) => (
-        <NavLink end={to === "/"} key={to} to={to}>
+        <NavLink
+          end={to === "/"}
+          key={to}
+          to={season ? `${to}?season=${encodeURIComponent(season)}` : to}
+        >
           <Icon aria-hidden size={21} weight="regular" />
           <span>{label}</span>
         </NavLink>

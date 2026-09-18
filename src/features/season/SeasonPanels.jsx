@@ -13,6 +13,7 @@ import {
   EmptyState,
   SourceNote,
   DataBoundary,
+  ActionLink,
 } from "../../components/ui";
 import { useGetCalendarQuery } from "../../api/archiveApi";
 import { dateLabel, focusEvent, previewCalendar } from "./selectors";
@@ -90,10 +91,12 @@ export function RaceFocus({ summary }) {
             {dateLabel(event.schedule.date)}
           </time>
         </span>
-        <a className="button button--primary" href="#season-calendar">
+        <ActionLink
+          variant="primary"
+          to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
+        >
           Explore the calendar
-          <ArrowRightIcon size={18} aria-hidden />
-        </a>
+        </ActionLink>
       </div>
     </section>
   );
@@ -163,6 +166,9 @@ export function CalendarPreview({ year, snapshotId, eventId }) {
           )}
         </DataBoundary>
       </Panel>
+      <ActionLink to={`/calendar?season=${year}`}>
+        Open season calendar
+      </ActionLink>
       <SourceNote meta={query.currentData?.meta} />
     </div>
   );

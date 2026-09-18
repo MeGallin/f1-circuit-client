@@ -1,5 +1,6 @@
 import AppShell from "../components/AppShell";
 import Overview from "../pages/Overview";
+import Calendar from "../pages/Calendar";
 import { lazy, Suspense } from "react";
 const Design = import.meta.env.DEV
   ? lazy(() => import("../pages/Design"))
@@ -12,6 +13,7 @@ export default function App() {
     <AppShell>
       <Routes>
         <Route path="/" element={<Overview />} />
+        <Route path="/calendar" element={<Calendar />} />
         {Design && (
           <Route
             path="/design"

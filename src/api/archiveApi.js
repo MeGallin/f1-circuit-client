@@ -33,9 +33,9 @@ export const archiveApi = createApi({
       providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
     }),
     getCalendar: builder.query({
-      query: ({ year, snapshotId }) => ({
+      query: ({ year, snapshotId, cursor }) => ({
         url: `/seasons/${year}/calendar`,
-        params: { snapshotId, limit: 200 },
+        params: { snapshotId, cursor, limit: 200 },
       }),
       transformResponse: collectionResponse,
       providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
