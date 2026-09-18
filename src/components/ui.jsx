@@ -1,0 +1,339 @@
+import { useId, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRightIcon,
+  ArrowClockwiseIcon,
+  WarningCircleIcon,
+} from "@phosphor-icons/react";
+
+export function Button({
+  variant = "primary",
+  children,
+  className = "",
+  ...props
+}) {
+  return (
+    <button
+      className={`button button--${variant} ${className}`}
+      type="button"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+export function ActionLink({ to, children, variant = "secondary", ...props }) {
+  return (
+    <Link className={`button button--${variant}`} to={to} {...props}>
+      {children}
+      <ArrowRightIcon aria-hidden size={18} />
+    </Link>
+  );
+}
+export function TextLink({ to, children, ...props }) {
+  return (
+    <Link className="text-link" to={to} {...props}>
+      {children}
+    </Link>
+  );
+}
+export function Panel({ title, action, children, className = "", ...props }) {
+  const id = useId();
+  return (
+    <section
+      className={`panel ${className}`}
+      aria-labelledby={title ? id : undefined}
+      {...props}
+    >
+      {title && (
+        <div className="panel-heading">
+          <h2 id={id}>{title}</h2>
+          {action}
+        </div>
+      )}
+      {children}
+    </section>
+  );
+}
+export function PageHeading({ eyebrow, title, description, actions }) {
+  return (
+    <header className="page-heading">
+      <div>
+        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+        <h1 tabIndex={-1}>{title}</h1>
+        {description && <p className="muted page-description">{description}</p>}
+      </div>
+      {actions && <div className="page-actions">{actions}</div>}
+    </header>
+  );
+}
+export function Select({ label, options, id: supplied, ...props }) {
+  const generated = useId();
+  const id = supplied || generated;
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <select id={id} {...props}>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+export function Input({ label, id: supplied, ...props }) {
+  const generated = useId();
+  const id = supplied || generated;
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <input id={id} {...props} />
+    </div>
+  );
+}
+export function Tabs({ label, items, value, onChange, children }) {
+  const id = useId();
+  return (
+    <>
+      <div className="tabs" role="tablist" aria-label={label}>
+        {items.map((item, index) => (
+          <button
+            key={item.value}
+            id={`${id}-${item.value}`}
+            role="tab"
+            type="button"
+            aria-selected={value === item.value}
+            aria-controls={`${id}-panel`}
+            tabIndex={value === item.value ? 0 : -1}
+            onClick={() => onChange(item.value)}
+            onKeyDown={(event) => {
+              let next;
+              if (event.key === "ArrowRight") next = (index + 1) % items.length;
+              if (event.key === "ArrowLeft")
+                next = (index - 1 + items.length) % items.length;
+              if (event.key === "Home") next = 0;
+              if (event.key === "End") next = items.length - 1;
+              if (next !== undefined) {
+                event.preventDefault();
+                onChange(items[next].value);
+                document.getElementById(`${id}-${items[next].value}`)?.focus();
+              }
+            }}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <div
+        role="tabpanel"
+        id={`${id}-panel`}
+        aria-labelledby={`${id}-${value}`}
+        tabIndex={0}
+      >
+        {children}
+      </div>
+    </>
+  );
+}
+export function StatusBadge({ children, tone = "neutral" }) {
+  return <span className={`status status--${tone}`}>{children}</span>;
+}
+export function Metric({ label, value, detail }) {
+  return (
+    <div className="metric">
+      <span className="muted">{label}</span>
+      <strong>{value ?? "Not available"}</strong>
+      {detail && <span className="muted">{detail}</span>}
+    </div>
+  );
+}
+export function EmptyState({
+  title = "No records available",
+  description = "This source does not currently contain data for this selection.",
+  action,
+}) {
+  return (
+    <div className="state">
+      <h3>{title}</h3>
+      <p>{description}</p>
+      {action}
+    </div>
+  );
+}
+export function ErrorState({ onRetry, status }) {
+  return (
+    <div className="state" role="alert">
+      <WarningCircleIcon size={28} aria-hidden />
+      <h3>
+        {status === 404 ? "Record not found" : "We could not load this data"}
+      </h3>
+      <p>
+        {status === 409
+          ? "The data snapshot has changed. Refresh this view to continue."
+          : "Your selection is preserved. The archive may be temporarily unavailable."}
+      </p>
+      {onRetry && (
+        <Button variant="secondary" onClick={onRetry}>
+          <ArrowClockwiseIcon size={18} aria-hidden />
+          Try again
+        </Button>
+      )}
+    </div>
+  );
+}
+export function Skeleton({ label = "Loading historical data" }) {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setSlow(true), 8000);
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <div className="loading">
+      <p role="status">
+        {slow
+          ? "The archive is waking up. This can take about a minute."
+          : label}
+      </p>
+      <div aria-hidden="true" className="skeleton">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
+    </div>
+  );
+}
+export function DataBoundary({ query, children, empty, onRetry }) {
+  if (query.isLoading || (!query.currentData && query.isFetching))
+    return <Skeleton />;
+  if (query.isError && !query.currentData)
+    return (
+      <ErrorState
+        status={query.error?.status}
+        onRetry={onRetry || query.refetch}
+      />
+    );
+  if (empty) return <EmptyState />;
+  return (
+    <div aria-busy={query.isFetching || undefined}>
+      {query.isError && <ErrorState onRetry={onRetry || query.refetch} />}
+      {query.isFetching && (
+        <p className="refresh-note" role="status">
+          Updating this view…
+        </p>
+      )}
+      {children}
+    </div>
+  );
+}
+export function DataTable({ caption, columns, rows, rowKey = (r) => r.id }) {
+  const id = useId();
+  if (!rows.length) return <EmptyState />;
+  return (
+    <div
+      className="table-scroll"
+      role="region"
+      aria-labelledby={id}
+      tabIndex={0}
+    >
+      <table>
+        <caption id={id}>{caption}</caption>
+        <thead>
+          <tr>
+            {columns.map((c) => (
+              <th
+                key={c.key}
+                scope="col"
+                className={c.numeric ? "numeric" : ""}
+              >
+                {c.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={rowKey(row)}>
+              {columns.map((c, i) => {
+                const Cell = i === 0 ? "th" : "td";
+                return (
+                  <Cell
+                    key={c.key}
+                    scope={i === 0 ? "row" : undefined}
+                    className={c.numeric ? "numeric" : ""}
+                  >
+                    {c.render ? c.render(row) : (row[c.key] ?? "N/A")}
+                  </Cell>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+export function Pagination({
+  page = 1,
+  hasMore,
+  total,
+  onNext,
+  onPrevious,
+  busy,
+}) {
+  return (
+    <nav className="pagination" aria-label="Results pages">
+      <Button
+        variant="quiet"
+        disabled={page === 1 || busy}
+        onClick={onPrevious}
+      >
+        Previous
+      </Button>
+      <span>
+        Page {page}
+        {total != null
+          ? ` · ${total} ${total === 1 ? "record" : "records"}`
+          : ""}
+      </span>
+      <Button variant="secondary" disabled={!hasMore || busy} onClick={onNext}>
+        Next
+      </Button>
+    </nav>
+  );
+}
+export function SourceNote({ meta }) {
+  if (!meta) return null;
+  return (
+    <aside className="source-note" aria-label="Data provenance">
+      <div className="source-summary">
+        <StatusBadge>
+          {meta.verification?.replaceAll("-", " ") || "Unassessed"}
+        </StatusBadge>
+        <span>
+          {meta.coverage} coverage · {meta.freshness}
+        </span>
+        <TextLink to="/sources">About the data</TextLink>
+      </div>
+      <details>
+        <summary>Source details</summary>
+        <p>
+          Retrieved:{" "}
+          {meta.lastSuccessfulRetrieval
+            ? new Date(meta.lastSuccessfulRetrieval).toLocaleString("en-GB", {
+                timeZone: "UTC",
+              }) + " UTC"
+            : "Not available"}
+        </p>
+        {meta.sources?.map((s) => (
+          <p key={s.id}>{s.attribution || s.name}</p>
+        ))}
+        {meta.warnings?.map((w, i) => (
+          <p key={i}>{w.message}</p>
+        ))}
+      </details>
+    </aside>
+  );
+}

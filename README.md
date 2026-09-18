@@ -2,9 +2,9 @@
 
 Frontend repository for the F1 Circuit historical and post-race application, using the selected Apex design direction.
 
-This initial commit establishes the directory structure only. No application features, dependencies, generated output or deployment configuration have been added. The development branch is `main`.
+Foundation and reusable component checkpoint. Run `npm ci` then `npm run dev`; review http://127.0.0.1:5173/design. Run `npm run check` for lint, tests and production build. See docs/CHECKPOINT.md for scope and next steps. No frontend deployment has been performed.
 
-## Planned architecture
+## Architecture
 
 React with plain JavaScript, Redux Toolkit and RTK Query. The client will consume the normalized F1 Circuit API; provider credentials and database access belong on the server. The Apex design system will provide reusable tokens, components and patterns.
 
