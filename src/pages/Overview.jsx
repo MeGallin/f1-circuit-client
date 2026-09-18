@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import useSeasonSearch from "../features/season/useSeasonSearch";
 import { ArrowClockwiseIcon, RankingIcon } from "@phosphor-icons/react";
 import {
   useGetSeasonsQuery,
@@ -27,8 +27,9 @@ import {
   ErrorState,
 } from "../components/ui";
 import "../styles/overview.css";
+import SeasonUnavailable from "../features/season/SeasonUnavailable";
 
-function SeasonOverview({ year }) {
+function SeasonOverview({ year, seasons }) {
   const query = useGetSeasonSummaryQuery({ year });
   const data = query.currentData;
   const summary = data?.summary;
@@ -46,41 +47,48 @@ function SeasonOverview({ year }) {
         </Button>
       </div>
       <DataBoundary query={query} empty={query.isSuccess && !summary}>
-        {summary && (
+        {summary?.season.coverage === "unavailable" ? (
           <>
-            <div className="season-grid">
-              <RaceFocus summary={summary} />
-              <ArchiveProgress season={summary.season} />
-            </div>
-            <div className="overview-jump">
-              <p>
-                Every result has a source. Explore what is available for this
-                season.
-              </p>
-              <a className="text-link" href="#season-standings">
-                <RankingIcon size={19} aria-hidden />
-                View championship leaders
-              </a>
-            </div>
-            <div className="season-grid season-grid--data">
-              <CalendarPreview
-                key={`calendar-${year}`}
-                year={year}
-                snapshotId={data.meta.snapshotId}
-                eventId={focusEvent(summary)?.id}
-                onSnapshotReset={query.refetch}
-              />
-              <StandingsPreview key={`standings-${year}`} summary={summary} />
-            </div>
+            <SeasonUnavailable year={year} seasons={seasons} imported />
             <SourceNote meta={data.meta} />
           </>
+        ) : (
+          summary && (
+            <>
+              <div className="season-grid">
+                <RaceFocus summary={summary} />
+                <ArchiveProgress season={summary.season} />
+              </div>
+              <div className="overview-jump">
+                <p>
+                  Every result has a source. Explore what is available for this
+                  season.
+                </p>
+                <a className="text-link" href="#season-standings">
+                  <RankingIcon size={19} aria-hidden />
+                  View championship leaders
+                </a>
+              </div>
+              <div className="season-grid season-grid--data">
+                <CalendarPreview
+                  key={`calendar-${year}`}
+                  year={year}
+                  snapshotId={data.meta.snapshotId}
+                  eventId={focusEvent(summary)?.id}
+                  onSnapshotReset={query.refetch}
+                />
+                <StandingsPreview key={`standings-${year}`} summary={summary} />
+              </div>
+              <SourceNote meta={data.meta} />
+            </>
+          )
         )}
       </DataBoundary>
     </>
   );
 }
 export default function Overview() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSeasonSearch();
   const reviewState = import.meta.env.DEV ? params.get("reviewState") : null;
   const simulated =
     import.meta.env.DEV && ["loading", "error", "empty"].includes(reviewState);
@@ -133,21 +141,18 @@ export default function Overview() {
       />
       <DataBoundary query={catalogue}>
         {catalogue.currentData &&
-          (year ? (
-            <SeasonOverview key={year} year={year} />
+          (year &&
+          catalogue.currentData.items.some((season) => season.year === year) ? (
+            <SeasonOverview
+              key={year}
+              year={year}
+              seasons={catalogue.currentData.items}
+            />
           ) : (
             <Panel title="Season selection">
-              <EmptyState
-                title={
-                  requested
-                    ? "This season is not in the archive"
-                    : "The archive has no published seasons"
-                }
-                description={
-                  requested
-                    ? "Choose an available season above. No data has been substituted for your selection."
-                    : "Please try again after the next source import."
-                }
+              <SeasonUnavailable
+                year={year}
+                seasons={catalogue.currentData.items}
               />
             </Panel>
           ))}

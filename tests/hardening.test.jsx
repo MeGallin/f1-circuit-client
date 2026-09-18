@@ -75,13 +75,9 @@ test.each([
     fail = false;
     await userEvent.click(screen.getByRole("button", { name: "Try again" }));
     await screen.findByText(
-      path === "/"
-        ? "The archive has no published seasons"
-        : path === "/calendar"
-          ? "The archive has no published seasons"
-          : path === "/standings"
-            ? "This season is not in the archive"
-            : "No records available",
+      path.startsWith("/events")
+        ? "No records available"
+        : `${new Date().getUTCFullYear()} is not in the season catalogue`,
     );
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     view.unmount();

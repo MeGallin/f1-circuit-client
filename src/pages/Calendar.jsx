@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import useSeasonSearch from "../features/season/useSeasonSearch";
 import {
   archiveApi,
   useGetCalendarQuery,
@@ -26,6 +26,7 @@ import {
   ActionLink,
 } from "../components/ui";
 import "../styles/calendar.css";
+import SeasonUnavailable from "../features/season/SeasonUnavailable";
 
 export function CalendarEvents({ events, selectedId, onSelect }) {
   return (
@@ -179,7 +180,7 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
 }
 
 export default function Calendar() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSeasonSearch();
   const review = import.meta.env.DEV ? params.get("reviewState") : null;
   const simulated =
     import.meta.env.DEV && ["loading", "empty", "error"].includes(review);
@@ -235,7 +236,10 @@ export default function Calendar() {
       ) : (
         <DataBoundary query={catalogue}>
           {catalogue.currentData &&
-            (year ? (
+            (year &&
+            catalogue.currentData.items.some(
+              (season) => season.year === year,
+            ) ? (
               <SeasonCalendar
                 key={year}
                 year={year}
@@ -245,13 +249,9 @@ export default function Calendar() {
                 }
               />
             ) : (
-              <EmptyState
-                title={
-                  params.has("season")
-                    ? "This season is not in the archive"
-                    : "The archive has no published seasons"
-                }
-                description="Choose an available season above. No data has been substituted for your selection."
+              <SeasonUnavailable
+                year={year}
+                seasons={catalogue.currentData.items}
               />
             ))}
         </DataBoundary>

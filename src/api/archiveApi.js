@@ -61,8 +61,48 @@ export const archiveApi = createApi({
       transformResponse: collectionResponse,
     }),
     getSeasons: builder.query({
-      query: () => ({ url: "/seasons", params: { limit: 200 } }),
-      transformResponse: collectionResponse,
+      async queryFn(_arg, _api, _extra, baseQuery) {
+        const items = [];
+        let cursor, snapshotId, first;
+        const visited = new Set();
+        do {
+          const response = await baseQuery({
+            url: "/seasons",
+            params: { limit: 200, cursor, snapshotId },
+          });
+          if (response.error) return { error: response.error };
+          let page;
+          try {
+            page = collectionResponse(response.data);
+          } catch {
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Unexpected season catalogue response",
+              },
+            };
+          }
+          first ||= page;
+          snapshotId = first.meta.snapshotId;
+          items.push(...page.items);
+          cursor = page.page.hasMore ? page.page.nextCursor : undefined;
+          if (page.page.hasMore && (!cursor || visited.has(cursor)))
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Incomplete season catalogue",
+              },
+            };
+          if (cursor) visited.add(cursor);
+        } while (cursor);
+        return {
+          data: {
+            items,
+            meta: first.meta,
+            page: { total: items.length, hasMore: false, nextCursor: null },
+          },
+        };
+      },
       providesTags: ["Seasons"],
     }),
     getSeasonSummary: builder.query({

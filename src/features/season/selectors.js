@@ -1,24 +1,34 @@
 import { createSelector } from "@reduxjs/toolkit";
+export const runtimeYear = () => new Date().getUTCFullYear();
 export const selectSeasonOptions = createSelector(
-  [(data) => data?.items],
-  (items) =>
-    (items || [])
+  [(data) => data?.items, () => runtimeYear()],
+  (items, currentYear) => {
+    if (!items) return [];
+    const options = items
       .slice()
       .sort((a, b) => b.year - a.year)
       .map((s) => ({
         value: String(s.year),
-        label: `${s.year}${s.isCurrent ? " · Current" : ""}`,
-      })),
+        label: `${s.year}${s.year === currentYear ? " · Current year" : ""} · ${s.coverage === "unavailable" ? "Not imported" : s.coverage ? `${s.coverage} coverage` : "Coverage not supplied"}`,
+      }));
+    if (!items.some((s) => s.year === currentYear))
+      options.push({
+        value: String(currentYear),
+        label: `${currentYear} · Current year · Not in catalogue`,
+      });
+    return options.sort((a, b) => Number(b.value) - Number(a.value));
+  },
 );
-export function selectedSeason(items, requested) {
-  if (requested && items?.some((s) => String(s.year) === requested))
+export function selectedSeason(items, requested, currentYear = runtimeYear()) {
+  if (!items) return null;
+  if (
+    requested != null &&
+    (items.some((s) => String(s.year) === requested) ||
+      requested === String(currentYear))
+  )
     return Number(requested);
-  if (requested) return null;
-  return (
-    (items?.find((s) => s.isCurrent)?.year ??
-      items?.reduce((latest, s) => Math.max(latest, s.year), 0)) ||
-    null
-  );
+  if (requested != null) return null;
+  return currentYear;
 }
 export function focusEvent(summary) {
   return summary?.nextEvent || summary?.latestCompletedEvent || null;

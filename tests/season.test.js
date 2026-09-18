@@ -19,10 +19,12 @@ test("selection uses only published seasons and refuses unavailable explicit sel
     { year: 2023, isCurrent: false },
     { year: 2024, isCurrent: false },
   ];
-  expect(selectedSeason(seasons, null)).toBe(2024);
+  expect(selectedSeason(seasons, null, 2026)).toBe(2026);
+  expect(selectedSeason(seasons, null, 2027)).toBe(2027);
   expect(selectedSeason(seasons, "2023")).toBe(2023);
-  expect(selectedSeason(seasons, "2025")).toBeNull();
-  expect(selectedSeason([], null)).toBeNull();
+  expect(selectedSeason(seasons, "2025", 2026)).toBeNull();
+  expect(selectedSeason([], null, 2026)).toBe(2026);
+  expect(selectedSeason(seasons, "", 2026)).toBeNull();
   expect(
     focusEvent({ nextEvent: null, latestCompletedEvent: { id: "fixture" } }),
   ).toEqual({ id: "fixture" });

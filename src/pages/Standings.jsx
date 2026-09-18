@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom";
+import useSeasonSearch from "../features/season/useSeasonSearch";
 import { useDispatch } from "react-redux";
 import {
   archiveApi,
@@ -23,6 +23,7 @@ import {
   ErrorState,
 } from "../components/ui";
 import "../styles/standings.css";
+import SeasonUnavailable from "../features/season/SeasonUnavailable";
 
 const kinds = [
   { value: "drivers", label: "Drivers" },
@@ -207,7 +208,7 @@ function Championship({ year, kind, params, setParams }) {
   );
 }
 export default function Standings() {
-  const [params, setParams] = useSearchParams();
+  const [params, setParams] = useSeasonSearch();
   const review = import.meta.env.DEV ? params.get("reviewState") : null;
   const simulated =
     import.meta.env.DEV && ["loading", "empty", "error"].includes(review);
@@ -270,10 +271,13 @@ export default function Standings() {
       ) : (
         <DataBoundary query={catalogue}>
           {catalogue.currentData &&
-            (!year ? (
-              <EmptyState
-                title="This season is not in the archive"
-                description="Choose an available season above. No season has been substituted."
+            (!year ||
+            !catalogue.currentData.items.some(
+              (season) => season.year === year,
+            ) ? (
+              <SeasonUnavailable
+                year={year}
+                seasons={catalogue.currentData.items}
               />
             ) : (
               <Panel title="Championship standings">

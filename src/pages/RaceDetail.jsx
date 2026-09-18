@@ -1,4 +1,5 @@
 import { useParams, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
   archiveApi,
@@ -385,6 +386,14 @@ export default function RaceDetail() {
     { eventId, snapshotId: params.get("snapshot") || undefined },
     { skip: simulated },
   );
+  const eventYear = query.currentData?.detail?.event.year;
+  useEffect(() => {
+    if (eventYear && !params.has("season")) {
+      const next = new URLSearchParams(params);
+      next.set("season", String(eventYear));
+      setParams(next, { replace: true });
+    }
+  }, [eventYear, params, setParams]);
   const refresh = () => {
     const next = new URLSearchParams(params);
     next.delete("snapshot");
@@ -432,13 +441,34 @@ export default function RaceDetail() {
         empty={query.isSuccess && !query.currentData?.detail}
         onRetry={query.error?.status === 409 ? refresh : query.refetch}
       >
-        {query.currentData?.detail && (
-          <Detail
-            data={query.currentData}
-            params={params}
-            setParams={setParams}
-            refresh={refresh}
-          />
+        {eventYear &&
+        params.has("season") &&
+        params.get("season") !== String(eventYear) ? (
+          <>
+            <PageHeading
+              title="Event and season do not match"
+              description={`This event belongs to ${eventYear}. No results have been shown for the selected season.`}
+            />
+            <ActionLink
+              to={`/calendar?season=${encodeURIComponent(params.get("season"))}`}
+            >
+              Return to selected season
+            </ActionLink>
+            <ActionLink
+              to={`/events/${encodeURIComponent(eventId)}?season=${eventYear}`}
+            >
+              Open this event in {eventYear}
+            </ActionLink>
+          </>
+        ) : (
+          query.currentData?.detail && (
+            <Detail
+              data={query.currentData}
+              params={params}
+              setParams={setParams}
+              refresh={refresh}
+            />
+          )
         )}
       </DataBoundary>
       {!query.currentData?.detail && (

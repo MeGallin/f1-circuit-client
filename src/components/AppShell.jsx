@@ -11,6 +11,7 @@ import {
   PaletteIcon,
 } from "@phosphor-icons/react";
 import { Select } from "./ui";
+import { runtimeYear } from "../features/season/selectors";
 const navigation = [
   { to: "/", label: "Overview", icon: SquaresFourIcon },
   { to: "/calendar", label: "Calendar", icon: CalendarBlankIcon },
@@ -33,6 +34,8 @@ function Navigation({ mobile = false }) {
     if (value != null) navigationParams.set(key, value);
   }
   if (eventId) navigationParams.set("event", eventId);
+  if (!navigationParams.has("season"))
+    navigationParams.set("season", String(runtimeYear()));
   return (
     <nav
       aria-label={mobile ? "Mobile navigation" : "Main navigation"}
@@ -87,6 +90,8 @@ function useTheme() {
 export default function AppShell({ children }) {
   useTheme();
   const location = useLocation();
+  const homeParams = new URLSearchParams(location.search);
+  const home = `/?season=${encodeURIComponent(homeParams.get("season") || String(runtimeYear()))}`;
   useEffect(() => {
     window.scrollTo(0, 0);
     document.getElementById("main")?.focus({ preventScroll: true });
@@ -97,7 +102,7 @@ export default function AppShell({ children }) {
         Skip to content
       </a>
       <aside className="rail">
-        <Link to="/" className="brand" aria-label="F1 Circuit home">
+        <Link to={home} className="brand" aria-label="F1 Circuit home">
           <FlagCheckeredIcon weight="fill" size={30} aria-hidden />
           <span>
             F1<span className="brand-secondary">CIRCUIT</span>
@@ -117,7 +122,7 @@ export default function AppShell({ children }) {
       </aside>
       <div className="workspace">
         <header className="topbar">
-          <Link to="/" className="mobile-brand">
+          <Link to={home} className="mobile-brand">
             F1 CIRCUIT
           </Link>
           <span className="topbar-context">FORMULA 1 / HISTORICAL DATA</span>
