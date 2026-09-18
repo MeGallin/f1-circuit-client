@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { EmptyState, ActionLink } from "../../components/ui";
+import { isScopedSeason } from "./selectors";
 export default function SeasonUnavailable({
   year,
   seasons = [],
@@ -8,7 +9,10 @@ export default function SeasonUnavailable({
   const { pathname, search } = useLocation();
   const fallback = seasons
     .filter(
-      (season) => season.coverage !== "unavailable" && season.eventCount > 0,
+      (season) =>
+        isScopedSeason(season.year) &&
+        season.coverage !== "unavailable" &&
+        season.eventCount > 0,
     )
     .sort((a, b) => b.year - a.year)[0];
   const next = new URLSearchParams(search);

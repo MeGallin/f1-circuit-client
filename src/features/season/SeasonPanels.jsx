@@ -16,7 +16,12 @@ import {
   ActionLink,
 } from "../../components/ui";
 import { useGetCalendarQuery } from "../../api/archiveApi";
-import { dateLabel, focusEvent, previewCalendar } from "./selectors";
+import {
+  dateLabel,
+  focusEvent,
+  previewCalendar,
+  seasonImportStatus,
+} from "./selectors";
 
 export function ArchiveProgress({ season }) {
   return (
@@ -40,7 +45,7 @@ export function ArchiveProgress({ season }) {
         </div>
         <div className="coverage-stats">
           <Metric label="Calendar rounds" value={season.eventCount} />
-          <Metric label="Season coverage" value={season.coverage} />
+          <Metric label="Import status" value={seasonImportStatus(season)} />
         </div>
       </div>
     </Panel>

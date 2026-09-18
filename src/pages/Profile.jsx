@@ -25,6 +25,10 @@ import {
   changeFilters,
   refreshSelection,
 } from "../features/entities/shared";
+import {
+  isScopedSeason,
+  seasonOptionLabel,
+} from "../features/season/selectors";
 import { RaceRecords } from "./RaceDetail";
 import "../styles/entities.css";
 export function HistoryRows({ kind, rows }) {
@@ -185,7 +189,7 @@ export default function Profile({ kind }) {
   const validYear =
     !year ||
     (/^\d{4}$/.test(year) &&
-      Number(year) >= 1950 &&
+      isScopedSeason(year) &&
       (!seasons.currentData ||
         seasons.currentData.items.some((s) => s.year === Number(year))));
   const validView = views.some((v) => v.value === view);
@@ -281,10 +285,12 @@ export default function Profile({ kind }) {
                 value={year}
                 options={[
                   { value: "", label: "All imported seasons" },
-                  ...seasons.currentData.items.map((s) => ({
-                    value: String(s.year),
-                    label: String(s.year),
-                  })),
+                  ...seasons.currentData.items
+                    .filter((s) => isScopedSeason(s.year))
+                    .map((s) => ({
+                      value: String(s.year),
+                      label: seasonOptionLabel(s),
+                    })),
                   ...(!validYear
                     ? [{ value: year, label: "Invalid season" }]
                     : []),

@@ -295,7 +295,7 @@ test("invalid comparison range or circuit points never issues an API comparison"
   );
   await waitFor(() =>
     expect(
-      screen.getAllByRole("option", { name: "2024" }).length,
+      screen.getAllByRole("option", { name: /^2024 ·/ }).length,
     ).toBeGreaterThan(0),
   );
   expect(

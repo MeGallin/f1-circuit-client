@@ -18,6 +18,10 @@ import {
   ActionLink,
 } from "../components/ui";
 import { changeFilters, refreshSelection } from "../features/entities/shared";
+import {
+  isScopedSeason,
+  seasonOptionLabel,
+} from "../features/season/selectors";
 import "../styles/entities.css";
 const kinds = ["driver", "constructor", "circuit", "season"];
 const metrics = [
@@ -130,7 +134,7 @@ export default function Compare() {
       metrics.includes(metric) && !(kind === "circuit" && metric === "points");
   const knownYear = (y) =>
     /^\d{4}$/.test(y) &&
-    Number(y) >= 1950 &&
+    isScopedSeason(y) &&
     seasons.currentData?.items.some((s) => s.year === Number(y));
   const valid =
     validKind &&
@@ -157,10 +161,12 @@ export default function Compare() {
     setParams(changeFilters(params, { ...values, run: null }));
   const yearOptions = [
     { value: "", label: "Choose season" },
-    ...(seasons.currentData?.items || []).map((s) => ({
-      value: String(s.year),
-      label: String(s.year),
-    })),
+    ...(seasons.currentData?.items || [])
+      .filter((s) => isScopedSeason(s.year))
+      .map((s) => ({
+        value: String(s.year),
+        label: seasonOptionLabel(s),
+      })),
   ];
   return (
     <div className="entity-stack">

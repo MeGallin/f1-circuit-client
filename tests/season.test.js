@@ -6,6 +6,10 @@ import {
   summaryResponse,
 } from "../src/api/archiveApi";
 import {
+  isScopedSeason,
+  seasonImportStatus,
+  seasonOptionLabel,
+  selectSeasonOptions,
   selectedSeason,
   focusEvent,
   previewCalendar,
@@ -23,8 +27,40 @@ test("selection uses only published seasons and refuses unavailable explicit sel
   expect(selectedSeason(seasons, null, 2027)).toBe(2027);
   expect(selectedSeason(seasons, "2023")).toBe(2023);
   expect(selectedSeason(seasons, "2025", 2026)).toBeNull();
+  expect(selectedSeason([{ year: 1999 }], "1999", 2026)).toBeNull();
   expect(selectedSeason([], null, 2026)).toBe(2026);
   expect(selectedSeason(seasons, "", 2026)).toBeNull();
+  expect(isScopedSeason(2000)).toBe(true);
+  expect(isScopedSeason(1999)).toBe(false);
+  expect(
+    selectSeasonOptions({
+      items: [
+        { year: 1999, coverage: "complete" },
+        { year: 2000, coverage: "partial", eventCount: 17, completedCount: 17 },
+        { year: 2026, coverage: "partial", eventCount: 23, completedCount: 14 },
+      ],
+    }),
+  ).toEqual([
+    {
+      value: "2026",
+      label: expect.stringContaining("Partial import · 14/23 rounds"),
+    },
+    {
+      value: "2000",
+      label: expect.stringContaining("Imported · 17/17 rounds"),
+    },
+  ]);
+  expect(seasonImportStatus({ coverage: "unavailable" })).toBe("Not imported");
+  expect(
+    seasonImportStatus({
+      coverage: "unavailable",
+      eventCount: 23,
+      completedCount: 14,
+    }),
+  ).toBe("Partial import · 14/23 rounds");
+  expect(
+    seasonOptionLabel({ year: 2026, eventCount: 23, completedCount: 14 }, 2026),
+  ).toContain("Current year");
   expect(
     focusEvent({ nextEvent: null, latestCompletedEvent: { id: "fixture" } }),
   ).toEqual({ id: "fixture" });
