@@ -17,8 +17,27 @@ export const archiveApi = createApi({
   keepUnusedDataFor: 300,
   refetchOnReconnect: true,
   refetchOnFocus: false,
-  tagTypes: ["Seasons", "Season"],
+  tagTypes: ["Seasons", "Season", "Event"],
   endpoints: (builder) => ({
+    getEvent: builder.query({
+      query: ({ eventId, snapshotId }) => ({
+        url: `/events/${encodeURIComponent(eventId)}`,
+        params: { snapshotId },
+      }),
+      transformResponse: eventResponse,
+      providesTags: (_r, _e, { eventId }) => [{ type: "Event", id: eventId }],
+    }),
+    getSessionData: builder.query({
+      query: ({ sessionId, dataset, cursor, snapshotId, limit = 20 }) => {
+        if (!["results", "qualifying", "laps", "pit-stops"].includes(dataset))
+          throw new Error("Unsupported dataset");
+        return {
+          url: `/sessions/${encodeURIComponent(sessionId)}/${dataset}`,
+          params: { cursor, snapshotId, limit },
+        };
+      },
+      transformResponse: collectionResponse,
+    }),
     getSeasons: builder.query({
       query: () => ({ url: "/seasons", params: { limit: 200 } }),
       transformResponse: collectionResponse,
@@ -60,7 +79,14 @@ export function summaryResponse(response) {
     throw new Error("Unexpected summary response");
   return { summary: response.data.seasonSummary, meta: response.meta };
 }
+export function eventResponse(response) {
+  if (!response?.data || !("eventDetail" in response.data) || !response.meta)
+    throw new Error("Unexpected event response");
+  return { detail: response.data.eventDetail, meta: response.meta };
+}
 export const {
+  useGetEventQuery,
+  useGetSessionDataQuery,
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
   useGetCalendarQuery,

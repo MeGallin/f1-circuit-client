@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { archiveApi, useGetCalendarQuery, useGetSeasonsQuery } from "../api/archiveApi";
+import {
+  archiveApi,
+  useGetCalendarQuery,
+  useGetSeasonsQuery,
+} from "../api/archiveApi";
 import {
   selectedSeason,
   selectSeasonOptions,
@@ -19,6 +23,7 @@ import {
   Pagination,
   Skeleton,
   ErrorState,
+  ActionLink,
 } from "../components/ui";
 import "../styles/calendar.css";
 
@@ -71,6 +76,11 @@ export function CalendarEvents({ events, selectedId, onSelect }) {
               <p>
                 Selected round · Location not supplied by the calendar source.
               </p>
+              <ActionLink
+                to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
+              >
+                Open race detail
+              </ActionLink>
               <p>
                 {event.schedule.circuitTimeZone
                   ? `Circuit time zone: ${event.schedule.circuitTimeZone}`

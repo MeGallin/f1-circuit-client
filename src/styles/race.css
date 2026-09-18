@@ -1,0 +1,90 @@
+.race-summary {
+  display: grid;
+  gap: var(--apex-space-7);
+  padding: var(--apex-space-7);
+  background: var(--apex-color-surface);
+  border: 1px solid var(--apex-color-line);
+  border-top: 3px solid var(--apex-color-accent);
+  border-radius: var(--apex-shape-radius);
+}
+.race-summary .metric strong {
+  font-size: var(--apex-type-subheading-size);
+  overflow-wrap: anywhere;
+}
+.race-coverage {
+  padding: var(--apex-space-6);
+  margin-block: var(--apex-space-6);
+  border: 1px solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  color: var(--apex-color-muted);
+}
+.race-coverage summary {
+  cursor: pointer;
+  min-height: 44px;
+  color: var(--apex-color-text);
+}
+.race-session-picker,
+.race-note {
+  padding: var(--apex-space-6);
+}
+.race-note {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.race-records {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.race-records > li {
+  padding: var(--apex-space-6);
+  border-top: 1px solid var(--apex-color-line);
+}
+.race-record-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-4);
+  justify-content: space-between;
+  overflow-wrap: anywhere;
+}
+.race-record-heading > span {
+  color: var(--apex-color-muted);
+}
+.race-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--apex-space-5);
+  margin-top: var(--apex-space-5);
+}
+.race-facts dt {
+  font-size: var(--apex-type-caption-size);
+  color: var(--apex-color-muted);
+}
+.race-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+}
+.race-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--apex-space-5);
+  padding: var(--apex-space-6);
+  font-size: var(--apex-type-caption-size);
+}
+@media (min-width: 768px) {
+  .race-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .race-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1151px) {
+  .race-facts {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

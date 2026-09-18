@@ -85,6 +85,11 @@ export function RaceFocus({ summary }) {
         />
       </div>
       <div className="race-focus-bottom">
+        <ActionLink
+          to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
+        >
+          Open race detail
+        </ActionLink>
         <span>
           <CalendarBlankIcon size={18} aria-hidden />
           <time dateTime={event.schedule.date || undefined}>

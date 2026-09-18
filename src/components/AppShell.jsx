@@ -18,8 +18,16 @@ const navigation = [
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
 function Navigation({ mobile = false }) {
-  const { search } = useLocation();
+  const { search, pathname } = useLocation();
   const season = new URLSearchParams(search).get("season");
+  let eventId = new URLSearchParams(search).get("event");
+  if (pathname.startsWith("/events/")) {
+    try {
+      eventId = decodeURIComponent(pathname.slice(8));
+    } catch {
+      eventId = null;
+    }
+  }
   return (
     <nav
       aria-label={mobile ? "Mobile navigation" : "Main navigation"}
@@ -29,7 +37,7 @@ function Navigation({ mobile = false }) {
         <NavLink
           end={to === "/"}
           key={to}
-          to={season ? `${to}?season=${encodeURIComponent(season)}` : to}
+          to={`${to}${season || eventId ? `?${new URLSearchParams({ ...(season ? { season } : {}), ...(eventId ? { event: eventId } : {}) })}` : ""}`}
         >
           <Icon aria-hidden size={21} weight="regular" />
           <span>{label}</span>

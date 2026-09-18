@@ -2,6 +2,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CalendarEvents } from "../src/pages/Calendar";
+import { MemoryRouter } from "react-router-dom";
 afterEach(cleanup);
 test("missing calendar fields stay explicit and date-only precision never invents a start time", async () => {
   const select = vi.fn();
@@ -21,6 +22,7 @@ test("missing calendar fields stay explicit and date-only precision never invent
   };
   const { rerender } = render(
     <CalendarEvents events={[event]} selectedId={null} onSelect={select} />,
+    { wrapper: MemoryRouter },
   );
   expect(screen.getByText("Status not supplied")).toBeInTheDocument();
   expect(screen.getByText("Date not supplied")).toBeInTheDocument();
