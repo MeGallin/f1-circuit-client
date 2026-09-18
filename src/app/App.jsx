@@ -1,4 +1,5 @@
 import AppShell from "../components/AppShell";
+import Overview from "../pages/Overview";
 import { lazy, Suspense } from "react";
 const Design = import.meta.env.DEV
   ? lazy(() => import("../pages/Design"))
@@ -10,6 +11,7 @@ export default function App() {
   return (
     <AppShell>
       <Routes>
+        <Route path="/" element={<Overview />} />
         {Design && (
           <Route
             path="/design"
@@ -27,13 +29,13 @@ export default function App() {
               <PageHeading
                 eyebrow="CLIENT FOUNDATION"
                 title="The race, in detail."
-                description="The Apex foundation is ready for review. Historical API views are the next implementation stage."
+                description="The season overview is available. This route is part of the next implementation stage."
               />
               <EmptyState
-                title="Component review checkpoint"
-                description="This build contains the design system and reusable interface components. It does not display race data yet."
+                title="This view is next"
+                description="Explore the live season overview while the dedicated calendar, standings and source routes are prepared."
                 action={
-                  <ActionLink to="/design">Review the design system</ActionLink>
+                  <ActionLink to="/">Return to season overview</ActionLink>
                 }
               />
             </>

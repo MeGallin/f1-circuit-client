@@ -1,4 +1,6 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { archiveApi } from "../api/archiveApi";
 let theme = "dark";
 try {
   const saved = localStorage.getItem("apex-theme");
@@ -18,5 +20,11 @@ const preferences = createSlice({
 });
 export const { setTheme } = preferences.actions;
 export const store = configureStore({
-  reducer: { preferences: preferences.reducer },
+  reducer: {
+    preferences: preferences.reducer,
+    [archiveApi.reducerPath]: archiveApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(archiveApi.middleware),
 });
+setupListeners(store.dispatch);

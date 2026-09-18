@@ -9,3 +9,7 @@ Review: hierarchy, charcoal/red palette, type pairing, narrow-screen controls an
 Next: RTK Query API integration and season overview, then calendar, race/session analysis, standings and source views. Navigation currently leads to an explicit foundation checkpoint rather than simulated feature screens. The public API is already configured in `.env.example`; do not put secrets in client configuration. Real data is not connected in this checkpoint.
 
 Production domain remains https://f1.livenotice.co.uk. No deployment was performed.
+
+## Next checkpoint completed
+
+The real season overview now runs at http://127.0.0.1:5173/. See SEASON-SLICE.md for API behaviour and scope. Dedicated route groups remain next; the original component specimen is still at /design.
