@@ -60,7 +60,7 @@ export function StandingRows({ rows, kind }) {
           <dl className="standing-stats">
             <div>
               <dt>Points</dt>
-              <dd>{row.points}</dd>
+              <dd>{row.points ?? "Not supplied"}</dd>
             </div>
             <div>
               <dt>Wins</dt>
@@ -195,8 +195,6 @@ function Championship({ year, kind, params, setParams }) {
               next.set("kind", kind);
               next.set("cursor", data.page.nextCursor);
               next.set("snapshot", data.meta.snapshotId);
-              if (data.items[0]?.standingSnapshotId)
-                next.set("standingSnapshot", data.items[0].standingSnapshotId);
               setParams(next);
             }}
           >

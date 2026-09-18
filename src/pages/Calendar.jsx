@@ -121,7 +121,12 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
     <>
       <div className="calendar-toolbar">
         <p>
-          {year} calendar · {data?.page.total ?? "Loading"} events
+          {year} calendar ·{" "}
+          {data?.page.total != null
+            ? `${data.page.total} events`
+            : query.isLoading || query.isFetching
+              ? "Loading event count"
+              : "Event count not supplied"}
         </p>
         <Button variant="quiet" disabled={query.isFetching} onClick={restart}>
           Refresh calendar

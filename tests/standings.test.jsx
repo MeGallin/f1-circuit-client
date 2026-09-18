@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -10,6 +10,94 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
+
+test.each(["", "&round=12"])(
+  "standings pagination preserves initial selection filters %s",
+  async (selection) => {
+    const requests = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (request) => {
+        const url = new URL(request.url);
+        requests.push(url);
+        const standings = url.pathname.includes("/standings/");
+        const next = url.searchParams.has("cursor");
+        const items = url.pathname.endsWith("/seasons")
+          ? [{ year: 2024 }]
+          : url.pathname.endsWith("/calendar")
+            ? [{ round: 12 }]
+            : [
+                {
+                  id: next ? "second" : "first",
+                  rank: next ? 51 : 1,
+                  entity: {
+                    displayName: next
+                      ? "Second page driver"
+                      : "First page driver",
+                  },
+                  constructors: [],
+                  points: null,
+                  wins: 0,
+                  podiums: null,
+                  standingSnapshotId: "standing:2024:12",
+                },
+              ];
+        return new Response(
+          JSON.stringify({
+            data: {
+              items,
+              page: {
+                total: standings ? 51 : items.length,
+                hasMore: standings && !next,
+                nextCursor: standings && !next ? "page-two" : null,
+              },
+            },
+            meta: { snapshotId: "stable", coverage: "partial", sources: [] },
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        );
+      }),
+    );
+    const store = configureStore({
+      reducer: { [archiveApi.reducerPath]: archiveApi.reducer },
+      middleware: (g) => g().concat(archiveApi.middleware),
+    });
+    const view = render(
+      <Provider store={store}>
+        <MemoryRouter
+          initialEntries={[`/standings?season=2024&kind=drivers${selection}`]}
+        >
+          <Standings />
+        </MemoryRouter>
+      </Provider>,
+    );
+    await screen.findByText("First page driver");
+    expect(screen.getByText("Points").nextElementSibling).toHaveTextContent(
+      "Not supplied",
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Next page" }));
+    await screen.findByText("Second page driver");
+    await waitFor(() =>
+      expect(
+        requests.filter((url) => url.pathname.includes("/standings/")),
+      ).toHaveLength(2),
+    );
+    const [first, second] = requests.filter((url) =>
+      url.pathname.includes("/standings/"),
+    );
+    const filters = (url) =>
+      Object.fromEntries(
+        [...url.searchParams].filter(
+          ([key]) => !["cursor", "snapshotId"].includes(key),
+        ),
+      );
+    expect(filters(second)).toEqual(filters(first));
+    expect(second.searchParams.get("snapshotId")).toBe("stable");
+    expect(second.searchParams.has("standingSnapshotId")).toBe(false);
+    view.unmount();
+    store.dispatch(archiveApi.util.resetApiState());
+  },
+);
 test("standings retain exact points and missing stats without replacing them with zero", () => {
   render(
     <StandingRows

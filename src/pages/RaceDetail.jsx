@@ -282,7 +282,7 @@ function Detail({ data, params, setParams, refresh }) {
           value={duration(detail.fastestLap?.durationMs)}
           detail={
             detail.fastestLap
-              ? `${fastestEntry ? entryName(fastestEntry) : "Driver name not supplied"} · Lap ${detail.fastestLap.lapNumber} · validity ${detail.fastestLap.validity}`
+              ? `${fastestEntry ? entryName(fastestEntry) : "Driver name not supplied"} · ${detail.fastestLap.lapNumber == null ? "Lap number not supplied" : `Lap ${detail.fastestLap.lapNumber}`} · validity ${detail.fastestLap.validity}`
               : "No fastest lap supplied"
           }
         />
