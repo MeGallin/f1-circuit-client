@@ -1,3 +1,4 @@
+import { EntityLink } from "../features/entities/shared";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { useDispatch } from "react-redux";
 import {
@@ -48,7 +49,12 @@ export function StandingRows({ rows, kind }) {
             <strong>{row.rank ?? "Not supplied"}</strong>
           </div>
           <div className="standing-name">
-            <strong>{row.entity.displayName}</strong>
+            <strong>
+              <EntityLink
+                entity={row.entity}
+                kind={kind === "drivers" ? "driver" : "constructor"}
+              />
+            </strong>
             {kind === "drivers" && (
               <p>
                 {row.constructors.length

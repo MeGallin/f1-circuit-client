@@ -84,7 +84,7 @@
   font-size: var(--apex-type-control-size);
   line-height: 1.4;
   text-decoration: none;
-  transition: background var(--apex-motion-feedback);
+  /* Swap theme text and background together to preserve contrast during theme changes. */
 }
 .button--primary {
   background: var(--apex-color-accent);
@@ -345,7 +345,7 @@ summary {
   background: var(--apex-color-surface);
   border-top: 1px solid var(--apex-color-line);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   padding-bottom: env(safe-area-inset-bottom);
 }
 .mobile-nav a {

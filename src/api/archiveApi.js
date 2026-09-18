@@ -11,6 +11,21 @@ const request = fetchBaseQuery({
   timeout: 75000,
   credentials: "omit",
 });
+export const entityKinds = {
+  driver: "drivers",
+  constructor: "constructors",
+  circuit: "circuits",
+};
+function entityUrl(kind, id) {
+  if (!Object.hasOwn(entityKinds, kind))
+    throw new Error("Unsupported entity kind");
+  return "/" + entityKinds[kind] + "/" + encodeURIComponent(id);
+}
+export function objectResponse(response, key) {
+  if (!response?.data || !(key in response.data) || !response.meta)
+    throw new Error("Unexpected archive response");
+  return { [key]: response.data[key], meta: response.meta };
+}
 export const archiveApi = createApi({
   reducerPath: "archiveApi",
   baseQuery: request,
@@ -19,6 +34,62 @@ export const archiveApi = createApi({
   refetchOnFocus: false,
   tagTypes: ["Seasons", "Season", "Event"],
   endpoints: (builder) => ({
+    searchEntities: builder.query({
+      query: ({ q, kind, cursor, snapshotId }) => ({
+        url: "/search",
+        params: { q, kind, cursor, snapshotId, limit: 20 },
+      }),
+      transformResponse: collectionResponse,
+    }),
+    getProfile: builder.query({
+      query: ({ kind, id, snapshotId }) => ({
+        url: entityUrl(kind, id),
+        params: { snapshotId },
+      }),
+      transformResponse: (r) => objectResponse(r, "profile"),
+    }),
+    getHistory: builder.query({
+      query: ({ kind, id, year, cursor, snapshotId }) => ({
+        url:
+          entityUrl(kind, id) + (kind === "circuit" ? "/events" : "/results"),
+        params: { year, cursor, snapshotId, limit: 20 },
+      }),
+      transformResponse: collectionResponse,
+    }),
+    getProgression: builder.query({
+      query: ({ kind, id, year, cursor, snapshotId }) => ({
+        url:
+          "/seasons/" +
+          year +
+          "/standings/" +
+          entityKinds[kind] +
+          "/progression",
+        params: { entityId: id, cursor, snapshotId, limit: 20 },
+      }),
+      transformResponse: collectionResponse,
+    }),
+    getLayouts: builder.query({
+      query: ({ id, cursor, snapshotId }) => ({
+        url: entityUrl("circuit", id) + "/layouts",
+        params: { cursor, snapshotId, limit: 20 },
+      }),
+      transformResponse: collectionResponse,
+    }),
+    getComparison: builder.query({
+      query: ({
+        kind,
+        leftId,
+        rightId,
+        fromYear,
+        toYear,
+        metric,
+        snapshotId,
+      }) => ({
+        url: "/comparisons",
+        params: { kind, leftId, rightId, fromYear, toYear, metric, snapshotId },
+      }),
+      transformResponse: (r) => objectResponse(r, "comparison"),
+    }),
     getSources: builder.query({
       query: ({ cursor, snapshotId } = {}) => ({
         url: "/sources/status",
@@ -147,6 +218,12 @@ export function eventResponse(response) {
   return { detail: response.data.eventDetail, meta: response.meta };
 }
 export const {
+  useSearchEntitiesQuery,
+  useGetProfileQuery,
+  useGetHistoryQuery,
+  useGetProgressionQuery,
+  useGetLayoutsQuery,
+  useGetComparisonQuery,
   useGetSourcesQuery,
   useGetStandingsQuery,
   useGetEventQuery,

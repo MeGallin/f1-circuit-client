@@ -1,3 +1,6 @@
+import Explore from "../pages/Explore";
+import Profile from "../pages/Profile";
+import Compare from "../pages/Compare";
 import AppShell from "../components/AppShell";
 import Overview from "../pages/Overview";
 import Calendar from "../pages/Calendar";
@@ -24,6 +27,14 @@ export default function App() {
         <Route path="/events/:eventId" element={<RaceDetail />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/sources" element={<Sources />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/compare" element={<Compare />} />
+        <Route path="/drivers/:id" element={<Profile kind="driver" />} />
+        <Route
+          path="/constructors/:id"
+          element={<Profile kind="constructor" />}
+        />
+        <Route path="/circuits/:id" element={<Profile kind="circuit" />} />
         {Design && (
           <Route
             path="/design"

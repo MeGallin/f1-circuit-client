@@ -1,0 +1,73 @@
+.entity-filters {
+  display: grid;
+  gap: var(--apex-space-5);
+  align-items: end;
+  margin-block: var(--apex-space-6);
+}
+.entity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.entity-list > li {
+  display: grid;
+  gap: var(--apex-space-3);
+  padding-block: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+.entity-facts {
+  display: grid;
+  gap: var(--apex-space-6);
+  margin-block: var(--apex-space-6);
+}
+.entity-facts dt {
+  color: var(--apex-color-muted);
+}
+.entity-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.entity-stack {
+  display: grid;
+  gap: var(--apex-space-7);
+}
+.entity-stack .panel {
+  min-width: 0;
+}
+.entity-session {
+  overflow-wrap: anywhere;
+  font-size: var(--apex-type-caption-size);
+  color: var(--apex-color-muted);
+}
+.entity-picker {
+  min-width: 0;
+  border: 1px solid var(--apex-color-line);
+  padding: var(--apex-space-5);
+}
+.entity-picker legend {
+  padding-inline: var(--apex-space-3);
+}
+.entity-picker .field {
+  margin-bottom: var(--apex-space-4);
+}
+.entity-picker ul {
+  list-style: none;
+  padding: 0;
+}
+.entity-picker li {
+  margin-block: var(--apex-space-3);
+}
+.entity-picker button {
+  white-space: normal;
+}
+@media (min-width: 768px) {
+  .entity-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  }
+  .entity-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .entity-list > li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}

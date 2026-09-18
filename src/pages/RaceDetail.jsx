@@ -1,3 +1,4 @@
+import { EntityLink } from "../features/entities/shared";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -56,12 +57,18 @@ export function RaceRecords({ rows, dataset, names = {} }) {
           <div className="race-record-heading">
             <strong>
               {row.entry
-                ? entryName(row.entry)
+                ? row.entry.drivers.map((driver, index) => (
+                    <span key={driver.id}>
+                      {index > 0 ? " / " : ""}
+                      <EntityLink entity={driver} kind="driver" />
+                    </span>
+                  ))
                 : names[row.entryId] || "Driver name not supplied"}
             </strong>
             <span>
-              {row.entry?.constructor?.displayName ||
-                (row.entry ? "Constructor not supplied" : "")}
+              {(row.entry?.constructor ? (
+                <EntityLink entity={row.entry.constructor} kind="constructor" />
+              ) : null) || (row.entry ? "Constructor not supplied" : "")}
             </span>
           </div>
           {dataset === "results" && (
