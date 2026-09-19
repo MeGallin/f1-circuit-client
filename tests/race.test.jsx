@@ -4,8 +4,15 @@ import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { MemoryRouter, Routes, Route, useLocation } from "react-router-dom";
-import RaceDetail, { RaceRecords } from "../src/pages/RaceDetail";
-import { archiveApi, eventResponse } from "../src/api/archiveApi";
+import RaceDetail, {
+  AdvancedRecords,
+  RaceRecords,
+} from "../src/pages/RaceDetail";
+import {
+  archiveApi,
+  eventResponse,
+  sessionDatasets,
+} from "../src/api/archiveApi";
 import {
   duration,
   gapLabel,
@@ -30,7 +37,7 @@ test("race formatting preserves missing values, exact times and distinct gap/gri
       meta: { coverage: "unavailable" },
     }).detail,
   ).toBeNull();
-  for (const dataset of ["results", "qualifying", "laps", "pit-stops"]) {
+  for (const dataset of sessionDatasets) {
     const route = contract.paths[`/sessions/{sessionId}/${dataset}`].get;
     expect(route.parameters.map((p) => p.name)).toEqual(
       expect.arrayContaining(["cursor", "limit", "snapshotId"]),
@@ -60,6 +67,30 @@ test("pit lane duration never substitutes for missing stationary duration", () =
   expect(
     screen.getByText("Stationary duration").nextElementSibling,
   ).toHaveTextContent("Not supplied");
+});
+test("advanced session datasets retain exact values and publication boundaries", () => {
+  render(
+    <AdvancedRecords
+      dataset="weather"
+      rows={[
+        {
+          id: "weather-fixture",
+          timestamp: "2024-07-07T14:00:00.000Z",
+          observationKind: "trackside",
+          airTemperatureC: 22.5,
+          trackTemperatureC: null,
+          humidityPercent: 61,
+          rainfall: false,
+          windSpeedMs: 3.2,
+        },
+      ]}
+      names={{}}
+    />,
+  );
+  expect(screen.getByText("22.5 °C")).toBeInTheDocument();
+  expect(screen.getAllByText("Not supplied").length).toBeGreaterThan(0);
+  expect(screen.getByText("No")).toBeInTheDocument();
+  expect(screen.getByText(/14:00:00 UTC/)).toBeInTheDocument();
 });
 test("lap pagination uses supported cursor/snapshot parameters and its URL survives a fresh mount", async () => {
   const meta = {

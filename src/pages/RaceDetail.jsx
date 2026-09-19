@@ -20,6 +20,7 @@ import {
   ActionLink,
   Select,
   Tabs,
+  DataTable,
 } from "../components/ui";
 import { dateLabel } from "../features/season/selectors";
 import {
@@ -36,7 +37,184 @@ const views = [
   { value: "qualifying", label: "Qualifying" },
   { value: "laps", label: "Laps" },
   { value: "pit-stops", label: "Pit stops" },
+  { value: "stints", label: "Stints" },
+  { value: "weather", label: "Weather" },
+  { value: "race-control", label: "Race control" },
+  { value: "penalties", label: "Penalties" },
+  { value: "positions", label: "Positions" },
+  { value: "intervals", label: "Intervals" },
+  { value: "overtakes", label: "Overtakes" },
+  { value: "radio", label: "Radio" },
 ];
+
+const advancedDatasetDefinitions = {
+  stints: {
+    caption: "Published tyre stints",
+    columns: [
+      ["entryId", "Entry", (row, names) => names[row.entryId] || row.entryId],
+      ["sequence", "Stint"],
+      [
+        "laps",
+        "Lap range",
+        (row) => `${row.startLap ?? missing} – ${row.endLap ?? "ongoing"}`,
+      ],
+      ["compound", "Compound", (row) => row.compoundLabel || row.compoundClass],
+      ["tyreState", "Tyre state"],
+      ["tyreAgeAtStart", "Age at start"],
+    ],
+  },
+  weather: {
+    caption: "Published weather observations",
+    columns: [
+      ["timestamp", "Time", dateTimeLabel],
+      ["observationKind", "Observation"],
+      [
+        "airTemperatureC",
+        "Air",
+        (row) => numberWithUnit(row.airTemperatureC, "°C"),
+      ],
+      [
+        "trackTemperatureC",
+        "Track",
+        (row) => numberWithUnit(row.trackTemperatureC, "°C"),
+      ],
+      [
+        "humidityPercent",
+        "Humidity",
+        (row) => numberWithUnit(row.humidityPercent, "%"),
+      ],
+      ["rainfall", "Rainfall", booleanLabel],
+      ["windSpeedMs", "Wind", (row) => numberWithUnit(row.windSpeedMs, "m/s")],
+    ],
+  },
+  "race-control": {
+    caption: "Race control messages",
+    columns: [
+      ["timestamp", "Time", dateTimeLabel],
+      ["lap", "Lap"],
+      ["category", "Category"],
+      ["flag", "Flag"],
+      ["message", "Message"],
+      ["scope", "Scope"],
+    ],
+  },
+  penalties: {
+    caption: "Published penalties",
+    columns: [
+      ["entryIds", "Entries", (row, names) => entryList(row.entryIds, names)],
+      ["type", "Type"],
+      [
+        "amount",
+        "Amount",
+        (row) => `${row.amount ?? missing}${row.unit ? ` ${row.unit}` : ""}`,
+      ],
+      ["appliesTo", "Applies to"],
+      ["status", "Status"],
+      ["issuedAt", "Issued", dateTimeLabel],
+    ],
+  },
+  positions: {
+    caption: "Published position timeline",
+    columns: [
+      ["entryId", "Entry", (row, names) => names[row.entryId] || row.entryId],
+      ["timestamp", "Time", dateTimeLabel],
+      ["position", "Position"],
+    ],
+  },
+  intervals: {
+    caption: "Published intervals",
+    columns: [
+      ["entryId", "Entry", (row, names) => names[row.entryId] || row.entryId],
+      ["timestamp", "Time", dateTimeLabel],
+      ["gapToLeader", "Gap to leader", (row) => gapLabel(row.gapToLeader)],
+      ["intervalAhead", "Interval ahead", (row) => gapLabel(row.intervalAhead)],
+    ],
+  },
+  overtakes: {
+    caption: "Published overtakes",
+    columns: [
+      ["timestamp", "Time", dateTimeLabel],
+      ["lap", "Lap"],
+      [
+        "passingEntryId",
+        "Passing entry",
+        (row, names) => names[row.passingEntryId] || row.passingEntryId,
+      ],
+      [
+        "passedEntryId",
+        "Passed entry",
+        (row, names) => names[row.passedEntryId] || row.passedEntryId,
+      ],
+      ["definitionVersion", "Definition"],
+    ],
+  },
+  radio: {
+    caption: "Published radio references",
+    columns: [
+      ["entryId", "Entry", (row, names) => names[row.entryId] || row.entryId],
+      ["timestamp", "Time", dateTimeLabel],
+      ["title", "Reference", radioReference],
+      ["publicationPermission", "Permission"],
+      ["attribution", "Attribution"],
+    ],
+  },
+};
+
+function dateTimeLabel(row) {
+  if (!row.timestamp) return missing;
+  const value = new Date(row.timestamp);
+  return Number.isNaN(value.valueOf())
+    ? missing
+    : `${value.toLocaleString("en-GB", { timeZone: "UTC" })} UTC`;
+}
+
+function numberWithUnit(value, unit) {
+  return value == null ? missing : `${value} ${unit}`;
+}
+
+function booleanLabel(row) {
+  return row.rainfall == null ? missing : row.rainfall ? "Yes" : "No";
+}
+
+function entryList(ids, names) {
+  return ids?.length ? ids.map((id) => names[id] || id).join(" / ") : missing;
+}
+
+function radioReference(row) {
+  if (!row.title) return missing;
+  if (row.publicationPermission !== "approved" || !row.referenceUrl)
+    return row.title;
+  try {
+    const url = new URL(row.referenceUrl);
+    if (!["http:", "https:"].includes(url.protocol)) return row.title;
+    return (
+      <a href={url.toString()} target="_blank" rel="noreferrer">
+        {row.title}
+      </a>
+    );
+  } catch {
+    return row.title;
+  }
+}
+
+export function AdvancedRecords({ rows, dataset, names }) {
+  const definition = advancedDatasetDefinitions[dataset];
+  if (!definition) return null;
+  return (
+    <DataTable
+      caption={definition.caption}
+      rows={rows}
+      rowKey={(row) => row.id}
+      columns={definition.columns.map(([key, label, render]) => ({
+        key,
+        label,
+        render: render
+          ? (row) => render(row, names)
+          : (row) => row[key] ?? missing,
+      }))}
+    />
+  );
+}
 function Facts({ items }) {
   return (
     <dl className="race-facts">
@@ -159,11 +337,22 @@ function SessionData({
   });
   const identities = useGetSessionDataQuery(
     { sessionId: session.id, dataset: "results", snapshotId, limit: 200 },
-    { skip: !["laps", "pit-stops"].includes(dataset) },
+    {
+      skip: ![
+        "laps",
+        "pit-stops",
+        "stints",
+        "penalties",
+        "positions",
+        "intervals",
+        "overtakes",
+        "radio",
+      ].includes(dataset),
+    },
   );
   const names = Object.fromEntries(
     (identities.currentData?.items || []).map((row) => [
-      row.entry.id,
+      row.entry?.id,
       entryName(row.entry),
     ]),
   );
@@ -193,9 +382,16 @@ function SessionData({
         empty={query.isSuccess && !data?.items.length}
         onRetry={query.error?.status === 409 ? onSnapshotReset : query.refetch}
       >
-        {data && (
-          <RaceRecords rows={data.items} dataset={dataset} names={names} />
-        )}
+        {data &&
+          (["results", "qualifying", "laps", "pit-stops"].includes(dataset) ? (
+            <RaceRecords rows={data.items} dataset={dataset} names={names} />
+          ) : (
+            <AdvancedRecords
+              rows={data.items}
+              dataset={dataset}
+              names={names}
+            />
+          ))}
       </DataBoundary>
       {data && (
         <nav className="race-pagination" aria-label="Session data pages">

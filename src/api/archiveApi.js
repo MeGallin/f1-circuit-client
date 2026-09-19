@@ -16,6 +16,20 @@ export const entityKinds = {
   constructor: "constructors",
   circuit: "circuits",
 };
+export const sessionDatasets = [
+  "results",
+  "qualifying",
+  "laps",
+  "pit-stops",
+  "stints",
+  "weather",
+  "race-control",
+  "penalties",
+  "positions",
+  "intervals",
+  "overtakes",
+  "radio",
+];
 function entityUrl(kind, id) {
   if (!Object.hasOwn(entityKinds, kind))
     throw new Error("Unsupported entity kind");
@@ -121,12 +135,34 @@ export const archiveApi = createApi({
       providesTags: (_r, _e, { eventId }) => [{ type: "Event", id: eventId }],
     }),
     getSessionData: builder.query({
-      query: ({ sessionId, dataset, cursor, snapshotId, limit = 20 }) => {
-        if (!["results", "qualifying", "laps", "pit-stops"].includes(dataset))
+      query: ({
+        sessionId,
+        dataset,
+        cursor,
+        snapshotId,
+        limit = 20,
+        driverId,
+        from,
+        to,
+        resolution,
+        sourceId,
+        category,
+      }) => {
+        if (!sessionDatasets.includes(dataset))
           throw new Error("Unsupported dataset");
         return {
           url: `/sessions/${encodeURIComponent(sessionId)}/${dataset}`,
-          params: { cursor, snapshotId, limit },
+          params: {
+            cursor,
+            snapshotId,
+            limit,
+            driverId,
+            from,
+            to,
+            resolution,
+            sourceId,
+            category,
+          },
         };
       },
       transformResponse: collectionResponse,
