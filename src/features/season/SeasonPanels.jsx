@@ -17,6 +17,7 @@ import {
 } from "../../components/ui";
 import {
   useGetCalendarQuery,
+  useGetEventQuery,
   useGetLayoutsQuery,
   useGetProfileQuery,
 } from "../../api/archiveApi";
@@ -32,6 +33,7 @@ import {
   previewCalendar,
   seasonImportStatus,
 } from "./selectors";
+import { entryName } from "./raceFormat";
 
 export function ArchiveProgress({ season }) {
   const resultsCount = Number.isFinite(Number(season.resultsEventCount))
@@ -76,6 +78,10 @@ export function RaceFocus({ summary, snapshotId }) {
     { id: circuitId, snapshotId },
     { skip: !circuitId },
   );
+  const eventDetail = useGetEventQuery(
+    { eventId: event?.id, snapshotId },
+    { skip: !event?.id || focusKind !== "latest" },
+  );
   const layout = selectLayout(circuitLayouts.currentData?.items, event?.year);
   const country = circuitProfile.currentData?.profile?.country;
   if (!event)
@@ -100,7 +106,7 @@ export function RaceFocus({ summary, snapshotId }) {
           </StatusBadge>
       </div>
       <div className="race-focus-content">
-        <div>
+        <div className="race-focus-copy">
           <p className="race-round">
             ROUND {event.round ?? "N/A"} / {event.year}
           </p>
@@ -113,6 +119,13 @@ export function RaceFocus({ summary, snapshotId }) {
             <span>{event.circuit?.displayName || "Circuit not supplied"}</span>
           </p>
         </div>
+        {focusKind === "latest" && (
+          <RacePodium
+            detail={eventDetail.currentData?.detail}
+            isFetching={eventDetail.isFetching}
+            isError={eventDetail.isError}
+          />
+        )}
         <CircuitSilhouette
           layout={layout}
           circuitName={event.circuit?.displayName}
@@ -148,6 +161,49 @@ export function RaceFocus({ summary, snapshotId }) {
           Explore the calendar
         </ActionLink>
       </div>
+    </section>
+  );
+}
+
+function RacePodium({ detail, isFetching, isError }) {
+  const podium = (detail?.podium || [])
+    .filter((row) => row?.position >= 1 && row.position <= 3)
+    .sort((a, b) => a.position - b.position);
+
+  return (
+    <section className="race-focus-results" aria-labelledby="race-result-title">
+      <div className="race-focus-results-heading">
+        <h3 className="eyebrow" id="race-result-title">
+          RACE RESULT
+        </h3>
+        <span className="race-focus-results-note">
+          {isFetching && !detail ? "Loading" : "Top three"}
+        </span>
+      </div>
+      {podium.length ? (
+        <ol className="race-podium">
+          {podium.map((row) => (
+            <li key={row.id} className="race-podium-row">
+              <span className="race-podium-position" aria-label={`Position ${row.position}`}>
+                {row.position}
+              </span>
+              <div>
+                <strong>{entryName(row.entry)}</strong>
+                <span>{row.entry?.constructor?.displayName || "Team not supplied"}</span>
+              </div>
+              <span className="race-podium-points">
+                {row.points == null ? "—" : `${row.points} PTS`}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p className="race-focus-results-empty">
+          {isError
+            ? "Top-three results are not supplied for this race."
+            : "Top-three results will appear here when published."}
+        </p>
+      )}
     </section>
   );
 }
