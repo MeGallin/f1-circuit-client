@@ -10,7 +10,6 @@ import {
   focusEvent,
 } from "../features/season/selectors";
 import {
-  ArchiveProgress,
   RaceFocus,
   CalendarPreview,
   StandingsPreview,
@@ -72,7 +71,6 @@ function SeasonOverview({ year, seasons }) {
                   summary={summary}
                   snapshotId={data.meta.snapshotId}
                 />
-                <ArchiveProgress season={summary.season} />
               </div>
               <div className="overview-jump">
                 <p>

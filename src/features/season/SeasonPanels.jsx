@@ -6,7 +6,6 @@ import {
 import {
   Panel,
   StatusBadge,
-  Metric,
   Button,
   Tabs,
   EmptyState,
@@ -30,39 +29,36 @@ import {
   focusEvent,
   focusEventKind,
   previewCalendar,
-  seasonImportStatus,
 } from "./selectors";
 import { entryName } from "./raceFormat";
 
-export function ArchiveProgress({ season }) {
+function ResultsAvailability({ season = {} }) {
   const resultsCount = Number.isFinite(Number(season.resultsEventCount))
     ? season.resultsEventCount
     : season.completedCount;
+  const eventCount = Number.isFinite(Number(season.eventCount))
+    ? Number(season.eventCount)
+    : null;
+  if (!eventCount) return null;
+
   return (
-    <Panel title="Archive coverage">
-      <div className="archive-progress">
-        <div className="coverage-count">
+    <div className="race-focus-availability">
+      <div className="race-focus-availability-heading">
+        <p className="eyebrow">RESULTS AVAILABLE</p>
+        <p className="race-focus-availability-count">
           <strong>{resultsCount}</strong>
-          <span>of {season.eventCount} events</span>
-        </div>
-        <p>
-          Published event results in this archive. This is data coverage, not
-          season progress.
+          <span>of {eventCount} events</span>
         </p>
-        <div className="coverage-segments" aria-hidden>
-          {Array.from({ length: season.eventCount }, (_, i) => (
-            <span
-              key={i}
-              className={i < resultsCount ? "filled" : ""}
-            />
-          ))}
-        </div>
-        <div className="coverage-stats">
-          <Metric label="Calendar rounds" value={season.eventCount} />
-          <Metric label="Import status" value={seasonImportStatus(season)} />
-        </div>
       </div>
-    </Panel>
+      <div className="coverage-segments" aria-hidden>
+        {Array.from({ length: eventCount }, (_, i) => (
+          <span
+            key={i}
+            className={i < resultsCount ? "filled" : ""}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 export function RaceFocus({ summary, snapshotId }) {
@@ -107,7 +103,7 @@ export function RaceFocus({ summary, snapshotId }) {
       <div className="race-focus-content">
         <div className="race-focus-copy">
           <p className="race-round">
-            ROUND {event.round ?? "N/A"} / {event.year}
+            ROUND {event.round ?? "N/A"} OF {summary.season?.eventCount ?? "N/A"}
           </p>
           <h2 id="race-focus-title">{event.name}</h2>
           <p className="circuit-name">
@@ -129,6 +125,7 @@ export function RaceFocus({ summary, snapshotId }) {
           fallback="message"
         />
       </div>
+      <ResultsAvailability season={summary.season} />
       <div className="race-focus-bottom">
         <ActionLink
           to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}

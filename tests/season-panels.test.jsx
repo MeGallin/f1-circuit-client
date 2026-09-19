@@ -84,6 +84,7 @@ test("latest completed race keeps the published podium in the first overview car
         <RaceFocus
           snapshotId="snapshot-fixture"
           summary={{
+            season: { eventCount: 23, resultsEventCount: 14 },
             latestCompletedEvent: {
               id: "event:2026:spanish-grand-prix",
               name: "Spanish Grand Prix",
@@ -107,4 +108,7 @@ test("latest completed race keeps the published podium in the first overview car
     "race-podium-row--winner",
   );
   expect(screen.getByRole("heading", { name: "RACE RESULT" })).toBeInTheDocument();
+  expect(screen.getByText("ROUND 14 OF 23")).toBeInTheDocument();
+  expect(screen.getByText("RESULTS AVAILABLE")).toBeInTheDocument();
+  expect(screen.getByText("14")).toBeInTheDocument();
 });

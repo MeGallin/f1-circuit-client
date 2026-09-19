@@ -243,49 +243,53 @@
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
 }
-.archive-progress {
-  padding: var(--apex-space-8);
+.race-focus-availability {
   display: grid;
+  gap: var(--apex-space-5);
+  padding-top: var(--apex-space-7);
+  border-top: 1px solid var(--apex-color-line);
+}
+.race-focus-availability-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
   gap: var(--apex-space-6);
 }
-.coverage-count {
+.race-focus-availability-heading .eyebrow {
+  margin: 0 0 var(--apex-space-2);
+}
+.race-focus-availability-count {
   display: flex;
   align-items: baseline;
-  gap: var(--apex-space-5);
+  gap: var(--apex-space-4);
+  margin: 0;
 }
-.coverage-count strong {
+.race-focus-availability-count strong {
   font-family: var(--apex-font-display);
   font-size: var(--apex-type-race-display-size);
-  line-height: 1;
+  line-height: 0.9;
 }
-.coverage-count span {
+.race-focus-availability-count span {
   color: var(--apex-color-muted);
-}
-.archive-progress > p {
-  font-size: var(--apex-type-caption-size);
-  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-body-size);
 }
 .coverage-segments {
   display: flex;
   gap: var(--apex-space-2);
+  width: 100%;
 }
 .coverage-segments span {
   height: 8px;
   flex: 1;
+  min-width: 0;
   background: var(--apex-color-line);
 }
 .coverage-segments .filled {
   background: var(--apex-color-accent);
 }
-.coverage-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
-  padding-top: var(--apex-space-6);
-}
-.coverage-stats strong {
-  text-transform: capitalize;
+.race-focus-availability + .race-focus-bottom {
+  margin-top: var(--apex-space-2);
 }
 .overview-jump {
   display: flex;
