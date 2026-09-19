@@ -4,7 +4,7 @@ import { afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { Tabs, Button, DataBoundary } from "../src/components/ui";
-import { Navigation } from "../src/components/AppShell";
+import { Navigation, routeTitle } from "../src/components/AppShell";
 import { MemoryRouter } from "react-router-dom";
 afterEach(cleanup);
 test("tabs support keyboard movement and selection semantics", async () => {
@@ -91,4 +91,10 @@ test("mobile navigation keeps primary tasks visible and groups secondary routes"
   expect(screen.getByRole("link", { name: "Ask" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Sources" })).toBeInTheDocument();
   expect(more).toHaveClass("active");
+});
+test("route titles identify the current archive journey", () => {
+  expect(routeTitle("/")).toBe("Season overview");
+  expect(routeTitle("/events/event%3Aone")).toBe("Race detail");
+  expect(routeTitle("/drivers/driver%3Aone")).toBe("Driver profile");
+  expect(routeTitle("/unknown")).toBe("F1 Circuit");
 });

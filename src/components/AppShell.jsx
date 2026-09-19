@@ -28,6 +28,24 @@ const navigation = [
 const primaryNavigation = navigation.slice(0, 4);
 const secondaryNavigation = navigation.slice(4);
 
+export function routeTitle(pathname) {
+  if (pathname === "/") return "Season overview";
+  if (pathname === "/calendar") return "Season calendar";
+  if (pathname.startsWith("/events/")) return "Race detail";
+  if (pathname === "/standings") return "Championship standings";
+  if (pathname === "/sources") return "Sources and coverage";
+  if (pathname.startsWith("/evidence/")) return "Evidence detail";
+  if (pathname === "/records") return "Archive records";
+  if (pathname === "/questions") return "Ask the archive";
+  if (pathname === "/explore") return "Explore the archive";
+  if (pathname === "/compare") return "Compare archive metrics";
+  if (pathname.startsWith("/drivers/")) return "Driver profile";
+  if (pathname.startsWith("/constructors/")) return "Constructor profile";
+  if (pathname.startsWith("/circuits/")) return "Circuit profile";
+  if (pathname === "/design") return "Design system";
+  return "F1 Circuit";
+}
+
 export function Navigation({ mobile = false }) {
   const [moreOpen, setMoreOpen] = useState(false);
   const { search, pathname } = useLocation();
@@ -141,6 +159,9 @@ export default function AppShell({ children }) {
   useEffect(() => {
     window.scrollTo(0, 0);
     document.getElementById("main")?.focus({ preventScroll: true });
+  }, [location.pathname]);
+  useEffect(() => {
+    document.title = `${routeTitle(location.pathname)} | F1 Circuit`;
   }, [location.pathname]);
   return (
     <div className="app-shell apex-layout">
