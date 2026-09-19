@@ -233,17 +233,17 @@
 }
 .circuit-silhouette {
   margin: 0;
-  padding: var(--apex-space-5);
-  border: 1px solid var(--apex-color-line);
-  border-radius: var(--apex-shape-radius);
-  background: var(--apex-color-elevated);
+  padding: var(--apex-space-5) 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--apex-color-muted);
 }
 .circuit-silhouette--compact {
-  padding: var(--apex-space-4);
+  padding-block: var(--apex-space-4);
 }
 .circuit-silhouette--hero {
-  padding: var(--apex-space-6);
+  padding-block: var(--apex-space-6);
 }
 .circuit-silhouette img {
   display: block;
