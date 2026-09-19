@@ -3,6 +3,9 @@
   width: 100%;
   align-items: center;
   gap: var(--apex-space-2);
+  padding: var(--apex-space-3) var(--apex-space-2);
+  border-top: 1px solid var(--apex-color-line);
+  border-bottom: 1px solid var(--apex-color-line);
 }
 
 .season-event-guidance {
@@ -13,6 +16,34 @@
   margin-top: var(--apex-space-5);
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
+}
+
+.season-event-guidance-action {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-4);
+  color: var(--apex-color-text);
+  font-weight: 700;
+}
+
+.season-event-guidance-marker {
+  display: block;
+  width: var(--apex-shape-active-indicator);
+  height: 1.75rem;
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-accent);
+}
+
+.season-event-guidance-copy {
+  display: grid;
+  gap: var(--apex-space-1);
+}
+
+.season-event-guidance-kicker {
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
 }
 
 .season-event-legend {
@@ -54,6 +85,12 @@
   background: transparent;
 }
 
+.season-event-segment:hover,
+.season-event-segment:focus-visible,
+.season-event-segment--selected {
+  background: var(--apex-color-hover);
+}
+
 .season-event-segment > span {
   display: block;
   height: var(--apex-shape-active-indicator);
@@ -93,6 +130,7 @@
 
   .season-event-strip {
     gap: var(--apex-space-1);
+    padding-inline: 0;
   }
 
   .season-event-segment {

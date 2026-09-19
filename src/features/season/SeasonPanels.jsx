@@ -60,7 +60,13 @@ function ResultsAvailability({
         </p>
       </div>
       <div className="season-event-guidance">
-        <p>Select a round to view its details.</p>
+        <p className="season-event-guidance-action">
+          <span className="season-event-guidance-marker" aria-hidden="true" />
+          <span className="season-event-guidance-copy">
+            <span className="season-event-guidance-kicker">ROUND EXPLORER</span>
+            <span>Tap or click a marker to inspect that round.</span>
+          </span>
+        </p>
         <div className="season-event-legend" aria-label="Event status legend">
           <span className="season-event-legend-item season-event-legend-item--complete">
             Completed

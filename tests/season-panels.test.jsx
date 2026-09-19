@@ -131,7 +131,10 @@ test("latest completed race keeps the published podium in the first overview car
   expect(screen.getByText("ROUND 14 OF 23")).toBeInTheDocument();
   expect(screen.getByText("EVENTS")).toBeInTheDocument();
   expect(screen.getByText("14")).toBeInTheDocument();
-  expect(screen.getByText("Select a round to view its details.")).toBeInTheDocument();
+  expect(
+    screen.getByText("Tap or click a marker to inspect that round."),
+  ).toBeInTheDocument();
+  expect(screen.getByText("ROUND EXPLORER")).toBeInTheDocument();
   expect(screen.getByText("Completed")).toBeInTheDocument();
   expect(screen.getByText("Upcoming")).toBeInTheDocument();
 });
