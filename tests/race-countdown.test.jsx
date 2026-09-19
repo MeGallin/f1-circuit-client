@@ -34,7 +34,7 @@ test("countdown renders the exact start target and accessible timer label", () =
     />,
   );
   expect(screen.getByRole("timer")).toHaveAccessibleName("Race starts in 1 weeks");
-  expect(screen.getByText("Race starts in 1 weeks")).toBeInTheDocument();
+  expect(screen.queryByText("Race starts in 1 weeks")).not.toBeInTheDocument();
   expect(screen.getByText("Starts 26 Sept 2026, 11:00 UTC")).toBeInTheDocument();
 });
 
@@ -52,7 +52,7 @@ test("wide countdown keeps the start date in the header and enlarges the timer",
     "Starts 26 Sept 2026, 11:00 UTC",
   );
   expect(screen.getByRole("timer")).toHaveAccessibleName("Race starts in 1 weeks");
-  expect(screen.getByText("Race starts in 1 weeks")).toBeInTheDocument();
+  expect(screen.queryByText("Race starts in 1 weeks")).not.toBeInTheDocument();
 });
 
 test("countdown refuses to invent a time from a date-only schedule", () => {

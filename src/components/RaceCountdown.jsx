@@ -133,7 +133,6 @@ export function RaceCountdown({ startsAt, timePrecision, now, variant = "default
       ) : (
         <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>
       )}
-      <p className="race-countdown-sentence">Race starts in {accessibleLabel}</p>
       <div className="race-countdown-parts" aria-hidden="true">
         {parts.map((part) => (
           <span className="race-countdown-part" key={part.unit}>
