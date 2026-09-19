@@ -119,23 +119,40 @@ export function countryFlagEmoji(value) {
     .join("");
 }
 
+export function layoutApplicability(layout, year) {
+  if (!layout) return "unknown";
+  const targetYear = Number(year);
+  if (!Number.isInteger(targetYear)) return "unknown";
+  const from = layout.validFrom
+    ? Number(String(layout.validFrom).slice(0, 4))
+    : -Infinity;
+  const to = layout.validTo
+    ? Number(String(layout.validTo).slice(0, 4))
+    : Infinity;
+  return targetYear >= from && targetYear <= to
+    ? "verified"
+    : "historical-fallback";
+}
+
+export function layoutApplicabilityLabel(value) {
+  if (value === "verified") return "Layout applies to this event year.";
+  if (value === "historical-fallback")
+    return "Historical layout shown; the exact event-year layout was not supplied.";
+  return "Layout applicability is not supplied.";
+}
+
 export function selectLayout(layouts, year) {
   if (!Array.isArray(layouts) || !layouts.length) return null;
   const targetYear = Number(year);
-  const inRange = layouts.filter((layout) => {
-    if (!Number.isInteger(targetYear)) return false;
-    const from = layout.validFrom
-      ? Number(String(layout.validFrom).slice(0, 4))
-      : -Infinity;
-    const to = layout.validTo
-      ? Number(String(layout.validTo).slice(0, 4))
-      : Infinity;
-    return targetYear >= from && targetYear <= to;
-  });
-  return (
-    (inRange.length ? inRange : layouts).find((layout) => layout?.assetUrl) ||
-    null
+  const inRange = layouts.filter(
+    (layout) => layoutApplicability(layout, targetYear) === "verified",
   );
+  const selected = (inRange.length ? inRange : layouts).find(
+    (layout) => layout?.assetUrl,
+  );
+  return selected
+    ? { ...selected, applicability: layoutApplicability(selected, targetYear) }
+    : null;
 }
 
 export function CountryFlag({
@@ -144,8 +161,8 @@ export function CountryFlag({
   className = "",
   showFallback = false,
 }) {
-  const emoji = countryFlagEmoji(country);
   const name = String(country || "").trim();
+  const code = countryCode(country);
   const classes = `country-flag ${className}`.trim();
   if (!name && !showFallback) return null;
   if (!name)
@@ -157,7 +174,7 @@ export function CountryFlag({
         Flag not supplied
       </span>
     );
-  if (!emoji)
+  if (!code)
     return (
       <span
         className={`${classes} country-flag--fallback`}
@@ -173,7 +190,7 @@ export function CountryFlag({
       aria-label={`${name} flag`}
       title={name}
     >
-      {emoji}
+      {code}
     </span>
   );
 }
@@ -194,6 +211,7 @@ export function CircuitSilhouette({
   country,
   size = "default",
   theme = "auto",
+  applicability,
   attribution,
   licence,
   fallback = "hidden",
@@ -220,6 +238,7 @@ export function CircuitSilhouette({
   const sourceAttribution = attribution || layout?.attribution;
   const sourceLicence = licence || layout?.licence;
   const evidenceId = layout?.evidenceId;
+  const layoutStatus = applicability || layout?.applicability;
   const name = `${circuitName}${country ? `, ${country}` : ""}`;
   return (
     <figure className={classes}>
@@ -229,6 +248,11 @@ export function CircuitSilhouette({
         loading="lazy"
         onError={() => setFailed(true)}
       />
+      {layoutStatus && (
+        <p className="circuit-silhouette-applicability">
+          {layoutApplicabilityLabel(layoutStatus)}
+        </p>
+      )}
       {(sourceAttribution || sourceLicence || evidenceId) && (
         <>
           <figcaption className="sr-only">

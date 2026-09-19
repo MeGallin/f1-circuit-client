@@ -279,7 +279,10 @@
   min-width: 1.5rem;
   min-height: 1.5rem;
   justify-content: center;
-  font-size: 1.25rem;
+  color: var(--apex-color-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+  font-weight: 700;
   line-height: 1;
   vertical-align: middle;
 }
@@ -305,6 +308,10 @@
 }
 .circuit-silhouette--hero {
   padding-block: var(--apex-space-6);
+}
+.circuit-silhouette-applicability {
+  margin: 0;
+  font-size: var(--apex-type-caption-size);
 }
 .circuit-silhouette img {
   display: block;

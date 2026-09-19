@@ -5,6 +5,7 @@ import {
   CountryFlag,
   countryCode,
   countryFlagEmoji,
+  layoutApplicability,
   selectLayout,
 } from "../src/components/visuals";
 
@@ -16,7 +17,9 @@ describe("country visuals", () => {
 
     render(<CountryFlag country="British" label="Driver nationality" />);
 
-    expect(screen.getByRole("img", { name: "British flag" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "British flag" })).toHaveTextContent(
+      "GB",
+    );
   });
 
   it("keeps missing or unmapped countries explicit", () => {
@@ -86,6 +89,8 @@ describe("circuit visuals", () => {
       },
     ];
     expect(selectLayout(layouts, 2024).id).toBe("layout:current");
+    expect(layoutApplicability(layouts[1], 2024)).toBe("verified");
+    expect(layoutApplicability(layouts[1], 2005)).toBe("historical-fallback");
 
     render(
       <CircuitSilhouette

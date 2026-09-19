@@ -39,6 +39,7 @@ import {
   CircuitSilhouette,
   CountryFlag,
   selectLayout,
+  layoutApplicabilityLabel,
 } from "../components/visuals";
 import "../styles/race.css";
 
@@ -1116,7 +1117,7 @@ function Detail({ data, params, setParams, refresh }) {
         </div>
         <p className="race-note">
           {layout
-            ? `${layout.name} · ${layout.validFrom || "Start date not supplied"} — ${layout.validTo || "End date not supplied"}`
+            ? `${layout.name} · ${layout.validFrom || "Start date not supplied"} — ${layout.validTo || "End date not supplied"} · ${layoutApplicabilityLabel(layout.applicability)}`
             : "No reviewed circuit layout is published for this event."}
         </p>
       </Panel>
