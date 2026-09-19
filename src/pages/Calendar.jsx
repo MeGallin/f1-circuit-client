@@ -4,6 +4,8 @@ import useSeasonSearch from "../features/season/useSeasonSearch";
 import {
   archiveApi,
   useGetCalendarQuery,
+  useGetLayoutsQuery,
+  useGetProfileQuery,
   useGetSeasonsQuery,
 } from "../api/archiveApi";
 import {
@@ -27,9 +29,15 @@ import {
 } from "../components/ui";
 import "../styles/calendar.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
-import { CircuitSilhouette, CountryFlag } from "../components/visuals";
+import { CircuitSilhouette, CountryFlag, selectLayout } from "../components/visuals";
 
-export function CalendarEvents({ events, selectedId, onSelect }) {
+export function CalendarEvents({
+  events,
+  selectedId,
+  onSelect,
+  selectedLayout,
+  selectedCountry,
+}) {
   return (
     <ol className="calendar-events" aria-label="Season events">
       {events.map((event) => (
@@ -54,7 +62,11 @@ export function CalendarEvents({ events, selectedId, onSelect }) {
             </button>
             <p>
               <CountryFlag
-                country={event.circuit?.country}
+                country={
+                  event.id === selectedId
+                    ? selectedCountry || event.circuit?.country
+                    : event.circuit?.country
+                }
                 label="Circuit country"
               />
               <span>
@@ -84,11 +96,12 @@ export function CalendarEvents({ events, selectedId, onSelect }) {
           {event.id === selectedId && (
             <div className="calendar-event-detail">
               <CircuitSilhouette
-                layout={event.layout}
+                layout={event.id === selectedId ? selectedLayout : null}
                 circuitName={event.circuit?.displayName}
+                showFallback
               />
               <p>
-                Selected round · Location not supplied by the calendar source.
+                Selected round · {selectedCountry || "Location not supplied by the calendar source."}
               </p>
               <ActionLink
                 to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
@@ -124,6 +137,25 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
   const [pages, setPages] = useState([{}]);
   const query = useGetCalendarQuery({ year, ...pages.at(-1) });
   const data = query.currentData;
+  const selectedEvent = data?.items.find((event) => event.id === selectedId);
+  const selectedCircuitId = selectedEvent?.circuit?.id;
+  const selectedProfile = useGetProfileQuery(
+    {
+      kind: "circuit",
+      id: selectedCircuitId,
+      snapshotId: data?.meta?.snapshotId,
+    },
+    { skip: !selectedCircuitId },
+  );
+  const selectedLayouts = useGetLayoutsQuery(
+    { id: selectedCircuitId, snapshotId: data?.meta?.snapshotId },
+    { skip: !selectedCircuitId },
+  );
+  const selectedLayout = selectLayout(
+    selectedLayouts.currentData?.items,
+    selectedEvent?.year,
+  );
+  const selectedCountry = selectedProfile.currentData?.profile?.country;
   const restart = () => {
     if (pages.length > 1) {
       setPages([{}]);
@@ -169,6 +201,8 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
                 events={data.items}
                 selectedId={selectedId}
                 onSelect={onSelect}
+                selectedLayout={selectedLayout}
+                selectedCountry={selectedCountry}
               />
               {(data.page.hasMore || pages.length > 1) && (
                 <Pagination

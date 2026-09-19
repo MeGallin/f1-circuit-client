@@ -33,6 +33,7 @@ const COUNTRY_CODES = {
   germany: "DE",
   german: "DE",
   greatbritain: "GB",
+  uk: "GB",
   hungarian: "HU",
   hungary: "HU",
   india: "IN",
@@ -115,6 +116,18 @@ export function countryFlagEmoji(value) {
   return [...code]
     .map((letter) => String.fromCodePoint(127397 + letter.charCodeAt(0)))
     .join("");
+}
+
+export function selectLayout(layouts, year) {
+  if (!Array.isArray(layouts) || !layouts.length) return null;
+  const targetYear = Number(year);
+  const inRange = layouts.filter((layout) => {
+    if (!Number.isInteger(targetYear)) return false;
+    const from = layout.validFrom ? Number(String(layout.validFrom).slice(0, 4)) : -Infinity;
+    const to = layout.validTo ? Number(String(layout.validTo).slice(0, 4)) : Infinity;
+    return targetYear >= from && targetYear <= to;
+  });
+  return (inRange.length ? inRange : layouts).find((layout) => layout?.assetUrl) || null;
 }
 
 export function CountryFlag({

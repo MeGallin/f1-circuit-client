@@ -7,6 +7,10 @@
   border-top: 3px solid var(--apex-color-accent);
   border-radius: var(--apex-shape-radius);
 }
+.race-circuit-visual {
+  display: grid;
+  gap: var(--apex-space-5);
+}
 .race-summary .metric strong {
   font-size: var(--apex-type-subheading-size);
   overflow-wrap: anywhere;

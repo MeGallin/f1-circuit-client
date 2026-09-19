@@ -246,6 +246,9 @@
   object-fit: contain;
   object-position: center;
 }
+[data-theme="light"] .circuit-silhouette img {
+  filter: invert(1);
+}
 .circuit-silhouette figcaption {
   margin-top: var(--apex-space-3);
   font-size: var(--apex-type-caption-size);

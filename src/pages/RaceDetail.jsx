@@ -6,6 +6,8 @@ import {
   archiveApi,
   useGetEventQuery,
   useGetImpactQuery,
+  useGetLayoutsQuery,
+  useGetProfileQuery,
   useGetSessionDataQuery,
 } from "../api/archiveApi";
 import {
@@ -33,6 +35,7 @@ import {
   gridLabel,
   missing,
 } from "../features/season/raceFormat";
+import { CircuitSilhouette, CountryFlag, selectLayout } from "../components/visuals";
 import "../styles/race.css";
 
 const views = [
@@ -731,6 +734,16 @@ export function ImpactPanel({ query }) {
 function Detail({ data, params, setParams, refresh }) {
   const { detail, meta } = data;
   const { event, sessions } = detail;
+  const circuitId = event.circuit?.id;
+  const circuitProfile = useGetProfileQuery(
+    { kind: "circuit", id: circuitId, snapshotId: meta.snapshotId },
+    { skip: !circuitId },
+  );
+  const circuitLayouts = useGetLayoutsQuery(
+    { id: circuitId, snapshotId: meta.snapshotId },
+    { skip: !circuitId },
+  );
+  const layout = selectLayout(circuitLayouts.currentData?.items, event.year);
   const impact = useGetImpactQuery({
     eventId: event.id,
     scope: params.get("impactScope") || "race",
@@ -805,6 +818,25 @@ function Detail({ data, params, setParams, refresh }) {
           }
         />
       </div>
+      <Panel title="Circuit">
+        <div className="race-circuit-visual">
+          <CountryFlag
+            country={circuitProfile.currentData?.profile?.country}
+            label="Circuit country"
+            showFallback
+          />
+          <CircuitSilhouette
+            layout={layout}
+            circuitName={event.circuit?.displayName || "Circuit"}
+            showFallback
+          />
+        </div>
+        <p className="race-note">
+          {layout
+            ? `${layout.name} · ${layout.attribution || "Attribution not supplied"} · ${layout.licence || "Licence not supplied"}`
+            : "No reviewed circuit layout is published for this event."}
+        </p>
+      </Panel>
       <SourceNote meta={meta} />
       <ImpactPanel query={impact} />
       <details className="race-coverage">
