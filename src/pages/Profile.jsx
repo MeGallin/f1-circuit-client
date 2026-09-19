@@ -29,6 +29,7 @@ import {
   isScopedSeason,
   seasonOptionLabel,
 } from "../features/season/selectors";
+import { CircuitSilhouette, CountryFlag } from "../components/visuals";
 import { RaceRecords } from "./RaceDetail";
 import "../styles/entities.css";
 export function HistoryRows({ kind, rows }) {
@@ -141,6 +142,11 @@ function History({
                 <li key={row.id}>
                   <div>
                     <h3>{row.name}</h3>
+                    <CircuitSilhouette
+                      layout={row}
+                      circuitName={row.name || "Circuit"}
+                      showFallback
+                    />
                     <p>
                       {row.lengthMetres == null
                         ? "Length not supplied"
@@ -222,6 +228,23 @@ export default function Profile({ kind }) {
               </Button>
             }
           >
+            <div className="entity-identity">
+              <CountryFlag
+                country={kind === "driver" ? p.nationality : p.country}
+                label={
+                  kind === "driver" ? "Driver nationality" : "Circuit country"
+                }
+                showFallback
+              />
+              <div>
+                <strong>{p.entity.displayName}</strong>
+                <span>
+                  {kind === "driver"
+                    ? p.nationality
+                    : p.country || "Country not supplied"}
+                </span>
+              </div>
+            </div>
             <dl className="entity-facts">
               {(kind === "driver"
                 ? [

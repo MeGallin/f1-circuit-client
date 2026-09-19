@@ -16,6 +16,7 @@ import {
   ActionLink,
 } from "../../components/ui";
 import { useGetCalendarQuery } from "../../api/archiveApi";
+import { CircuitSilhouette, CountryFlag } from "../../components/visuals";
 import {
   dateLabel,
   focusEvent,
@@ -79,9 +80,17 @@ export function RaceFocus({ summary }) {
           </p>
           <h2 id="race-focus-title">{event.name}</h2>
           <p className="circuit-name">
-            {event.circuit?.displayName || "Circuit not supplied"}
+            <CountryFlag
+              country={event.circuit?.country}
+              label="Circuit country"
+            />
+            <span>{event.circuit?.displayName || "Circuit not supplied"}</span>
           </p>
         </div>
+        <CircuitSilhouette
+          layout={event.layout}
+          circuitName={event.circuit?.displayName}
+        />
         <FlagCheckeredIcon
           size={64}
           weight="light"
@@ -131,7 +140,15 @@ function CalendarRows({ events, selectedId }) {
           </span>
           <div>
             <strong>{event.name}</strong>
-            <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
+            <p>
+              <CountryFlag
+                country={event.circuit?.country}
+                label="Circuit country"
+              />
+              <span>
+                {event.circuit?.displayName || "Circuit not supplied"}
+              </span>
+            </p>
           </div>
           <div className="calendar-row-date">
             <time dateTime={event.schedule.date || undefined}>

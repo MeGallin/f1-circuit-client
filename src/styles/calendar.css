@@ -56,7 +56,14 @@
   color: var(--apex-color-link);
   text-decoration: underline;
 }
-.calendar-event-name p,
+.calendar-event-name p {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--apex-space-3);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
 .calendar-date span {
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
@@ -76,6 +83,10 @@
   padding-top: var(--apex-space-6);
   font-size: var(--apex-type-caption-size);
   color: var(--apex-color-muted);
+}
+.calendar-event-detail .circuit-silhouette {
+  max-width: 22rem;
+  margin-bottom: var(--apex-space-6);
 }
 .calendar-event-detail ul {
   display: flex;

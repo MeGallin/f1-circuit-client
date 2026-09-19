@@ -27,6 +27,26 @@
   margin: 0;
   overflow-wrap: anywhere;
 }
+.entity-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-5);
+  padding: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+  background: var(--apex-color-elevated);
+}
+.entity-identity > div {
+  display: grid;
+  gap: var(--apex-space-2);
+  min-width: 0;
+}
+.entity-identity strong {
+  overflow-wrap: anywhere;
+}
+.entity-identity span {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
 .entity-stack {
   display: grid;
   gap: var(--apex-space-7);

@@ -27,6 +27,7 @@ import {
 } from "../components/ui";
 import "../styles/calendar.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
+import { CircuitSilhouette, CountryFlag } from "../components/visuals";
 
 export function CalendarEvents({ events, selectedId, onSelect }) {
   return (
@@ -51,7 +52,15 @@ export function CalendarEvents({ events, selectedId, onSelect }) {
             >
               {event.name}
             </button>
-            <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
+            <p>
+              <CountryFlag
+                country={event.circuit?.country}
+                label="Circuit country"
+              />
+              <span>
+                {event.circuit?.displayName || "Circuit not supplied"}
+              </span>
+            </p>
           </div>
           <div className="calendar-date">
             <time dateTime={event.schedule.date || undefined}>
@@ -74,6 +83,10 @@ export function CalendarEvents({ events, selectedId, onSelect }) {
           </StatusBadge>
           {event.id === selectedId && (
             <div className="calendar-event-detail">
+              <CircuitSilhouette
+                layout={event.layout}
+                circuitName={event.circuit?.displayName}
+              />
               <p>
                 Selected round · Location not supplied by the calendar source.
               </p>

@@ -54,8 +54,16 @@
   max-width: 14ch;
 }
 .circuit-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--apex-space-4);
   margin-top: var(--apex-space-6);
   color: var(--apex-color-muted);
+}
+.race-focus-content > .circuit-silhouette {
+  align-self: center;
+  width: min(100%, 15rem);
 }
 .race-focus-icon {
   display: none;
