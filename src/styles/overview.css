@@ -363,13 +363,17 @@
     grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.65fr);
     align-items: start;
   }
-  .race-focus-copy,
-  .race-focus-results {
+  .race-focus-copy {
     grid-column: 1;
+    grid-row: 1;
+  }
+  .race-focus-results {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
   .race-focus-content > .circuit-silhouette {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 1;
     justify-self: end;
   }
   .race-focus-icon {
