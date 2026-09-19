@@ -2,7 +2,7 @@
 
 Frontend repository for the F1 Circuit historical and post-race application, using the selected Apex design direction.
 
-Foundation and reusable component checkpoint. Run `npm ci` then `npm run dev`; review http://127.0.0.1:5173/design. Run `npm run check` for lint, tests and production build. See docs/CHECKPOINT.md for scope and next steps. No frontend deployment has been performed.
+The Apex client now covers the season overview, calendar, standings, race/session analysis, entity profiles and comparisons, source coverage, records, field-level evidence and deterministic archive questions. Run `npm ci` then `npm run dev`; review http://127.0.0.1:5173/. Run `npm run check` for lint, tests and production build. See `docs/TRUST-SURFACES.md` for the latest contract and QA checkpoint. No frontend deployment has been performed.
 
 ## Architecture
 
