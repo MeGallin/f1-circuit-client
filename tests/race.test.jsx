@@ -6,6 +6,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { MemoryRouter, Routes, Route, useLocation } from "react-router-dom";
 import RaceDetail, {
   AdvancedRecords,
+  ImpactPanel,
   RaceRecords,
   seriesWindowError,
   toUtcIso,
@@ -112,6 +113,23 @@ test("series requests require an explicit bounded UTC window", () => {
   ).toContain("120 seconds");
   expect(seriesWindowError("", null, null)).toContain("Choose a driver");
 });
+test("standings impact keeps unavailable reconciliation explicit", () => {
+  render(
+    <ImpactPanel
+      query={{
+        currentData: { impact: null },
+        isSuccess: true,
+        isLoading: false,
+        isFetching: false,
+        isError: false,
+        refetch: () => {},
+      }}
+    />,
+  );
+  expect(
+    screen.getByText("Championship impact unavailable"),
+  ).toBeInTheDocument();
+});
 test("lap pagination uses supported cursor/snapshot parameters and its URL survives a fresh mount", async () => {
   const meta = {
     snapshotId: "snapshot-fixture",
@@ -148,7 +166,9 @@ test("lap pagination uses supported cursor/snapshot parameters and its URL survi
       const url = new URL(request.url);
       requests.push(url);
       let data;
-      if (url.pathname.includes("/events/")) data = { eventDetail: detail };
+      if (url.pathname.endsWith("/standings-impact")) data = { impact: null };
+      else if (url.pathname.includes("/events/"))
+        data = { eventDetail: detail };
       else if (url.pathname.endsWith("/laps")) {
         const next = url.searchParams.has("cursor");
         data = {

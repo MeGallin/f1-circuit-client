@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import {
   archiveApi,
   useGetEventQuery,
+  useGetImpactQuery,
   useGetSessionDataQuery,
 } from "../api/archiveApi";
 import {
@@ -633,9 +634,93 @@ function SessionData({
   );
 }
 
+export function ImpactPanel({ query }) {
+  const impact = query.currentData?.impact;
+  return (
+    <Panel title="Championship impact">
+      <DataBoundary query={query} onRetry={query.refetch}>
+        {impact ? (
+          <>
+            <p className="race-note">
+              {impact.scope} scope · before snapshot{" "}
+              {impact.beforeSnapshotId || missing} · after snapshot{" "}
+              {impact.afterSnapshotId || missing}
+            </p>
+            {impact.changes.length ? (
+              <DataTable
+                caption="Published championship changes"
+                rows={impact.changes}
+                rowKey={(row) => row.id}
+                columns={[
+                  {
+                    key: "entity",
+                    label: "Entity",
+                    render: (row) => row.entity?.displayName || missing,
+                  },
+                  {
+                    key: "pointsBefore",
+                    label: "Points before",
+                    render: (row) => row.pointsBefore ?? missing,
+                  },
+                  {
+                    key: "pointsAfter",
+                    label: "Points after",
+                    render: (row) => row.pointsAfter ?? missing,
+                  },
+                  {
+                    key: "pointsDelta",
+                    label: "Points change",
+                    render: (row) => row.pointsDelta ?? missing,
+                  },
+                  {
+                    key: "rankBefore",
+                    label: "Rank before",
+                    render: (row) => row.rankBefore ?? missing,
+                  },
+                  {
+                    key: "rankAfter",
+                    label: "Rank after",
+                    render: (row) => row.rankAfter ?? missing,
+                  },
+                  {
+                    key: "positionGain",
+                    label: "Position change",
+                    render: (row) => row.positionGain ?? missing,
+                  },
+                  {
+                    key: "attribution",
+                    label: "Coverage",
+                    render: (row) => row.attribution ?? missing,
+                  },
+                ]}
+              />
+            ) : (
+              <EmptyState
+                title="No championship changes published"
+                description="The archive supplied the impact scope but no reconciled changes."
+              />
+            )}
+          </>
+        ) : (
+          <EmptyState
+            title="Championship impact unavailable"
+            description="No reconciled before-and-after standings are published for this event."
+          />
+        )}
+      </DataBoundary>
+      <SourceNote meta={query.currentData?.meta} />
+    </Panel>
+  );
+}
+
 function Detail({ data, params, setParams, refresh }) {
   const { detail, meta } = data;
   const { event, sessions } = detail;
+  const impact = useGetImpactQuery({
+    eventId: event.id,
+    scope: params.get("impactScope") || "race",
+    snapshotId: meta.snapshotId,
+  });
   const fastestEntries = useGetSessionDataQuery(
     {
       sessionId: detail.fastestLap?.sessionId,
@@ -706,6 +791,7 @@ function Detail({ data, params, setParams, refresh }) {
         />
       </div>
       <SourceNote meta={meta} />
+      <ImpactPanel query={impact} />
       <details className="race-coverage">
         <summary>Event coverage and session schedule</summary>
         <ul>

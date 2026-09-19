@@ -136,6 +136,14 @@ export const archiveApi = createApi({
       transformResponse: eventResponse,
       providesTags: (_r, _e, { eventId }) => [{ type: "Event", id: eventId }],
     }),
+    getImpact: builder.query({
+      query: ({ eventId, scope = "race", snapshotId }) => ({
+        url: `/events/${encodeURIComponent(eventId)}/standings-impact`,
+        params: { scope, snapshotId },
+      }),
+      transformResponse: (r) => objectResponse(r, "impact"),
+      providesTags: (_r, _e, { eventId }) => [{ type: "Event", id: eventId }],
+    }),
     getSessionData: builder.query({
       query: ({
         sessionId,
@@ -265,6 +273,7 @@ export const {
   useGetSourcesQuery,
   useGetStandingsQuery,
   useGetEventQuery,
+  useGetImpactQuery,
   useGetSessionDataQuery,
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
