@@ -92,7 +92,6 @@ function SeasonOverview({ year, seasons }) {
                   onSnapshotReset={query.refetch}
                 />
               </div>
-              <SourceNote meta={data.meta} />
             </>
           )
         )}
