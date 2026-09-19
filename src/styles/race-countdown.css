@@ -39,8 +39,52 @@
 .race-countdown time {
   font-family: var(--apex-font-numeric);
 }
+.race-countdown--wide {
+  width: 100%;
+  margin-top: var(--apex-space-4);
+  padding-top: var(--apex-space-5);
+  border-top: 1px solid var(--apex-color-line);
+}
+.race-countdown-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--apex-space-5);
+}
+.race-countdown--wide .race-countdown-meta time {
+  color: var(--apex-color-text);
+  font-size: var(--apex-type-body-size);
+}
+.race-countdown--wide .race-countdown-parts {
+  gap: var(--apex-space-6);
+  padding-top: var(--apex-space-2);
+}
+.race-countdown--wide .race-countdown-part {
+  gap: var(--apex-space-3);
+}
+.race-countdown--wide .race-countdown-part strong {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+}
+.race-countdown--wide .race-countdown-part span {
+  font-size: var(--apex-type-body-size);
+}
 .race-countdown--unavailable,
 .race-countdown--elapsed {
   margin-bottom: 0;
 }
 
+@media (max-width: 599px) {
+  .race-countdown-meta {
+    align-items: start;
+    flex-direction: column;
+    gap: var(--apex-space-2);
+  }
+
+  .race-countdown--wide .race-countdown-parts {
+    gap: var(--apex-space-4);
+  }
+
+  .race-countdown--wide .race-countdown-part strong {
+    font-size: clamp(2rem, 13vw, 3rem);
+  }
+}

@@ -37,6 +37,22 @@ test("countdown renders the exact start target and accessible timer label", () =
   expect(screen.getByText("Starts 26 Sept 2026, 11:00 UTC")).toBeInTheDocument();
 });
 
+test("wide countdown keeps the start date in the header and enlarges the timer", () => {
+  const { container } = render(
+    <RaceCountdown
+      startsAt={raceStart}
+      timePrecision="second"
+      now={oneWeekBefore}
+      variant="wide"
+    />,
+  );
+  expect(container.querySelector(".race-countdown--wide")).toBeInTheDocument();
+  expect(container.querySelector(".race-countdown-meta time")).toHaveTextContent(
+    "Starts 26 Sept 2026, 11:00 UTC",
+  );
+  expect(screen.getByRole("timer")).toHaveAccessibleName("Race starts in 1 week");
+});
+
 test("countdown refuses to invent a time from a date-only schedule", () => {
   render(
     <RaceCountdown

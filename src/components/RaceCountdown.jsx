@@ -83,7 +83,7 @@ function targetTimeLabel(startsAt) {
   }).format(new Date(startsAt));
 }
 
-export function RaceCountdown({ startsAt, timePrecision, now }) {
+export function RaceCountdown({ startsAt, timePrecision, now, variant = "default" }) {
   const [currentTime, setCurrentTime] = useState(() => now ?? Date.now());
   useEffect(() => {
     if (now != null) return undefined;
@@ -115,11 +115,20 @@ export function RaceCountdown({ startsAt, timePrecision, now }) {
   const accessibleLabel = parts.map((part) => part.label).join(", ");
   return (
     <div
-      className="race-countdown"
+      className={`race-countdown${variant === "wide" ? " race-countdown--wide" : ""}`}
       role="timer"
       aria-label={`Race starts in ${accessibleLabel}`}
     >
-      <p className="race-countdown-heading">COUNTDOWN TO RACE START</p>
+      {variant === "wide" ? (
+        <div className="race-countdown-meta">
+          <p className="race-countdown-heading">COUNTDOWN TO RACE START</p>
+          <time dateTime={new Date(targetMs).toISOString()}>
+            Starts {targetTimeLabel(startsAt)}
+          </time>
+        </div>
+      ) : (
+        <p className="race-countdown-heading">COUNTDOWN TO RACE START</p>
+      )}
       <div className="race-countdown-parts" aria-hidden="true">
         {parts.map((part) => (
           <span className="race-countdown-part" key={part.unit}>
@@ -128,10 +137,11 @@ export function RaceCountdown({ startsAt, timePrecision, now }) {
           </span>
         ))}
       </div>
-      <time dateTime={new Date(targetMs).toISOString()}>
-        Starts {targetTimeLabel(startsAt)}
-      </time>
+      {variant !== "wide" && (
+        <time dateTime={new Date(targetMs).toISOString()}>
+          Starts {targetTimeLabel(startsAt)}
+        </time>
+      )}
     </div>
   );
 }
-

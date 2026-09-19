@@ -300,19 +300,20 @@ function AdjacentEventBand({ event, label, next = false }) {
       <div className="overview-adjacent-event-copy">
         <strong>{event.name}</strong>
         <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
-        {next && (
-          <RaceCountdown
-            startsAt={event.schedule?.startsAt}
-            timePrecision={event.schedule?.timePrecision}
-          />
-        )}
       </div>
       <div className="overview-adjacent-event-date">
-        <b>{dateLabel(event.schedule?.date)}</b>
+        {!next && <b>{dateLabel(event.schedule?.date)}</b>}
         <small>
           <RaceStatus status={status}>{statusLabel}</RaceStatus>
         </small>
       </div>
+      {next && (
+        <RaceCountdown
+          startsAt={event.schedule?.startsAt}
+          timePrecision={event.schedule?.timePrecision}
+          variant="wide"
+        />
+      )}
       {next && (
         <ActionLink
           to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
