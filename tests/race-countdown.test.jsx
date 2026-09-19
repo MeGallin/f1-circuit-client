@@ -43,7 +43,7 @@ test("wide countdown keeps the start date in the header and enlarges the timer",
     <RaceCountdown
       startsAt={raceStart}
       timePrecision="second"
-      now={oneWeekBefore}
+      now={Date.parse("2026-09-26T08:57:58Z")}
       variant="wide"
     />,
   );
@@ -51,8 +51,13 @@ test("wide countdown keeps the start date in the header and enlarges the timer",
   expect(container.querySelector(".race-countdown-meta time")).toHaveTextContent(
     "Starts 26 Sept 2026, 11:00 UTC",
   );
-  expect(screen.getByRole("timer")).toHaveAccessibleName("Race starts in 1 weeks");
-  expect(screen.queryByText("Race starts in 1 weeks")).not.toBeInTheDocument();
+  expect(screen.getByRole("timer")).toHaveAccessibleName(
+    "Race starts in 2 hours, 2 minutes, 2 seconds",
+  );
+  expect(screen.queryByText("Race starts in 2 hours, 2 minutes, 2 seconds")).not.toBeInTheDocument();
+  expect(screen.getByText("H")).toBeInTheDocument();
+  expect(screen.getByText("M")).toBeInTheDocument();
+  expect(screen.getByText("S")).toBeInTheDocument();
 });
 
 test("countdown refuses to invent a time from a date-only schedule", () => {

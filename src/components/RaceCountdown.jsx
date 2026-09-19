@@ -40,6 +40,10 @@ function unitLabel(value, unit) {
   return `${value} ${unitName(unit)}`;
 }
 
+function displayUnitName(unit) {
+  return { hour: "H", minute: "M", second: "S" }[unit] || unitName(unit);
+}
+
 export function getCountdownParts(startsAt, now = Date.now()) {
   const targetMs = Date.parse(startsAt || "");
   const nowMs = typeof now === "number" ? now : Date.parse(now);
@@ -137,7 +141,7 @@ export function RaceCountdown({ startsAt, timePrecision, now, variant = "default
         {parts.map((part) => (
           <span className="race-countdown-part" key={part.unit}>
             <strong>{String(part.value).padStart(2, "0")}</strong>
-            <span>{unitName(part.unit)}</span>
+            <span>{displayUnitName(part.unit)}</span>
           </span>
         ))}
       </div>
