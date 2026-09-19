@@ -53,6 +53,26 @@ test("disabled actions cannot fire and errors offer explicit retry", async () =>
   await userEvent.click(screen.getByRole("button", { name: "Try again" }));
   expect(action).toHaveBeenCalledOnce();
 });
+test("refreshing keeps current data visible and announces the update", () => {
+  render(
+    <DataBoundary
+      query={{
+        currentData: { items: [{ id: "one" }] },
+        isFetching: true,
+        isError: false,
+        refetch: vi.fn(),
+      }}
+    >
+      <p>Current archive data</p>
+    </DataBoundary>,
+  );
+  expect(screen.getByText("Current archive data")).toBeInTheDocument();
+  expect(screen.getByRole("status")).toHaveTextContent("Updating this view");
+  expect(screen.getByRole("status").parentElement).toHaveAttribute(
+    "aria-busy",
+    "true",
+  );
+});
 test("mobile navigation keeps primary tasks visible and groups secondary routes", async () => {
   render(
     <MemoryRouter initialEntries={["/records?season=2026"]}>

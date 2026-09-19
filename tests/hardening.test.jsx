@@ -84,14 +84,16 @@ test.each([
     store.dispatch(archiveApi.util.resetApiState());
   },
 );
-test("slow requests explain possible wake-up without claiming a diagnosed cold start", () => {
+test("slow requests preserve the selection without making a time promise", () => {
   vi.useFakeTimers();
   render(<Skeleton />);
   expect(screen.getByRole("status")).toHaveTextContent(
     "Loading historical data",
   );
   act(() => vi.advanceTimersByTime(8000));
-  expect(screen.getByRole("status")).toHaveTextContent("It may be waking up");
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "Your selection is preserved",
+  );
 });
 test("a stalled archive request times out and releases the loading state", async () => {
   vi.useFakeTimers();

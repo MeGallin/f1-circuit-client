@@ -246,7 +246,7 @@ export function Skeleton({ label = "Loading historical data" }) {
     <div className="loading">
       <p role="status">
         {slow
-          ? "The archive is taking longer than usual. It may be waking up; please allow about a minute."
+          ? "The archive is taking longer than usual. Your selection is preserved while it responds."
           : label}
       </p>
       <div aria-hidden="true" className="skeleton">
