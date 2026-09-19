@@ -14,6 +14,7 @@ import {
   PageHeading,
   Panel,
   Metric,
+  RaceStatus,
   SourceNote,
   DataBoundary,
   EmptyState,
@@ -1042,7 +1043,13 @@ function Detail({ data, params, setParams, refresh }) {
       <div className="race-summary">
         <Metric
           label="Event status"
-          value={event.status === "unknown" ? missing : event.status}
+          value={
+            event.status === "unknown" ? (
+              missing
+            ) : event.status ? (
+              <RaceStatus status={event.status}>{event.status}</RaceStatus>
+            ) : undefined
+          }
         />
         <Metric
           label="Winner"

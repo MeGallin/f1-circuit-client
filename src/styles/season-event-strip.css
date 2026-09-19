@@ -72,7 +72,7 @@
 }
 
 .season-event-legend-item--complete::before {
-  background: var(--apex-color-accent);
+  display: none;
 }
 
 .season-event-segment {

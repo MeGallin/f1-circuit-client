@@ -273,6 +273,17 @@
 .status--warning {
   color: var(--apex-color-warning);
 }
+.race-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+.race-status-icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+}
 .country-flag {
   display: inline-flex;
   align-items: center;

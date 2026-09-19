@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRightIcon,
   ArrowClockwiseIcon,
+  FlagCheckeredIcon,
   WarningCircleIcon,
 } from "@phosphor-icons/react";
 
@@ -141,8 +142,48 @@ export function Tabs({ label, items, value, onChange, children }) {
     </>
   );
 }
-export function StatusBadge({ children, tone = "neutral" }) {
-  return <span className={`status status--${tone}`}>{children}</span>;
+export function RaceStatus({
+  status,
+  children,
+  tone = "neutral",
+  badge = false,
+  className = "",
+}) {
+  const label = children ?? status ?? "";
+  const statusValue = typeof status === "string" ? status : label;
+  const isCompleted =
+    typeof statusValue === "string" &&
+    statusValue.trim().toLowerCase() === "completed";
+  const classes = [
+    "race-status",
+    badge ? "status" : "",
+    badge ? `status--${tone}` : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <span className={classes}>
+      {isCompleted && (
+        <FlagCheckeredIcon
+          className="race-status-icon"
+          size="1em"
+          weight="regular"
+          aria-hidden
+        />
+      )}
+      <span>{label}</span>
+    </span>
+  );
+}
+
+export function StatusBadge({ children, tone = "neutral", status }) {
+  return (
+    <RaceStatus status={status} tone={tone} badge>
+      {children}
+    </RaceStatus>
+  );
 }
 const availabilityTone = {
   available: "success",

@@ -6,6 +6,7 @@ import {
   Button,
   EmptyState,
   ErrorState,
+  RaceStatus,
   Skeleton,
   SourceNote,
   StatusBadge,
@@ -123,7 +124,10 @@ export function EventInsightDialog({ event, snapshotId, onClose }) {
         <header className="event-dialog-header">
           <div>
             <p className="eyebrow">
-              ROUND {event.round ?? "N/A"} · {event.status || "STATUS NOT SUPPLIED"}
+              ROUND {event.round ?? "N/A"} · {" "}
+              <RaceStatus status={event.status}>
+                {event.status || "STATUS NOT SUPPLIED"}
+              </RaceStatus>
             </p>
             <h2 id={titleId}>{event.name}</h2>
             <p className="event-dialog-meta">
@@ -140,7 +144,9 @@ export function EventInsightDialog({ event, snapshotId, onClose }) {
           </Button>
         </header>
         <div className="event-dialog-status">
-          <StatusBadge>{event.status || "Status not supplied"}</StatusBadge>
+          <StatusBadge status={event.status}>
+            {event.status || "Status not supplied"}
+          </StatusBadge>
           {event.circuit?.country && <span>{event.circuit.country}</span>}
         </div>
         <div className="event-dialog-body">
@@ -158,4 +164,3 @@ export function EventInsightDialog({ event, snapshotId, onClose }) {
     </dialog>
   );
 }
-

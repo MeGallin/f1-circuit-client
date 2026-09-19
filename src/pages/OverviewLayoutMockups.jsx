@@ -1,4 +1,5 @@
 import { ArrowRightIcon, CalendarBlankIcon } from "@phosphor-icons/react";
+import { RaceStatus } from "../components/ui";
 import "../styles/overview-layout-mockups.css";
 
 const standings = [
@@ -67,7 +68,7 @@ function MockupRaceHero() {
     <section className="mockup-race-hero" aria-label="Latest completed race">
       <div className="mockup-race-topline">
         <span>LATEST COMPLETED RACE</span>
-        <b>completed</b>
+        <b><RaceStatus status="completed">completed</RaceStatus></b>
       </div>
       <div className="mockup-race-identity">
         <div className="mockup-race-copy">
@@ -105,7 +106,7 @@ function MockupEventStrip() {
         ))}
       </div>
       <div className="mockup-event-legend">
-        <span><i className="is-complete" /> Completed</span>
+        <RaceStatus status="completed">Completed</RaceStatus>
         <span><i /> Upcoming</span>
         <b>Round 14 is the latest published result</b>
       </div>
@@ -137,7 +138,7 @@ function MockupAdjacentEvent({
       </div>
       <div className="mockup-adjacent-event-date">
         <b>{date}</b>
-        <small>{status}</small>
+        <small><RaceStatus status={status}>{status}</RaceStatus></small>
       </div>
       {action && <MockupAction>{action}</MockupAction>}
     </section>

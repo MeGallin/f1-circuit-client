@@ -110,7 +110,7 @@ export function CalendarEvents({
                 </span>
               )}
           </div>
-          <StatusBadge>
+          <StatusBadge status={event.status}>
             {event.status === "unknown" ? "Status not supplied" : event.status}
           </StatusBadge>
           <div className="calendar-event-actions">

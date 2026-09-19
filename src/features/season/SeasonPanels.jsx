@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
   Panel,
+  RaceStatus,
   StatusBadge,
   Tabs,
   EmptyState,
@@ -68,9 +69,12 @@ function ResultsAvailability({
           </span>
         </p>
         <div className="season-event-legend" aria-label="Event status legend">
-          <span className="season-event-legend-item season-event-legend-item--complete">
+          <RaceStatus
+            className="season-event-legend-item season-event-legend-item--complete"
+            status="completed"
+          >
             Completed
-          </span>
+          </RaceStatus>
           <span className="season-event-legend-item season-event-legend-item--upcoming">
             Upcoming
           </span>
@@ -128,7 +132,7 @@ export function RaceFocus({ summary, snapshotId }) {
             ? "NEXT SCHEDULED EVENT"
             : "LATEST COMPLETED RACE"}
         </p>
-          <StatusBadge>
+          <StatusBadge status={focusKind === "next" ? "upcoming" : event.resultStatus || event.status}>
             {focusKind === "next" ? "upcoming" : event.resultStatus || event.status}
           </StatusBadge>
       </div>
@@ -286,11 +290,11 @@ function CalendarContextRows({ events }) {
             <time dateTime={event.schedule.date || undefined}>
               {dateLabel(event.schedule.date)}
             </time>
-            <span>
+            <RaceStatus status={event.status}>
               {event.status === "unknown"
                 ? "Status not supplied"
                 : event.status}
-            </span>
+            </RaceStatus>
           </div>
         </li>
       ))}
