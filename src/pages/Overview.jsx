@@ -56,7 +56,10 @@ function SeasonOverview({ year, seasons }) {
           summary && (
             <>
               <div className="season-grid">
-                <RaceFocus summary={summary} />
+                <RaceFocus
+                  summary={summary}
+                  snapshotId={data.meta.snapshotId}
+                />
                 <ArchiveProgress season={summary.season} />
               </div>
               <div className="overview-jump">

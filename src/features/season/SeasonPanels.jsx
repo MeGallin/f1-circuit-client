@@ -15,8 +15,16 @@ import {
   DataBoundary,
   ActionLink,
 } from "../../components/ui";
-import { useGetCalendarQuery } from "../../api/archiveApi";
-import { CircuitSilhouette, CountryFlag } from "../../components/visuals";
+import {
+  useGetCalendarQuery,
+  useGetLayoutsQuery,
+  useGetProfileQuery,
+} from "../../api/archiveApi";
+import {
+  CircuitSilhouette,
+  CountryFlag,
+  selectLayout,
+} from "../../components/visuals";
 import {
   dateLabel,
   focusEvent,
@@ -52,8 +60,19 @@ export function ArchiveProgress({ season }) {
     </Panel>
   );
 }
-export function RaceFocus({ summary }) {
+export function RaceFocus({ summary, snapshotId }) {
   const event = focusEvent(summary);
+  const circuitId = event?.circuit?.id;
+  const circuitProfile = useGetProfileQuery(
+    { kind: "circuit", id: circuitId, snapshotId },
+    { skip: !circuitId },
+  );
+  const circuitLayouts = useGetLayoutsQuery(
+    { id: circuitId, snapshotId },
+    { skip: !circuitId },
+  );
+  const layout = selectLayout(circuitLayouts.currentData?.items, event?.year);
+  const country = circuitProfile.currentData?.profile?.country;
   if (!event)
     return (
       <Panel title="Race spotlight">
@@ -81,22 +100,27 @@ export function RaceFocus({ summary }) {
           <h2 id="race-focus-title">{event.name}</h2>
           <p className="circuit-name">
             <CountryFlag
-              country={event.circuit?.country}
+              country={country || event.circuit?.country}
               label="Circuit country"
             />
             <span>{event.circuit?.displayName || "Circuit not supplied"}</span>
           </p>
         </div>
         <CircuitSilhouette
-          layout={event.layout}
+          layout={layout}
           circuitName={event.circuit?.displayName}
+          country={country}
+          size="hero"
+          fallback="message"
         />
-        <FlagCheckeredIcon
-          size={64}
-          weight="light"
-          aria-hidden
-          className="race-focus-icon"
-        />
+        {!layout && (
+          <FlagCheckeredIcon
+            size={64}
+            weight="light"
+            aria-hidden
+            className="race-focus-icon"
+          />
+        )}
       </div>
       <div className="race-focus-bottom">
         <ActionLink

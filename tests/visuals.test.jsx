@@ -5,11 +5,13 @@ import {
   CountryFlag,
   countryCode,
   countryFlagEmoji,
+  selectLayout,
 } from "../src/components/visuals";
 
 describe("country visuals", () => {
   it("normalises supported country names to a native flag", () => {
     expect(countryCode("British")).toBe("GB");
+    expect(countryCode("UK")).toBe("GB");
     expect(countryFlagEmoji("British")).toBe("🇬🇧");
 
     render(<CountryFlag country="British" label="Driver nationality" />);
@@ -60,5 +62,42 @@ describe("circuit visuals", () => {
     );
 
     expect(screen.getByText("Track layout not supplied")).toBeInTheDocument();
+  });
+
+  it("selects the layout that covers an event year and keeps the size/theme contract", () => {
+    const layouts = [
+      {
+        id: "layout:old",
+        validFrom: "2000-01-01",
+        validTo: "2010-12-31",
+        assetUrl: "https://example.com/old.svg",
+      },
+      {
+        id: "layout:current",
+        validFrom: "2011-01-01",
+        validTo: "2025-12-31",
+        assetUrl: "https://example.com/current.svg",
+      },
+    ];
+    expect(selectLayout(layouts, 2024).id).toBe("layout:current");
+
+    render(
+      <CircuitSilhouette
+        layout={{ assetUrl: "https://example.com/current.svg" }}
+        circuitName="Test Circuit"
+        country="UK"
+        size="compact"
+        theme="light"
+        fallback="message"
+      />,
+    );
+    expect(
+      screen
+        .getByRole("img", { name: "Test Circuit, UK track layout" })
+        .closest("figure"),
+    ).toHaveClass(
+      "circuit-silhouette--compact",
+      "circuit-silhouette--theme-light",
+    );
   });
 });

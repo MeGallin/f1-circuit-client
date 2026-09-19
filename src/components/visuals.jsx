@@ -106,6 +106,7 @@ function normalizeCountry(value) {
 
 export function countryCode(value) {
   const normalized = normalizeCountry(value);
+  if (normalized === "uk") return "GB";
   if (/^[a-z]{2}$/.test(normalized)) return normalized.toUpperCase();
   return COUNTRY_CODES[normalized] || null;
 }
@@ -123,11 +124,18 @@ export function selectLayout(layouts, year) {
   const targetYear = Number(year);
   const inRange = layouts.filter((layout) => {
     if (!Number.isInteger(targetYear)) return false;
-    const from = layout.validFrom ? Number(String(layout.validFrom).slice(0, 4)) : -Infinity;
-    const to = layout.validTo ? Number(String(layout.validTo).slice(0, 4)) : Infinity;
+    const from = layout.validFrom
+      ? Number(String(layout.validFrom).slice(0, 4))
+      : -Infinity;
+    const to = layout.validTo
+      ? Number(String(layout.validTo).slice(0, 4))
+      : Infinity;
     return targetYear >= from && targetYear <= to;
   });
-  return (inRange.length ? inRange : layouts).find((layout) => layout?.assetUrl) || null;
+  return (
+    (inRange.length ? inRange : layouts).find((layout) => layout?.assetUrl) ||
+    null
+  );
 }
 
 export function CountryFlag({
@@ -181,35 +189,49 @@ function safeAssetUrl(value) {
 
 export function CircuitSilhouette({
   layout,
+  assetUrl,
   circuitName = "Circuit",
+  country,
+  size = "default",
+  theme = "auto",
+  attribution,
+  licence,
+  fallback = "hidden",
   showFallback = false,
+  fallbackLabel,
   className = "",
 }) {
   const [failed, setFailed] = useState(false);
-  const source = safeAssetUrl(layout?.assetUrl);
-  const classes = `circuit-silhouette ${className}`.trim();
+  const source = safeAssetUrl(assetUrl || layout?.assetUrl);
+  const classes =
+    `circuit-silhouette circuit-silhouette--${size} circuit-silhouette--theme-${theme} ${className}`.trim();
+  const effectiveFallback = showFallback ? "message" : fallback;
   if (!source || failed)
-    return showFallback ? (
+    return effectiveFallback === "message" ? (
       <div
         className={`${classes} circuit-silhouette--fallback`}
         role="img"
-        aria-label={`${circuitName} track layout not supplied`}
+        aria-label={`${circuitName} track layout ${failed ? "unavailable" : "not supplied"}`}
       >
-        Track layout not supplied
+        {fallbackLabel ||
+          (failed ? "Track layout unavailable" : "Track layout not supplied")}
       </div>
     ) : null;
+  const sourceAttribution = attribution || layout?.attribution;
+  const sourceLicence = licence || layout?.licence;
+  const name = `${circuitName}${country ? `, ${country}` : ""}`;
   return (
     <figure className={classes}>
       <img
         src={source}
-        alt={`${circuitName} track layout`}
+        alt={`${name} track layout`}
         loading="lazy"
         onError={() => setFailed(true)}
       />
-      {(layout.attribution || layout.licence) && (
+      {(sourceAttribution || sourceLicence) && (
         <figcaption>
-          {layout.attribution || "Layout source supplied"}
-          {layout.licence ? ` · ${layout.licence}` : ""}
+          {sourceAttribution || "Layout source supplied"}
+          {sourceLicence ? ` · ${sourceLicence}` : ""}
         </figcaption>
       )}
     </figure>

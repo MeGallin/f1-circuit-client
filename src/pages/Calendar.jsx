@@ -29,7 +29,11 @@ import {
 } from "../components/ui";
 import "../styles/calendar.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
-import { CircuitSilhouette, CountryFlag, selectLayout } from "../components/visuals";
+import {
+  CircuitSilhouette,
+  CountryFlag,
+  selectLayout,
+} from "../components/visuals";
 
 export function CalendarEvents({
   events,
@@ -98,10 +102,14 @@ export function CalendarEvents({
               <CircuitSilhouette
                 layout={event.id === selectedId ? selectedLayout : null}
                 circuitName={event.circuit?.displayName}
-                showFallback
+                country={selectedCountry}
+                size="compact"
+                fallback="message"
               />
               <p>
-                Selected round · {selectedCountry || "Location not supplied by the calendar source."}
+                Selected round ·{" "}
+                {selectedCountry ||
+                  "Location not supplied by the calendar source."}
               </p>
               <ActionLink
                 to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}

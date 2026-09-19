@@ -239,6 +239,12 @@
   background: var(--apex-color-elevated);
   color: var(--apex-color-muted);
 }
+.circuit-silhouette--compact {
+  padding: var(--apex-space-4);
+}
+.circuit-silhouette--hero {
+  padding: var(--apex-space-6);
+}
 .circuit-silhouette img {
   display: block;
   width: 100%;
@@ -246,8 +252,12 @@
   object-fit: contain;
   object-position: center;
 }
-[data-theme="light"] .circuit-silhouette img {
+.circuit-silhouette--theme-light img,
+[data-theme="light"] .circuit-silhouette--theme-auto img {
   filter: invert(1);
+}
+.circuit-silhouette--theme-dark img {
+  filter: none;
 }
 .circuit-silhouette figcaption {
   margin-top: var(--apex-space-3);

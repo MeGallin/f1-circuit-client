@@ -35,7 +35,11 @@ import {
   gridLabel,
   missing,
 } from "../features/season/raceFormat";
-import { CircuitSilhouette, CountryFlag, selectLayout } from "../components/visuals";
+import {
+  CircuitSilhouette,
+  CountryFlag,
+  selectLayout,
+} from "../components/visuals";
 import "../styles/race.css";
 
 const views = [
@@ -828,7 +832,8 @@ function Detail({ data, params, setParams, refresh }) {
           <CircuitSilhouette
             layout={layout}
             circuitName={event.circuit?.displayName || "Circuit"}
-            showFallback
+            country={circuitProfile.currentData?.profile?.country}
+            fallback="message"
           />
         </div>
         <p className="race-note">

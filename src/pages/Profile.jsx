@@ -77,6 +77,7 @@ function History({
   params,
   setParams,
   refreshProfile,
+  country,
 }) {
   const args = {
     kind,
@@ -145,7 +146,8 @@ function History({
                     <CircuitSilhouette
                       layout={row}
                       circuitName={row.name || "Circuit"}
-                      showFallback
+                      country={country}
+                      fallback="message"
                     />
                     <p>
                       {row.lengthMetres == null
@@ -363,6 +365,7 @@ export default function Profile({ kind }) {
                 snapshotId={snapshotId || data.meta.snapshotId}
                 params={params}
                 setParams={setParams}
+                country={kind === "circuit" ? p.country : undefined}
               />
             </Tabs>
           )}
