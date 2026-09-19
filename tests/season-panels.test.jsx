@@ -103,5 +103,8 @@ test("latest completed race keeps the published podium in the first overview car
   expect(screen.getByText("Max Verstappen")).toBeInTheDocument();
   expect(screen.getByText("Lando Norris")).toBeInTheDocument();
   expect(screen.getByText("25 PTS")).toBeInTheDocument();
+  expect(screen.getByText("Andrea Kimi Antonelli").closest("li")).toHaveClass(
+    "race-podium-row--winner",
+  );
   expect(screen.getByRole("heading", { name: "RACE RESULT" })).toBeInTheDocument();
 });

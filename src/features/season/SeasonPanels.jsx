@@ -183,7 +183,16 @@ function RacePodium({ detail, isFetching, isError }) {
       {podium.length ? (
         <ol className="race-podium">
           {podium.map((row) => (
-            <li key={row.id} className="race-podium-row">
+            <li
+              key={row.id}
+              className={`race-podium-row race-podium-row--${
+                row.position === 1
+                  ? "winner"
+                  : row.position === 2
+                    ? "second"
+                    : "third"
+              }`}
+            >
               <span className="race-podium-position" aria-label={`Position ${row.position}`}>
                 {row.position}
               </span>
