@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAskQuestionMutation } from "../api/archiveApi";
+import { useAskQuestionMutation, useGetEventQuery } from "../api/archiveApi";
 import {
   ActionLink,
   Button,
@@ -8,11 +8,13 @@ import {
   Input,
   PageHeading,
   Panel,
+  Select,
   Skeleton,
   SourceNote,
   StatusBadge,
   TextLink,
 } from "../components/ui";
+import EntityPicker from "../components/EntityPicker";
 import "../styles/questions.css";
 
 const initialContext = {
@@ -23,15 +25,42 @@ const initialContext = {
   constructorId: null,
 };
 
-function contextFromForm(form) {
+function contextFromForm(form, current) {
   const year = String(form.get("year") || "").trim();
   return {
+    ...current,
     year: year ? Number(year) : null,
-    eventId: String(form.get("eventId") || "").trim() || null,
-    sessionId: String(form.get("sessionId") || "").trim() || null,
-    driverId: String(form.get("driverId") || "").trim() || null,
-    constructorId: String(form.get("constructorId") || "").trim() || null,
   };
+}
+
+function SessionPicker({ eventId, value, onChange }) {
+  const event = useGetEventQuery(
+    { eventId },
+    { skip: !eventId },
+  );
+  const sessions = event.currentData?.detail?.sessions || [];
+  return (
+    <Select
+      label="Session"
+      value={value || ""}
+      disabled={!eventId || event.isFetching}
+      options={[
+        {
+          value: "",
+          label: !eventId
+            ? "Choose an event first"
+            : event.isFetching
+              ? "Loading sessions…"
+              : "Choose session",
+        },
+        ...sessions.map((session) => ({
+          value: session.id,
+          label: session.label || session.kind || session.id,
+        })),
+      ]}
+      onChange={(event) => onChange(event.target.value || null)}
+    />
+  );
 }
 
 function displayValue(value) {
@@ -131,6 +160,7 @@ function QuestionUnavailable() {
 export default function Questions() {
   const enabled = import.meta.env.VITE_ENABLE_QUESTION_LAYER === "true";
   const [context, setContext] = useState(initialContext);
+  const [contextLabels, setContextLabels] = useState({});
   const [text, setText] = useState("");
   const [ask, query] = useAskQuestionMutation();
   const submit = async (event, selectedContext = context) => {
@@ -139,7 +169,7 @@ export default function Questions() {
     const nextText = event
       ? String(form.get("text") || "").trim()
       : text;
-    const nextContext = form ? contextFromForm(form) : selectedContext;
+    const nextContext = form ? contextFromForm(form, context) : selectedContext;
     if (!nextText || nextText.length > 500) return;
     setText(nextText);
     setContext(nextContext);
@@ -175,7 +205,7 @@ export default function Questions() {
               onChange={(event) => setText(event.target.value)}
               maxLength={500}
               rows={4}
-              placeholder="Try: How many wins does driver:hamilton have?"
+              placeholder="Try: How many wins does Lewis Hamilton have?"
               required
             />
             <span className="muted">{text.length}/500 characters</span>
@@ -183,15 +213,65 @@ export default function Questions() {
           <fieldset>
             <legend>Optional context</legend>
             <p className="muted">
-              Use canonical IDs when you want to pin the interpretation to a
-              published entity or session.
+              Use published names when you want to pin the interpretation to a
+              specific race, driver, team or session.
             </p>
             <div className="questions-context">
-              <Input label="Season year" name="year" type="number" min="1950" max="2100" />
-              <Input label="Event ID" name="eventId" placeholder="event:..." />
-              <Input label="Session ID" name="sessionId" placeholder="session:..." />
-              <Input label="Driver ID" name="driverId" placeholder="driver:..." />
-              <Input label="Constructor ID" name="constructorId" placeholder="constructor:..." />
+              <Input label="Season year" name="year" type="number" min="2000" max="2100" />
+              <EntityPicker
+                label="Event"
+                kind="event"
+                value={context.eventId || ""}
+                displayName={contextLabels.event || ""}
+                onChange={(id, item) => {
+                  setContext((current) => ({
+                    ...current,
+                    eventId: id || null,
+                    sessionId: null,
+                  }));
+                  setContextLabels((current) => ({
+                    ...current,
+                    event: item?.entity?.displayName || "",
+                    session: "",
+                  }));
+                }}
+              />
+              <SessionPicker
+                eventId={context.eventId}
+                value={context.sessionId}
+                onChange={(id) =>
+                  setContext((current) => ({ ...current, sessionId: id }))
+                }
+              />
+              <EntityPicker
+                label="Driver"
+                kind="driver"
+                value={context.driverId || ""}
+                displayName={contextLabels.driver || ""}
+                onChange={(id, item) => {
+                  setContext((current) => ({ ...current, driverId: id || null }));
+                  setContextLabels((current) => ({
+                    ...current,
+                    driver: item?.entity?.displayName || "",
+                  }));
+                }}
+              />
+              <EntityPicker
+                label="Constructor"
+                kind="constructor"
+                value={context.constructorId || ""}
+                displayName={contextLabels.constructor || ""}
+                onChange={(id, item) => {
+                  setContext((current) => ({
+                    ...current,
+                    constructorId: id || null,
+                  }));
+                  setContextLabels((current) => ({
+                    ...current,
+                    constructor: item?.entity?.displayName || "",
+                  }));
+                }}
+              />
             </div>
           </fieldset>
           <Button type="submit" disabled={query.isLoading}>

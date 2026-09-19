@@ -35,6 +35,24 @@ test("question form posts structured context and renders exact values with evide
   vi.stubGlobal(
     "fetch",
     vi.fn(async (request) => {
+      if (new URL(request.url).pathname.endsWith("/search"))
+        return new Response(
+          JSON.stringify({
+            data: {
+              items: [
+                {
+                  id: "driver:one",
+                  kind: "driver",
+                  entity: { displayName: "Example Driver" },
+                  context: null,
+                },
+              ],
+              page: { total: 1, hasMore: false, nextCursor: null },
+            },
+            meta: { snapshotId: "search", coverage: "complete", sources: [] },
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        );
       body = await request.json();
       return new Response(
         JSON.stringify({
@@ -65,7 +83,10 @@ test("question form posts structured context and renders exact values with evide
     "How many wins?",
   );
   await userEvent.type(screen.getByLabelText("Season year"), "2024");
-  await userEvent.type(screen.getByLabelText("Driver ID"), "driver:one");
+  await userEvent.type(screen.getByLabelText("Driver"), "Example");
+  await userEvent.click(
+    await screen.findByRole("option", { name: /Example Driver/ }),
+  );
   await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
   expect(await screen.findByText("driver.wins")).toBeInTheDocument();
   expect(screen.getByText("0.50")).toBeInTheDocument();
