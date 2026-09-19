@@ -54,6 +54,19 @@
 .entity-stack .panel {
   min-width: 0;
 }
+.explore-browse {
+  display: grid;
+  gap: var(--apex-space-4);
+  margin-bottom: var(--apex-space-5);
+}
+.entity-help,
+.entity-validation {
+  margin-block: var(--apex-space-4);
+}
+.entity-validation {
+  padding-left: var(--apex-space-6);
+  color: var(--apex-color-warning);
+}
 .entity-session {
   overflow-wrap: anywhere;
   font-size: var(--apex-type-caption-size);
@@ -98,5 +111,8 @@
   }
   .entity-list > li {
     grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .explore-browse {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

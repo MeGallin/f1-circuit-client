@@ -18,6 +18,7 @@ import {
   CollectionPages,
   refreshSelection,
 } from "../features/entities/shared";
+import { runtimeYear } from "../features/season/selectors";
 import "../styles/entities.css";
 export const searchKinds = [
   { value: "", label: "All records" },
@@ -33,6 +34,7 @@ export default function Explore() {
   const [params, setParams] = useSearchParams();
   const q = params.get("q") || "";
   const kind = params.get("type") || "";
+  const season = params.get("season") || String(runtimeYear());
   const valid =
     q.trim().length >= 2 &&
     q.length <= 100 &&
@@ -61,6 +63,23 @@ export default function Explore() {
           </ActionLink>
         }
       />
+      <Panel title="Browse by task">
+        <div className="explore-browse">
+          <ActionLink to={`/calendar?season=${season}`}>
+            Find a race
+          </ActionLink>
+          <ActionLink to={`/standings?season=${season}&kind=drivers`}>
+            Browse drivers
+          </ActionLink>
+          <ActionLink to={`/standings?season=${season}&kind=constructors`}>
+            Browse constructors
+          </ActionLink>
+        </div>
+        <p className="muted">
+          Start with the season view, then open a published profile or race
+          detail for the evidence behind each record.
+        </p>
+      </Panel>
       <Panel title="Search the archive">
         <form
           key={`${q}:${kind}`}

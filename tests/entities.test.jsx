@@ -167,6 +167,17 @@ test("search submits names and maps canonical profile links with season and pinn
   expect(calls[1].searchParams.get("kind")).toBe("driver");
   expect(calls[1].searchParams.get("q")).toBe("Example");
 });
+test("explore provides task-led browse paths before a search is entered", () => {
+  mount("/explore?season=2024");
+  expect(screen.getByRole("link", { name: "Find a race" })).toHaveAttribute(
+    "href",
+    "/calendar?season=2024",
+  );
+  expect(screen.getByRole("link", { name: "Browse drivers" })).toHaveAttribute(
+    "href",
+    "/standings?season=2024&kind=drivers",
+  );
+});
 test("profile history keeps decimal points and resets pagination when the season changes", async () => {
   const calls = mock((url) =>
     url.pathname.endsWith("/seasons")
@@ -322,6 +333,9 @@ test("invalid comparison range or circuit points never issues an API comparison"
     screen.getByRole("button", { name: "Compare records" }),
   ).toBeDisabled();
   expect(calls.some((u) => u.pathname.endsWith("/comparisons"))).toBe(false);
+  expect(
+    screen.getByText("The start season must be no later than the end season."),
+  ).toBeInTheDocument();
 });
 test("comparison data preserves exact supplied values and metric coverage", () => {
   render(

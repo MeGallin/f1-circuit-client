@@ -22,14 +22,15 @@ import {
 } from "../features/season/selectors";
 import "../styles/entities.css";
 const kinds = ["driver", "constructor", "circuit", "season"];
-const metrics = [
-  "starts",
-  "wins",
-  "podiums",
-  "poles",
-  "fastest-laps",
-  "points",
-];
+const metricDefinitions = {
+  starts: "Published race starts in the selected season range.",
+  wins: "Published race wins in the selected season range.",
+  podiums: "Published top-three race finishes in the selected season range.",
+  poles: "Published pole positions in the selected season range.",
+  "fastest-laps": "Published fastest race laps in the selected season range.",
+  points: "Published championship points in the selected season range.",
+};
+const metrics = Object.keys(metricDefinitions);
 export function ComparisonResult({ data }) {
   const result = data?.comparison;
   return (
@@ -90,6 +91,17 @@ export default function Compare() {
     knownYear(from) &&
     knownYear(to) &&
     Number(from) <= Number(to);
+  const validationMessages = [];
+  if (!validKind) validationMessages.push("Choose a supported record type.");
+  if (!validMetric) validationMessages.push("Choose a supported metric for that record type.");
+  if (!leftId || !rightId)
+    validationMessages.push("Choose both records by name.");
+  else if (leftId === rightId)
+    validationMessages.push("Choose two different records to compare.");
+  if (!knownYear(from) || !knownYear(to))
+    validationMessages.push("Choose two imported seasons.");
+  else if (Number(from) > Number(to))
+    validationMessages.push("The start season must be no later than the end season.");
   const query = useGetComparisonQuery(
     {
       kind,
@@ -157,10 +169,16 @@ export default function Compare() {
               { value: "", label: "Choose metric" },
               ...metrics
                 .filter((m) => kind !== "circuit" || m !== "points")
-                .map((value) => ({ value, label: value.replaceAll("-", " ") })),
+                .map((value) => ({
+                  value,
+                  label: value.replaceAll("-", " "),
+                })),
             ]}
             onChange={(e) => update({ metric: e.target.value })}
           />
+          <p className="muted entity-help">
+            {metricDefinitions[metric] || "Choose a metric to see its definition."}
+          </p>
         </div>
         <DataBoundary query={seasons}>
           {seasons.currentData && (
@@ -217,10 +235,11 @@ export default function Compare() {
           </div>
         )}
         {!valid && (
-          <p role="status">
-            Choose two different records of the same type, a supported metric,
-            and a valid season range with the start no later than the end.
-          </p>
+          <ul className="entity-validation" role="status" aria-live="polite">
+            {validationMessages.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
         )}
         <Button
           disabled={!valid || query.isFetching}
