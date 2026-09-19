@@ -339,6 +339,8 @@
 }
 
 .mockup-adjacent-event-copy strong {
+  position: relative;
+  top: -0.2rem;
   font-size: var(--apex-type-body-size);
 }
 
