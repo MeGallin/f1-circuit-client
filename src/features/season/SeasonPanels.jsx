@@ -18,6 +18,7 @@ import {
   useGetEventQuery,
   useGetLayoutsQuery,
   useGetProfileQuery,
+  useGetStandingsQuery,
 } from "../../api/archiveApi";
 import {
   CircuitSilhouette,
@@ -321,8 +322,14 @@ function LeaderList({ entries }) {
 }
 export function StandingsPreview({ summary }) {
   const [kind, setKind] = useState("drivers");
-  const rows =
+  const standingsQuery = useGetStandingsQuery({
+    year: summary.season.year,
+    kind,
+    standingSnapshotId: summary.standingSnapshotId,
+  });
+  const fallbackRows =
     kind === "drivers" ? summary.leadingDrivers : summary.leadingConstructors;
+  const rows = standingsQuery.currentData?.items?.slice(0, 10) || fallbackRows;
   return (
     <section id="season-standings" className="anchor-section">
       <Panel title="Championship snapshot">
