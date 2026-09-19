@@ -3,8 +3,8 @@ import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
   Panel,
   CircuitName,
+  DriverNumber,
   RaceStatus,
-  StatusBadge,
   Tabs,
   EmptyState,
   SourceNote,
@@ -39,6 +39,7 @@ function ResultsAvailability({
   events,
   selectedEventId,
   onSelectEvent,
+  throughEventName,
 }) {
   const resultsCount = Number.isFinite(Number(season.resultsEventCount))
     ? season.resultsEventCount
@@ -50,36 +51,21 @@ function ResultsAvailability({
 
   return (
     <div
-      className="race-focus-availability"
+      className="season-progress"
       role="group"
-      aria-label="Season results coverage"
+      aria-label="Season progress"
     >
-      <div className="race-focus-availability-heading">
-        <p className="eyebrow">EVENTS</p>
-        <p className="race-focus-availability-count">
-          <strong>{resultsCount}</strong>
-          <span>of {eventCount} events</span>
-        </p>
-      </div>
-      <div className="season-event-guidance">
-        <p className="season-event-guidance-action">
-          <span className="season-event-guidance-marker" aria-hidden="true" />
-          <span className="season-event-guidance-copy">
-            <span className="season-event-guidance-kicker">ROUND EXPLORER</span>
-            <span>Tap or click a marker to inspect that round.</span>
-          </span>
-        </p>
-        <div className="season-event-legend" aria-label="Event status legend">
-          <RaceStatus
-            className="season-event-legend-item season-event-legend-item--complete"
-            status="completed"
-          >
-            Completed
-          </RaceStatus>
-          <span className="season-event-legend-item season-event-legend-item--upcoming">
-            Upcoming
-          </span>
+      <div className="season-progress-heading">
+        <div>
+          <p className="eyebrow">SEASON PROGRESS</p>
+          <p className="season-progress-count">
+            <strong>{resultsCount}</strong>
+            <span>of {eventCount} events</span>
+          </p>
         </div>
+        <span className="season-progress-note">
+          Results through {throughEventName || "latest published result"}
+        </span>
       </div>
       <SeasonEventStrip
         events={events}
@@ -88,13 +74,35 @@ function ResultsAvailability({
         selectedEventId={selectedEventId}
         onSelect={onSelectEvent}
       />
+      <div className="season-progress-legend" aria-label="Event status legend">
+        <span className="season-progress-legend-item season-progress-legend-item--complete">
+          <i aria-hidden="true" /> Completed
+        </span>
+        <span className="season-progress-legend-item season-progress-legend-item--upcoming">
+          <i aria-hidden="true" /> Upcoming
+        </span>
+        <b>Tap or click a marker to inspect that round.</b>
+      </div>
     </div>
   );
 }
-export function RaceFocus({ summary, snapshotId }) {
+export function RaceFocus({
+  summary,
+  snapshotId,
+  includeSeasonProgress = true,
+  showCalendarAction = true,
+  selectedEventId: suppliedSelectedEventId,
+  onSelectEvent,
+  onCloseEvent,
+  className = "",
+}) {
   const event = focusEvent(summary);
   const focusKind = focusEventKind(summary);
-  const [selectedEventId, setSelectedEventId] = useState(null);
+  const [internalSelectedEventId, setInternalSelectedEventId] = useState(null);
+  const isControlled = suppliedSelectedEventId !== undefined;
+  const selectedEventId = isControlled
+    ? suppliedSelectedEventId
+    : internalSelectedEventId;
   const circuitId = event?.circuit?.id;
   const circuitProfile = useGetProfileQuery(
     { kind: "circuit", id: circuitId, snapshotId },
@@ -126,16 +134,23 @@ export function RaceFocus({ summary, snapshotId }) {
       </Panel>
     );
   return (
-    <section className="race-focus" aria-labelledby="race-focus-title">
+    <section
+      className={`race-focus ${className}`.trim()}
+      aria-labelledby="race-focus-title"
+    >
       <div className="race-focus-top">
         <p className="eyebrow">
           {focusKind === "next"
             ? "NEXT SCHEDULED EVENT"
             : "LATEST COMPLETED RACE"}
         </p>
-          <StatusBadge status={focusKind === "next" ? "upcoming" : event.resultStatus || event.status}>
+        <b>
+          <RaceStatus
+            status={focusKind === "next" ? "upcoming" : event.resultStatus || event.status}
+          >
             {focusKind === "next" ? "upcoming" : event.resultStatus || event.status}
-          </StatusBadge>
+          </RaceStatus>
+        </b>
       </div>
       <div className="race-focus-content">
         <div className="race-focus-copy">
@@ -162,12 +177,18 @@ export function RaceFocus({ summary, snapshotId }) {
           fallback="message"
         />
       </div>
-      <ResultsAvailability
-        season={summary.season}
-        events={calendarEvents}
-        selectedEventId={selectedEventId}
-        onSelectEvent={(selected) => setSelectedEventId(selected.id)}
-      />
+      {includeSeasonProgress && (
+        <ResultsAvailability
+          season={summary.season}
+          events={calendarEvents}
+          selectedEventId={selectedEventId}
+          throughEventName={summary.latestCompletedEvent?.name}
+          onSelectEvent={(selected) => {
+            if (!isControlled) setInternalSelectedEventId(selected.id);
+            onSelectEvent?.(selected);
+          }}
+        />
+      )}
       <div className="race-focus-bottom">
         <ActionLink
           to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
@@ -180,18 +201,23 @@ export function RaceFocus({ summary, snapshotId }) {
             {dateLabel(event.schedule.date)}
           </time>
         </span>
-        <ActionLink
-          variant="primary"
-          to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
-        >
-          Explore the calendar
-        </ActionLink>
+        {showCalendarAction && (
+          <ActionLink
+            variant="primary"
+            to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
+          >
+            Explore the calendar
+          </ActionLink>
+        )}
       </div>
       {selectedEvent && (
         <EventInsightDialog
           event={selectedEvent}
           snapshotId={snapshotId}
-          onClose={() => setSelectedEventId(null)}
+          onClose={() => {
+            if (!isControlled) setInternalSelectedEventId(null);
+            onCloseEvent?.();
+          }}
         />
       )}
     </section>
@@ -227,7 +253,10 @@ function RacePodium({ detail, isFetching, isError }) {
               }`}
             >
               <div className="race-podium-driver">
-                <strong>{entryName(row.entry)}</strong>
+                <div className="race-podium-driver-line">
+                  <DriverNumber number={row.entry?.number || row.entry?.driverNumber} />
+                  <strong>{entryName(row.entry)}</strong>
+                </div>
                 <span>{row.entry?.constructor?.displayName || "Team not supplied"}</span>
               </div>
               <div className="race-podium-block">
@@ -254,6 +283,109 @@ function RacePodium({ detail, isFetching, isError }) {
     </section>
   );
 }
+
+function AdjacentEventBand({ event, label, next = false }) {
+  if (!event) return null;
+  const status = event.status || "unknown";
+  const statusLabel = status === "unknown" ? "Status not supplied" : status;
+  return (
+    <section
+      className={`overview-adjacent-event overview-adjacent-event--${next ? "next" : "previous"}`}
+      aria-label={label}
+    >
+      <div className="overview-adjacent-event-heading">
+        <span>{label}</span>
+      </div>
+      <b className="overview-adjacent-event-round">{event.round ?? "N/A"}</b>
+      <div className="overview-adjacent-event-copy">
+        <strong>{event.name}</strong>
+        <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
+        {next && (
+          <RaceCountdown
+            startsAt={event.schedule?.startsAt}
+            timePrecision={event.schedule?.timePrecision}
+          />
+        )}
+      </div>
+      <div className="overview-adjacent-event-date">
+        <b>{dateLabel(event.schedule?.date)}</b>
+        <small>
+          <RaceStatus status={status}>{statusLabel}</RaceStatus>
+        </small>
+      </div>
+      {next && (
+        <ActionLink
+          to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
+        >
+          Explore the calendar
+        </ActionLink>
+      )}
+    </section>
+  );
+}
+
+export function SeasonAroundRace({ summary, snapshotId, meta, onSnapshotReset }) {
+  const [selectedEventId, setSelectedEventId] = useState(null);
+  const calendarQuery = useGetCalendarQuery({
+    year: summary.season?.year,
+    snapshotId,
+  });
+  const events = calendarQuery.currentData?.items || [];
+  const focus = focusEvent(summary);
+  const adjacent = focus?.id
+    ? adjacentCalendarEvents(events, focus.id)
+    : { previous: null, next: null };
+  const nextEvent = adjacent.next || summary.nextEvent || null;
+  const previousEvent = adjacent.previous || summary.previousEvent || null;
+  const selectEvent = (event) => setSelectedEventId(event.id);
+
+  return (
+    <section className="season-around-race" aria-label="Season around the race">
+      <div className="season-around-race-freshness">
+        Results through {summary.latestCompletedEvent?.name || "latest published result"}
+        {summary.latestCompletedEvent?.schedule?.date
+          ? ` · ${summary.latestCompletedEvent.schedule.date}`
+          : ""}
+      </div>
+      <AdjacentEventBand event={nextEvent} label="NEXT EVENT" next />
+      <div className="season-around-race-main">
+        <RaceFocus
+          className="season-around-race-focus"
+          includeSeasonProgress={false}
+          onCloseEvent={() => setSelectedEventId(null)}
+          onSelectEvent={selectEvent}
+          selectedEventId={selectedEventId}
+          showCalendarAction={false}
+          snapshotId={snapshotId}
+          summary={summary}
+        />
+        <StandingsPreview embedded summary={summary} />
+      </div>
+      <DataBoundary
+        query={calendarQuery}
+        empty={calendarQuery.isSuccess && !events.length}
+        onRetry={
+          calendarQuery.error?.status === 409
+            ? onSnapshotReset
+            : calendarQuery.refetch
+        }
+      >
+        <ResultsAvailability
+          events={events}
+          onSelectEvent={selectEvent}
+          season={summary.season}
+          selectedEventId={selectedEventId}
+          throughEventName={summary.latestCompletedEvent?.name}
+        />
+      </DataBoundary>
+      <AdjacentEventBand event={previousEvent} label="PREVIOUS EVENT" />
+      <div className="season-around-race-provenance">
+        <SourceNote meta={meta} />
+      </div>
+    </section>
+  );
+}
+
 function CalendarContextRows({ events }) {
   return (
     <ol className="calendar-rows">
@@ -339,7 +471,7 @@ export function CalendarPreview({
     </div>
   );
 }
-function LeaderList({ entries }) {
+function LeaderList({ entries, kind }) {
   return (
     <ol className="leader-list">
       {entries.map((row) => (
@@ -348,7 +480,14 @@ function LeaderList({ entries }) {
             {String(row.rank ?? "?").padStart(2, "0")}
           </span>
           <div>
-            <strong>{row.entity.displayName}</strong>
+            <div className="leader-driver-line">
+              {kind === "drivers" && (
+                <DriverNumber
+                  number={row.number || row.entity?.number || row.entity?.driverNumber}
+                />
+              )}
+              <strong>{row.entity.displayName}</strong>
+            </div>
             {row.constructors.length > 0 && (
               <p>{row.constructors.map((c) => c.displayName).join(" / ")}</p>
             )}
@@ -362,7 +501,7 @@ function LeaderList({ entries }) {
     </ol>
   );
 }
-export function StandingsPreview({ summary }) {
+export function StandingsPreview({ summary, embedded = false }) {
   const [kind, setKind] = useState("drivers");
   const standingsQuery = useGetStandingsQuery({
     year: summary.season.year,
@@ -373,8 +512,15 @@ export function StandingsPreview({ summary }) {
     kind === "drivers" ? summary.leadingDrivers : summary.leadingConstructors;
   const rows = standingsQuery.currentData?.items?.slice(0, 10) || fallbackRows;
   return (
-    <section id="season-standings" className="anchor-section">
-      <Panel title="Championship snapshot">
+    <section
+      id="season-standings"
+      className={`anchor-section${embedded ? " season-around-race-standings" : ""}`}
+    >
+      <Panel
+        className={embedded ? "season-around-race-panel" : ""}
+        eyebrow="CHAMPIONSHIP"
+        title="Championship snapshot"
+      >
         <Tabs
           label="Championship standings"
           items={[
@@ -385,7 +531,7 @@ export function StandingsPreview({ summary }) {
           onChange={setKind}
         >
           {rows.length ? (
-            <LeaderList entries={rows} />
+            <LeaderList entries={rows} kind={kind} />
           ) : (
             <EmptyState title="Standings not yet available" />
           )}

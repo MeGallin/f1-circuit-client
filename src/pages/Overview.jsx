@@ -1,5 +1,5 @@
 import useSeasonSearch from "../features/season/useSeasonSearch";
-import { ArrowClockwiseIcon, RankingIcon } from "@phosphor-icons/react";
+import { ArrowClockwiseIcon } from "@phosphor-icons/react";
 import {
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
@@ -7,13 +7,8 @@ import {
 import {
   selectSeasonOptions,
   selectedSeason,
-  focusEvent,
 } from "../features/season/selectors";
-import {
-  RaceFocus,
-  CalendarPreview,
-  StandingsPreview,
-} from "../features/season/SeasonPanels";
+import { SeasonAroundRace } from "../features/season/SeasonPanels";
 import {
   PageHeading,
   Select,
@@ -24,7 +19,6 @@ import {
   Panel,
   Skeleton,
   ErrorState,
-  FreshnessSummary,
 } from "../components/ui";
 import "../styles/overview.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
@@ -55,43 +49,13 @@ function SeasonOverview({ year, seasons }) {
         ) : (
           summary && (
             <>
-              <FreshnessSummary
+              <SeasonAroundRace
+                key={`season-around-race-${year}`}
                 meta={data.meta}
-                cutoff={
-                  summary.latestCompletedEvent
-                    ? {
-                        eventName: summary.latestCompletedEvent.name,
-                        date: summary.latestCompletedEvent.schedule?.date,
-                      }
-                    : null
-                }
+                onSnapshotReset={query.refetch}
+                snapshotId={data.meta.snapshotId}
+                summary={summary}
               />
-              <div className="season-grid">
-                <RaceFocus
-                  summary={summary}
-                  snapshotId={data.meta.snapshotId}
-                />
-                <StandingsPreview key={`standings-${year}`} summary={summary} />
-              </div>
-              <div className="overview-jump">
-                <p>
-                  Every result has a source. Explore what is available for this
-                  season.
-                </p>
-                <a className="text-link" href="#season-standings">
-                  <RankingIcon size={19} aria-hidden />
-                  View championship leaders
-                </a>
-              </div>
-              <div className="season-grid season-grid--data">
-                <CalendarPreview
-                  key={`calendar-${year}`}
-                  year={year}
-                  snapshotId={data.meta.snapshotId}
-                  eventId={focusEvent(summary)?.id}
-                  onSnapshotReset={query.refetch}
-                />
-              </div>
             </>
           )
         )}

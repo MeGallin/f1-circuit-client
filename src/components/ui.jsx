@@ -38,7 +38,14 @@ export function TextLink({ to, children, ...props }) {
     </Link>
   );
 }
-export function Panel({ title, action, children, className = "", ...props }) {
+export function Panel({
+  title,
+  eyebrow,
+  action,
+  children,
+  className = "",
+  ...props
+}) {
   const id = useId();
   return (
     <section
@@ -48,7 +55,10 @@ export function Panel({ title, action, children, className = "", ...props }) {
     >
       {title && (
         <div className="panel-heading">
-          <h2 id={id}>{title}</h2>
+          <div>
+            {eyebrow && <p className="eyebrow panel-eyebrow">{eyebrow}</p>}
+            <h2 id={id}>{title}</h2>
+          </div>
           {action}
         </div>
       )}
