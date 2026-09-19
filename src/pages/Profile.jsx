@@ -158,15 +158,6 @@ function History({
                       {row.validFrom ?? "Start date not supplied"} —{" "}
                       {row.validTo ?? "End date not supplied"}
                     </p>
-                    <p>
-                      {row.attribution ?? "Attribution not supplied"} ·{" "}
-                      {row.licence ?? "Licence not supplied"}
-                    </p>
-                    {row.assetUrl && /^https?:\/\//i.test(row.assetUrl) && (
-                      <a href={row.assetUrl} target="_blank" rel="noreferrer">
-                        View supplied layout asset
-                      </a>
-                    )}
                   </div>
                 </li>
               ))}

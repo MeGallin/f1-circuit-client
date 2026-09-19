@@ -34,7 +34,7 @@ describe("circuit visuals", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders a supplied asset with attribution and a safe fallback", () => {
+  it("renders a supplied asset with an accessible source disclosure", () => {
     render(
       <CircuitSilhouette
         circuitName="Test Circuit"
@@ -42,6 +42,7 @@ describe("circuit visuals", () => {
           assetUrl: "https://example.com/test-circuit.svg",
           attribution: "Circuit source",
           licence: "CC BY 4.0",
+          evidenceId: "evidence:test-layout",
         }}
       />,
     );
@@ -49,7 +50,12 @@ describe("circuit visuals", () => {
     expect(
       screen.getByRole("img", { name: "Test Circuit track layout" }),
     ).toHaveAttribute("src", "https://example.com/test-circuit.svg");
-    expect(screen.getByText("Circuit source · CC BY 4.0")).toBeInTheDocument();
+    expect(screen.getByText("Layout source")).toBeVisible();
+    expect(screen.getByText(/Source:/)).toHaveClass("sr-only");
+    screen.getByText("Layout source").click();
+    expect(
+      screen.getByRole("link", { name: "View layout evidence" }),
+    ).toHaveAttribute("href", "/evidence/evidence%3Atest-layout");
   });
 
   it("shows an explicit unavailable state when requested", () => {

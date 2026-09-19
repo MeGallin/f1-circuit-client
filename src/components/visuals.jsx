@@ -219,6 +219,7 @@ export function CircuitSilhouette({
     ) : null;
   const sourceAttribution = attribution || layout?.attribution;
   const sourceLicence = licence || layout?.licence;
+  const evidenceId = layout?.evidenceId;
   const name = `${circuitName}${country ? `, ${country}` : ""}`;
   return (
     <figure className={classes}>
@@ -228,11 +229,25 @@ export function CircuitSilhouette({
         loading="lazy"
         onError={() => setFailed(true)}
       />
-      {(sourceAttribution || sourceLicence) && (
-        <figcaption>
-          {sourceAttribution || "Layout source supplied"}
-          {sourceLicence ? ` · ${sourceLicence}` : ""}
-        </figcaption>
+      {(sourceAttribution || sourceLicence || evidenceId) && (
+        <>
+          <figcaption className="sr-only">
+            Source: {sourceAttribution || "Layout source supplied"}
+            {sourceLicence ? ` · Licence: ${sourceLicence}` : ""}
+          </figcaption>
+          <details className="circuit-silhouette-source">
+            <summary>Layout source</summary>
+            <p>
+              {sourceAttribution || "Layout source supplied"}
+              {sourceLicence ? ` · ${sourceLicence}` : ""}
+            </p>
+            {evidenceId && (
+              <a href={`/evidence/${encodeURIComponent(evidenceId)}`}>
+                View layout evidence
+              </a>
+            )}
+          </details>
+        </>
       )}
     </figure>
   );

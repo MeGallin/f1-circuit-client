@@ -259,10 +259,22 @@
 .circuit-silhouette--theme-dark img {
   filter: none;
 }
-.circuit-silhouette figcaption {
+.circuit-silhouette-source {
   margin-top: var(--apex-space-3);
   font-size: var(--apex-type-caption-size);
   line-height: 1.4;
+}
+.circuit-silhouette-source summary {
+  min-height: 32px;
+  color: var(--apex-color-link);
+  cursor: pointer;
+}
+.circuit-silhouette-source p {
+  margin: var(--apex-space-2) 0 0;
+}
+.circuit-silhouette-source a {
+  display: inline-block;
+  margin-top: var(--apex-space-2);
 }
 .circuit-silhouette--fallback {
   min-height: 4rem;

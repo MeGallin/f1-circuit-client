@@ -838,7 +838,7 @@ function Detail({ data, params, setParams, refresh }) {
         </div>
         <p className="race-note">
           {layout
-            ? `${layout.name} · ${layout.attribution || "Attribution not supplied"} · ${layout.licence || "Licence not supplied"}`
+            ? `${layout.name} · ${layout.validFrom || "Start date not supplied"} — ${layout.validTo || "End date not supplied"}`
             : "No reviewed circuit layout is published for this event."}
         </p>
       </Panel>
