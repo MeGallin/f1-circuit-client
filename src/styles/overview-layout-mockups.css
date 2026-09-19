@@ -284,27 +284,37 @@
   font-size: var(--apex-type-section-size);
 }
 
-.mockup-next-event {
+.mockup-adjacent-event {
   display: grid;
-  grid-area: next;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--apex-space-5);
+  grid-template-areas:
+    "heading heading date action"
+    "round copy date action";
+  align-items: start;
+  gap: var(--apex-space-2) var(--apex-space-5);
   padding-top: var(--apex-space-5);
   padding-bottom: var(--apex-space-5);
+}
+
+.mockup-next-event {
+  grid-area: next;
   border-bottom: 1px solid var(--apex-color-line);
   background: color-mix(in srgb, var(--apex-color-surface) 56%, transparent);
 }
 
-.mockup-next-event-label,
-.mockup-previous-event-label {
-  display: grid;
-  align-items: center;
-  gap: var(--apex-space-2);
+.mockup-previous-event {
+  grid-area: previous;
+  grid-template-areas:
+    "heading heading date date"
+    "round copy date date";
+  border-top: 1px solid var(--apex-color-line);
 }
 
-.mockup-next-event-label span,
-.mockup-previous-event-label span {
+.mockup-adjacent-event-heading {
+  grid-area: heading;
+}
+
+.mockup-adjacent-event-heading span {
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-eyebrow-size);
@@ -312,8 +322,8 @@
   text-transform: uppercase;
 }
 
-.mockup-next-event-label b,
-.mockup-previous-event-label b {
+.mockup-adjacent-event-round {
+  grid-area: round;
   color: var(--apex-color-muted);
   font-family: var(--apex-font-display);
   font-size: var(--apex-type-section-size);
@@ -321,35 +331,33 @@
   line-height: 0.9;
 }
 
-.mockup-next-event-copy,
-.mockup-previous-event > div:nth-child(2) {
+.mockup-adjacent-event-copy {
   display: grid;
+  grid-area: copy;
   min-width: 0;
   gap: var(--apex-space-2);
 }
 
-.mockup-next-event-copy strong,
-.mockup-previous-event strong {
+.mockup-adjacent-event-copy strong {
   font-size: var(--apex-type-body-size);
 }
 
-.mockup-next-event-copy p,
-.mockup-next-event-copy em,
-.mockup-previous-event p {
+.mockup-adjacent-event-copy p,
+.mockup-adjacent-event-copy em {
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
   font-style: normal;
 }
 
-.mockup-next-event-copy em {
+.mockup-adjacent-event-copy em {
   margin-top: var(--apex-space-1);
   color: var(--apex-color-accent-text);
   font-family: var(--apex-font-numeric);
 }
 
-.mockup-next-event-date,
-.mockup-previous-event-date {
+.mockup-adjacent-event-date {
   display: grid;
+  grid-area: date;
   align-content: start;
   gap: var(--apex-space-2);
   color: var(--apex-color-muted);
@@ -359,45 +367,26 @@
   white-space: nowrap;
 }
 
-.mockup-next-event-date b,
-.mockup-previous-event-date b {
+.mockup-adjacent-event-date b {
   color: var(--apex-color-text);
   font-weight: 400;
 }
 
-.mockup-next-event-date small,
-.mockup-previous-event-date small {
+.mockup-adjacent-event-date small {
   font-size: var(--apex-type-eyebrow-size);
   text-transform: uppercase;
 }
 
-.mockup-previous-event {
-  display: grid;
-  grid-area: previous;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: var(--apex-space-4);
-  align-items: start;
-  padding-top: var(--apex-space-6);
-  padding-bottom: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
-}
-
-.mockup-previous-event-date {
-  align-items: end;
-}
-
-.mockup-previous-event-date small {
-  color: var(--apex-color-muted);
+.mockup-adjacent-event .mockup-action {
+  grid-area: action;
+  align-self: start;
+  border-color: var(--apex-color-control-border);
+  background: transparent;
+  color: var(--apex-color-text);
 }
 
 .mockup-next-event + .mockup-race-hero {
   border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
-}
-
-.mockup-next-event .mockup-action {
-  border-color: var(--apex-color-control-border);
-  background: transparent;
-  color: var(--apex-color-text);
 }
 
 /* These are bands within one reading surface, not nested panels. */
@@ -407,11 +396,7 @@
   margin-left: var(--apex-space-7);
 }
 
-.mockup-next-event {
-  padding-right: 0;
-  padding-left: 0;
-}
-
+.mockup-next-event,
 .mockup-previous-event {
   padding-right: 0;
   padding-left: 0;
@@ -671,12 +656,18 @@
     border-top: 1px solid var(--apex-color-line);
   }
 
-  .mockup-next-event {
+  .mockup-adjacent-event {
     grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "heading heading date"
+      "round copy date"
+      "round copy date";
   }
 
   .mockup-next-event .mockup-action {
+    grid-area: auto;
     grid-column: 2 / -1;
+    grid-row: 3;
     justify-self: start;
   }
 
@@ -714,19 +705,23 @@
     margin-left: 0;
   }
 
-  .mockup-next-event,
-  .mockup-previous-event {
+  .mockup-adjacent-event {
     grid-template-columns: 2rem minmax(0, 1fr);
+    grid-template-areas:
+      "heading heading"
+      "round copy"
+      "round copy"
+      "date date"
+      "action action";
   }
 
-  .mockup-next-event-date,
-  .mockup-previous-event-date {
-    grid-column: 2;
+  .mockup-adjacent-event-date {
     text-align: left;
   }
 
   .mockup-next-event .mockup-action {
-    grid-column: 2;
+    grid-area: action;
+    justify-self: start;
   }
 
   .mockup-provenance {

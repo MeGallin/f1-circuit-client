@@ -113,44 +113,61 @@ function MockupEventStrip() {
   );
 }
 
-function MockupNextEvent() {
+function MockupAdjacentEvent({
+  label,
+  round,
+  name,
+  track,
+  date,
+  status,
+  countdown,
+  action,
+  className,
+}) {
   return (
-    <section className="mockup-next-event" aria-label="Next event">
-      <div className="mockup-next-event-label">
-        <span>NEXT EVENT</span>
-        <b>15</b>
+    <section className={`mockup-adjacent-event ${className}`} aria-label={label}>
+      <div className="mockup-adjacent-event-heading">
+        <span>{label}</span>
       </div>
-      <div className="mockup-next-event-copy">
-        <strong>Azerbaijan Grand Prix</strong>
-        <p>Baku City Circuit</p>
-        <em>Countdown to race start · 06 days 19 hours</em>
+      <b className="mockup-adjacent-event-round">{round}</b>
+      <div className="mockup-adjacent-event-copy">
+        <strong>{name}</strong>
+        <p>{track}</p>
+        {countdown && <em>{countdown}</em>}
       </div>
-      <div className="mockup-next-event-date">
-        <b>26 Sept 2026</b>
-        <small>scheduled</small>
+      <div className="mockup-adjacent-event-date">
+        <b>{date}</b>
+        <small>{status}</small>
       </div>
-      <MockupAction>Explore the calendar</MockupAction>
+      {action && <MockupAction>{action}</MockupAction>}
     </section>
   );
 }
 
+function MockupNextEvent() {
+  return <MockupAdjacentEvent
+    className="mockup-next-event"
+    label="NEXT EVENT"
+    round="15"
+    name="Azerbaijan Grand Prix"
+    track="Baku City Circuit"
+    countdown="Countdown to race start · 06 days 19 hours"
+    date="26 Sept 2026"
+    status="scheduled"
+    action="Explore the calendar"
+  />;
+}
+
 function MockupPreviousEvent() {
-  return (
-    <section className="mockup-previous-event" aria-label="Previous event">
-      <div className="mockup-previous-event-label">
-        <span>PREVIOUS EVENT</span>
-        <b>13</b>
-      </div>
-      <div>
-        <strong>Italian Grand Prix</strong>
-        <p>Autodromo Nazionale di Monza</p>
-      </div>
-      <div className="mockup-previous-event-date">
-        <b>06 Sept 2026</b>
-        <small>completed</small>
-      </div>
-    </section>
-  );
+  return <MockupAdjacentEvent
+    className="mockup-previous-event"
+    label="PREVIOUS EVENT"
+    round="13"
+    name="Italian Grand Prix"
+    track="Autodromo Nazionale di Monza"
+    date="06 Sept 2026"
+    status="completed"
+  />;
 }
 
 function MockupStandings() {
