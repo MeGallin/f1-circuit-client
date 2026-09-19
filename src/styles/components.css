@@ -284,6 +284,26 @@
   width: 1em;
   height: 1em;
 }
+.circuit-name {
+  display: grid;
+  align-items: start;
+  gap: var(--apex-space-2);
+  margin-top: var(--apex-space-6);
+}
+.circuit-name-label {
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+.circuit-name strong {
+  color: var(--apex-color-text);
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-type-body-size);
+  font-weight: 500;
+  line-height: 1.1;
+}
 .country-flag {
   display: inline-flex;
   align-items: center;

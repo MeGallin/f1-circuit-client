@@ -185,6 +185,14 @@ export function StatusBadge({ children, tone = "neutral", status }) {
     </RaceStatus>
   );
 }
+export function CircuitName({ name, className = "" }) {
+  return (
+    <div className={`circuit-name ${className}`.trim()}>
+      <span className="circuit-name-label">Circuit</span>
+      <strong>{name}</strong>
+    </div>
+  );
+}
 const availabilityTone = {
   available: "success",
   complete: "success",

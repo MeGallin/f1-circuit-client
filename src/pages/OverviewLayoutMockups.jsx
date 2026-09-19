@@ -1,5 +1,5 @@
 import { ArrowRightIcon, CalendarBlankIcon } from "@phosphor-icons/react";
-import { RaceStatus } from "../components/ui";
+import { CircuitName, RaceStatus } from "../components/ui";
 import "../styles/overview-layout-mockups.css";
 
 const standings = [
@@ -74,7 +74,7 @@ function MockupRaceHero() {
         <div className="mockup-race-copy">
           <span className="mockup-round">ROUND 14 OF 23</span>
           <h3>Spanish Grand Prix</h3>
-          <p>Madring</p>
+          <CircuitName name="Madring" />
         </div>
         <div className="mockup-track-state">
           <div className="mockup-track-placeholder">Track layout not supplied</div>

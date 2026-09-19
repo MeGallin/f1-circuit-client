@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
   Panel,
+  CircuitName,
   RaceStatus,
   StatusBadge,
   Tabs,
@@ -142,9 +143,9 @@ export function RaceFocus({ summary, snapshotId }) {
             ROUND {event.round ?? "N/A"} OF {summary.season?.eventCount ?? "N/A"}
           </p>
           <h2 id="race-focus-title">{event.name}</h2>
-          <p className="circuit-name">
-            <span>{event.circuit?.displayName || "Circuit not supplied"}</span>
-          </p>
+          <CircuitName
+            name={event.circuit?.displayName || "Circuit not supplied"}
+          />
         </div>
         {focusKind === "latest" && (
           <RacePodium
