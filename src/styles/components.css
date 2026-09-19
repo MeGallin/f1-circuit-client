@@ -304,6 +304,18 @@
   font-weight: 500;
   line-height: 1.1;
 }
+.driver-number {
+  display: inline-flex;
+  min-width: 2.1rem;
+  align-items: center;
+  justify-content: center;
+  padding: var(--apex-space-1) var(--apex-space-2);
+  border: 1px solid var(--apex-color-control-border);
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  line-height: 1;
+}
 .country-flag {
   display: inline-flex;
   align-items: center;

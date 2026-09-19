@@ -71,7 +71,7 @@
 
 .overview-mockup-surface {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 0.8fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(22rem, 1fr);
   grid-template-areas:
     "freshness freshness"
     "next next"
@@ -219,6 +219,14 @@
   min-width: 0;
 }
 
+.mockup-podium-driver-line {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--apex-space-2);
+}
+
 .mockup-podium-driver strong {
   overflow: hidden;
   font-size: var(--apex-type-caption-size);
@@ -226,7 +234,7 @@
   white-space: nowrap;
 }
 
-.mockup-podium-driver span,
+.mockup-podium-driver > span,
 .mockup-podium-block span {
   color: var(--apex-color-muted);
   font-size: var(--apex-type-eyebrow-size);
@@ -459,7 +467,15 @@
   min-width: 0;
 }
 
+.mockup-standings-driver-line {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--apex-space-2);
+}
+
 .mockup-standings li strong {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

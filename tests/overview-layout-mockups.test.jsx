@@ -18,4 +18,5 @@ test("overview layout study presents the focused season-around-the-race mock-up"
         element.textContent.replace(/\s+/g, " ").trim() === "14 of 23 events",
     ),
   ).toHaveLength(1);
+  expect(screen.getAllByLabelText("Driver number 12")).toHaveLength(2);
 });

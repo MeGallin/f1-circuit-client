@@ -193,6 +193,17 @@ export function CircuitName({ name, className = "" }) {
     </div>
   );
 }
+export function DriverNumber({ number, className = "" }) {
+  if (number === null || number === undefined || number === "") return null;
+  return (
+    <span
+      aria-label={`Driver number ${number}`}
+      className={`driver-number ${className}`.trim()}
+    >
+      #{number}
+    </span>
+  );
+}
 const availabilityTone = {
   available: "success",
   complete: "success",

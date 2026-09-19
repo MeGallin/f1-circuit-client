@@ -1,18 +1,18 @@
 import { ArrowRightIcon, CalendarBlankIcon } from "@phosphor-icons/react";
-import { CircuitName, RaceStatus } from "../components/ui";
+import { CircuitName, DriverNumber, RaceStatus } from "../components/ui";
 import "../styles/overview-layout-mockups.css";
 
 const standings = [
-  ["01", "Andrea Kimi Antonelli", "Mercedes", "292"],
-  ["02", "George Russell", "Mercedes", "211"],
-  ["03", "Lewis Hamilton", "Ferrari", "191"],
-  ["04", "Lando Norris", "McLaren", "186"],
-  ["05", "Charles Leclerc", "Ferrari", "167"],
-  ["06", "Max Verstappen", "Red Bull", "145"],
-  ["07", "Oscar Piastri", "McLaren", "120"],
-  ["08", "Isack Hadjar", "Red Bull", "71"],
-  ["09", "Liam Lawson", "RB F1 Team / Red Bull", "59"],
-  ["10", "Pierre Gasly", "Alpine F1 Team", "41"],
+  ["01", "12", "Andrea Kimi Antonelli", "Mercedes", "292"],
+  ["02", "63", "George Russell", "Mercedes", "211"],
+  ["03", "44", "Lewis Hamilton", "Ferrari", "191"],
+  ["04", "1", "Lando Norris", "McLaren", "186"],
+  ["05", "16", "Charles Leclerc", "Ferrari", "167"],
+  ["06", "3", "Max Verstappen", "Red Bull", "145"],
+  ["07", "81", "Oscar Piastri", "McLaren", "120"],
+  ["08", "6", "Isack Hadjar", "Red Bull", "71"],
+  ["09", "30", "Liam Lawson", "RB F1 Team / Red Bull", "59"],
+  ["10", "10", "Pierre Gasly", "Alpine F1 Team", "41"],
 ];
 
 const focusVariant = {
@@ -34,9 +34,9 @@ function MockupAction({ children, primary = false }) {
 
 function MockupPodium() {
   const podium = [
-    ["Max Verstappen", "Red Bull", "2", "18 PTS", "second"],
-    ["Andrea Kimi Antonelli", "Mercedes", "1", "25 PTS", "winner"],
-    ["Lando Norris", "McLaren", "3", "15 PTS", "third"],
+    ["Max Verstappen", "3", "Red Bull", "2", "18 PTS", "second"],
+    ["Andrea Kimi Antonelli", "12", "Mercedes", "1", "25 PTS", "winner"],
+    ["Lando Norris", "1", "McLaren", "3", "15 PTS", "third"],
   ];
 
   return (
@@ -46,10 +46,13 @@ function MockupPodium() {
         <small>Top three</small>
       </div>
       <div className="mockup-podium">
-        {podium.map(([name, team, position, points, place]) => (
+        {podium.map(([name, number, team, position, points, place]) => (
           <div className={`mockup-podium-item mockup-podium-item--${place}`} key={position}>
             <div className="mockup-podium-driver">
-              <strong>{name}</strong>
+              <div className="mockup-podium-driver-line">
+                <DriverNumber number={number} />
+                <strong>{name}</strong>
+              </div>
               <span>{team}</span>
             </div>
             <div className="mockup-podium-block">
@@ -182,10 +185,16 @@ function MockupStandings() {
         <span>Drivers / Constructors</span>
       </div>
       <ol>
-        {standings.map(([rank, name, team, points]) => (
+        {standings.map(([rank, number, name, team, points]) => (
           <li key={rank}>
             <span>{rank}</span>
-            <div><strong>{name}</strong><small>{team}</small></div>
+            <div>
+              <div className="mockup-standings-driver-line">
+                <DriverNumber number={number} />
+                <strong>{name}</strong>
+              </div>
+              <small>{team}</small>
+            </div>
             <b>{points}<small>PTS</small></b>
           </li>
         ))}
