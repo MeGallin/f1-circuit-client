@@ -640,7 +640,7 @@ export function RaceResultTable({ rows, names = {}, snapshotId }) {
   );
 }
 
-function SessionNavigation({ value, onChange, features = [] }) {
+export function SessionNavigation({ value, onChange, features = [] }) {
   const navigation = useRef(null);
   const availability = Object.fromEntries(
     features.map((feature) => [feature.key, feature]),

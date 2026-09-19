@@ -9,6 +9,7 @@ import RaceDetail, {
   ImpactPanel,
   RaceRecords,
   RaceResultTable,
+  SessionNavigation,
   seriesWindowError,
   toUtcIso,
 } from "../src/pages/RaceDetail";
@@ -96,6 +97,31 @@ test("race classification is readable as a complete results table", () => {
   expect(screen.getByText("Pit lane")).toBeInTheDocument();
   expect(screen.getByText("1:28.293 · rank 6")).toBeInTheDocument();
   expect(screen.getByText("0.50")).toBeInTheDocument();
+});
+test("session navigation groups every dataset and disables known unavailable data", async () => {
+  const onChange = vi.fn();
+  render(
+    <SessionNavigation
+      value="results"
+      onChange={onChange}
+      features={[{ key: "laps", coverage: "unavailable" }]}
+    />,
+  );
+  for (const label of [
+    "Results",
+    "Qualifying",
+    "Pace & laps",
+    "Strategy",
+    "Conditions",
+    "Race events",
+    "More data",
+  ])
+    expect(screen.getByRole("heading", { name: label })).toBeInTheDocument();
+  expect(screen.getAllByRole("tab")).toHaveLength(14);
+  expect(screen.getByRole("tab", { name: /Laps/ })).toBeDisabled();
+  await userEvent.click(screen.getByRole("tab", { name: "Results" }));
+  await userEvent.keyboard("{ArrowRight}");
+  expect(onChange).toHaveBeenLastCalledWith("qualifying");
 });
 test("advanced session datasets retain exact values and publication boundaries", () => {
   render(
