@@ -7,6 +7,16 @@
   margin-bottom: var(--apex-space-6);
   color: var(--apex-color-muted);
 }
+.calendar-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--apex-space-4);
+}
+.calendar-filter {
+  padding: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
 .calendar-explainer {
   padding: var(--apex-space-6);
   color: var(--apex-color-muted);
@@ -76,6 +86,10 @@
 }
 .calendar-event > .status {
   justify-self: start;
+}
+.calendar-event-actions {
+  justify-self: start;
+  font-size: var(--apex-type-caption-size);
 }
 .calendar-event-detail {
   grid-column: 1 / -1;

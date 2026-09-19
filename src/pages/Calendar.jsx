@@ -35,6 +35,21 @@ import {
   selectLayout,
 } from "../components/visuals";
 
+const calendarFilters = [
+  { value: "all", label: "All rounds" },
+  { value: "completed", label: "Completed" },
+  { value: "upcoming", label: "Upcoming" },
+];
+
+export function filterCalendarEvents(events, filter = "all") {
+  return (events || []).filter((event) => {
+    if (filter === "completed") return event.status === "completed";
+    if (filter === "upcoming")
+      return ["scheduled", "upcoming"].includes(event.status);
+    return true;
+  });
+}
+
 export function CalendarEvents({
   events,
   selectedId,
@@ -59,7 +74,8 @@ export function CalendarEvents({
           <div className="calendar-event-name">
             <button
               type="button"
-              aria-pressed={event.id === selectedId}
+              aria-expanded={event.id === selectedId}
+              aria-controls={`calendar-event-detail-${encodeURIComponent(event.id)}`}
               onClick={() => onSelect(event.id)}
             >
               {event.name}
@@ -97,8 +113,18 @@ export function CalendarEvents({
           <StatusBadge>
             {event.status === "unknown" ? "Status not supplied" : event.status}
           </StatusBadge>
+          <div className="calendar-event-actions">
+            <ActionLink
+              to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
+            >
+              Open race detail
+            </ActionLink>
+          </div>
           {event.id === selectedId && (
-            <div className="calendar-event-detail">
+            <div
+              className="calendar-event-detail"
+              id={`calendar-event-detail-${encodeURIComponent(event.id)}`}
+            >
               <CircuitSilhouette
                 layout={event.id === selectedId ? selectedLayout : null}
                 circuitName={event.circuit?.displayName}
@@ -111,11 +137,6 @@ export function CalendarEvents({
                 {selectedCountry ||
                   "Location not supplied by the calendar source."}
               </p>
-              <ActionLink
-                to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
-              >
-                Open race detail
-              </ActionLink>
               <p>
                 {event.schedule.circuitTimeZone
                   ? `Circuit time zone: ${event.schedule.circuitTimeZone}`
@@ -140,11 +161,12 @@ export function CalendarEvents({
   );
 }
 
-function SeasonCalendar({ year, selectedId, onSelect }) {
+function SeasonCalendar({ year, selectedId, onSelect, filter }) {
   const dispatch = useDispatch();
   const [pages, setPages] = useState([{}]);
   const query = useGetCalendarQuery({ year, ...pages.at(-1) });
   const data = query.currentData;
+  const visibleEvents = filterCalendarEvents(data?.items, filter);
   const selectedEvent = data?.items.find((event) => event.id === selectedId);
   const selectedCircuitId = selectedEvent?.circuit?.id;
   const selectedProfile = useGetProfileQuery(
@@ -164,6 +186,14 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
     selectedEvent?.year,
   );
   const selectedCountry = selectedProfile.currentData?.profile?.country;
+  const latestResult = (data?.items || [])
+    .filter((event) => event.status === "completed")
+    .sort((a, b) => (b.round ?? 0) - (a.round ?? 0))[0];
+  const nextRace = (data?.items || [])
+    .filter((event) => ["scheduled", "upcoming"].includes(event.status))
+    .sort((a, b) =>
+      String(a.schedule.date || "").localeCompare(String(b.schedule.date || "")),
+    )[0];
   const restart = () => {
     if (pages.length > 1) {
       setPages([{}]);
@@ -181,9 +211,25 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
               ? "Loading event count"
               : "Event count not supplied"}
         </p>
-        <Button variant="quiet" disabled={query.isFetching} onClick={restart}>
-          Refresh calendar
-        </Button>
+        <div className="calendar-toolbar-actions">
+          {latestResult && (
+            <ActionLink
+              to={`/events/${encodeURIComponent(latestResult.id)}?season=${year}`}
+            >
+              Open latest result
+            </ActionLink>
+          )}
+          {nextRace && (
+            <ActionLink
+              to={`/events/${encodeURIComponent(nextRace.id)}?season=${year}`}
+            >
+              Open next race
+            </ActionLink>
+          )}
+          <Button variant="quiet" disabled={query.isFetching} onClick={restart}>
+            Refresh calendar
+          </Button>
+        </div>
       </div>
       <Panel title="Every round">
         <p className="calendar-explainer">
@@ -198,20 +244,37 @@ function SeasonCalendar({ year, selectedId, onSelect }) {
         >
           {data && (
             <>
+              <div className="calendar-filter">
+                <Select
+                  label="Show rounds"
+                  value={filter}
+                  options={calendarFilters}
+                  onChange={(event) => onSelect(null, event.target.value)}
+                />
+              </div>
               {selectedId &&
-                !data.items.some((event) => event.id === selectedId) && (
+                !visibleEvents.some((event) => event.id === selectedId) && (
                   <p className="calendar-explainer" role="status">
-                    The selected event is not on this calendar page. No other
-                    event has been selected.
+                    The selected event is outside this filter. Choose All rounds
+                    to return to it.
                   </p>
                 )}
-              <CalendarEvents
-                events={data.items}
-                selectedId={selectedId}
-                onSelect={onSelect}
-                selectedLayout={selectedLayout}
-                selectedCountry={selectedCountry}
-              />
+              {visibleEvents.length ? (
+                <CalendarEvents
+                  events={visibleEvents}
+                  selectedId={selectedId}
+                  onSelect={(id) =>
+                    onSelect(id === selectedId ? null : id, filter)
+                  }
+                  selectedLayout={selectedLayout}
+                  selectedCountry={selectedCountry}
+                />
+              ) : (
+                <EmptyState
+                  title={`No ${filter} rounds published`}
+                  description="Try another calendar filter or check the source coverage note below."
+                />
+              )}
               {(data.page.hasMore || pages.length > 1) && (
                 <Pagination
                   page={pages.length}
@@ -249,6 +312,11 @@ export default function Calendar() {
     catalogue.currentData?.items,
     params.get("season"),
   );
+  const filter = calendarFilters.some(
+    (option) => option.value === params.get("status"),
+  )
+    ? params.get("status")
+    : "all";
   const options = selectSeasonOptions(catalogue.currentData);
   const exitReview = () => {
     const next = new URLSearchParams(params);
@@ -301,12 +369,19 @@ export default function Calendar() {
               (season) => season.year === year,
             ) ? (
               <SeasonCalendar
-                key={year}
+                key={`${year}:${filter}`}
                 year={year}
                 selectedId={params.get("event")}
-                onSelect={(id) =>
-                  setParams({ season: String(year), event: id })
-                }
+                filter={filter}
+                onSelect={(id, nextFilter = filter) => {
+                  const next = new URLSearchParams(params);
+                  next.set("season", String(year));
+                  if (id) next.set("event", id);
+                  else next.delete("event");
+                  if (nextFilter === "all") next.delete("status");
+                  else next.set("status", nextFilter);
+                  setParams(next);
+                }}
               />
             ) : (
               <SeasonUnavailable
