@@ -3,7 +3,8 @@ import { render, screen, cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { Tabs, Button, DataBoundary } from "../src/components/ui";
+import { Tabs, Button, DataBoundary, FreshnessSummary } from "../src/components/ui";
+import { seasonImportStatus } from "../src/features/season/selectors";
 import { Navigation, routeTitle } from "../src/components/AppShell";
 import { MemoryRouter } from "react-router-dom";
 afterEach(cleanup);
@@ -97,4 +98,21 @@ test("route titles identify the current archive journey", () => {
   expect(routeTitle("/events/event%3Aone")).toBe("Race detail");
   expect(routeTitle("/drivers/driver%3Aone")).toBe("Driver profile");
   expect(routeTitle("/unknown")).toBe("F1 Circuit");
+});
+test("freshness and archive coverage use distinct language", () => {
+  render(
+    <FreshnessSummary
+      meta={{
+        freshness: {
+          throughEventName: "Spanish Grand Prix",
+          throughDate: "13 Sept 2026",
+        },
+      }}
+    />,
+  );
+  expect(screen.getByText("Results through Spanish Grand Prix · 13 Sept 2026"))
+    .toBeInTheDocument();
+  expect(seasonImportStatus({ eventCount: 23, completedCount: 14 })).toBe(
+    "Partial import · 14/23 rounds",
+  );
 });
