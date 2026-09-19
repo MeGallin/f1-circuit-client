@@ -85,6 +85,11 @@ function EvidenceField({ field }) {
 export default function Evidence() {
   const { evidenceId } = useParams();
   const [params] = useSearchParams();
+  const requestedBackPath = params.get("from");
+  const backPath =
+    requestedBackPath?.startsWith("/") && !requestedBackPath.startsWith("//")
+      ? requestedBackPath
+      : "/sources";
   const query = useGetEvidenceQuery({
     evidenceId,
     snapshotId: params.get("snapshot") || undefined,
@@ -96,30 +101,42 @@ export default function Evidence() {
         eyebrow="PROVENANCE RECORD"
         title="Evidence detail"
         description="Field-level source assertions for a published archive record. Verification and coverage remain exactly as supplied."
-        actions={<ActionLink to="/sources">Back to sources</ActionLink>}
+        actions={
+          <ActionLink to={backPath}>
+            {requestedBackPath ? "Back to selected record" : "Back to sources"}
+          </ActionLink>
+        }
       />
       <DataBoundary query={query} onRetry={query.refetch}>
         {evidence ? (
           <>
-            <Panel title="Publication identity">
-              <dl className="evidence-facts evidence-publication">
-                <div>
-                  <dt>Evidence ID</dt>
-                  <dd>{evidence.evidenceId}</dd>
-                </div>
-                <div>
-                  <dt>Snapshot</dt>
-                  <dd>{evidence.snapshotId}</dd>
-                </div>
-                <div>
-                  <dt>Resource</dt>
-                  <dd>{evidence.resourceId}</dd>
-                </div>
-                <div>
-                  <dt>Derivation</dt>
-                  <dd>{evidence.derivationVersion || missing}</dd>
-                </div>
-              </dl>
+            <Panel title="Publication context">
+              <p className="evidence-summary">
+                This record shows the source assertions behind the published
+                values. Verification and coverage are not upgraded by this
+                page.
+              </p>
+              <details className="evidence-technical">
+                <summary>Technical publication details</summary>
+                <dl className="evidence-facts evidence-publication">
+                  <div>
+                    <dt>Evidence ID</dt>
+                    <dd>{evidence.evidenceId}</dd>
+                  </div>
+                  <div>
+                    <dt>Snapshot</dt>
+                    <dd>{evidence.snapshotId}</dd>
+                  </div>
+                  <div>
+                    <dt>Resource</dt>
+                    <dd>{evidence.resourceId}</dd>
+                  </div>
+                  <div>
+                    <dt>Derivation</dt>
+                    <dd>{evidence.derivationVersion || missing}</dd>
+                  </div>
+                </dl>
+              </details>
             </Panel>
             <Panel title="Field assertions">
               {evidence.fields.length ? (

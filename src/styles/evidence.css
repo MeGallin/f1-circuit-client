@@ -5,6 +5,19 @@
   margin: 0;
   padding: var(--apex-space-6);
 }
+.evidence-summary,
+.evidence-technical {
+  margin: 0;
+  padding: var(--apex-space-6);
+}
+.evidence-technical {
+  border-top: 1px solid var(--apex-color-line);
+}
+.evidence-technical summary {
+  min-height: 44px;
+  color: var(--apex-color-link);
+  cursor: pointer;
+}
 .evidence-publication {
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }

@@ -65,7 +65,11 @@ test("evidence detail preserves field coverage and safe source references", asyn
   });
   render(
     <Provider store={store}>
-      <MemoryRouter initialEntries={["/evidence/evidence-fixture"]}>
+      <MemoryRouter
+        initialEntries={[
+          "/evidence/evidence-fixture?from=%2Fevents%2Fevent%3Aone%3Fseason%3D2024",
+        ]}
+      >
         <Routes>
           <Route path="/evidence/:evidenceId" element={<Evidence />} />
         </Routes>
@@ -80,4 +84,7 @@ test("evidence detail preserves field coverage and safe source references", asyn
     "href",
     "https://example.com/source",
   );
+  expect(
+    screen.getByRole("link", { name: "Back to selected record" }),
+  ).toHaveAttribute("href", "/events/event:one?season=2024");
 });

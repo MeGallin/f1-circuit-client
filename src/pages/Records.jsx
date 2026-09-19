@@ -51,12 +51,12 @@ function setPageParams(params, values) {
   return next;
 }
 
-function evidencePath(row, snapshotId) {
+function evidencePath(row, snapshotId, from) {
   if (!row.evidenceId) return null;
-  const query = snapshotId
-    ? `?${new URLSearchParams({ snapshot: snapshotId })}`
-    : "";
-  return `/evidence/${encodeURIComponent(row.evidenceId)}${query}`;
+  const query = new URLSearchParams();
+  if (snapshotId) query.set("snapshot", snapshotId);
+  if (from) query.set("from", from);
+  return `/evidence/${encodeURIComponent(row.evidenceId)}${query.size ? `?${query}` : ""}`;
 }
 
 export default function Records() {
@@ -207,7 +207,7 @@ export default function Records() {
                     key: "evidenceId",
                     label: "Evidence",
                     render: (row) => {
-                      const path = evidencePath(row, snapshotId);
+                      const path = evidencePath(row, snapshotId, `/records?${params}`);
                       return path ? (
                         <TextLink to={path}>View evidence</TextLink>
                       ) : (

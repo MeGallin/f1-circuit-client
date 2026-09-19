@@ -451,7 +451,13 @@ function Facts({ items }) {
     </dl>
   );
 }
-export function RaceRecords({ rows, dataset, names = {}, snapshotId }) {
+export function RaceRecords({
+  rows,
+  dataset,
+  names = {},
+  snapshotId,
+  evidenceContext,
+}) {
   return (
     <ol className="race-records">
       {rows.map((row) => (
@@ -476,7 +482,7 @@ export function RaceRecords({ rows, dataset, names = {}, snapshotId }) {
           {row.evidenceId && (
             <p className="race-evidence">
               <TextLink
-                to={`/evidence/${encodeURIComponent(row.evidenceId)}${snapshotId ? `?snapshot=${encodeURIComponent(snapshotId)}` : ""}`}
+                to={evidencePath(row.evidenceId, snapshotId, evidenceContext)}
               >
                 View field evidence
               </TextLink>
@@ -570,18 +576,26 @@ function resultConstructor(row) {
   );
 }
 
-function resultEvidence(row, snapshotId) {
-  if (!row.evidenceId) return "Evidence not supplied";
+function evidencePath(evidenceId, snapshotId, evidenceContext) {
+  if (!evidenceId) return null;
+  const query = new URLSearchParams();
+  if (snapshotId) query.set("snapshot", snapshotId);
+  if (evidenceContext?.from) query.set("from", evidenceContext.from);
+  if (evidenceContext?.season) query.set("season", evidenceContext.season);
+  if (evidenceContext?.event) query.set("event", evidenceContext.event);
+  if (evidenceContext?.session) query.set("session", evidenceContext.session);
+  return `/evidence/${encodeURIComponent(evidenceId)}${query.size ? `?${query}` : ""}`;
+}
+
+function resultEvidence(row, snapshotId, evidenceContext) {
+  const path = evidencePath(row.evidenceId, snapshotId, evidenceContext);
+  if (!path) return "Evidence not supplied";
   return (
-    <TextLink
-      to={`/evidence/${encodeURIComponent(row.evidenceId)}${snapshotId ? `?snapshot=${encodeURIComponent(snapshotId)}` : ""}`}
-    >
-      View evidence
-    </TextLink>
+    <TextLink to={path}>View evidence</TextLink>
   );
 }
 
-export function RaceResultTable({ rows, names = {}, snapshotId }) {
+export function RaceResultTable({ rows, names = {}, snapshotId, evidenceContext }) {
   return (
     <DataTable
       caption="Race classification"
@@ -634,7 +648,7 @@ export function RaceResultTable({ rows, names = {}, snapshotId }) {
         {
           key: "evidence",
           label: "Evidence",
-          render: (row) => resultEvidence(row, snapshotId),
+            render: (row) => resultEvidence(row, snapshotId, evidenceContext),
         },
       ]}
     />
@@ -726,6 +740,8 @@ export function SessionNavigation({ value, onChange, features = [] }) {
 
 function SessionData({
   session,
+  eventId,
+  year,
   dataset,
   snapshotId,
   params,
@@ -778,6 +794,12 @@ function SessionData({
     ]),
   );
   const data = query.currentData;
+  const evidenceContext = {
+    from: `/events/${encodeURIComponent(eventId)}?season=${year}&session=${encodeURIComponent(session.id)}&view=${dataset}`,
+    season: String(year),
+    event: eventId,
+    session: session.id,
+  };
   const first = () => {
     const next = new URLSearchParams(params);
     next.delete("cursor");
@@ -826,6 +848,7 @@ function SessionData({
                 rows={data.items}
                 names={names}
                 snapshotId={snapshotId}
+                evidenceContext={evidenceContext}
               />
             ) : ["qualifying", "laps", "pit-stops"].includes(dataset) ? (
               <RaceRecords
@@ -833,6 +856,7 @@ function SessionData({
                 dataset={dataset}
                 names={names}
                 snapshotId={snapshotId}
+                evidenceContext={evidenceContext}
               />
             ) : (
               <AdvancedRecords
@@ -1084,6 +1108,8 @@ function Detail({ data, params, setParams, refresh }) {
                   <SessionData
                     key={`${session.id}:${requestedView}`}
                     session={session}
+                    eventId={event.id}
+                    year={event.year}
                     dataset={requestedView}
                     snapshotId={meta.snapshotId}
                     params={params}

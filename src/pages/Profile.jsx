@@ -79,7 +79,20 @@ export function HistoryRows({ kind, rows }) {
           ) : (
             <p className="muted">Race context not supplied by this history response.</p>
           )}
-          <RaceRecords rows={[row]} dataset="results" />
+          <RaceRecords
+            rows={[row]}
+            dataset="results"
+            evidenceContext={
+              row.eventContext
+                ? {
+                    from: `/events/${encodeURIComponent(row.eventContext.event.id)}?season=${row.eventContext.event.year}`,
+                    season: String(row.eventContext.event.year),
+                    event: row.eventContext.event.id,
+                    session: row.eventContext.session.id,
+                  }
+                : undefined
+            }
+          />
         </section>
       ))}
     </div>

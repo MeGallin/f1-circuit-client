@@ -73,7 +73,7 @@ test("records request preserves exact values, coverage and evidence snapshot", a
   expect(screen.getByText("partial")).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "View evidence" })).toHaveAttribute(
     "href",
-    "/evidence/evidence%3Aone?snapshot=snapshot%3Aone",
+    "/evidence/evidence%3Aone?snapshot=snapshot%3Aone&from=%2Frecords%3Fscope%3Ddriver%26metric%3Dpoints%26entityId%3Ddriver%253Aone",
   );
   const recordsRequest = calls.find((url) => url.pathname.endsWith("/records"));
   expect(recordsRequest.searchParams.get("scope")).toBe("driver");
