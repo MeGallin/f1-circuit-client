@@ -59,6 +59,15 @@
   font-size: var(--apex-type-caption-size);
   color: var(--apex-color-muted);
 }
+.entity-history-context {
+  display: grid;
+  gap: var(--apex-space-2);
+  margin-bottom: var(--apex-space-4);
+  font-size: var(--apex-type-caption-size);
+}
+.entity-history-context span {
+  color: var(--apex-color-muted);
+}
 .entity-picker {
   min-width: 0;
   border: 1px solid var(--apex-color-line);

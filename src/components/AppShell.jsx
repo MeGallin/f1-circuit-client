@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setTheme } from "../app/store";
 import { NavLink, Link, useLocation } from "react-router-dom";
@@ -12,6 +12,7 @@ import {
   MagnifyingGlassIcon,
   ChartLineUpIcon,
   ChatCircleTextIcon,
+  DotsThreeIcon,
 } from "@phosphor-icons/react";
 import { Select } from "./ui";
 import { runtimeYear } from "../features/season/selectors";
@@ -24,7 +25,11 @@ const navigation = [
   { to: "/questions", label: "Ask", icon: ChatCircleTextIcon },
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
-function Navigation({ mobile = false }) {
+const primaryNavigation = navigation.slice(0, 4);
+const secondaryNavigation = navigation.slice(4);
+
+export function Navigation({ mobile = false }) {
+  const [moreOpen, setMoreOpen] = useState(false);
   const { search, pathname } = useLocation();
   let eventId = new URLSearchParams(search).get("event");
   if (pathname.startsWith("/events/")) {
@@ -42,21 +47,56 @@ function Navigation({ mobile = false }) {
   if (eventId) navigationParams.set("event", eventId);
   if (!navigationParams.has("season"))
     navigationParams.set("season", String(runtimeYear()));
-  return (
-    <nav
-      aria-label={mobile ? "Mobile navigation" : "Main navigation"}
-      className={mobile ? "mobile-nav" : "rail-nav"}
+  const target = (to) =>
+    `${to}${navigationParams.size ? `?${navigationParams}` : ""}`;
+  const isSecondaryActive = secondaryNavigation.some(({ to }) =>
+    to === "/" ? pathname === "/" : pathname.startsWith(to),
+  );
+  useEffect(() => {
+    if (!moreOpen) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setMoreOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [moreOpen]);
+  const link = ({ to, label, icon: Icon }, onClick) => (
+    <NavLink
+      end={to === "/"}
+      key={to}
+      to={target(to)}
+      onClick={onClick}
     >
-      {navigation.map(({ to, label, icon: Icon }) => (
-        <NavLink
-          end={to === "/"}
-          key={to}
-          to={`${to}${navigationParams.size ? `?${navigationParams}` : ""}`}
-        >
-          <Icon aria-hidden size={21} weight="regular" />
-          <span>{label}</span>
-        </NavLink>
-      ))}
+      <Icon aria-hidden size={21} weight="regular" />
+      <span>{label}</span>
+    </NavLink>
+  );
+  if (mobile)
+    return (
+      <nav aria-label="Mobile navigation" className="mobile-nav">
+        {primaryNavigation.map((item) => link(item, () => setMoreOpen(false)))}
+        <div className="nav-more">
+          <button
+            className={isSecondaryActive ? "nav-more-toggle active" : "nav-more-toggle"}
+            type="button"
+            aria-expanded={moreOpen}
+            aria-controls="mobile-more-menu"
+            onClick={() => setMoreOpen((open) => !open)}
+          >
+            <DotsThreeIcon aria-hidden size={21} weight="regular" />
+            <span>More</span>
+          </button>
+          {moreOpen && (
+            <div id="mobile-more-menu" className="nav-more-menu">
+              {secondaryNavigation.map((item) => link(item, () => setMoreOpen(false)))}
+            </div>
+          )}
+        </div>
+      </nav>
+    );
+  return (
+    <nav aria-label="Main navigation" className="rail-nav">
+      {navigation.map((item) => link(item))}
     </nav>
   );
 }

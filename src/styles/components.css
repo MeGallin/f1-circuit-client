@@ -493,6 +493,57 @@ summary {
   color: var(--apex-color-link);
   background: var(--apex-color-elevated);
 }
+.nav-more {
+  position: relative;
+  min-width: 0;
+}
+.nav-more-toggle {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+  justify-items: center;
+  gap: var(--apex-space-2);
+  padding: var(--apex-space-5) var(--apex-space-3);
+  border: 0;
+  background: transparent;
+  color: var(--apex-color-muted);
+  font: inherit;
+  font-size: var(--apex-type-caption-size);
+  cursor: pointer;
+}
+.nav-more-toggle:hover,
+.nav-more-toggle:focus-visible,
+.nav-more-toggle.active {
+  color: var(--apex-color-link);
+  background: var(--apex-color-elevated);
+}
+.nav-more-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--apex-space-3));
+  min-width: 12rem;
+  padding: var(--apex-space-3);
+  display: grid;
+  gap: var(--apex-space-2);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+  box-shadow: var(--apex-color-shadow);
+}
+.nav-more-menu a {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--apex-space-3);
+  padding: var(--apex-space-4);
+  border-radius: var(--apex-shape-radius);
+  white-space: nowrap;
+}
+.nav-more-menu a:hover,
+.nav-more-menu a:focus-visible,
+.nav-more-menu a.active {
+  color: var(--apex-color-text);
+  background: var(--apex-color-elevated);
+}
 .skip-link {
   position: fixed;
   top: var(--apex-space-6);

@@ -58,6 +58,21 @@ const result = {
   },
   position: null,
   points: "0.50",
+  eventContext: {
+    event: {
+      id: "event:one",
+      name: "Example Grand Prix",
+      year: 2024,
+      round: 1,
+      schedule: { date: "2024-07-07" },
+    },
+    session: {
+      id: "session:one",
+      label: "Race",
+      kind: "race",
+      schedule: { date: "2024-07-07" },
+    },
+  },
 };
 let stores = [];
 afterEach(() => {
@@ -163,6 +178,9 @@ test("profile history keeps decimal points and resets pagination when the season
   mount("/drivers/driver%3Aone?season=2024");
   await screen.findByRole("heading", { name: "Example Driver" });
   await screen.findByText("0.50");
+  expect(
+    await screen.findByRole("link", { name: "Example Grand Prix" }),
+  ).toHaveAttribute("href", "/events/event%3Aone?season=2024");
   await userEvent.click(screen.getByRole("button", { name: "Next page" }));
   await waitFor(() =>
     expect(calls.filter((u) => u.pathname.endsWith("/results"))).toHaveLength(

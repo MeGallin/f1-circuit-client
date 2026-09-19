@@ -4,6 +4,8 @@ import { afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { Tabs, Button, DataBoundary } from "../src/components/ui";
+import { Navigation } from "../src/components/AppShell";
+import { MemoryRouter } from "react-router-dom";
 afterEach(cleanup);
 test("tabs support keyboard movement and selection semantics", async () => {
   function Sample() {
@@ -50,4 +52,23 @@ test("disabled actions cannot fire and errors offer explicit retry", async () =>
   );
   await userEvent.click(screen.getByRole("button", { name: "Try again" }));
   expect(action).toHaveBeenCalledOnce();
+});
+test("mobile navigation keeps primary tasks visible and groups secondary routes", async () => {
+  render(
+    <MemoryRouter initialEntries={["/records?season=2026"]}>
+      <Navigation mobile />
+    </MemoryRouter>,
+  );
+  expect(screen.getByRole("link", { name: "Overview" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Calendar" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Standings" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Explore" })).toBeInTheDocument();
+  const more = screen.getByRole("button", { name: "More" });
+  expect(more).toHaveAttribute("aria-expanded", "false");
+  await userEvent.click(more);
+  expect(more).toHaveAttribute("aria-expanded", "true");
+  expect(screen.getByRole("link", { name: "Records" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Ask" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Sources" })).toBeInTheDocument();
+  expect(more).toHaveClass("active");
 });

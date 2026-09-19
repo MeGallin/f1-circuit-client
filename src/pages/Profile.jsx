@@ -26,6 +26,7 @@ import {
   refreshSelection,
 } from "../features/entities/shared";
 import {
+  dateLabel,
   isScopedSeason,
   seasonOptionLabel,
 } from "../features/season/selectors";
@@ -58,11 +59,27 @@ export function HistoryRows({ kind, rows }) {
           key={row.id}
           aria-label={`${row.entry?.drivers?.map((d) => d.displayName).join(" / ") || "Entry"} result`}
         >
+          {row.eventContext ? (
+            <div className="entity-history-context">
+              <TextLink
+                to={`/events/${encodeURIComponent(row.eventContext.event.id)}?season=${row.eventContext.event.year}`}
+              >
+                {row.eventContext.event.name}
+              </TextLink>
+              <span>
+                {row.eventContext.event.year} · Round{" "}
+                {row.eventContext.event.round ?? "not supplied"} ·{" "}
+                {dateLabel(row.eventContext.event.schedule?.date)}
+              </span>
+              <span>
+                {row.eventContext.session.label} ·{" "}
+                {dateLabel(row.eventContext.session.schedule?.date)}
+              </span>
+            </div>
+          ) : (
+            <p className="muted">Race context not supplied by this history response.</p>
+          )}
           <RaceRecords rows={[row]} dataset="results" />
-          <details className="entity-session">
-            <summary>Session reference</summary>
-            <p>{row.sessionId}</p>
-          </details>
         </section>
       ))}
     </div>
@@ -344,7 +361,7 @@ export default function Profile({ kind }) {
             >
               <p className="muted">
                 {view === "history" && kind !== "circuit"
-                  ? "Each result is a published entry classification. The provider does not supply event labels in this history endpoint; session references are available with each record."
+                  ? "Each result is a published entry classification. Race and session context is shown when supplied; gaps remain explicit."
                   : "Only published records are shown. Gaps in coverage are not filled or estimated."}
               </p>
               <History
