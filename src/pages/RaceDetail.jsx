@@ -1,6 +1,6 @@
 import { EntityLink } from "../features/entities/shared";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   archiveApi,
@@ -19,6 +19,7 @@ import {
   Button,
   ActionLink,
   Select,
+  Input,
   Tabs,
   DataTable,
 } from "../components/ui";
@@ -45,7 +46,17 @@ const views = [
   { value: "intervals", label: "Intervals" },
   { value: "overtakes", label: "Overtakes" },
   { value: "radio", label: "Radio" },
+  { value: "telemetry", label: "Telemetry" },
+  { value: "locations", label: "Locations" },
 ];
+
+const SERIES_DATASETS = new Set(["telemetry", "locations"]);
+const SERIES_RESOLUTIONS = [
+  { value: "1s", label: "1 second" },
+  { value: "100ms", label: "100 milliseconds" },
+  { value: "raw", label: "Raw observations" },
+];
+const SERIES_WINDOW_MS = 120 * 1000;
 
 const advancedDatasetDefinitions = {
   stints: {
@@ -83,7 +94,7 @@ const advancedDatasetDefinitions = {
         "Humidity",
         (row) => numberWithUnit(row.humidityPercent, "%"),
       ],
-      ["rainfall", "Rainfall", booleanLabel],
+      ["rainfall", "Rainfall", (row) => booleanLabel(row)],
       ["windSpeedMs", "Wind", (row) => numberWithUnit(row.windSpeedMs, "m/s")],
     ],
   },
@@ -158,6 +169,32 @@ const advancedDatasetDefinitions = {
       ["attribution", "Attribution"],
     ],
   },
+  telemetry: {
+    caption: "Published telemetry samples",
+    columns: [
+      ["timestamp", "Time", dateTimeLabel],
+      ["speedKph", "Speed", (row) => numberWithUnit(row.speedKph, "km/h")],
+      [
+        "throttlePercent",
+        "Throttle",
+        (row) => numberWithUnit(row.throttlePercent, "%"),
+      ],
+      ["brakePressed", "Brake", (row) => booleanLabel(row, "brakePressed")],
+      ["gear", "Gear"],
+      ["rpm", "RPM"],
+      ["drs", "DRS"],
+    ],
+  },
+  locations: {
+    caption: "Published location samples",
+    columns: [
+      ["timestamp", "Time", dateTimeLabel],
+      ["x", "X", (row) => numberWithUnit(row.x, row.unit)],
+      ["y", "Y", (row) => numberWithUnit(row.y, row.unit)],
+      ["z", "Z", (row) => numberWithUnit(row.z, row.unit)],
+      ["coordinateSystem", "Coordinate system"],
+    ],
+  },
 };
 
 function dateTimeLabel(row) {
@@ -172,8 +209,8 @@ function numberWithUnit(value, unit) {
   return value == null ? missing : `${value} ${unit}`;
 }
 
-function booleanLabel(row) {
-  return row.rainfall == null ? missing : row.rainfall ? "Yes" : "No";
+function booleanLabel(row, key = "rainfall") {
+  return row[key] == null ? missing : row[key] ? "Yes" : "No";
 }
 
 function entryList(ids, names) {
@@ -214,6 +251,147 @@ export function AdvancedRecords({ rows, dataset, names }) {
       }))}
     />
   );
+}
+
+export function toUtcIso(value) {
+  const input = String(value || "").trim();
+  if (!input) return null;
+  const withZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(input)
+    ? input
+    : `${input}:00Z`;
+  const timestamp = Date.parse(withZone);
+  return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : null;
+}
+
+function dateTimeInputValue(value) {
+  const timestamp = value ? new Date(value) : null;
+  if (!timestamp || Number.isNaN(timestamp.valueOf())) return "";
+  return (
+    [
+      timestamp.getUTCFullYear(),
+      String(timestamp.getUTCMonth() + 1).padStart(2, "0"),
+      String(timestamp.getUTCDate()).padStart(2, "0"),
+    ].join("-") +
+    `T${String(timestamp.getUTCHours()).padStart(2, "0")}:${String(timestamp.getUTCMinutes()).padStart(2, "0")}`
+  );
+}
+
+export function seriesWindowError(driverId, from, to) {
+  if (!driverId) return "Choose a driver before requesting a series.";
+  if (!from || !to) return "Enter both UTC start and end times.";
+  const start = Date.parse(from);
+  const end = Date.parse(to);
+  if (!Number.isFinite(start) || !Number.isFinite(end))
+    return "Use valid UTC date and time values.";
+  if (end <= start) return "The end time must be after the start time.";
+  if (end - start > SERIES_WINDOW_MS)
+    return "Choose a window of 120 seconds or less.";
+  return "";
+}
+
+function SeriesWindowControls({
+  dataset,
+  params,
+  setParams,
+  drivers,
+  identities,
+}) {
+  const driver = params.get("driver") || "";
+  const from = params.get("from") || "";
+  const to = params.get("to") || "";
+  const resolution = params.get("resolution") || "1s";
+  const [error, setError] = useState("");
+  const currentError = seriesWindowError(driver, toUtcIso(from), toUtcIso(to));
+  const options = drivers.length
+    ? [
+        { value: "", label: "Choose a driver" },
+        ...drivers.map((item) => ({ value: item.id, label: item.name })),
+      ]
+    : [{ value: "", label: "No driver entries supplied" }];
+  return (
+    <form
+      key={`${dataset}:${driver}:${from}:${to}:${resolution}`}
+      className="series-controls"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const values = new FormData(event.currentTarget);
+        const nextDriver = String(values.get("driver") || "");
+        const nextFrom = toUtcIso(values.get("from"));
+        const nextTo = toUtcIso(values.get("to"));
+        const nextError = seriesWindowError(nextDriver, nextFrom, nextTo);
+        setError(nextError);
+        if (nextError) return;
+        const next = new URLSearchParams(params);
+        next.set("driver", nextDriver);
+        next.set("from", nextFrom);
+        next.set("to", nextTo);
+        next.set("resolution", String(values.get("resolution") || "1s"));
+        next.delete("cursor");
+        setParams(next);
+      }}
+    >
+      <div className="series-controls-heading">
+        <strong>Bounded series window</strong>
+        <span>UTC · maximum 120 seconds · no interpolation</span>
+      </div>
+      <div className="series-controls-fields">
+        <Select
+          label="Driver"
+          name="driver"
+          defaultValue={driver}
+          options={options}
+        />
+        <Input
+          label="From (UTC)"
+          name="from"
+          type="datetime-local"
+          defaultValue={dateTimeInputValue(from)}
+          required
+        />
+        <Input
+          label="To (UTC)"
+          name="to"
+          type="datetime-local"
+          defaultValue={dateTimeInputValue(to)}
+          required
+        />
+        <Select
+          label="Resolution"
+          name="resolution"
+          defaultValue={resolution}
+          options={SERIES_RESOLUTIONS}
+        />
+      </div>
+      <Button type="submit" variant="secondary" disabled={!drivers.length}>
+        Load {dataset}
+      </Button>
+      {(error || currentError) && (
+        <p className="series-controls-error" role="status">
+          {error || currentError}
+        </p>
+      )}
+      {!drivers.length && !identities.isFetching && (
+        <p className="series-controls-note">
+          No driver identity is published for this session, so a series cannot
+          be requested safely.
+        </p>
+      )}
+    </form>
+  );
+}
+
+function sessionDrivers(items) {
+  const drivers = new Map();
+  for (const row of items || []) {
+    for (const driver of row.entry?.drivers || []) {
+      if (!drivers.has(driver.id))
+        drivers.set(driver.id, {
+          id: driver.id,
+          name: driver.displayName || driver.id,
+        });
+    }
+  }
+  return [...drivers.values()];
 }
 function Facts({ items }) {
   return (
@@ -329,12 +507,26 @@ function SessionData({
   onSnapshotReset,
 }) {
   const cursor = params.get("cursor") || undefined;
-  const query = useGetSessionDataQuery({
-    sessionId: session.id,
-    dataset,
-    snapshotId,
-    cursor,
-  });
+  const isSeries = SERIES_DATASETS.has(dataset);
+  const driverId = params.get("driver") || "";
+  const from = toUtcIso(params.get("from"));
+  const to = toUtcIso(params.get("to"));
+  const seriesError = isSeries ? seriesWindowError(driverId, from, to) : "";
+  const seriesReady = !isSeries || !seriesError;
+  const query = useGetSessionDataQuery(
+    {
+      sessionId: session.id,
+      dataset,
+      snapshotId,
+      cursor,
+      driverId: isSeries ? driverId : undefined,
+      from: isSeries ? from : undefined,
+      to: isSeries ? to : undefined,
+      resolution: isSeries ? params.get("resolution") || "1s" : undefined,
+      limit: isSeries ? 1000 : undefined,
+    },
+    { skip: !seriesReady },
+  );
   const identities = useGetSessionDataQuery(
     { sessionId: session.id, dataset: "results", snapshotId, limit: 200 },
     {
@@ -347,9 +539,12 @@ function SessionData({
         "intervals",
         "overtakes",
         "radio",
+        "telemetry",
+        "locations",
       ].includes(dataset),
     },
   );
+  const drivers = sessionDrivers(identities.currentData?.items);
   const names = Object.fromEntries(
     (identities.currentData?.items || []).map((row) => [
       row.entry?.id,
@@ -376,23 +571,43 @@ function SessionData({
         {session.label} · {dateLabel(session.schedule.date)} ·{" "}
         {session.status === "unknown" ? "Status not supplied" : session.status}
       </p>
+      {isSeries && (
+        <SeriesWindowControls
+          dataset={dataset}
+          params={params}
+          setParams={setParams}
+          drivers={drivers}
+          identities={identities}
+        />
+      )}
       <SourceNote meta={data?.meta} />
-      <DataBoundary
-        query={query}
-        empty={query.isSuccess && !data?.items.length}
-        onRetry={query.error?.status === 409 ? onSnapshotReset : query.refetch}
-      >
-        {data &&
-          (["results", "qualifying", "laps", "pit-stops"].includes(dataset) ? (
-            <RaceRecords rows={data.items} dataset={dataset} names={names} />
-          ) : (
-            <AdvancedRecords
-              rows={data.items}
-              dataset={dataset}
-              names={names}
-            />
-          ))}
-      </DataBoundary>
+      {isSeries && !seriesReady ? (
+        <EmptyState
+          title="Choose a bounded window"
+          description="Select a driver and a UTC window of 120 seconds or less before requesting this series."
+        />
+      ) : (
+        <DataBoundary
+          query={query}
+          empty={query.isSuccess && !data?.items.length}
+          onRetry={
+            query.error?.status === 409 ? onSnapshotReset : query.refetch
+          }
+        >
+          {data &&
+            (["results", "qualifying", "laps", "pit-stops"].includes(
+              dataset,
+            ) ? (
+              <RaceRecords rows={data.items} dataset={dataset} names={names} />
+            ) : (
+              <AdvancedRecords
+                rows={data.items}
+                dataset={dataset}
+                names={names}
+              />
+            ))}
+        </DataBoundary>
+      )}
       {data && (
         <nav className="race-pagination" aria-label="Session data pages">
           <Button

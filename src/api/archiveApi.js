@@ -29,6 +29,8 @@ export const sessionDatasets = [
   "intervals",
   "overtakes",
   "radio",
+  "telemetry",
+  "locations",
 ];
 function entityUrl(kind, id) {
   if (!Object.hasOwn(entityKinds, kind))

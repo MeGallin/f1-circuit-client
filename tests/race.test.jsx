@@ -7,6 +7,8 @@ import { MemoryRouter, Routes, Route, useLocation } from "react-router-dom";
 import RaceDetail, {
   AdvancedRecords,
   RaceRecords,
+  seriesWindowError,
+  toUtcIso,
 } from "../src/pages/RaceDetail";
 import {
   archiveApi,
@@ -91,6 +93,24 @@ test("advanced session datasets retain exact values and publication boundaries",
   expect(screen.getAllByText("Not supplied").length).toBeGreaterThan(0);
   expect(screen.getByText("No")).toBeInTheDocument();
   expect(screen.getByText(/14:00:00 UTC/)).toBeInTheDocument();
+});
+test("series requests require an explicit bounded UTC window", () => {
+  expect(toUtcIso("2024-07-07T14:00")).toBe("2024-07-07T14:00:00.000Z");
+  expect(
+    seriesWindowError(
+      "driver-fixture",
+      "2024-07-07T14:00:00.000Z",
+      "2024-07-07T14:00:59.000Z",
+    ),
+  ).toBe("");
+  expect(
+    seriesWindowError(
+      "driver-fixture",
+      "2024-07-07T14:00:00.000Z",
+      "2024-07-07T14:02:01.000Z",
+    ),
+  ).toContain("120 seconds");
+  expect(seriesWindowError("", null, null)).toContain("Choose a driver");
 });
 test("lap pagination uses supported cursor/snapshot parameters and its URL survives a fresh mount", async () => {
   const meta = {
