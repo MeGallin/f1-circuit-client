@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   ArrowRightIcon,
   CalendarBlankIcon,
-  FlagCheckeredIcon,
 } from "@phosphor-icons/react";
 import {
   Panel,
@@ -129,14 +128,6 @@ export function RaceFocus({ summary, snapshotId }) {
           size="hero"
           fallback="message"
         />
-        {!layout && (
-          <FlagCheckeredIcon
-            size={64}
-            weight="light"
-            aria-hidden
-            className="race-focus-icon"
-          />
-        )}
       </div>
       <div className="race-focus-bottom">
         <ActionLink

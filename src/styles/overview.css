@@ -227,11 +227,6 @@
   justify-self: start;
   width: min(100%, 15rem);
 }
-.race-focus-icon {
-  display: none;
-  color: var(--apex-color-muted);
-  flex-shrink: 0;
-}
 .race-focus-bottom {
   display: flex;
   flex-wrap: wrap;
@@ -416,9 +411,6 @@
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
-  }
-  .race-focus-icon {
-    display: block;
   }
   .calendar-row {
     grid-template-columns: 28px minmax(0, 1fr) auto;
