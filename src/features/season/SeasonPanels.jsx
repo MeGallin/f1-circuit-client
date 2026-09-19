@@ -46,6 +46,7 @@ function ResultsAvailability({ season = {} }) {
       aria-label="Season results coverage"
     >
       <div className="race-focus-availability-heading">
+        <p className="eyebrow">EVENTS</p>
         <p className="race-focus-availability-count">
           <strong>{resultsCount}</strong>
           <span>of {eventCount} events</span>
