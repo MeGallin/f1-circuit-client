@@ -29,8 +29,15 @@ import {
 } from "./selectors";
 import { entryName } from "./raceFormat";
 import { RaceCountdown } from "../../components/RaceCountdown";
+import { EventInsightDialog } from "./EventInsightDialog";
+import { SeasonEventStrip } from "./SeasonEventStrip";
 
-function ResultsAvailability({ season = {} }) {
+function ResultsAvailability({
+  season = {},
+  events,
+  selectedEventId,
+  onSelectEvent,
+}) {
   const resultsCount = Number.isFinite(Number(season.resultsEventCount))
     ? season.resultsEventCount
     : season.completedCount;
@@ -52,20 +59,20 @@ function ResultsAvailability({ season = {} }) {
           <span>of {eventCount} events</span>
         </p>
       </div>
-      <div className="coverage-segments" aria-hidden>
-        {Array.from({ length: eventCount }, (_, i) => (
-          <span
-            key={i}
-            className={i < resultsCount ? "filled" : ""}
-          />
-        ))}
-      </div>
+      <SeasonEventStrip
+        events={events}
+        eventCount={eventCount}
+        resultsCount={resultsCount}
+        selectedEventId={selectedEventId}
+        onSelect={onSelectEvent}
+      />
     </div>
   );
 }
 export function RaceFocus({ summary, snapshotId }) {
   const event = focusEvent(summary);
   const focusKind = focusEventKind(summary);
+  const [selectedEventId, setSelectedEventId] = useState(null);
   const circuitId = event?.circuit?.id;
   const circuitProfile = useGetProfileQuery(
     { kind: "circuit", id: circuitId, snapshotId },
@@ -79,6 +86,12 @@ export function RaceFocus({ summary, snapshotId }) {
     { eventId: event?.id, snapshotId },
     { skip: !event?.id || focusKind !== "latest" },
   );
+  const calendarQuery = useGetCalendarQuery({
+    year: summary.season?.year,
+    snapshotId,
+  });
+  const calendarEvents = calendarQuery.currentData?.items || [];
+  const selectedEvent = calendarEvents.find((item) => item.id === selectedEventId);
   const layout = selectLayout(circuitLayouts.currentData?.items, event?.year);
   const country = circuitProfile.currentData?.profile?.country;
   if (!event)
@@ -127,7 +140,12 @@ export function RaceFocus({ summary, snapshotId }) {
           fallback="message"
         />
       </div>
-      <ResultsAvailability season={summary.season} />
+      <ResultsAvailability
+        season={summary.season}
+        events={calendarEvents}
+        selectedEventId={selectedEventId}
+        onSelectEvent={(selected) => setSelectedEventId(selected.id)}
+      />
       <div className="race-focus-bottom">
         <ActionLink
           to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
@@ -147,6 +165,13 @@ export function RaceFocus({ summary, snapshotId }) {
           Explore the calendar
         </ActionLink>
       </div>
+      {selectedEvent && (
+        <EventInsightDialog
+          event={selectedEvent}
+          snapshotId={snapshotId}
+          onClose={() => setSelectedEventId(null)}
+        />
+      )}
     </section>
   );
 }

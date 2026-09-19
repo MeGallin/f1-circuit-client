@@ -1,0 +1,144 @@
+.event-dialog {
+  width: min(calc(100% - 2rem), var(--apex-size-dialog-max));
+  max-height: min(90dvh, 48rem);
+  padding: 0;
+  border: 1px solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+  color: var(--apex-color-text);
+  box-shadow: var(--apex-color-shadow);
+  overflow: hidden;
+  z-index: var(--apex-layer-dialog);
+}
+.event-dialog::backdrop {
+  background: var(--apex-color-overlay);
+}
+.event-dialog-shell {
+  display: grid;
+  max-height: min(90dvh, 48rem);
+  overflow: auto;
+}
+.event-dialog-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--apex-space-6);
+  align-items: start;
+  padding: var(--apex-space-8);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+.event-dialog-header h2 {
+  margin-top: var(--apex-space-4);
+  font-size: var(--apex-type-title-size);
+}
+.event-dialog-header .eyebrow {
+  margin: 0;
+}
+.event-dialog-meta {
+  margin-top: var(--apex-space-5);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-body-size);
+}
+.event-dialog-close {
+  min-width: var(--apex-size-target);
+  padding-inline: var(--apex-space-4);
+}
+.event-dialog-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--apex-space-5);
+  padding: var(--apex-space-6) var(--apex-space-8) 0;
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.event-dialog-body {
+  padding: var(--apex-space-6) var(--apex-space-8);
+}
+.event-dialog-results {
+  display: grid;
+  gap: var(--apex-space-5);
+}
+.event-dialog-section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--apex-space-5);
+}
+.event-dialog-section-heading h3 {
+  font-size: var(--apex-type-section-size);
+}
+.event-dialog-section-heading span {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.event-dialog-podium {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--apex-color-line);
+}
+.event-dialog-podium li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--apex-space-5);
+  min-height: var(--apex-size-target);
+  padding: var(--apex-space-5) 0;
+  border-bottom: 1px solid var(--apex-color-line);
+}
+.event-dialog-podium-position,
+.event-dialog-podium-points {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+}
+.event-dialog-podium li > div {
+  display: grid;
+  gap: var(--apex-space-1);
+  min-width: 0;
+}
+.event-dialog-podium strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.event-dialog-podium li > div span {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.event-dialog-podium-points {
+  white-space: nowrap;
+}
+.event-dialog-footer {
+  display: grid;
+  gap: var(--apex-space-5);
+  padding: 0 var(--apex-space-8) var(--apex-space-8);
+}
+.event-dialog-footer .source-note {
+  margin: 0;
+}
+@media (max-width: 519px) {
+  .event-dialog {
+    width: 100%;
+    max-width: none;
+    max-height: 92dvh;
+    margin: auto 0 0;
+    border-bottom: 0;
+    border-radius: var(--apex-shape-radius) var(--apex-shape-radius) 0 0;
+  }
+  .event-dialog-shell {
+    max-height: 92dvh;
+  }
+  .event-dialog-header,
+  .event-dialog-body,
+  .event-dialog-status,
+  .event-dialog-footer {
+    padding-inline: var(--apex-space-6);
+  }
+  .event-dialog-header {
+    padding-block: var(--apex-space-7) var(--apex-space-6);
+  }
+  .event-dialog-header h2 {
+    font-size: var(--apex-type-title-mobile-size);
+  }
+}

@@ -65,6 +65,26 @@ test("latest completed race keeps the published podium in the first overview car
           }),
           { headers: { "Content-Type": "application/json" } },
         );
+      if (url.pathname.endsWith("/calendar"))
+        return new Response(
+          JSON.stringify({
+            data: {
+              items: [
+                {
+                  id: "event:2026:spanish-grand-prix",
+                  name: "Spanish Grand Prix",
+                  round: 14,
+                  status: "completed",
+                  schedule: { date: "2026-09-13", startsAt: null, timePrecision: "date" },
+                  circuit: { displayName: "Madring" },
+                },
+              ],
+              page: { total: 1, hasMore: false, nextCursor: null },
+            },
+            meta,
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        );
       return new Response(
         JSON.stringify({
           data: { profile: { country: "Spain" } },

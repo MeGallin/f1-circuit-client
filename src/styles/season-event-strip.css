@@ -1,0 +1,56 @@
+.season-event-strip {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--apex-space-2);
+}
+
+.season-event-segment {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: var(--apex-size-target);
+  padding: var(--apex-space-5) 0;
+  border: 0;
+  border-radius: var(--apex-shape-radius);
+  background: transparent;
+}
+
+.season-event-segment > span {
+  display: block;
+  height: var(--apex-shape-active-indicator);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-line);
+  transition:
+    background var(--apex-motion-feedback) var(--apex-motion-easing),
+    box-shadow var(--apex-motion-feedback) var(--apex-motion-easing),
+    transform var(--apex-motion-feedback) var(--apex-motion-easing);
+}
+
+.season-event-segment--complete > span {
+  background: var(--apex-color-accent);
+}
+
+.season-event-segment:hover > span,
+.season-event-segment:focus-visible > span {
+  background: var(--apex-color-accent-hover);
+  transform: scaleY(1.5);
+}
+
+.season-event-segment--selected > span {
+  background: var(--apex-color-selection-marker);
+  box-shadow: 0 0 0 var(--apex-shape-focus-width) var(--apex-color-focus);
+}
+
+.season-event-segment--placeholder {
+  cursor: default;
+}
+
+@media (max-width: 519px) {
+  .season-event-strip {
+    gap: var(--apex-space-1);
+  }
+
+  .season-event-segment {
+    min-height: var(--apex-size-target);
+  }
+}
