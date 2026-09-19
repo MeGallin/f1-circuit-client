@@ -71,6 +71,7 @@ function SeasonOverview({ year, seasons }) {
                   summary={summary}
                   snapshotId={data.meta.snapshotId}
                 />
+                <StandingsPreview key={`standings-${year}`} summary={summary} />
               </div>
               <div className="overview-jump">
                 <p>
@@ -90,7 +91,6 @@ function SeasonOverview({ year, seasons }) {
                   eventId={focusEvent(summary)?.id}
                   onSnapshotReset={query.refetch}
                 />
-                <StandingsPreview key={`standings-${year}`} summary={summary} />
               </div>
               <SourceNote meta={data.meta} />
             </>
