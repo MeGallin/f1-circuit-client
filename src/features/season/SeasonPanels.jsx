@@ -1,12 +1,8 @@
 import { useState } from "react";
-import {
-  ArrowRightIcon,
-  CalendarBlankIcon,
-} from "@phosphor-icons/react";
+import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
   Panel,
   StatusBadge,
-  Button,
   Tabs,
   EmptyState,
   SourceNote,
@@ -27,9 +23,9 @@ import {
 } from "../../components/visuals";
 import {
   dateLabel,
+  adjacentCalendarEvents,
   focusEvent,
   focusEventKind,
-  previewCalendar,
 } from "./selectors";
 import { entryName } from "./raceFormat";
 
@@ -206,17 +202,13 @@ function RacePodium({ detail, isFetching, isError }) {
     </section>
   );
 }
-function CalendarRows({ events, selectedId }) {
+function CalendarContextRows({ events }) {
   return (
     <ol className="calendar-rows">
-      {events.map((event) => (
+      {events.map(({ event, label }) => (
         <li
           key={event.id}
-          className={
-            event.id === selectedId
-              ? "calendar-row calendar-row--selected"
-              : "calendar-row"
-          }
+          className="calendar-row calendar-row--context"
         >
           <span className="round-number">
             <span className="sr-only">Round </span>
@@ -225,6 +217,7 @@ function CalendarRows({ events, selectedId }) {
               : String(event.round).padStart(2, "0")}
           </span>
           <div>
+            <p className="calendar-row-label">{label}</p>
             <strong>{event.name}</strong>
             <p>
               <CountryFlag
@@ -258,23 +251,15 @@ export function CalendarPreview({
   onSnapshotReset,
 }) {
   const query = useGetCalendarQuery({ year, snapshotId });
-  const [expanded, setExpanded] = useState(false);
   const events = query.currentData?.items || [];
+  const { previous, next } = adjacentCalendarEvents(events, eventId);
+  const contextEvents = [
+    previous && { event: previous, label: "Previous event" },
+    next && { event: next, label: "Next event" },
+  ].filter(Boolean);
   return (
     <div id="season-calendar" className="anchor-section">
-      <Panel
-        title="Around the calendar"
-        action={
-          <Button
-            variant="quiet"
-            onClick={() => setExpanded(!expanded)}
-            disabled={!events.length}
-          >
-            {expanded ? "Show nearby rounds" : "Show all rounds"}
-            <ArrowRightIcon size={17} aria-hidden />
-          </Button>
-        }
-      >
+      <Panel title="Previous and next events">
         <DataBoundary
           query={query}
           empty={query.isSuccess && !events.length}
@@ -282,11 +267,10 @@ export function CalendarPreview({
             query.error?.status === 409 ? onSnapshotReset : query.refetch
           }
         >
-          {events.length > 0 && (
-            <CalendarRows
-              events={expanded ? events : previewCalendar(events, eventId)}
-              selectedId={eventId}
-            />
+          {contextEvents.length > 0 ? (
+            <CalendarContextRows events={contextEvents} />
+          ) : (
+            <EmptyState title="No adjacent events available" />
           )}
         </DataBoundary>
       </Panel>

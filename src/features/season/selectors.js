@@ -83,6 +83,14 @@ export function previewCalendar(events, eventId) {
   const index = events.findIndex((e) => e.id === eventId);
   return events.slice(Math.max(0, index - 1), Math.max(0, index - 1) + 4);
 }
+export function adjacentCalendarEvents(events, eventId) {
+  const index = events.findIndex((e) => e.id === eventId);
+  if (index < 0) return { previous: null, next: null };
+  return {
+    previous: events[index - 1] || null,
+    next: events[index + 1] || null,
+  };
+}
 export function dateLabel(value) {
   if (!value) return "Date not supplied";
   return new Intl.DateTimeFormat("en-GB", {

@@ -12,6 +12,7 @@ import {
   selectSeasonOptions,
   selectedSeason,
   focusEvent,
+  adjacentCalendarEvents,
   previewCalendar,
   dateLabel,
 } from "../src/features/season/selectors";
@@ -77,6 +78,17 @@ test("calendar preview preserves source order and UTC dates", () => {
     "5",
   ]);
   expect(dateLabel("2024-07-07")).toBe("07 Jul 2024");
+});
+test("calendar context identifies only the previous and next events", () => {
+  const rows = Array.from({ length: 3 }, (_, i) => ({ id: String(i) }));
+  expect(adjacentCalendarEvents(rows, "1")).toEqual({
+    previous: { id: "0" },
+    next: { id: "2" },
+  });
+  expect(adjacentCalendarEvents(rows, "0")).toEqual({
+    previous: null,
+    next: { id: "1" },
+  });
 });
 test("contract envelopes keep metadata and exact fractional points unchanged", () => {
   const meta = {

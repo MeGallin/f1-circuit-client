@@ -337,6 +337,17 @@
   background: var(--apex-color-elevated);
   border-left-color: var(--apex-color-accent);
 }
+.calendar-row--context {
+  border-left-color: var(--apex-color-line);
+}
+.calendar-row-label {
+  margin: 0 0 var(--apex-space-2);
+  color: var(--apex-color-accent);
+  font-size: var(--apex-type-eyebrow-size) !important;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .calendar-row strong,
 .leader-list strong {
   font-size: var(--apex-type-body-size);
