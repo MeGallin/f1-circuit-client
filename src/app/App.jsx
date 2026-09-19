@@ -3,6 +3,7 @@ import Profile from "../pages/Profile";
 import Compare from "../pages/Compare";
 import AppShell from "../components/AppShell";
 import Overview from "../pages/Overview";
+import OverviewLayoutMockups from "../pages/OverviewLayoutMockups";
 import Calendar from "../pages/Calendar";
 import RaceDetail from "../pages/RaceDetail";
 import Standings from "../pages/Standings";
@@ -26,6 +27,7 @@ export default function App() {
     <AppShell>
       <Routes>
         <Route path="/" element={<Overview />} />
+        <Route path="/design/overview-layouts" element={<OverviewLayoutMockups />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/events/:eventId" element={<RaceDetail />} />
         <Route path="/standings" element={<Standings />} />

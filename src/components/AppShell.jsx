@@ -43,6 +43,7 @@ export function routeTitle(pathname) {
   if (pathname.startsWith("/constructors/")) return "Constructor profile";
   if (pathname.startsWith("/circuits/")) return "Circuit profile";
   if (pathname === "/design") return "Design system";
+  if (pathname === "/design/overview-layouts") return "Overview layout study";
   return "F1 Circuit";
 }
 

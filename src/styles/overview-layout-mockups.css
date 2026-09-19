@@ -1,0 +1,583 @@
+.overview-mockup-page {
+  display: grid;
+  gap: var(--apex-space-10);
+}
+
+.overview-mockup-intro {
+  display: grid;
+  gap: var(--apex-space-5);
+  max-width: 62rem;
+}
+
+.overview-mockup-intro h1 {
+  max-width: 18ch;
+}
+
+.overview-mockup-intro > p:last-child {
+  max-width: 62ch;
+  color: var(--apex-color-muted);
+}
+
+.overview-mockup-list {
+  display: grid;
+  gap: var(--apex-space-12);
+}
+
+.overview-mockup-frame {
+  display: grid;
+  gap: var(--apex-space-7);
+  padding: var(--apex-space-8);
+  border: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+}
+
+.overview-mockup-frame-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--apex-space-8);
+  padding-bottom: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+
+.overview-mockup-frame-heading > div {
+  display: grid;
+  gap: var(--apex-space-3);
+}
+
+.overview-mockup-frame-heading > div > span,
+.mockup-race-topline > span,
+.mockup-section-heading > span,
+.mockup-event-progress-heading > span,
+.mockup-event-guidance > span,
+.mockup-calendar-row small,
+.mockup-panel-heading > span {
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.overview-mockup-frame-heading h2 {
+  font-size: var(--apex-type-subheading-size);
+}
+
+.overview-mockup-frame-heading > p {
+  max-width: 42ch;
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+
+.overview-mockup-grid {
+  display: grid;
+  gap: var(--apex-layout-overview-gap);
+  align-items: start;
+}
+
+.overview-mockup-freshness,
+.overview-mockup-provenance {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+}
+
+.overview-mockup-freshness {
+  grid-area: freshness;
+}
+
+.overview-mockup-race {
+  grid-area: race;
+  min-width: 0;
+}
+
+.overview-mockup-standings {
+  grid-area: standings;
+  min-width: 0;
+}
+
+.overview-mockup-calendar {
+  grid-area: calendar;
+  min-width: 0;
+}
+
+.overview-mockup-provenance {
+  grid-area: provenance;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-5);
+  padding-top: var(--apex-space-5);
+  border-top: 1px solid var(--apex-color-line);
+}
+
+.overview-mockup-provenance span {
+  white-space: nowrap;
+}
+
+.overview-mockup-provenance span + span {
+  padding-left: var(--apex-space-5);
+  border-left: 1px solid var(--apex-color-line);
+}
+
+.mockup-race-focus,
+.mockup-standings,
+.mockup-calendar {
+  min-width: 0;
+  border: 1px solid var(--apex-color-line);
+  background: var(--apex-color-canvas);
+}
+
+.mockup-race-focus {
+  display: grid;
+  gap: var(--apex-space-7);
+  padding: var(--apex-space-7);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+}
+
+.mockup-race-topline,
+.mockup-panel-heading,
+.mockup-event-progress-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--apex-space-5);
+}
+
+.mockup-race-topline b,
+.mockup-calendar-row > b {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+  font-weight: 400;
+}
+
+.mockup-race-identity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.6fr);
+  align-items: center;
+  gap: var(--apex-space-8);
+}
+
+.mockup-round {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+}
+
+.mockup-race-identity h3 {
+  max-width: 12ch;
+  margin-top: var(--apex-space-4);
+  font-family: var(--apex-font-display);
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  line-height: 0.95;
+}
+
+.mockup-race-identity p {
+  margin-top: var(--apex-space-5);
+  color: var(--apex-color-muted);
+}
+
+.mockup-track-state {
+  display: grid;
+  gap: var(--apex-space-3);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+  text-align: right;
+}
+
+.mockup-track-placeholder {
+  display: grid;
+  min-height: 7rem;
+  place-items: center;
+  border: 1px dashed var(--apex-color-control-border);
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+  text-align: center;
+}
+
+.mockup-results,
+.mockup-event-progress,
+.mockup-race-footer {
+  display: grid;
+  gap: var(--apex-space-5);
+  padding-top: var(--apex-space-6);
+  border-top: 1px solid var(--apex-color-line);
+}
+
+.mockup-section-heading small,
+.mockup-event-progress-heading small {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+
+.mockup-podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--apex-space-2);
+}
+
+.mockup-podium-item {
+  display: grid;
+  align-content: end;
+  min-width: 0;
+  gap: var(--apex-space-3);
+  text-align: center;
+}
+
+.mockup-podium-item--second { order: 1; }
+.mockup-podium-item--winner { order: 2; }
+.mockup-podium-item--third { order: 3; }
+
+.mockup-podium-driver {
+  display: grid;
+  gap: var(--apex-space-1);
+  min-width: 0;
+}
+
+.mockup-podium-driver strong {
+  overflow: hidden;
+  font-size: var(--apex-type-caption-size);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mockup-podium-driver span,
+.mockup-podium-block span {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-eyebrow-size);
+}
+
+.mockup-podium-block {
+  display: grid;
+  min-height: 4rem;
+  place-items: center;
+  align-content: center;
+  gap: var(--apex-space-2);
+  border: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-line);
+  background: var(--apex-color-elevated);
+}
+
+.mockup-podium-item--winner .mockup-podium-block {
+  min-height: 7rem;
+  border-top-color: var(--apex-color-accent);
+}
+
+.mockup-podium-item--third .mockup-podium-block {
+  min-height: 3.5rem;
+}
+
+.mockup-podium-block strong {
+  font-family: var(--apex-font-display);
+  font-size: clamp(2rem, 4vw, 3.7rem);
+  line-height: 0.9;
+}
+
+.mockup-podium-item--second .mockup-podium-block strong { font-size: 2.45rem; }
+.mockup-podium-item--third .mockup-podium-block strong { font-size: 1.35rem; }
+
+.mockup-event-progress-heading strong {
+  font-family: var(--apex-font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 0.9;
+}
+
+.mockup-event-progress-heading strong small {
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-body-size);
+  font-weight: 400;
+}
+
+.mockup-event-guidance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--apex-space-4);
+  padding-left: var(--apex-space-4);
+  border-left: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+}
+
+.mockup-event-guidance strong {
+  font-size: var(--apex-type-caption-size);
+}
+
+.mockup-event-strip {
+  display: flex;
+  gap: var(--apex-space-2);
+}
+
+.mockup-event-strip i {
+  flex: 1;
+  height: var(--apex-shape-active-indicator);
+  background: var(--apex-color-line);
+}
+
+.mockup-event-strip i.is-complete,
+.mockup-event-legend i.is-complete {
+  background: var(--apex-color-accent);
+}
+
+.mockup-event-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-5);
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.mockup-event-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apex-space-2);
+}
+
+.mockup-event-legend i {
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--apex-color-line);
+}
+
+.mockup-race-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mockup-race-footer > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apex-space-3);
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+}
+
+.mockup-action {
+  display: inline-flex;
+  min-height: var(--apex-size-target);
+  align-items: center;
+  justify-content: center;
+  gap: var(--apex-space-3);
+  padding: var(--apex-space-4) var(--apex-space-5);
+  border: 1px solid var(--apex-color-control-border);
+  color: var(--apex-color-text);
+  font-size: var(--apex-type-control-size);
+  font-weight: 700;
+}
+
+.mockup-action--primary {
+  border-color: var(--apex-color-accent-border);
+  background: var(--apex-color-accent);
+  color: var(--apex-color-on-accent);
+}
+
+.mockup-standings,
+.mockup-calendar {
+  overflow: hidden;
+}
+
+.mockup-panel-heading {
+  padding: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+
+.mockup-panel-heading h3 {
+  font-size: var(--apex-type-section-size);
+}
+
+.mockup-standings ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mockup-standings li {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  gap: var(--apex-space-4);
+  align-items: center;
+  padding: var(--apex-space-4) var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+
+.mockup-standings li > span,
+.mockup-standings li > b,
+.mockup-standings li small {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+}
+
+.mockup-standings li > div {
+  display: grid;
+  gap: var(--apex-space-1);
+  min-width: 0;
+}
+
+.mockup-standings li strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mockup-standings li > b {
+  color: var(--apex-color-text);
+  font-size: var(--apex-type-points-size);
+  font-weight: 400;
+  text-align: right;
+}
+
+.mockup-standings li > b small {
+  display: block;
+  text-align: right;
+}
+
+.mockup-standings > p {
+  padding: var(--apex-space-6);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+
+.mockup-standings > .mockup-action,
+.mockup-calendar > .mockup-action {
+  margin: 0 var(--apex-space-6) var(--apex-space-6);
+}
+
+.mockup-calendar-row {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  gap: var(--apex-space-5);
+  padding: var(--apex-space-7) var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+
+.mockup-calendar-row > span {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+}
+
+.mockup-calendar-row > div {
+  display: grid;
+  gap: var(--apex-space-2);
+}
+
+.mockup-calendar-row strong {
+  font-size: var(--apex-type-body-size);
+}
+
+.mockup-calendar-row p,
+.mockup-calendar-row em {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+  font-style: normal;
+}
+
+.mockup-calendar-row em {
+  margin-top: var(--apex-space-3);
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-numeric);
+}
+
+.mockup-calendar-row > b {
+  display: grid;
+  align-content: start;
+  gap: var(--apex-space-2);
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  .overview-mockup-grid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(18rem, 1fr);
+    grid-template-areas:
+      "freshness freshness"
+      "race standings"
+      "calendar calendar"
+      "provenance provenance";
+  }
+
+  .overview-mockup-frame--race-first .overview-mockup-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+    grid-template-areas:
+      "freshness freshness"
+      "race race"
+      "standings calendar"
+      "provenance provenance";
+  }
+
+  .overview-mockup-frame--championship .overview-mockup-grid {
+    grid-template-columns: minmax(18rem, 0.75fr) minmax(0, 1.25fr);
+    grid-template-areas:
+      "freshness freshness"
+      "standings race"
+      "calendar calendar"
+      "provenance provenance";
+  }
+
+  .overview-mockup-frame--calendar-first .overview-mockup-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "freshness freshness"
+      "calendar race"
+      "standings standings"
+      "provenance provenance";
+  }
+}
+
+@media (max-width: 899px) {
+  .overview-mockup-frame {
+    padding: var(--apex-space-6);
+  }
+
+  .overview-mockup-frame-heading,
+  .mockup-race-identity {
+    align-items: start;
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .mockup-track-state {
+    text-align: left;
+  }
+}
+
+@media (max-width: 519px) {
+  .overview-mockup-intro h1 {
+    font-size: var(--apex-type-title-mobile-size);
+  }
+
+  .mockup-race-focus {
+    padding: var(--apex-space-6);
+  }
+
+  .mockup-podium-driver strong {
+    font-size: var(--apex-type-eyebrow-size);
+  }
+
+  .mockup-podium-item--second .mockup-podium-block strong { font-size: 2rem; }
+  .mockup-podium-item--third .mockup-podium-block strong { font-size: 1.1rem; }
+
+  .mockup-calendar-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+
+  .overview-mockup-provenance span + span {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .mockup-calendar-row > b {
+    grid-column: 2;
+    text-align: left;
+  }
+}
