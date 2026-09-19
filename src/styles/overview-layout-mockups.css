@@ -562,9 +562,8 @@
 
 .mockup-event-legend i {
   display: block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
+  width: 1.25rem;
+  height: var(--apex-shape-active-indicator);
   background: var(--apex-color-line);
 }
 
