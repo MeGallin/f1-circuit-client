@@ -109,9 +109,9 @@ function MockupEventStrip() {
         ))}
       </div>
       <div className="mockup-event-legend">
-        <RaceStatus status="completed">Completed</RaceStatus>
+        <span><i className="is-complete" /> Completed</span>
         <span><i /> Upcoming</span>
-        <b>Round 14 is the latest published result</b>
+        <b>Tap or click a marker to inspect that round.</b>
       </div>
     </section>
   );

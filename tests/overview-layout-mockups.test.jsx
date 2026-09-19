@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import OverviewLayoutMockups from "../src/pages/OverviewLayoutMockups";
 
 test("overview layout study presents the focused season-around-the-race mock-up", () => {
-  render(<OverviewLayoutMockups />);
+  const { container } = render(<OverviewLayoutMockups />);
   expect(screen.getByRole("heading", { level: 1, name: /put the season around the race/i })).toBeInTheDocument();
   expect(
     screen.getAllByRole("heading", { name: "Spanish Grand Prix" }),
@@ -19,4 +19,6 @@ test("overview layout study presents the focused season-around-the-race mock-up"
     ),
   ).toHaveLength(1);
   expect(screen.getAllByLabelText("Driver number 12")).toHaveLength(2);
+  expect(container.querySelector(".mockup-event-legend i.is-complete")).toBeInTheDocument();
+  expect(screen.getByText("Tap or click a marker to inspect that round.")).toBeInTheDocument();
 });
