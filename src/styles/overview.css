@@ -473,14 +473,6 @@
   background: var(--apex-color-canvas);
 }
 
-.season-around-race-freshness {
-  padding: var(--apex-space-5) var(--apex-space-7);
-  border-bottom: 1px solid var(--apex-color-line);
-  color: var(--apex-color-muted);
-  font-family: var(--apex-font-numeric);
-  font-size: var(--apex-type-caption-size);
-}
-
 .season-around-race-main {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(22rem, 1fr);
@@ -807,7 +799,6 @@
 }
 
 @media (max-width: 599px) {
-  .season-around-race-freshness,
   .season-progress,
   .season-around-race-provenance .source-note {
     padding-inline: var(--apex-space-6);

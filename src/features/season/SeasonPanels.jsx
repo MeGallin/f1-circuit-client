@@ -342,12 +342,6 @@ export function SeasonAroundRace({ summary, snapshotId, meta, onSnapshotReset })
 
   return (
     <section className="season-around-race" aria-label="Season around the race">
-      <div className="season-around-race-freshness">
-        Results through {summary.latestCompletedEvent?.name || "latest published result"}
-        {summary.latestCompletedEvent?.schedule?.date
-          ? ` · ${summary.latestCompletedEvent.schedule.date}`
-          : ""}
-      </div>
       <AdjacentEventBand event={nextEvent} label="NEXT EVENT" next />
       <div className="season-around-race-main">
         <RaceFocus
