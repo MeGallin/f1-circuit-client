@@ -154,7 +154,7 @@
 @media (min-width: 520px) {
   .race-podium {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: end;
+    align-items: start;
     gap: var(--apex-space-2);
   }
   .race-podium-row {
@@ -163,8 +163,8 @@
     flex-direction: column;
     justify-content: end;
     align-items: stretch;
-    align-self: end;
-    height: 6.5rem;
+    align-self: start;
+    height: auto;
     min-height: 0;
     border: var(--apex-shape-border) solid var(--apex-color-line);
     text-align: center;
@@ -175,30 +175,37 @@
   .race-podium-row--winner {
     grid-column: 2;
     grid-row: 1;
-    height: 11rem;
     border-left: 0;
   }
   .race-podium-row--second {
     grid-column: 1;
     grid-row: 1;
-    height: 8.5rem;
+    margin-top: var(--apex-space-10);
   }
   .race-podium-row--third {
     grid-column: 3;
     grid-row: 1;
-    height: 6.5rem;
+    margin-top: calc(var(--apex-space-10) + var(--apex-space-4));
   }
   .race-podium-driver {
-    flex: 0 0 auto;
+    box-sizing: border-box;
+    flex: 0 0 var(--apex-size-control);
     align-items: center;
     padding: 0 var(--apex-space-3) var(--apex-space-4);
     background: transparent;
   }
   .race-podium-block {
-    flex: 1 1 auto;
+    box-sizing: border-box;
+    flex: 0 0 6.5rem;
     min-width: 0;
     padding: var(--apex-space-5) var(--apex-space-4);
     border-top-color: var(--apex-color-line);
+  }
+  .race-podium-row--winner .race-podium-block {
+    flex-basis: 11rem;
+  }
+  .race-podium-row--second .race-podium-block {
+    flex-basis: 8.5rem;
   }
   .race-podium-row--winner .race-podium-block {
     border-top-color: var(--apex-color-accent);
