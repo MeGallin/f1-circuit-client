@@ -11,6 +11,7 @@ import {
   PaletteIcon,
   MagnifyingGlassIcon,
   ChartLineUpIcon,
+  ChatCircleTextIcon,
 } from "@phosphor-icons/react";
 import { Select } from "./ui";
 import { runtimeYear } from "../features/season/selectors";
@@ -20,6 +21,7 @@ const navigation = [
   { to: "/standings", label: "Standings", icon: RankingIcon },
   { to: "/explore", label: "Explore", icon: MagnifyingGlassIcon },
   { to: "/records", label: "Records", icon: ChartLineUpIcon },
+  { to: "/questions", label: "Ask", icon: ChatCircleTextIcon },
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
 function Navigation({ mobile = false }) {

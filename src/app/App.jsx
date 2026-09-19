@@ -9,6 +9,7 @@ import Standings from "../pages/Standings";
 import Sources from "../pages/Sources";
 import Evidence from "../pages/Evidence";
 import Records from "../pages/Records";
+import Questions from "../pages/Questions";
 import { lazy, Suspense } from "react";
 const Design = import.meta.env.DEV
   ? lazy(() => import("../pages/Design"))
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/sources" element={<Sources />} />
         <Route path="/evidence/:evidenceId" element={<Evidence />} />
         <Route path="/records" element={<Records />} />
+        <Route path="/questions" element={<Questions />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/drivers/:id" element={<Profile kind="driver" />} />

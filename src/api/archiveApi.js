@@ -166,6 +166,14 @@ export const archiveApi = createApi({
       }),
       transformResponse: collectionResponse,
     }),
+    askQuestion: builder.mutation({
+      query: ({ text, context }) => ({
+        url: "/questions",
+        method: "POST",
+        body: { text, ...(context ? { context } : {}) },
+      }),
+      transformResponse: (r) => objectResponse(r, "questionResult"),
+    }),
     getSessionData: builder.query({
       query: ({
         sessionId,
@@ -298,6 +306,7 @@ export const {
   useGetImpactQuery,
   useGetEvidenceQuery,
   useGetRecordsQuery,
+  useAskQuestionMutation,
   useGetSessionDataQuery,
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,

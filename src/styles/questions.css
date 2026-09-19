@@ -1,0 +1,77 @@
+.questions-form {
+  display: grid;
+  gap: var(--apex-space-6);
+  padding: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+.questions-form__text textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  border: 1px solid var(--apex-color-control-border);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+  color: var(--apex-color-text);
+  padding: var(--apex-space-4) var(--apex-space-5);
+  font: inherit;
+  line-height: 1.5;
+}
+.questions-form fieldset {
+  border: 1px solid var(--apex-color-line);
+  padding: var(--apex-space-5);
+  min-width: 0;
+}
+.questions-form legend {
+  padding-inline: var(--apex-space-3);
+  font-weight: 700;
+}
+.questions-context {
+  display: grid;
+  gap: var(--apex-space-5);
+  margin-top: var(--apex-space-5);
+}
+.question-result {
+  display: grid;
+  gap: var(--apex-space-5);
+  padding: var(--apex-space-6);
+}
+.question-result-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-5);
+  flex-wrap: wrap;
+}
+.question-values {
+  display: grid;
+  gap: var(--apex-space-4);
+  margin: 0;
+}
+.question-values > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.4fr) minmax(0, 1fr);
+  gap: var(--apex-space-5);
+  padding-block: var(--apex-space-4);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+.question-values dt {
+  color: var(--apex-color-muted);
+  overflow-wrap: anywhere;
+}
+.question-values dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.question-choices,
+.question-evidence ul {
+  display: flex;
+  gap: var(--apex-space-4);
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 768px) {
+  .questions-context {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
