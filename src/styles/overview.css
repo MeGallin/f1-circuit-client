@@ -165,7 +165,7 @@
     height: auto;
     min-height: 0;
     border: var(--apex-shape-border) solid var(--apex-color-line);
-    text-align: center;
+    text-align: left;
     background: transparent;
     border: 0;
     box-shadow: none;
@@ -188,7 +188,7 @@
   .race-podium-driver {
     box-sizing: border-box;
     flex: 0 0 var(--apex-size-control);
-    align-items: center;
+    align-items: flex-start;
     padding: 0 var(--apex-space-3) var(--apex-space-4);
     background: transparent;
   }
