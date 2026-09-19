@@ -28,6 +28,7 @@ import {
   focusEventKind,
 } from "./selectors";
 import { entryName } from "./raceFormat";
+import { RaceCountdown } from "../../components/RaceCountdown";
 
 function ResultsAvailability({ season = {} }) {
   const resultsCount = Number.isFinite(Number(season.resultsEventCount))
@@ -205,7 +206,7 @@ function RacePodium({ detail, isFetching, isError }) {
 function CalendarContextRows({ events }) {
   return (
     <ol className="calendar-rows">
-      {events.map(({ event, label }) => (
+      {events.map(({ event, label, showCountdown }) => (
         <li
           key={event.id}
           className="calendar-row calendar-row--context"
@@ -228,6 +229,12 @@ function CalendarContextRows({ events }) {
                 {event.circuit?.displayName || "Circuit not supplied"}
               </span>
             </p>
+            {showCountdown && (
+              <RaceCountdown
+                startsAt={event.schedule.startsAt}
+                timePrecision={event.schedule.timePrecision}
+              />
+            )}
           </div>
           <div className="calendar-row-date">
             <time dateTime={event.schedule.date || undefined}>
@@ -255,7 +262,7 @@ export function CalendarPreview({
   const { previous, next } = adjacentCalendarEvents(events, eventId);
   const contextEvents = [
     previous && { event: previous, label: "Previous event" },
-    next && { event: next, label: "Next event" },
+    next && { event: next, label: "Next event", showCountdown: true },
   ].filter(Boolean);
   return (
     <div id="season-calendar" className="anchor-section">

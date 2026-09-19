@@ -1,0 +1,46 @@
+.race-countdown {
+  display: grid;
+  gap: var(--apex-space-3);
+  margin-top: var(--apex-space-5);
+  padding-top: var(--apex-space-5);
+  border-top: 1px solid var(--apex-color-line);
+}
+.race-countdown-heading {
+  margin: 0;
+  color: var(--apex-color-accent);
+  font-size: var(--apex-type-eyebrow-size);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.race-countdown-parts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--apex-space-4);
+}
+.race-countdown-part {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--apex-space-2);
+}
+.race-countdown-part strong {
+  color: var(--apex-color-text);
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-type-points-size);
+  line-height: 1;
+}
+.race-countdown-part span,
+.race-countdown time,
+.race-countdown--unavailable,
+.race-countdown--elapsed {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.race-countdown time {
+  font-family: var(--apex-font-numeric);
+}
+.race-countdown--unavailable,
+.race-countdown--elapsed {
+  margin-bottom: 0;
+}
+
