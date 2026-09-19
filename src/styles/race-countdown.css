@@ -12,6 +12,11 @@
   font-weight: 600;
   letter-spacing: 0.08em;
 }
+.race-countdown-sentence {
+  margin: calc(var(--apex-space-3) * -1) 0 0;
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-body-size);
+}
 .race-countdown-parts {
   display: flex;
   flex-wrap: wrap;
@@ -63,7 +68,7 @@
   gap: var(--apex-space-3);
 }
 .race-countdown--wide .race-countdown-part strong {
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-size: clamp(1.75rem, 3.5vw, 3.15rem);
 }
 .race-countdown--wide .race-countdown-part span {
   font-size: var(--apex-type-body-size);
@@ -85,6 +90,6 @@
   }
 
   .race-countdown--wide .race-countdown-part strong {
-    font-size: clamp(2rem, 13vw, 3rem);
+    font-size: clamp(1.4rem, 9vw, 2.1rem);
   }
 }

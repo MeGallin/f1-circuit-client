@@ -32,8 +32,12 @@ function calendarMonthsBetween(start, end) {
   return Math.max(0, months);
 }
 
+function unitName(unit) {
+  return `${unit}s`;
+}
+
 function unitLabel(value, unit) {
-  return `${value} ${unit}${value === 1 ? "" : "s"}`;
+  return `${value} ${unitName(unit)}`;
 }
 
 export function getCountdownParts(startsAt, now = Date.now()) {
@@ -121,19 +125,20 @@ export function RaceCountdown({ startsAt, timePrecision, now, variant = "default
     >
       {variant === "wide" ? (
         <div className="race-countdown-meta">
-          <p className="race-countdown-heading">COUNTDOWN TO RACE START</p>
+          <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>
           <time dateTime={new Date(targetMs).toISOString()}>
             Starts {targetTimeLabel(startsAt)}
           </time>
         </div>
       ) : (
-        <p className="race-countdown-heading">COUNTDOWN TO RACE START</p>
+        <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>
       )}
+      <p className="race-countdown-sentence">Race starts in {accessibleLabel}</p>
       <div className="race-countdown-parts" aria-hidden="true">
         {parts.map((part) => (
           <span className="race-countdown-part" key={part.unit}>
             <strong>{String(part.value).padStart(2, "0")}</strong>
-            <span>{part.unit}</span>
+            <span>{unitName(part.unit)}</span>
           </span>
         ))}
       </div>
