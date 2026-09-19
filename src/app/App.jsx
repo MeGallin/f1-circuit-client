@@ -7,6 +7,7 @@ import Calendar from "../pages/Calendar";
 import RaceDetail from "../pages/RaceDetail";
 import Standings from "../pages/Standings";
 import Sources from "../pages/Sources";
+import Evidence from "../pages/Evidence";
 import { lazy, Suspense } from "react";
 const Design = import.meta.env.DEV
   ? lazy(() => import("../pages/Design"))
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/events/:eventId" element={<RaceDetail />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/sources" element={<Sources />} />
+        <Route path="/evidence/:evidenceId" element={<Evidence />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/drivers/:id" element={<Profile kind="driver" />} />

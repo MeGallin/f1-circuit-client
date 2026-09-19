@@ -23,6 +23,7 @@ import {
   Input,
   Tabs,
   DataTable,
+  TextLink,
 } from "../components/ui";
 import { dateLabel } from "../features/season/selectors";
 import {
@@ -406,7 +407,7 @@ function Facts({ items }) {
     </dl>
   );
 }
-export function RaceRecords({ rows, dataset, names = {} }) {
+export function RaceRecords({ rows, dataset, names = {}, snapshotId }) {
   return (
     <ol className="race-records">
       {rows.map((row) => (
@@ -428,6 +429,15 @@ export function RaceRecords({ rows, dataset, names = {} }) {
               ) : null) || (row.entry ? "Constructor not supplied" : "")}
             </span>
           </div>
+          {row.evidenceId && (
+            <p className="race-evidence">
+              <TextLink
+                to={`/evidence/${encodeURIComponent(row.evidenceId)}${snapshotId ? `?snapshot=${encodeURIComponent(snapshotId)}` : ""}`}
+              >
+                View field evidence
+              </TextLink>
+            </p>
+          )}
           {dataset === "results" && (
             <Facts
               items={[
@@ -599,7 +609,12 @@ function SessionData({
             (["results", "qualifying", "laps", "pit-stops"].includes(
               dataset,
             ) ? (
-              <RaceRecords rows={data.items} dataset={dataset} names={names} />
+              <RaceRecords
+                rows={data.items}
+                dataset={dataset}
+                names={names}
+                snapshotId={snapshotId}
+              />
             ) : (
               <AdvancedRecords
                 rows={data.items}

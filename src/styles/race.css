@@ -75,6 +75,10 @@
 .race-record-heading > span {
   color: var(--apex-color-muted);
 }
+.race-evidence {
+  margin-top: var(--apex-space-4);
+  font-size: var(--apex-type-caption-size);
+}
 .race-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

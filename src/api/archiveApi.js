@@ -144,6 +144,13 @@ export const archiveApi = createApi({
       transformResponse: (r) => objectResponse(r, "impact"),
       providesTags: (_r, _e, { eventId }) => [{ type: "Event", id: eventId }],
     }),
+    getEvidence: builder.query({
+      query: ({ evidenceId, snapshotId }) => ({
+        url: `/evidence/${encodeURIComponent(evidenceId)}`,
+        params: { snapshotId },
+      }),
+      transformResponse: (r) => objectResponse(r, "evidence"),
+    }),
     getSessionData: builder.query({
       query: ({
         sessionId,
@@ -274,6 +281,7 @@ export const {
   useGetStandingsQuery,
   useGetEventQuery,
   useGetImpactQuery,
+  useGetEvidenceQuery,
   useGetSessionDataQuery,
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
