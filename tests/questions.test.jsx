@@ -10,6 +10,7 @@ import { archiveApi } from "../src/api/archiveApi";
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
 });
 
 function mount() {
@@ -29,6 +30,7 @@ function mount() {
 }
 
 test("question form posts structured context and renders exact values with evidence", async () => {
+  vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   let body;
   vi.stubGlobal(
     "fetch",
@@ -85,6 +87,7 @@ test("question form posts structured context and renders exact values with evide
 });
 
 test("question clarification stays explicit and offers supplied choices", async () => {
+  vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   vi.stubGlobal(
     "fetch",
     vi.fn(
@@ -126,4 +129,15 @@ test("question clarification stays explicit and offers supplied choices", async 
   await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
   expect(await screen.findByText("Which season do you mean?")).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "2024 season" })).toBeInTheDocument();
+});
+
+test("disabled question capability is explained before any submission", () => {
+  mount();
+  expect(screen.getByRole("status")).toHaveTextContent("disabled");
+  expect(screen.getByText("Questions are not available yet")).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Browse published records" })).toHaveAttribute(
+    "href",
+    "/records",
+  );
+  expect(screen.queryByRole("button", { name: "Ask question" })).not.toBeInTheDocument();
 });

@@ -75,3 +75,16 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+.question-capability {
+  display: grid;
+  gap: var(--apex-space-5);
+  max-width: 70ch;
+}
+.question-capability p {
+  margin: 0;
+}
+.question-capability-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-5);
+}

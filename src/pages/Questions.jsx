@@ -105,7 +105,31 @@ function QuestionResult({ result, onChoice }) {
   );
 }
 
+function QuestionUnavailable() {
+  return (
+    <Panel title="Questions are not available yet">
+      <div className="question-capability" role="status">
+        <StatusBadge tone="warning">Unavailable</StatusBadge>
+        <p>
+          The optional question layer is disabled in this archive build. No
+          model is used, and no question can supply facts outside the
+          published API records.
+        </p>
+        <p className="muted">
+          Use the deterministic archive journeys below to find the same
+          information with its source and evidence attached.
+        </p>
+        <div className="question-capability-actions">
+          <ActionLink to="/records">Browse published records</ActionLink>
+          <ActionLink to="/explore">Explore drivers and circuits</ActionLink>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 export default function Questions() {
+  const enabled = import.meta.env.VITE_ENABLE_QUESTION_LAYER === "true";
   const [context, setContext] = useState(initialContext);
   const [text, setText] = useState("");
   const [ask, query] = useAskQuestionMutation();
@@ -130,10 +154,17 @@ export default function Questions() {
       <PageHeading
         eyebrow="ASK THE ARCHIVE"
         title="Questions"
-        description="Ask a supported, read-only question. Answers use deterministic archive templates and always show the supplied evidence references; unsupported questions stay clearly labelled."
+        description={
+          enabled
+            ? "Ask a supported, read-only question. Answers use deterministic archive templates and always show the supplied evidence references."
+            : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."
+        }
         actions={<ActionLink to="/records">Browse records</ActionLink>}
       />
-      <Panel title="Ask a question">
+      {!enabled ? (
+        <QuestionUnavailable />
+      ) : (
+        <Panel title="Ask a question">
         <form className="questions-form" onSubmit={submit}>
           <div className="field questions-form__text">
             <label htmlFor="question-text">Question</label>
@@ -183,7 +214,8 @@ export default function Questions() {
           <QuestionResult result={query.data?.questionResult} onChoice={handleChoice} />
         )}
         <SourceNote meta={query.data?.meta} />
-      </Panel>
+        </Panel>
+      )}
     </>
   );
 }
