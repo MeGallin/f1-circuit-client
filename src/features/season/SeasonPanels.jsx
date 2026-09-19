@@ -112,10 +112,6 @@ export function RaceFocus({ summary, snapshotId }) {
           </p>
           <h2 id="race-focus-title">{event.name}</h2>
           <p className="circuit-name">
-            <CountryFlag
-              country={country || event.circuit?.country}
-              label="Circuit country"
-            />
             <span>{event.circuit?.displayName || "Circuit not supplied"}</span>
           </p>
         </div>
