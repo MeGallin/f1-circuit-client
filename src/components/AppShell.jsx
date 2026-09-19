@@ -10,6 +10,7 @@ import {
   DatabaseIcon,
   PaletteIcon,
   MagnifyingGlassIcon,
+  ChartLineUpIcon,
 } from "@phosphor-icons/react";
 import { Select } from "./ui";
 import { runtimeYear } from "../features/season/selectors";
@@ -18,6 +19,7 @@ const navigation = [
   { to: "/calendar", label: "Calendar", icon: CalendarBlankIcon },
   { to: "/standings", label: "Standings", icon: RankingIcon },
   { to: "/explore", label: "Explore", icon: MagnifyingGlassIcon },
+  { to: "/records", label: "Records", icon: ChartLineUpIcon },
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
 function Navigation({ mobile = false }) {

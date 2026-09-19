@@ -1,0 +1,18 @@
+.records-filters {
+  display: grid;
+  gap: var(--apex-space-5);
+  align-items: end;
+  padding: var(--apex-space-6);
+  border-bottom: 1px solid var(--apex-color-line);
+}
+.records-filters .button {
+  width: 100%;
+}
+.records-filters + .state {
+  margin: var(--apex-space-6);
+}
+@media (min-width: 768px) {
+  .records-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  }
+}

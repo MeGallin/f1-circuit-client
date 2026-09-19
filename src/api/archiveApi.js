@@ -151,6 +151,21 @@ export const archiveApi = createApi({
       }),
       transformResponse: (r) => objectResponse(r, "evidence"),
     }),
+    getRecords: builder.query({
+      query: ({
+        scope,
+        metric,
+        entityId,
+        year,
+        cursor,
+        snapshotId,
+        limit = 50,
+      }) => ({
+        url: "/records",
+        params: { scope, metric, entityId, year, cursor, snapshotId, limit },
+      }),
+      transformResponse: collectionResponse,
+    }),
     getSessionData: builder.query({
       query: ({
         sessionId,
@@ -282,6 +297,7 @@ export const {
   useGetEventQuery,
   useGetImpactQuery,
   useGetEvidenceQuery,
+  useGetRecordsQuery,
   useGetSessionDataQuery,
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
