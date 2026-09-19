@@ -109,6 +109,6 @@ test("latest completed race keeps the published podium in the first overview car
   );
   expect(screen.getByRole("heading", { name: "RACE RESULT" })).toBeInTheDocument();
   expect(screen.getByText("ROUND 14 OF 23")).toBeInTheDocument();
-  expect(screen.getByText("RESULTS AVAILABLE")).toBeInTheDocument();
+  expect(screen.queryByText("RESULTS AVAILABLE")).not.toBeInTheDocument();
   expect(screen.getByText("14")).toBeInTheDocument();
 });

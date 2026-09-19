@@ -40,9 +40,12 @@ function ResultsAvailability({ season = {} }) {
   if (!eventCount) return null;
 
   return (
-    <div className="race-focus-availability">
+    <div
+      className="race-focus-availability"
+      role="group"
+      aria-label="Season results coverage"
+    >
       <div className="race-focus-availability-heading">
-        <p className="eyebrow">RESULTS AVAILABLE</p>
         <p className="race-focus-availability-count">
           <strong>{resultsCount}</strong>
           <span>of {eventCount} events</span>
