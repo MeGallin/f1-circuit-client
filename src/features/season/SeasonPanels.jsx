@@ -59,6 +59,17 @@ function ResultsAvailability({
           <span>of {eventCount} events</span>
         </p>
       </div>
+      <div className="season-event-guidance">
+        <p>Select a round to view its details.</p>
+        <div className="season-event-legend" aria-label="Event status legend">
+          <span className="season-event-legend-item season-event-legend-item--complete">
+            Completed
+          </span>
+          <span className="season-event-legend-item season-event-legend-item--upcoming">
+            Upcoming
+          </span>
+        </div>
+      </div>
       <SeasonEventStrip
         events={events}
         eventCount={eventCount}

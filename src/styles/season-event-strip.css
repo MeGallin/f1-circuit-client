@@ -5,6 +5,45 @@
   gap: var(--apex-space-2);
 }
 
+.season-event-guidance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apex-space-6);
+  margin-top: var(--apex-space-5);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+
+.season-event-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-5);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.season-event-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apex-space-2);
+  white-space: nowrap;
+}
+
+.season-event-legend-item::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--apex-color-line);
+  content: "";
+}
+
+.season-event-legend-item--complete::before {
+  background: var(--apex-color-accent);
+}
+
 .season-event-segment {
   flex: 1 1 0;
   min-width: 0;
@@ -46,6 +85,12 @@
 }
 
 @media (max-width: 519px) {
+  .season-event-guidance {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--apex-space-3);
+  }
+
   .season-event-strip {
     gap: var(--apex-space-1);
   }
