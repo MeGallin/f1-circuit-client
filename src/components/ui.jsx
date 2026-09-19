@@ -144,6 +144,55 @@ export function Tabs({ label, items, value, onChange, children }) {
 export function StatusBadge({ children, tone = "neutral" }) {
   return <span className={`status status--${tone}`}>{children}</span>;
 }
+const availabilityTone = {
+  available: "success",
+  complete: "success",
+  upcoming: "neutral",
+  pending: "warning",
+  missing: "warning",
+  "optional-unavailable": "warning",
+  stale: "warning",
+  unavailable: "warning",
+  "service-error": "warning",
+  unsupported: "neutral",
+  "no-match": "neutral",
+};
+export function AvailabilityBadge({ status = "unknown", children }) {
+  const label = children || status.replaceAll("-", " ");
+  return (
+    <StatusBadge tone={availabilityTone[status] || "neutral"}>
+      {label}
+    </StatusBadge>
+  );
+}
+function freshnessLabel(meta) {
+  const freshness = meta?.freshness;
+  if (freshness && typeof freshness === "object") {
+    if (freshness.throughEventName && freshness.throughDate)
+      return `Results through ${freshness.throughEventName} · ${freshness.throughDate}`;
+    if (freshness.throughEventName)
+      return `Results through ${freshness.throughEventName}`;
+    if (freshness.retrievedAt)
+      return `Checked ${new Date(freshness.retrievedAt).toLocaleDateString("en-GB", { timeZone: "UTC" })} UTC`;
+  }
+  if (meta?.lastSuccessfulRetrieval)
+    return `Checked ${new Date(meta.lastSuccessfulRetrieval).toLocaleDateString("en-GB", { timeZone: "UTC" })} UTC`;
+  return null;
+}
+export function FreshnessSummary({ meta, cutoff, className = "" }) {
+  const eventName =
+    cutoff?.eventName || meta?.freshness?.throughEventName || null;
+  const date = cutoff?.date || meta?.freshness?.throughDate || null;
+  const detail = eventName
+    ? `Results through ${eventName}${date ? ` · ${date}` : ""}`
+    : freshnessLabel(meta);
+  if (!detail) return null;
+  return (
+    <p className={`source-summary ${className}`.trim()}>
+      <span>{detail}</span>
+    </p>
+  );
+}
 export function Metric({ label, value, detail }) {
   return (
     <div className="metric">
@@ -314,15 +363,14 @@ export function Pagination({
 }
 export function SourceNote({ meta }) {
   if (!meta) return null;
+  const coverage = meta.coverage || "unknown";
+  const verification = meta.verification?.replaceAll("-", " ") || "Unassessed";
   return (
     <aside className="source-note" aria-label="Data provenance">
       <div className="source-summary">
-        <StatusBadge>
-          {meta.verification?.replaceAll("-", " ") || "Unassessed"}
-        </StatusBadge>
-        <span>
-          {meta.coverage} coverage · {meta.freshness}
-        </span>
+        <StatusBadge>{verification}</StatusBadge>
+        <span>{coverage} coverage</span>
+        {freshnessLabel(meta) && <span>{freshnessLabel(meta)}</span>}
         <TextLink to="/sources">About the data</TextLink>
       </div>
       <details>

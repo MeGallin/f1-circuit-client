@@ -14,6 +14,8 @@ import {
   StatusBadge,
   TextLink,
 } from "../components/ui";
+import { MIN_ARCHIVE_YEAR } from "../features/season/selectors";
+import EntityPicker from "../components/EntityPicker";
 import "../styles/records.css";
 
 export const recordScopes = [
@@ -31,13 +33,21 @@ export const recordMetrics = [
   { value: "points", label: "Points" },
 ];
 
-function updateParams(params, values) {
+function setFilterParams(params, values) {
   const next = new URLSearchParams(params);
   Object.entries(values).forEach(([key, value]) => {
     if (value == null || value === "") next.delete(key);
     else next.set(key, String(value));
   });
   next.delete("cursor");
+  return next;
+}
+function setPageParams(params, values) {
+  const next = new URLSearchParams(params);
+  Object.entries(values).forEach(([key, value]) => {
+    if (value == null || value === "") next.delete(key);
+    else next.set(key, String(value));
+  });
   return next;
 }
 
@@ -60,7 +70,7 @@ export default function Records() {
   const validScope = recordScopes.some((item) => item.value === scope);
   const validMetric = recordMetrics.some((item) => item.value === metric);
   const validTarget = seasonScope
-    ? Number.isInteger(yearNumber) && yearNumber >= 1950
+    ? Number.isInteger(yearNumber) && yearNumber >= MIN_ARCHIVE_YEAR
     : entityId.trim().length > 0 && entityId.length <= 160;
   const valid = validScope && validMetric && validTarget;
   const query = useGetRecordsQuery(
@@ -86,10 +96,12 @@ export default function Records() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     setParams(
-      updateParams(params, {
+      setFilterParams(params, {
         scope: form.get("scope"),
         metric: form.get("metric"),
-        entityId: form.get("entityId")?.toString().trim(),
+        entityId: seasonScope
+          ? undefined
+          : entityId.trim(),
         year: form.get("year")?.toString().trim(),
       }),
     );
@@ -112,9 +124,9 @@ export default function Records() {
             onChange={(event) => {
               const nextScope = event.target.value;
               setParams(
-                updateParams(params, {
+                setFilterParams(params, {
                   scope: nextScope,
-                  entityId: nextScope === "season" ? undefined : entityId,
+                  entityId: undefined,
                   year: nextScope === "season" ? year : undefined,
                 }),
               );
@@ -126,7 +138,7 @@ export default function Records() {
             name="metric"
             value={metric}
             onChange={(event) =>
-              setParams(updateParams(params, { metric: event.target.value }))
+              setParams(setFilterParams(params, { metric: event.target.value }))
             }
             options={recordMetrics}
           />
@@ -135,19 +147,21 @@ export default function Records() {
               label="Season year"
               name="year"
               type="number"
-              min="1950"
+              min={MIN_ARCHIVE_YEAR}
               max="2100"
               inputMode="numeric"
               defaultValue={year}
               placeholder="e.g. 2024"
             />
           ) : (
-            <Input
-              label="Canonical entity ID"
-              name="entityId"
-              defaultValue={entityId}
-              maxLength={160}
-              placeholder="e.g. driver:hamilton"
+            <EntityPicker
+              label="Driver or entity"
+              kind={scope}
+              value={entityId}
+              onChange={(value) =>
+                setParams(setFilterParams(params, { entityId: value }))
+              }
+              placeholder="Search by name"
             />
           )}
           <Button type="submit">Show record</Button>
@@ -157,8 +171,8 @@ export default function Records() {
             title={seasonScope ? "Choose a season" : "Choose an entity"}
             description={
               seasonScope
-                ? "Enter a season year from 1950 onward to request a published metric."
-                : "Enter the canonical entity ID used by the archive, then choose a metric."
+                ? `Enter a season year from ${MIN_ARCHIVE_YEAR} onward to request a published metric.`
+                : "Choose an entity by name, then choose a metric."
             }
           />
         ) : (
@@ -223,7 +237,7 @@ export default function Records() {
                   disabled={!data.page.hasMore || query.isFetching}
                   onClick={() =>
                     setParams(
-                      updateParams(params, {
+                      setPageParams(params, {
                         cursor: data.page.nextCursor,
                         snapshot: data.meta.snapshotId,
                       }),

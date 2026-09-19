@@ -43,11 +43,11 @@ test("selection uses only published seasons and refuses unavailable explicit sel
   ).toEqual([
     {
       value: "2026",
-      label: expect.stringContaining("Partial import · 14/23 rounds"),
+      label: "2026 · Current year",
     },
     {
       value: "2000",
-      label: expect.stringContaining("Imported · 17/17 rounds"),
+      label: "2000",
     },
   ]);
   expect(seasonImportStatus({ coverage: "unavailable" })).toBe("Not imported");

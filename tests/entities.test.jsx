@@ -1,5 +1,6 @@
 import { afterEach, expect, test, vi } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/react";
+import { useState } from "react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -8,6 +9,7 @@ import { archiveApi, objectResponse } from "../src/api/archiveApi";
 import Explore from "../src/pages/Explore";
 import Profile from "../src/pages/Profile";
 import Compare, { ComparisonResult } from "../src/pages/Compare";
+import EntityPicker from "../src/components/EntityPicker";
 import contract from "../contracts/openapi.json";
 const meta = {
   snapshotId: "stable",
@@ -295,7 +297,7 @@ test("invalid comparison range or circuit points never issues an API comparison"
   );
   await waitFor(() =>
     expect(
-      screen.getAllByRole("option", { name: /^2024 ·/ }).length,
+      screen.getAllByRole("option", { name: /^2024$/ }).length,
     ).toBeGreaterThan(0),
   );
   expect(
@@ -332,4 +334,46 @@ test("comparison data preserves exact supplied values and metric coverage", () =
   expect(
     screen.getByText("Not supplied · points · unavailable coverage"),
   ).toBeInTheDocument();
+});
+
+test("reusable entity picker searches by name and writes the canonical selection", async () => {
+  const calls = mock((url) =>
+    url.pathname.endsWith("/search")
+      ? collection([{ id: entity.id, kind: "driver", entity, context: null }])
+      : seasons,
+  );
+  function PickerHarness() {
+    const [value, setValue] = useState("");
+    return (
+      <>
+        <EntityPicker
+          label="Driver"
+          kind="driver"
+          value={value}
+          onChange={(next) => setValue(next)}
+        />
+        <output data-testid="picked">{value}</output>
+      </>
+    );
+  }
+  render(
+    <Provider
+      store={configureStore({
+        reducer: { [archiveApi.reducerPath]: archiveApi.reducer },
+        middleware: (g) => g().concat(archiveApi.middleware),
+      })}
+    >
+      <PickerHarness />
+    </Provider>,
+  );
+  const input = screen.getByRole("combobox", { name: "Driver" });
+  await userEvent.type(input, "Example");
+  await userEvent.click(
+    await screen.findByRole("option", { name: /Example Driver/ }),
+  );
+  expect(screen.getByTestId("picked")).toHaveTextContent("driver:one");
+  expect(screen.getByText("Example Driver")).toBeInTheDocument();
+  expect(calls.some((url) => url.searchParams.get("q") === "Example")).toBe(
+    true,
+  );
 });

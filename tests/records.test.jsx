@@ -75,9 +75,10 @@ test("records request preserves exact values, coverage and evidence snapshot", a
     "href",
     "/evidence/evidence%3Aone?snapshot=snapshot%3Aone",
   );
-  expect(calls[0].searchParams.get("scope")).toBe("driver");
-  expect(calls[0].searchParams.get("metric")).toBe("points");
-  expect(calls[0].searchParams.get("entityId")).toBe("driver:one");
+  const recordsRequest = calls.find((url) => url.pathname.endsWith("/records"));
+  expect(recordsRequest.searchParams.get("scope")).toBe("driver");
+  expect(recordsRequest.searchParams.get("metric")).toBe("points");
+  expect(recordsRequest.searchParams.get("entityId")).toBe("driver:one");
 });
 
 test("records requires a valid target before requesting", async () => {
@@ -104,4 +105,53 @@ test("records requires a valid target before requesting", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Show record" }));
   expect(await screen.findByText("No published record")).toBeInTheDocument();
   expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+
+test("records pagination carries the snapshot cursor and filter changes reset it", async () => {
+  const calls = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (request) => {
+      const url = new URL(request.url);
+      calls.push(url);
+      const secondPage = url.searchParams.get("cursor") === "next-records";
+      return new Response(
+        JSON.stringify({
+          data: {
+            items: [
+              {
+                id: secondPage ? "metric:two" : "metric:one",
+                key: "wins",
+                value: secondPage ? "2" : "1",
+                unit: "wins",
+                coverage: "complete",
+              },
+            ],
+            page: {
+              total: 2,
+              hasMore: !secondPage,
+              nextCursor: secondPage ? null : "next-records",
+            },
+          },
+          meta: {
+            snapshotId: "snapshot:records",
+            coverage: "complete",
+            freshness: "fresh",
+            verification: "source-only",
+            sources: [],
+          },
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }),
+  );
+  mount("/records?scope=driver&metric=wins&entityId=driver%3Aone");
+  expect(await screen.findByText("1")).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Next page" }));
+  expect(await screen.findByText("2")).toBeInTheDocument();
+  const recordsRequests = calls.filter((url) => url.pathname.endsWith("/records"));
+  expect(recordsRequests[1].searchParams.get("cursor")).toBe("next-records");
+  expect(recordsRequests[1].searchParams.get("snapshotId")).toBe("snapshot:records");
+  await userEvent.click(screen.getByRole("button", { name: "First page" }));
+  expect(screen.getByTestId("location")).not.toHaveTextContent("cursor");
 });

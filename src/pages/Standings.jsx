@@ -25,6 +25,7 @@ import {
 } from "../components/ui";
 import "../styles/standings.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
+import { dateLabel, standingCutoff } from "../features/season/selectors";
 
 const kinds = [
   { value: "drivers", label: "Drivers" },
@@ -98,10 +99,17 @@ function Championship({ year, kind, params, setParams }) {
     { skip: !validRound(round) },
   );
   const data = query.currentData;
+  const calendarEvents = calendar.currentData?.items || [];
+  const hasEventStatuses = calendarEvents.some((event) => event.status);
   const rounds = [
     ...new Set(
-      (calendar.currentData?.items || [])
+      calendarEvents
         .map((event) => event.round)
+        .filter(
+          (value, index) =>
+            value != null &&
+            (!hasEventStatuses || calendarEvents[index]?.status === "completed"),
+        )
         .filter((value) => value != null),
     ),
   ].sort((a, b) => a - b);
@@ -154,13 +162,25 @@ function Championship({ year, kind, params, setParams }) {
           </Button>
         </p>
       )}
-      <p className="standing-note">
-        {round
-          ? `After round ${round}`
-          : "Latest published standings in this archive"}{" "}
-        · {year}. Missing round data is never replaced by the latest standings.
-        Points and ranks are shown exactly as supplied.
-      </p>
+      {(() => {
+        const cutoff = standingCutoff({
+          standingSnapshotId:
+            data?.items?.[0]?.standingSnapshotId ||
+            (round ? `standing:${year}:${round}` : null),
+          events: calendarEvents,
+        });
+        return (
+          <p className="standing-note">
+            {cutoff.eventName
+              ? `Standings after ${cutoff.eventName}${cutoff.date ? ` · ${dateLabel(cutoff.date)}` : ""}`
+              : round
+                ? `Standings after round ${round}`
+                : "Latest published standings in this archive"}{" "}
+            · {year}. Missing round data is never replaced by the latest
+            standings. Points and ranks are shown exactly as supplied.
+          </p>
+        );
+      })()}
       <SourceNote meta={data?.meta} />
       {!validRound(round) ? (
         <EmptyState

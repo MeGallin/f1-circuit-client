@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
-  useSearchEntitiesQuery,
   useGetComparisonQuery,
   useGetSeasonsQuery,
 } from "../api/archiveApi";
@@ -9,7 +7,6 @@ import {
   PageHeading,
   Panel,
   Select,
-  Input,
   Button,
   DataBoundary,
   EmptyState,
@@ -17,6 +14,7 @@ import {
   DataTable,
   ActionLink,
 } from "../components/ui";
+import EntityPicker from "../components/EntityPicker";
 import { changeFilters, refreshSelection } from "../features/entities/shared";
 import {
   isScopedSeason,
@@ -32,59 +30,6 @@ const metrics = [
   "fastest-laps",
   "points",
 ];
-function Picker({ side, kind, selected, name, onSelect }) {
-  const [term, setTerm] = useState("");
-  const [search, setSearch] = useState("");
-  const query = useSearchEntitiesQuery(
-    { q: search, kind },
-    { skip: search.length < 2 },
-  );
-  return (
-    <fieldset className="entity-picker">
-      <legend>
-        {side} {kind}
-      </legend>
-      <p>{selected ? `Selected: ${name || selected}` : "No selection"}</p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setSearch(term.trim());
-        }}
-      >
-        <Input
-          label={`Find ${side.toLowerCase()} ${kind}`}
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          minLength={2}
-          maxLength={100}
-          required
-        />
-        <Button type="submit" variant="secondary">
-          Search {side.toLowerCase()}
-        </Button>
-      </form>
-      {search.length >= 2 && (
-        <DataBoundary
-          query={query}
-          empty={query.isSuccess && !query.currentData?.items.length}
-        >
-          <ul>
-            {query.currentData?.items.map((row) => (
-              <li key={row.id}>
-                <Button variant="quiet" onClick={() => onSelect(row.entity)}>
-                  {row.entity.displayName}
-                </Button>
-              </li>
-            ))}
-          </ul>
-          {query.currentData?.page.hasMore && (
-            <p>More matches exist. Refine the name to narrow your search.</p>
-          )}
-        </DataBoundary>
-      )}
-    </fieldset>
-  );
-}
 export function ComparisonResult({ data }) {
   const result = data?.comparison;
   return (
@@ -254,16 +199,16 @@ export default function Compare() {
                   onChange={(e) => update({ [`${key}Id`]: e.target.value })}
                 />
               ) : (
-                <Picker
+                <EntityPicker
                   key={`${side}:${kind}`}
-                  side={side}
+                  label={`${side} ${kind}`}
                   kind={kind}
-                  selected={params.get(`${key}Id`)}
-                  name={params.get(`${key}Name`)}
-                  onSelect={(entity) =>
+                  value={params.get(`${key}Id`) || ""}
+                  displayName={params.get(`${key}Name`) || ""}
+                  onChange={(id, entity) =>
                     update({
-                      [`${key}Id`]: entity.id,
-                      [`${key}Name`]: entity.displayName,
+                      [`${key}Id`]: id || null,
+                      [`${key}Name`]: entity?.entity?.displayName || null,
                     })
                   }
                 />

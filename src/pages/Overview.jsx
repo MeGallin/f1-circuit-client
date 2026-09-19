@@ -25,6 +25,7 @@ import {
   Panel,
   Skeleton,
   ErrorState,
+  FreshnessSummary,
 } from "../components/ui";
 import "../styles/overview.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
@@ -55,6 +56,17 @@ function SeasonOverview({ year, seasons }) {
         ) : (
           summary && (
             <>
+              <FreshnessSummary
+                meta={data.meta}
+                cutoff={
+                  summary.latestCompletedEvent
+                    ? {
+                        eventName: summary.latestCompletedEvent.name,
+                        date: summary.latestCompletedEvent.schedule?.date,
+                      }
+                    : null
+                }
+              />
               <div className="season-grid">
                 <RaceFocus
                   summary={summary}

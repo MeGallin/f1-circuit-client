@@ -28,27 +28,31 @@ import {
 import {
   dateLabel,
   focusEvent,
+  focusEventKind,
   previewCalendar,
   seasonImportStatus,
 } from "./selectors";
 
 export function ArchiveProgress({ season }) {
+  const resultsCount = Number.isFinite(Number(season.resultsEventCount))
+    ? season.resultsEventCount
+    : season.completedCount;
   return (
     <Panel title="Archive coverage">
       <div className="archive-progress">
         <div className="coverage-count">
-          <strong>{season.completedCount}</strong>
+          <strong>{resultsCount}</strong>
           <span>of {season.eventCount} events</span>
         </div>
         <p>
-          Completed events with results in this archive. This is data coverage,
-          not season progress.
+          Published event results in this archive. This is data coverage, not
+          season progress.
         </p>
         <div className="coverage-segments" aria-hidden>
           {Array.from({ length: season.eventCount }, (_, i) => (
             <span
               key={i}
-              className={i < season.completedCount ? "filled" : ""}
+              className={i < resultsCount ? "filled" : ""}
             />
           ))}
         </div>
@@ -62,6 +66,7 @@ export function ArchiveProgress({ season }) {
 }
 export function RaceFocus({ summary, snapshotId }) {
   const event = focusEvent(summary);
+  const focusKind = focusEventKind(summary);
   const circuitId = event?.circuit?.id;
   const circuitProfile = useGetProfileQuery(
     { kind: "circuit", id: circuitId, snapshotId },
@@ -86,11 +91,13 @@ export function RaceFocus({ summary, snapshotId }) {
     <section className="race-focus" aria-labelledby="race-focus-title">
       <div className="race-focus-top">
         <p className="eyebrow">
-          {summary.nextEvent
+          {focusKind === "next"
             ? "NEXT SCHEDULED EVENT"
-            : "LATEST COMPLETED IN ARCHIVE"}
+            : "LATEST COMPLETED RACE"}
         </p>
-        <StatusBadge>{event.status}</StatusBadge>
+          <StatusBadge>
+            {focusKind === "next" ? "upcoming" : event.resultStatus || event.status}
+          </StatusBadge>
       </div>
       <div className="race-focus-content">
         <div>
@@ -281,8 +288,11 @@ export function StandingsPreview({ summary }) {
           )}
         </Tabs>
         <p className="panel-footnote">
-          Leading entries from the latest published standings. Points are shown
-          exactly as supplied.
+          Leading entries from the latest published standings
+          {summary.latestCompletedEvent?.name
+            ? ` after ${summary.latestCompletedEvent.name}`
+            : ""}
+          . Points are shown exactly as supplied.
         </p>
         <ActionLink
           to={`/standings?season=${summary.season.year}&kind=${kind}`}

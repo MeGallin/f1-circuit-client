@@ -20,7 +20,7 @@ export function seasonImportStatus(season) {
 }
 export function seasonOptionLabel(season, currentYear = runtimeYear()) {
   const current = season.year === currentYear ? " · Current year" : "";
-  return `${season.year}${current} · ${seasonImportStatus(season)}`;
+  return `${season.year}${current}`;
 }
 export const selectSeasonOptions = createSelector(
   [(data) => data?.items, () => runtimeYear()],
@@ -40,7 +40,7 @@ export const selectSeasonOptions = createSelector(
     )
       options.push({
         value: String(currentYear),
-        label: `${currentYear} · Current year · Not in catalogue`,
+        label: `${currentYear} · Current year`,
       });
     return options.sort((a, b) => Number(b.value) - Number(a.value));
   },
@@ -60,7 +60,24 @@ export function selectedSeason(items, requested, currentYear = runtimeYear()) {
   return isScopedSeason(currentYear) ? currentYear : null;
 }
 export function focusEvent(summary) {
-  return summary?.nextEvent || summary?.latestCompletedEvent || null;
+  return summary?.latestCompletedEvent || summary?.nextEvent || null;
+}
+export function focusEventKind(summary) {
+  return summary?.latestCompletedEvent ? "latest" : "next";
+}
+export function standingCutoff({ summary, standingSnapshotId, events = [] }) {
+  const snapshot = standingSnapshotId || summary?.standingSnapshotId;
+  const round = Number(String(snapshot || "").split(":").at(-1));
+  const event = events.find((item) => item.round === round) ||
+    (round === summary?.latestCompletedEvent?.round
+      ? summary.latestCompletedEvent
+      : null);
+  return {
+    round: Number.isInteger(round) ? round : null,
+    eventId: event?.id || null,
+    eventName: event?.name || null,
+    date: event?.schedule?.date || null,
+  };
 }
 export function previewCalendar(events, eventId) {
   const index = events.findIndex((e) => e.id === eventId);

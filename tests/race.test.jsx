@@ -8,6 +8,7 @@ import RaceDetail, {
   AdvancedRecords,
   ImpactPanel,
   RaceRecords,
+  RaceResultTable,
   seriesWindowError,
   toUtcIso,
 } from "../src/pages/RaceDetail";
@@ -70,6 +71,31 @@ test("pit lane duration never substitutes for missing stationary duration", () =
   expect(
     screen.getByText("Stationary duration").nextElementSibling,
   ).toHaveTextContent("Not supplied");
+});
+test("race classification is readable as a complete results table", () => {
+  render(
+    <RaceResultTable
+      rows={[
+        {
+          id: "result-fixture",
+          entryId: "entry-fixture",
+          position: null,
+          grid: { kind: "pit-lane" },
+          statusLabel: "Did not finish",
+          lapsCompleted: 42,
+          points: "0.50",
+          fastestLap: { durationMs: 88293, rank: 6 },
+        },
+      ]}
+      names={{ "entry-fixture": "Test driver" }}
+    />,
+  );
+  expect(screen.getByRole("table", { name: "Race classification" })).toBeInTheDocument();
+  expect(screen.getByText("NC")).toBeInTheDocument();
+  expect(screen.getByText("Did not finish")).toBeInTheDocument();
+  expect(screen.getByText("Pit lane")).toBeInTheDocument();
+  expect(screen.getByText("1:28.293 · rank 6")).toBeInTheDocument();
+  expect(screen.getByText("0.50")).toBeInTheDocument();
 });
 test("advanced session datasets retain exact values and publication boundaries", () => {
   render(

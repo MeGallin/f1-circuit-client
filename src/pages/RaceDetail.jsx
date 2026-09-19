@@ -1,6 +1,6 @@
 import { EntityLink } from "../features/entities/shared";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   archiveApi,
@@ -23,9 +23,9 @@ import {
   ActionLink,
   Select,
   Input,
-  Tabs,
   DataTable,
   TextLink,
+  AvailabilityBadge,
 } from "../components/ui";
 import { dateLabel } from "../features/season/selectors";
 import {
@@ -57,6 +57,42 @@ const views = [
   { value: "radio", label: "Radio" },
   { value: "telemetry", label: "Telemetry" },
   { value: "locations", label: "Locations" },
+];
+const sessionGroups = [
+  {
+    label: "Results",
+    items: views.filter((view) => view.value === "results"),
+  },
+  {
+    label: "Qualifying",
+    items: views.filter((view) => view.value === "qualifying"),
+  },
+  {
+    label: "Pace & laps",
+    items: views.filter((view) =>
+      ["laps", "intervals", "positions"].includes(view.value),
+    ),
+  },
+  {
+    label: "Strategy",
+    items: views.filter((view) => ["pit-stops", "stints"].includes(view.value)),
+  },
+  {
+    label: "Conditions",
+    items: views.filter((view) => view.value === "weather"),
+  },
+  {
+    label: "Race events",
+    items: views.filter((view) =>
+      ["race-control", "penalties", "overtakes"].includes(view.value),
+    ),
+  },
+  {
+    label: "More data",
+    items: views.filter((view) =>
+      ["radio", "telemetry", "locations"].includes(view.value),
+    ),
+  },
 ];
 
 const SERIES_DATASETS = new Set(["telemetry", "locations"]);
@@ -516,6 +552,177 @@ export function RaceRecords({ rows, dataset, names = {}, snapshotId }) {
     </ol>
   );
 }
+
+function resultDriver(row, names) {
+  if (row.entry?.drivers?.length)
+    return row.entry.drivers.map((driver) => (
+      <EntityLink key={driver.id} entity={driver} kind="driver" />
+    ));
+  return names[row.entryId] || "Driver name not supplied";
+}
+
+function resultConstructor(row) {
+  return row.entry?.constructor ? (
+    <EntityLink entity={row.entry.constructor} kind="constructor" />
+  ) : (
+    "Constructor not supplied"
+  );
+}
+
+function resultEvidence(row, snapshotId) {
+  if (!row.evidenceId) return "Evidence not supplied";
+  return (
+    <TextLink
+      to={`/evidence/${encodeURIComponent(row.evidenceId)}${snapshotId ? `?snapshot=${encodeURIComponent(snapshotId)}` : ""}`}
+    >
+      View evidence
+    </TextLink>
+  );
+}
+
+export function RaceResultTable({ rows, names = {}, snapshotId }) {
+  return (
+    <DataTable
+      caption="Race classification"
+      rows={rows}
+      rowKey={(row) => row.id}
+      columns={[
+        {
+          key: "position",
+          label: "Pos.",
+          numeric: true,
+          render: (row) => row.position ?? "NC",
+        },
+        { key: "driver", label: "Driver", render: (row) => resultDriver(row, names) },
+        {
+          key: "constructor",
+          label: "Constructor",
+          render: resultConstructor,
+        },
+        {
+          key: "status",
+          label: "Status",
+          render: (row) => row.statusLabel || "Status not supplied",
+        },
+        {
+          key: "grid",
+          label: "Grid",
+          numeric: true,
+          render: (row) => gridLabel(row.grid),
+        },
+        {
+          key: "laps",
+          label: "Laps",
+          numeric: true,
+          render: (row) => row.lapsCompleted ?? missing,
+        },
+        {
+          key: "points",
+          label: "Points",
+          numeric: true,
+          render: (row) => row.points ?? missing,
+        },
+        {
+          key: "fastestLap",
+          label: "Fastest lap",
+          render: (row) =>
+            row.fastestLap
+              ? `${duration(row.fastestLap.durationMs)}${row.fastestLap.rank == null ? "" : ` · rank ${row.fastestLap.rank}`}`
+              : missing,
+        },
+        {
+          key: "evidence",
+          label: "Evidence",
+          render: (row) => resultEvidence(row, snapshotId),
+        },
+      ]}
+    />
+  );
+}
+
+function SessionNavigation({ value, onChange, features = [] }) {
+  const navigation = useRef(null);
+  const availability = Object.fromEntries(
+    features.map((feature) => [feature.key, feature]),
+  );
+  const move = (event) => {
+    if (!navigation.current) return;
+    const keys = [
+      "ArrowRight",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowUp",
+      "Home",
+      "End",
+    ];
+    if (!keys.includes(event.key)) return;
+    const buttons = [...navigation.current.querySelectorAll("button")].filter(
+      (button) => !button.disabled,
+    );
+    const index = buttons.indexOf(event.currentTarget);
+    const nextIndex =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? buttons.length - 1
+          : (index +
+              (["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : -1) +
+              buttons.length) %
+            buttons.length;
+    event.preventDefault();
+    onChange(buttons[nextIndex].dataset.value);
+    buttons[nextIndex].focus();
+  };
+  return (
+    <nav
+      ref={navigation}
+      className="session-nav"
+      aria-label="Session datasets"
+    >
+      {sessionGroups.map((group) => (
+        <div key={group.label} className="session-nav-group">
+          <h3>{group.label}</h3>
+          <div
+            className="session-nav-items"
+            role="tablist"
+            aria-label={`${group.label} datasets`}
+          >
+            {group.items.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                role="tab"
+                aria-selected={value === item.value}
+                aria-controls="session-data-panel"
+                data-value={item.value}
+                disabled={availability[item.value]?.coverage === "unavailable"}
+                title={
+                  availability[item.value]?.coverage === "unavailable"
+                    ? "This dataset is not supplied for the selected event."
+                    : undefined
+                }
+                className={value === item.value ? "is-active" : undefined}
+                onClick={() => onChange(item.value)}
+                onKeyDown={move}
+              >
+                {item.label}
+                {availability[item.value] &&
+                  availability[item.value].coverage !== "complete" && (
+                    <AvailabilityBadge
+                      status={availability[item.value].coverage}
+                    >
+                      {availability[item.value].coverage}
+                    </AvailabilityBadge>
+                  )}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </nav>
+  );
+}
+
 function SessionData({
   session,
   dataset,
@@ -541,7 +748,7 @@ function SessionData({
       from: isSeries ? from : undefined,
       to: isSeries ? to : undefined,
       resolution: isSeries ? params.get("resolution") || "1s" : undefined,
-      limit: isSeries ? 1000 : undefined,
+      limit: dataset === "results" ? 100 : isSeries ? 1000 : undefined,
     },
     { skip: !seriesReady },
   );
@@ -613,9 +820,13 @@ function SessionData({
           }
         >
           {data &&
-            (["results", "qualifying", "laps", "pit-stops"].includes(
-              dataset,
-            ) ? (
+            (dataset === "results" ? (
+              <RaceResultTable
+                rows={data.items}
+                names={names}
+                snapshotId={snapshotId}
+              />
+            ) : ["qualifying", "laps", "pit-stops"].includes(dataset) ? (
               <RaceRecords
                 rows={data.items}
                 dataset={dataset}
@@ -822,47 +1033,7 @@ function Detail({ data, params, setParams, refresh }) {
           }
         />
       </div>
-      <Panel title="Circuit">
-        <div className="race-circuit-visual">
-          <CountryFlag
-            country={circuitProfile.currentData?.profile?.country}
-            label="Circuit country"
-            showFallback
-          />
-          <CircuitSilhouette
-            layout={layout}
-            circuitName={event.circuit?.displayName || "Circuit"}
-            country={circuitProfile.currentData?.profile?.country}
-            fallback="message"
-          />
-        </div>
-        <p className="race-note">
-          {layout
-            ? `${layout.name} · ${layout.validFrom || "Start date not supplied"} — ${layout.validTo || "End date not supplied"}`
-            : "No reviewed circuit layout is published for this event."}
-        </p>
-      </Panel>
       <SourceNote meta={meta} />
-      <ImpactPanel query={impact} />
-      <details className="race-coverage">
-        <summary>Event coverage and session schedule</summary>
-        <ul>
-          {event.features.map((feature) => (
-            <li key={feature.key}>
-              {feature.key.replaceAll("-", " ")}: {feature.coverage}
-            </li>
-          ))}
-        </ul>
-        {!event.features.length && <p>No dataset coverage supplied.</p>}
-        <ul>
-          {sessions.map((item) => (
-            <li key={item.id}>
-              {item.label} · {dateLabel(item.schedule.date)} ·{" "}
-              {item.status === "unknown" ? "Status not supplied" : item.status}
-            </li>
-          ))}
-        </ul>
-      </details>
       <Panel
         title="Session archive"
         action={
@@ -891,34 +1062,36 @@ function Detail({ data, params, setParams, refresh }) {
                 }
               />
             </div>
-            <Tabs
-              label="Session datasets"
-              items={views}
-              value={validView ? requestedView : ""}
-              onChange={changeView}
-            >
-              {!validView ? (
-                <EmptyState
-                  title="Unknown dataset selection"
-                  description="Choose one of the available dataset tabs."
-                />
-              ) : !session ? (
-                <EmptyState
-                  title="This session is not available"
-                  description="Choose a session supplied for this event. No other session has been substituted."
-                />
-              ) : (
-                <SessionData
-                  key={`${session.id}:${requestedView}`}
-                  session={session}
-                  dataset={requestedView}
-                  snapshotId={meta.snapshotId}
-                  params={params}
-                  setParams={setParams}
-                  onSnapshotReset={refresh}
-                />
-              )}
-            </Tabs>
+            <>
+              <SessionNavigation
+                value={validView ? requestedView : ""}
+                onChange={changeView}
+                features={event.features}
+              />
+              <div id="session-data-panel" role="tabpanel" tabIndex={0}>
+                {!validView ? (
+                  <EmptyState
+                    title="Unknown dataset selection"
+                    description="Choose one of the available dataset tabs."
+                  />
+                ) : !session ? (
+                  <EmptyState
+                    title="This session is not available"
+                    description="Choose a session supplied for this event. No other session has been substituted."
+                  />
+                ) : (
+                  <SessionData
+                    key={`${session.id}:${requestedView}`}
+                    session={session}
+                    dataset={requestedView}
+                    snapshotId={meta.snapshotId}
+                    params={params}
+                    setParams={setParams}
+                    onSnapshotReset={refresh}
+                  />
+                )}
+              </div>
+            </>
           </>
         ) : (
           <EmptyState
@@ -927,6 +1100,46 @@ function Detail({ data, params, setParams, refresh }) {
           />
         )}
       </Panel>
+      <Panel title="Circuit">
+        <div className="race-circuit-visual">
+          <CountryFlag
+            country={circuitProfile.currentData?.profile?.country}
+            label="Circuit country"
+            showFallback
+          />
+          <CircuitSilhouette
+            layout={layout}
+            circuitName={event.circuit?.displayName || "Circuit"}
+            country={circuitProfile.currentData?.profile?.country}
+            fallback="message"
+          />
+        </div>
+        <p className="race-note">
+          {layout
+            ? `${layout.name} · ${layout.validFrom || "Start date not supplied"} — ${layout.validTo || "End date not supplied"}`
+            : "No reviewed circuit layout is published for this event."}
+        </p>
+      </Panel>
+      <ImpactPanel query={impact} />
+      <details className="race-coverage">
+        <summary>Event coverage and session schedule</summary>
+        <ul>
+          {event.features.map((feature) => (
+            <li key={feature.key}>
+              {feature.key.replaceAll("-", " ")}: {feature.coverage}
+            </li>
+          ))}
+        </ul>
+        {!event.features.length && <p>No dataset coverage supplied.</p>}
+        <ul>
+          {sessions.map((item) => (
+            <li key={item.id}>
+              {item.label} · {dateLabel(item.schedule.date)} ·{" "}
+              {item.status === "unknown" ? "Status not supplied" : item.status}
+            </li>
+          ))}
+        </ul>
+      </details>
     </>
   );
 }
