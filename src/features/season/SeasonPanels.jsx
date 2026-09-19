@@ -255,9 +255,13 @@ function RacePodium({ detail, isFetching, isError }) {
               <div className="race-podium-driver">
                 <div className="race-podium-driver-line">
                   <DriverNumber number={row.entry?.number || row.entry?.driverNumber} />
-                  <strong>{entryName(row.entry)}</strong>
+                  <div className="race-podium-driver-copy">
+                    <strong>{entryName(row.entry)}</strong>
+                    <span>
+                      {row.entry?.constructor?.displayName || "Team not supplied"}
+                    </span>
+                  </div>
                 </div>
-                <span>{row.entry?.constructor?.displayName || "Team not supplied"}</span>
               </div>
               <div className="race-podium-block">
                 <span
