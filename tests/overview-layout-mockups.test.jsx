@@ -4,7 +4,7 @@ import OverviewLayoutMockups from "../src/pages/OverviewLayoutMockups";
 
 test("overview layout study presents four complete static alternatives", () => {
   render(<OverviewLayoutMockups />);
-  expect(screen.getByRole("heading", { name: /four ways/i })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: /four complete ways/i })).toBeInTheDocument();
   expect(
     screen.getAllByRole("heading", { name: "Spanish Grand Prix" }),
   ).toHaveLength(4);

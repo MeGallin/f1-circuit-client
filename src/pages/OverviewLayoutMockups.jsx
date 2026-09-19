@@ -16,32 +16,32 @@ const standings = [
 
 const variants = [
   {
-    id: "race-first",
-    label: "01 / Race first",
-    title: "Answer the immediate question first",
+    id: "race-report",
+    label: "Race report",
+    title: "One answer, then the evidence",
     summary:
-      "The latest race owns the full width. Standings and next/previous context follow as supporting evidence.",
+      "The latest result is the first reading. Season movement, adjacent races and the championship are built into the same report surface.",
   },
   {
-    id: "balanced",
-    label: "02 / Balanced",
-    title: "Give the result and season equal weight",
+    id: "race-week",
+    label: "Race week",
+    title: "Put the season around the race",
     summary:
-      "The latest race and championship snapshot sit together, making the page useful for both race and season visitors.",
+      "Previous, current and next events form one continuous timeline, with the result and title picture held beneath it.",
   },
   {
-    id: "championship",
-    label: "03 / Championship desk",
-    title: "Lead with the title picture",
+    id: "championship-led",
+    label: "Championship led",
+    title: "Read the title picture through the latest race",
     summary:
-      "The championship snapshot is the first reading column, while the latest result remains the strong visual counterpoint.",
+      "The standings carry the visual weight, while the latest podium explains the most recent change in the table.",
   },
   {
-    id: "calendar-first",
-    label: "04 / Calendar desk",
-    title: "Orient the visitor in the season",
+    id: "season-led",
+    label: "Season led",
+    title: "A single season desk",
     summary:
-      "Previous and next events establish where the season is, with the latest result and full standings immediately below.",
+      "Round position, adjacent events, result and standings are presented as one compact desk for quick return visits.",
   },
 ];
 
@@ -60,8 +60,9 @@ function MockupPodium() {
     ["Andrea Kimi Antonelli", "Mercedes", "1", "25 PTS", "winner"],
     ["Lando Norris", "McLaren", "3", "15 PTS", "third"],
   ];
+
   return (
-    <section className="mockup-results" aria-label="Race result preview">
+    <section className="mockup-podium-section" aria-label="Race result preview">
       <div className="mockup-section-heading">
         <span>RACE RESULT</span>
         <small>Top three</small>
@@ -84,39 +85,15 @@ function MockupPodium() {
   );
 }
 
-function MockupEventStrip() {
+function MockupRaceHero() {
   return (
-    <section className="mockup-event-progress" aria-label="Season progress preview">
-      <div className="mockup-event-progress-heading">
-        <span>EVENTS</span>
-        <strong>14 <small>of 23 events</small></strong>
-      </div>
-      <div className="mockup-event-guidance">
-        <span>ROUND EXPLORER</span>
-        <strong>Tap or click a marker to inspect that round.</strong>
-      </div>
-      <div className="mockup-event-strip" aria-hidden="true">
-        {Array.from({ length: 23 }, (_, index) => (
-          <i className={index < 14 ? "is-complete" : ""} key={index} />
-        ))}
-      </div>
-      <div className="mockup-event-legend">
-        <span><i className="is-complete" /> Completed</span>
-        <span><i /> Upcoming</span>
-      </div>
-    </section>
-  );
-}
-
-function MockupRaceFocus() {
-  return (
-    <section className="mockup-race-focus">
+    <section className="mockup-race-hero" aria-label="Latest completed race">
       <div className="mockup-race-topline">
         <span>LATEST COMPLETED RACE</span>
         <b>completed</b>
       </div>
       <div className="mockup-race-identity">
-        <div>
+        <div className="mockup-race-copy">
           <span className="mockup-round">ROUND 14 OF 23</span>
           <h3>Spanish Grand Prix</h3>
           <p>Madring</p>
@@ -127,21 +104,79 @@ function MockupRaceFocus() {
         </div>
       </div>
       <MockupPodium />
-      <MockupEventStrip />
-      <div className="mockup-race-footer">
+      <div className="mockup-race-actions">
         <MockupAction>Open race detail</MockupAction>
         <span><CalendarBlankIcon size={16} aria-hidden /> 13 Sept 2026</span>
-        <MockupAction primary>Explore the calendar</MockupAction>
       </div>
+    </section>
+  );
+}
+
+function MockupEventStrip() {
+  return (
+    <section className="mockup-event-progress" aria-label="Season progress preview">
+      <div className="mockup-event-progress-heading">
+        <div>
+          <span>SEASON PROGRESS</span>
+          <strong>14 <small>of 23 events</small></strong>
+        </div>
+        <span className="mockup-event-progress-note">Results through Spanish Grand Prix</span>
+      </div>
+      <div className="mockup-event-strip" aria-hidden="true">
+        {Array.from({ length: 23 }, (_, index) => (
+          <i className={index < 14 ? "is-complete" : ""} key={index} />
+        ))}
+      </div>
+      <div className="mockup-event-legend">
+        <span><i className="is-complete" /> Completed</span>
+        <span><i /> Upcoming</span>
+        <b>Round 14 is the latest published result</b>
+      </div>
+    </section>
+  );
+}
+
+function MockupEventContext() {
+  return (
+    <section className="mockup-event-context" aria-label="Previous and next events">
+      <div className="mockup-context-heading">
+        <h3>Previous and next events</h3>
+        <span>Where the season goes next</span>
+      </div>
+      <div className="mockup-context-events">
+        <div className="mockup-context-event mockup-context-event--previous">
+          <span className="mockup-context-round">13</span>
+          <div>
+            <small>PREVIOUS EVENT</small>
+            <strong>Italian Grand Prix</strong>
+            <p>Autodromo Nazionale di Monza</p>
+          </div>
+          <b>06 Sept 2026<small>completed</small></b>
+        </div>
+        <div className="mockup-context-event mockup-context-event--next">
+          <span className="mockup-context-round">15</span>
+          <div>
+            <small>NEXT EVENT</small>
+            <strong>Azerbaijan Grand Prix</strong>
+            <p>Baku City Circuit</p>
+            <em>Countdown to race start · 06 days 19 hours</em>
+          </div>
+          <b>26 Sept 2026<small>scheduled</small></b>
+        </div>
+      </div>
+      <MockupAction primary>Explore the calendar</MockupAction>
     </section>
   );
 }
 
 function MockupStandings() {
   return (
-    <section className="mockup-standings">
+    <section className="mockup-standings" aria-label="Championship snapshot">
       <div className="mockup-panel-heading">
-        <h3>Championship snapshot</h3>
+        <div>
+          <span>CHAMPIONSHIP</span>
+          <h3>Championship snapshot</h3>
+        </div>
         <span>Drivers / Constructors</span>
       </div>
       <ol>
@@ -153,30 +188,10 @@ function MockupStandings() {
           </li>
         ))}
       </ol>
-      <p>Leading entries from the latest published standings after Spanish Grand Prix.</p>
-      <MockupAction>Open full standings</MockupAction>
-    </section>
-  );
-}
-
-function MockupCalendar() {
-  return (
-    <section className="mockup-calendar">
-      <div className="mockup-panel-heading">
-        <h3>Previous and next events</h3>
-        <span>Season context</span>
+      <div className="mockup-standings-footer">
+        <p>Leading entries after Spanish Grand Prix.</p>
+        <MockupAction>Open full standings</MockupAction>
       </div>
-      <div className="mockup-calendar-row">
-        <span>13</span>
-        <div><small>PREVIOUS EVENT</small><strong>Italian Grand Prix</strong><p>Autodromo Nazionale di Monza</p></div>
-        <b>06 Sept 2026<small>completed</small></b>
-      </div>
-      <div className="mockup-calendar-row mockup-calendar-row--next">
-        <span>15</span>
-        <div><small>NEXT EVENT</small><strong>Azerbaijan Grand Prix</strong><p>Baku City Circuit</p><em>Countdown to race start · 06 days 19 hours</em></div>
-        <b>26 Sept 2026<small>scheduled</small></b>
-      </div>
-      <MockupAction>Open season calendar</MockupAction>
     </section>
   );
 }
@@ -202,12 +217,13 @@ function LayoutFrame({ variant }) {
         </div>
         <p>{variant.summary}</p>
       </header>
-      <div className="overview-mockup-grid">
-        <div className="overview-mockup-freshness">Results through Spanish Grand Prix · 2026-09-13</div>
-        <div className="overview-mockup-race"><MockupRaceFocus /></div>
-        <div className="overview-mockup-standings"><MockupStandings /></div>
-        <div className="overview-mockup-calendar"><MockupCalendar /></div>
-        <div className="overview-mockup-provenance"><MockupProvenance /></div>
+      <div className="overview-mockup-surface">
+        <div className="mockup-surface-freshness">Results through Spanish Grand Prix · 2026-09-13</div>
+        <MockupRaceHero />
+        <MockupEventContext />
+        <MockupStandings />
+        <MockupEventStrip />
+        <MockupProvenance />
       </div>
     </section>
   );
@@ -218,10 +234,9 @@ export default function OverviewLayoutMockups() {
     <div className="overview-mockup-page">
       <header className="overview-mockup-intro">
         <p className="eyebrow">OVERVIEW LAYOUT STUDY</p>
-        <h1>Four ways to structure the season overview</h1>
+        <h1>Four complete ways to read the season overview</h1>
         <p>
-          Same data, same components and same visual language. Only the reading order changes.
-          These are static review mock-ups for the 2026 season surface.
+          Same data, same components and same visual language. Each option is one continuous overview module, with the latest race, adjacent events, progress and championship in a deliberate reading order.
         </p>
       </header>
       <div className="overview-mockup-list">
