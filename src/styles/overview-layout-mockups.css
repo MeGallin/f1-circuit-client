@@ -382,16 +382,6 @@
   border-top: 1px solid var(--apex-color-line);
 }
 
-.mockup-previous-event-label {
-  grid-template-columns: auto auto;
-  align-items: baseline;
-  gap: var(--apex-space-3);
-}
-
-.mockup-previous-event-label b {
-  order: -1;
-}
-
 .mockup-previous-event-date {
   align-items: end;
 }
