@@ -200,7 +200,7 @@ export function DriverNumber({ number, className = "" }) {
       aria-label={`Driver number ${number}`}
       className={`driver-number ${className}`.trim()}
     >
-      #{number}
+      {number}
     </span>
   );
 }
