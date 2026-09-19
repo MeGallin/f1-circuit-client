@@ -552,6 +552,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--apex-space-2);
+  line-height: 1;
 }
 
 .mockup-event-legend b {
