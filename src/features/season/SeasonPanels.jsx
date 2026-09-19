@@ -193,16 +193,21 @@ function RacePodium({ detail, isFetching, isError }) {
                     : "third"
               }`}
             >
-              <span className="race-podium-position" aria-label={`Position ${row.position}`}>
-                {row.position}
-              </span>
-              <div>
+              <div className="race-podium-driver">
                 <strong>{entryName(row.entry)}</strong>
                 <span>{row.entry?.constructor?.displayName || "Team not supplied"}</span>
               </div>
-              <span className="race-podium-points">
-                {row.points == null ? "—" : `${row.points} PTS`}
-              </span>
+              <div className="race-podium-block">
+                <span
+                  className="race-podium-position"
+                  aria-label={`Position ${row.position}`}
+                >
+                  {row.position}
+                </span>
+                <span className="race-podium-points">
+                  {row.points == null ? "—" : `${row.points} PTS`}
+                </span>
+              </div>
             </li>
           ))}
         </ol>
