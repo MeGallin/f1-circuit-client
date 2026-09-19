@@ -136,6 +136,12 @@
   font-size: var(--apex-type-metric-size);
   line-height: 1;
 }
+.race-podium-row--second .race-podium-position {
+  font-size: calc(var(--apex-type-metric-size) * 0.66);
+}
+.race-podium-row--third .race-podium-position {
+  font-size: calc(var(--apex-type-metric-size) * 0.33);
+}
 .race-podium-row--winner {
   border-left: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
 }
@@ -212,14 +218,17 @@
     height: 7rem;
     min-height: 0;
   }
-  .race-podium-row--third .race-podium-position {
-    font-size: var(--apex-type-metric-size);
-  }
   .race-podium-row--winner .race-podium-block {
     border-top-color: var(--apex-color-accent);
   }
   .race-podium-position {
     font-size: var(--apex-type-race-display-size);
+  }
+  .race-podium-row--second .race-podium-position {
+    font-size: calc(var(--apex-type-race-display-size) * 0.66);
+  }
+  .race-podium-row--third .race-podium-position {
+    font-size: calc(var(--apex-type-race-display-size) * 0.33);
   }
 }
 .race-focus-content > .circuit-silhouette {
