@@ -425,6 +425,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: var(--apex-space-8);
+  row-gap: var(--apex-space-3);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -438,6 +439,10 @@
   min-width: 0;
   padding: var(--apex-space-4) 0;
   border-top: 1px solid var(--apex-color-line);
+}
+
+.mockup-standings li:nth-child(even) {
+  transform: translateY(var(--apex-space-4));
 }
 
 .mockup-standings li > span,
@@ -690,6 +695,10 @@
 
   .mockup-standings ol {
     grid-template-columns: 1fr;
+  }
+
+  .mockup-standings li:nth-child(even) {
+    transform: none;
   }
 
   .mockup-event-progress-heading {

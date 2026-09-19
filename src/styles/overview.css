@@ -371,8 +371,18 @@
   grid-template-columns: 24px minmax(0, 1fr) auto;
   gap: var(--apex-space-5);
   align-items: center;
+  min-width: 0;
   padding: var(--apex-space-6);
   border-bottom: 1px solid var(--apex-color-line);
+}
+.leader-list li > div {
+  min-width: 0;
+}
+.leader-list li > div strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .leader-list li:last-child {
   border: 0;
@@ -403,6 +413,21 @@
 }
 .season-grid--data {
   align-items: start;
+}
+@media (min-width: 520px) {
+  .leader-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--apex-space-5);
+    row-gap: var(--apex-space-3);
+  }
+  .leader-list li {
+    border-top: 1px solid var(--apex-color-line);
+    border-bottom: 0;
+  }
+  .leader-list li:nth-child(even) {
+    transform: translateY(var(--apex-space-4));
+  }
 }
 @media (min-width: 1151px) {
   .season-grid {
