@@ -185,7 +185,7 @@
   .race-podium-row--third {
     grid-column: 3;
     grid-row: 1;
-    margin-top: calc(var(--apex-space-10) + var(--apex-space-4));
+    margin-top: calc(var(--apex-space-10) + var(--apex-space-8));
   }
   .race-podium-driver {
     box-sizing: border-box;
@@ -206,6 +206,14 @@
   }
   .race-podium-row--second .race-podium-block {
     flex-basis: 8.5rem;
+  }
+  .race-podium-row--third .race-podium-block {
+    flex: 0 0 7rem;
+    height: 7rem;
+    min-height: 0;
+  }
+  .race-podium-row--third .race-podium-position {
+    font-size: var(--apex-type-metric-size);
   }
   .race-podium-row--winner .race-podium-block {
     border-top-color: var(--apex-color-accent);
