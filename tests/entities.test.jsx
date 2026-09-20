@@ -146,14 +146,20 @@ test("entity endpoints match the pinned contract and nullable comparison mapping
 });
 test("search submits names and maps canonical profile links with season and pinned pagination", async () => {
   const calls = mock((url) =>
-    collection(
-      [{ id: entity.id, kind: "driver", entity, context: null }],
-      !url.searchParams.has("cursor"),
-    ),
+    url.pathname.endsWith("/seasons")
+      ? seasons
+      : collection(
+          [{ id: entity.id, kind: "driver", entity, context: null }],
+          !url.searchParams.has("cursor"),
+        ),
   );
+  const searchCalls = () => calls.filter((url) => url.pathname.endsWith("/search"));
   mount("/explore?season=2024");
-  expect(screen.getByText("Find a record")).toBeInTheDocument();
-  await userEvent.type(screen.getByLabelText("Name or season"), "Example");
+  expect(screen.getByText("Start with a search")).toBeInTheDocument();
+  await userEvent.type(
+    screen.getByLabelText("Name, circuit, race or season"),
+    "Example",
+  );
   await userEvent.selectOptions(screen.getByLabelText("Record type"), "driver");
   await userEvent.click(
     screen.getByRole("button", { name: "Search", exact: true }),
@@ -161,11 +167,33 @@ test("search submits names and maps canonical profile links with season and pinn
   expect(
     await screen.findByRole("link", { name: "Example Driver" }),
   ).toHaveAttribute("href", "/drivers/driver%3Aone?season=2024");
+  expect(screen.getByText("Driver")).toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: "Next page" }));
-  await waitFor(() => expect(calls).toHaveLength(2));
-  expect(calls[1].searchParams.get("snapshotId")).toBe("stable");
-  expect(calls[1].searchParams.get("kind")).toBe("driver");
-  expect(calls[1].searchParams.get("q")).toBe("Example");
+  await waitFor(() => expect(searchCalls()).toHaveLength(2));
+  expect(searchCalls()[1].searchParams.get("snapshotId")).toBe("stable");
+  expect(searchCalls()[1].searchParams.get("kind")).toBe("driver");
+  expect(searchCalls()[1].searchParams.get("q")).toBe("Example");
+  await userEvent.click(
+    await screen.findByRole("button", { name: "Clear search" }),
+  );
+  expect(await screen.findByText("Start with a search")).toBeInTheDocument();
+  expect(screen.getByTestId("location")).toHaveTextContent("?season=2024");
+});
+test("empty search results explain the query and offer recovery", async () => {
+  mock((url) =>
+    url.pathname.endsWith("/seasons") ? seasons : collection([]),
+  );
+  mount("/explore?season=2024&q=zzzzzzzz");
+  expect(
+    await screen.findByRole("heading", { name: /No records match/ }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      "Try a different name, circuit, race or season, or search all record types.",
+    ),
+  ).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Clear search" }));
+  expect(await screen.findByText("Start with a search")).toBeInTheDocument();
 });
 test("explore provides task-led browse paths before a search is entered", () => {
   mount("/explore?season=2024");
@@ -176,6 +204,10 @@ test("explore provides task-led browse paths before a search is entered", () => 
   expect(screen.getByRole("link", { name: "Browse drivers" })).toHaveAttribute(
     "href",
     "/standings?season=2024&kind=drivers",
+  );
+  expect(screen.getByRole("link", { name: "Search circuits" })).toHaveAttribute(
+    "href",
+    "/explore?season=2024&type=circuit",
   );
 });
 test("profile history keeps decimal points and resets pagination when the season changes", async () => {

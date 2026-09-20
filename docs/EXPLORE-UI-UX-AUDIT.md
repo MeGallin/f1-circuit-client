@@ -12,6 +12,10 @@ The current experience is not yet a strong exploration surface. It reads as two 
 
 This should be a targeted evolution, not a new route or a visual rewrite. Keep `/explore`, the existing design tokens, the current navigation labels, the source-of-truth model and the URL-driven search contract.
 
+## Implementation status
+
+The first implementation slice is complete in the React client. The route now uses the search-first composition described below, with season context, richer result rows, query-aware empty states, search-specific loading and error states, expanded browse routes and preserved provenance. The remaining checklist items are manual responsive and theme QA items that must be verified before release.
+
 ## Design read and working dials
 
 Reading this as: a redesign-preserve audit of a research-oriented archive for engaged F1 followers, with a dark trackside editorial language and moderate information density, leaning toward a search-first index rather than a generic dashboard.
@@ -256,27 +260,27 @@ Use the existing JavaScript React components and tokens:
 - `Panel` only where it communicates a real group; avoid nested or oversized empty panels.
 - `TextLink` for result names and canonical entity navigation.
 - `ActionLink` for route-level movement, not for every result row.
-- `DataBoundary`, `EmptyState`, `ErrorState`, `Pagination` and `SourceNote` for consistent states.
+- `Skeleton`, `ErrorState`, `CollectionPages` and `SourceNote` for consistent states.
 
 Do not create one-off generic classes or introduce a component library. Any new visual pattern should be a named, route-owned pattern in the existing design system. If a result row or query suggestion is used on another route, promote it to a reusable component rather than duplicating markup. Do not over-componentize a single Explore-only composition.
 
 ## Implementation checklist for the development team
 
-- [ ] Add visible season context to Explore without implying that search is season-filtered.
-- [ ] Remove the inconsistent hard-coded 2024 fallback from Explore links.
-- [ ] Reorder the page so Search the archive is the primary task.
-- [ ] Reduce the initial empty-state height and replace generic copy with useful examples.
-- [ ] Expand or clarify browse routes for circuits, events and seasons.
-- [ ] Improve the query label and helper copy.
-- [ ] Add a result count and a clear-filter action once results exist.
-- [ ] Build a consistent result-row anatomy with human-readable type labels.
-- [ ] Preserve supplied context and leave missing fields explicit.
-- [ ] Make the empty-result state query-aware and recoverable.
-- [ ] Make loading and error states search-specific while preserving the current query.
-- [ ] Keep provenance visible but subordinate to the search task.
+- [x] Add visible season context to Explore without implying that search is season-filtered.
+- [x] Remove the inconsistent hard-coded 2024 fallback from Explore links.
+- [x] Reorder the page so Search the archive is the primary task.
+- [x] Reduce the initial empty-state height and replace generic copy with useful examples.
+- [x] Expand or clarify browse routes for circuits, events and seasons.
+- [x] Improve the query label and helper copy.
+- [x] Add a result count and a clear-filter action once results exist.
+- [x] Build a consistent result-row anatomy with human-readable type labels.
+- [x] Preserve supplied context and leave missing fields explicit.
+- [x] Make the empty-result state query-aware and recoverable.
+- [x] Make loading and error states search-specific while preserving the current query.
+- [x] Keep provenance visible but subordinate to the search task.
 - [ ] Verify mobile layout at 320px, 390px and 430px.
 - [ ] Verify keyboard navigation, focus management, contrast and reduced motion.
-- [ ] Add or update tests for URL state, filters, empty results, clear action and result labels.
+- [x] Add or update tests for URL state, filters, empty results, clear action and result labels.
 - [ ] Run the full client check and inspect the live route in dark and light themes before release.
 
 ## Definition of done
@@ -291,4 +295,3 @@ The Explore route is ready when a first-time visitor can answer these questions 
 6. How do I get to races, drivers, constructors, circuits and seasons without guessing?
 
 The implementation is complete only when the answers remain clear in the initial, loading, successful, empty, error, filtered, paginated and mobile states.
-
