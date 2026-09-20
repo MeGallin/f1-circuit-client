@@ -2,6 +2,7 @@ import { Button, StatusBadge, TextLink } from "./ui";
 
 const labels = {
   constructor: "Constructor",
+  championshipYears: "Championship years",
   count: "Count",
   comparisonCount: "Compared count",
   comparisonCompounds: "Compared compounds",
