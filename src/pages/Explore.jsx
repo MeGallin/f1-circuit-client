@@ -55,6 +55,10 @@ function resultPath(row, season) {
   );
 }
 
+function normalizeSearchQuery(value) {
+  return value.replace(/[,+]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
 const relatedTargetKinds = new Set(["driver", "constructor", "circuit"]);
 const relatedOutputKinds = new Set(["event", "constructor", "circuit"]);
 
@@ -102,15 +106,16 @@ export default function Explore() {
     ? requestedKind
     : "";
   const season = params.get("season") || String(runtimeYear());
+  const searchQuery = normalizeSearchQuery(q);
   const seasons = useGetSeasonsQuery();
   const seasonOptions = selectSeasonOptions(seasons.currentData);
   const valid =
-    q.trim().length >= 2 &&
-    q.length <= 100 &&
+    searchQuery.length >= 2 &&
+    searchQuery.length <= 100 &&
     searchKinds.some((option) => option.value === kind);
   const query = useSearchEntitiesQuery(
     {
-      q,
+      q: searchQuery,
       kind: kind || undefined,
       cursor: params.get("cursor") || undefined,
       snapshotId: params.get("snapshot") || undefined,
@@ -125,7 +130,7 @@ export default function Explore() {
     query.isSuccess &&
     data?.items.length === 0;
   const relatedSearch = useSearchEntitiesQuery(
-    { q, cursor: undefined, snapshotId: undefined },
+    { q: searchQuery, cursor: undefined, snapshotId: undefined },
     { skip: !relatedLookupEnabled },
   );
   const relatedEntity = relatedSearch.currentData?.items.find((row) =>
@@ -182,7 +187,8 @@ export default function Explore() {
       <Panel title="Search the archive">
         <p className="explore-search-note">
           Results come from the published archive snapshot. Search is not
-          limited to the selected season.
+          limited to the selected season. Separate multiple terms with spaces
+          or commas to search for any of them.
         </p>
         <form
           key={`${q}:${kind}`}
