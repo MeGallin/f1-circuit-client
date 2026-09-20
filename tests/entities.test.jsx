@@ -195,6 +195,42 @@ test("empty search results explain the query and offer recovery", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Clear search" }));
   expect(await screen.findByText("Start with a search")).toBeInTheDocument();
 });
+test("filtered searches offer related archive history from published records", async () => {
+  const calls = mock((url) => {
+    if (url.pathname.endsWith("/seasons")) return seasons;
+    if (url.pathname.endsWith("/search"))
+      return url.searchParams.get("kind") === "event"
+        ? collection([])
+        : collection([{ id: entity.id, kind: "driver", entity, context: null }]);
+    if (url.pathname.endsWith("/results")) return collection([result]);
+    return { data: { profile }, meta };
+  });
+  mount("/explore?season=2024&type=event&q=Example");
+  expect(
+    await screen.findByRole("heading", {
+      name: "No event match “Example”",
+    }),
+  ).toBeInTheDocument();
+  expect(
+    await screen.findByRole("heading", {
+      name: "Example Driver's race history",
+    }),
+  ).toBeInTheDocument();
+  expect(
+    await screen.findByRole("link", { name: "Example Grand Prix" }),
+  ).toHaveAttribute("href", "/events/event%3Aone?season=2024");
+  expect(screen.getByRole("link", { name: "Search all records" })).toHaveAttribute(
+    "href",
+    "/explore?season=2024&q=Example",
+  );
+  expect(
+    calls.some(
+      (url) =>
+        url.pathname.endsWith("/drivers/driver%3Aone/results") &&
+        url.searchParams.get("snapshotId") === "stable",
+    ),
+  ).toBe(true);
+});
 test("explore provides task-led browse paths before a search is entered", () => {
   mount("/explore?season=2024");
   expect(screen.getByRole("link", { name: "Find a race" })).toHaveAttribute(

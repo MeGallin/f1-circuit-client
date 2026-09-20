@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import {
   useGetSeasonsQuery,
+  useGetHistoryQuery,
   useSearchEntitiesQuery,
 } from "../api/archiveApi";
 import {
@@ -54,6 +55,45 @@ function resultPath(row, season) {
   );
 }
 
+const relatedTargetKinds = new Set(["driver", "constructor", "circuit"]);
+const relatedOutputKinds = new Set(["event", "constructor", "circuit"]);
+
+function relatedTitle(kind, displayName) {
+  if (kind === "constructor") return `Teams in ${displayName}'s race history`;
+  if (kind === "circuit") return `Circuits in ${displayName}'s race history`;
+  return `${displayName}'s race history`;
+}
+
+function relatedRecords(outputKind, targetKind, history) {
+  const seen = new Set();
+
+  return (history?.items || []).reduce((rows, row) => {
+    const event =
+      row.eventContext?.event || (targetKind === "circuit" ? row : null);
+    const entity =
+      outputKind === "event"
+        ? event && {
+            id: event.id,
+            displayName: event.name || event.displayName,
+          }
+        : outputKind === "constructor"
+          ? row.entry?.constructor
+          : event?.circuit;
+
+    if (!entity?.id || seen.has(entity.id)) return rows;
+    seen.add(entity.id);
+    rows.push({
+      kind: outputKind,
+      entity: {
+        ...entity,
+        displayName: entity.displayName || entity.name || entity.id,
+      },
+      context: event?.year ? String(event.year) : null,
+    });
+    return rows;
+  }, []);
+}
+
 export default function Explore() {
   const [params, setParams] = useSearchParams();
   const q = params.get("q") || "";
@@ -78,11 +118,44 @@ export default function Explore() {
     { skip: !valid },
   );
   const data = query.currentData;
+  const relatedLookupEnabled =
+    valid &&
+    Boolean(kind) &&
+    relatedOutputKinds.has(kind) &&
+    query.isSuccess &&
+    data?.items.length === 0;
+  const relatedSearch = useSearchEntitiesQuery(
+    { q, cursor: undefined, snapshotId: undefined },
+    { skip: !relatedLookupEnabled },
+  );
+  const relatedEntity = relatedSearch.currentData?.items.find((row) =>
+    relatedTargetKinds.has(row.kind),
+  );
+  const relatedHistory = useGetHistoryQuery(
+    relatedEntity
+      ? {
+          kind: relatedEntity.kind,
+          id: relatedEntity.entity.id,
+          snapshotId: relatedSearch.currentData?.meta?.snapshotId,
+        }
+      : {},
+    { skip: !relatedEntity },
+  );
+  const relatedRows = relatedRecords(
+    kind,
+    relatedEntity?.kind,
+    relatedHistory.currentData,
+  );
   const clearSearch = () =>
     setParams(changeFilters(params, { q: "", type: "" }));
   const runExample = (value) =>
     setParams(changeFilters(params, { q: value, type: "" }));
   const comparePath = `/compare?${new URLSearchParams({ season })}`;
+  const allRecordsParams = new URLSearchParams(params);
+  allRecordsParams.delete("type");
+  allRecordsParams.delete("cursor");
+  allRecordsParams.delete("snapshot");
+  const allRecordsPath = `/explore?${allRecordsParams.toString()}`;
   const seasonSelectOptions = seasonOptions.length
     ? seasonOptions
     : [{ value: season, label: `${season} season` }];
@@ -218,19 +291,98 @@ export default function Explore() {
                 <CollectionPages {...{ data, query, params, setParams }} />
               </div>
             ) : (
-              <div className="explore-empty-state" role="status">
-                <h3>
-                  No {kind ? kindLabel(kind).toLowerCase() : "records"} match{" "}
-                  “{q}”
-                </h3>
-                <p>
-                  Try a different name, circuit, race or season, or search all
-                  record types.
-                </p>
-                <Button variant="quiet" type="button" onClick={clearSearch}>
-                  Clear search
-                </Button>
-              </div>
+              <>
+                <div className="explore-empty-state" role="status">
+                  <h3>
+                    No {kind ? kindLabel(kind).toLowerCase() : "records"} match{" "}
+                    “{q}”
+                  </h3>
+                  <p>
+                    {kind
+                      ? "Search matches names inside the selected record type. To find races or teams associated with a person, search All records first."
+                      : "Try a different name, circuit, race or season, or search all record types."}
+                  </p>
+                  <div className="explore-empty-actions">
+                    {kind && (
+                      <ActionLink variant="quiet" to={allRecordsPath}>
+                        Search all records
+                      </ActionLink>
+                    )}
+                    <Button variant="quiet" type="button" onClick={clearSearch}>
+                      Clear search
+                    </Button>
+                  </div>
+                </div>
+                {relatedLookupEnabled && (
+                  <div className="explore-related-state" aria-live="polite">
+                    {relatedSearch.isLoading ? (
+                      <Skeleton label="Finding related archive records" />
+                    ) : relatedEntity ? (
+                      <>
+                        <div className="explore-related-heading">
+                          <div>
+                            <p className="eyebrow">RELATED ARCHIVE</p>
+                            <h3>
+                              {relatedTitle(
+                                kind,
+                                relatedEntity.entity.displayName,
+                              )}
+                            </h3>
+                            <p>
+                              Found from the published history for{" "}
+                              <TextLink to={resultPath(relatedEntity, season)}>
+                                {relatedEntity.entity.displayName}
+                              </TextLink>
+                              .
+                            </p>
+                          </div>
+                          <ActionLink
+                            variant="quiet"
+                            to={resultPath(relatedEntity, season)}
+                          >
+                            Open profile
+                          </ActionLink>
+                        </div>
+                        {relatedHistory.isLoading ? (
+                          <Skeleton label="Loading related records" />
+                        ) : relatedRows.length ? (
+                          <ul className="entity-list explore-related-list">
+                            {relatedRows.slice(0, 6).map((row) => (
+                              <li key={`${row.kind}:${row.entity.id}`}>
+                                <div className="explore-result-copy">
+                                  <TextLink to={resultPath(row, season)}>
+                                    {row.entity.displayName}
+                                  </TextLink>
+                                  <div className="explore-result-meta">
+                                    <span className="explore-result-kind">
+                                      {kindLabel(row.kind)}
+                                    </span>
+                                    {row.context && (
+                                      <span className="explore-result-context">
+                                        Season {row.context}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="explore-related-empty">
+                            No related records are published for this selection.
+                          </p>
+                        )}
+                        {relatedRows.length > 6 && (
+                          <p className="muted explore-related-note">
+                            Showing 6 related records. Open the profile for the
+                            full history.
+                          </p>
+                        )}
+                      </>
+                    ) : null}
+                  </div>
+                )}
+              </>
             )}
             <SourceNote meta={data?.meta} />
           </>
