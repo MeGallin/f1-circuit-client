@@ -4,6 +4,7 @@ import useSeasonSearch from "../features/season/useSeasonSearch";
 import {
   archiveApi,
   useGetCalendarQuery,
+  useGetEventQuery,
   useGetLayoutsQuery,
   useGetProfileQuery,
   useGetSeasonsQuery,
@@ -13,6 +14,7 @@ import {
   selectSeasonOptions,
   dateLabel,
 } from "../features/season/selectors";
+import { entryName } from "../features/season/raceFormat";
 import {
   PageHeading,
   Select,
@@ -41,6 +43,25 @@ const calendarFilters = [
   { value: "upcoming", label: "Upcoming" },
 ];
 
+function statusLabel(status) {
+  if (status === "completed") return "Completed";
+  if (["scheduled", "upcoming"].includes(status)) return "Upcoming";
+  return "Status not supplied";
+}
+
+function eventTime(event) {
+  if (
+    !event.schedule.startsAt ||
+    !["minute", "second"].includes(event.schedule.timePrecision)
+  )
+    return null;
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  }).format(new Date(event.schedule.startsAt));
+}
+
 export function filterCalendarEvents(events, filter = "all") {
   return (events || []).filter((event) => {
     if (filter === "completed") return event.status === "completed";
@@ -56,6 +77,11 @@ export function CalendarEvents({
   onSelect,
   selectedLayout,
   selectedCountry,
+  latestResultId,
+  nextRaceId,
+  eventDetail,
+  eventDetailFetching,
+  eventDetailError,
 }) {
   return (
     <ol className="calendar-events" aria-label="Season events">
@@ -69,9 +95,15 @@ export function CalendarEvents({
           }
         >
           <span className="calendar-round">
-            Round {event.round ?? "not supplied"}
+            <span>Round</span>
+            <strong>{String(event.round ?? "N/A").padStart(2, "0")}</strong>
           </span>
           <div className="calendar-event-name">
+            {(event.id === latestResultId || event.id === nextRaceId) && (
+              <span className="calendar-event-marker">
+                {event.id === latestResultId ? "Latest result" : "Next race"}
+              </span>
+            )}
             <button
               type="button"
               aria-expanded={event.id === selectedId}
@@ -98,26 +130,16 @@ export function CalendarEvents({
             <time dateTime={event.schedule.date || undefined}>
               {dateLabel(event.schedule.date)}
             </time>
-            {event.schedule.startsAt &&
-              ["minute", "second"].includes(event.schedule.timePrecision) && (
-                <span>
-                  {new Intl.DateTimeFormat("en-GB", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    timeZone: "UTC",
-                  }).format(new Date(event.schedule.startsAt))}{" "}
-                  UTC
-                </span>
-              )}
+            {eventTime(event) && <span>{eventTime(event)} UTC</span>}
           </div>
           <StatusBadge status={event.status}>
-            {event.status === "unknown" ? "Status not supplied" : event.status}
+            {statusLabel(event.status)}
           </StatusBadge>
           <div className="calendar-event-actions">
             <ActionLink
               to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
             >
-              Open race detail
+              Full race detail
             </ActionLink>
           </div>
           {event.id === selectedId && (
@@ -128,31 +150,68 @@ export function CalendarEvents({
               <CircuitSilhouette
                 layout={event.id === selectedId ? selectedLayout : null}
                 circuitName={event.circuit?.displayName}
-                country={selectedCountry}
+                  country={selectedCountry || event.circuit?.country}
                 size="compact"
                 fallback="message"
               />
-              <p>
-                Selected round ·{" "}
-                {selectedCountry ||
-                  "Location not supplied by the calendar source."}
-              </p>
-              <p>
-                {event.schedule.circuitTimeZone
-                  ? `Circuit time zone: ${event.schedule.circuitTimeZone}`
-                  : "Circuit time zone not supplied."}
-              </p>
-              {event.features.length ? (
-                <ul aria-label="Available datasets">
-                  {event.features.map((feature) => (
-                    <li key={feature.key}>
-                      {feature.key.replaceAll("-", " ")}: {feature.coverage}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No dataset coverage supplied for this event.</p>
-              )}
+              <div className="calendar-event-detail-copy">
+                <div className="calendar-detail-meta">
+                  <p>
+                    {selectedCountry ||
+                      event.circuit?.country ||
+                      "Location not supplied by the calendar source."}
+                  </p>
+                  <p>
+                    {event.schedule.circuitTimeZone
+                      ? `Circuit time zone: ${event.schedule.circuitTimeZone}`
+                      : "Circuit time zone not supplied."}
+                  </p>
+                </div>
+                <p className="calendar-detail-kicker">
+                  {event.status === "completed" ? "Race result" : "Round preview"}
+                </p>
+                {eventDetail?.podium?.length ? (
+                  <ol className="calendar-podium" aria-label="Top three finishers">
+                    {eventDetail.podium
+                      .filter((row) => row.position >= 1 && row.position <= 3)
+                      .sort((a, b) => a.position - b.position)
+                      .map((row) => (
+                        <li key={row.id}>
+                          <strong>{row.position}</strong>
+                          <span>{entryName(row.entry)}</span>
+                          <small>
+                            {row.entry?.constructor?.displayName ||
+                              "Team not supplied"}
+                          </small>
+                        </li>
+                      ))}
+                  </ol>
+                ) : (
+                  <p>
+                    {eventDetailFetching
+                      ? "Loading race result…"
+                      : eventDetailError
+                        ? "Race result is not available for this round."
+                        : event.status === "completed"
+                          ? "Race result is not supplied for this round."
+                          : "Results will appear here after the race."}
+                  </p>
+                )}
+                <details className="calendar-coverage">
+                  <summary>Data availability</summary>
+                  {event.features?.length ? (
+                    <ul aria-label="Available datasets">
+                      {event.features.map((feature) => (
+                        <li key={feature.key}>
+                          {feature.key.replaceAll("-", " ")}: {feature.coverage}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Coverage details are not supplied for this round.</p>
+                  )}
+                </details>
+              </div>
             </div>
           )}
         </li>
@@ -186,6 +245,10 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
     selectedEvent?.year,
   );
   const selectedCountry = selectedProfile.currentData?.profile?.country;
+  const selectedEventDetailQuery = useGetEventQuery(
+    { eventId: selectedId, snapshotId: data?.meta?.snapshotId },
+    { skip: !selectedId || !selectedEvent || !data?.meta?.snapshotId },
+  );
   const latestResult = (data?.items || [])
     .filter((event) => event.status === "completed")
     .sort((a, b) => (b.round ?? 0) - (a.round ?? 0))[0];
@@ -194,6 +257,21 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
     .sort((a, b) =>
       String(a.schedule.date || "").localeCompare(String(b.schedule.date || "")),
     )[0];
+  const completedEvents = (data?.items || []).filter(
+    (event) => event.status === "completed",
+  );
+  const upcomingEvents = (data?.items || []).filter((event) =>
+    ["scheduled", "upcoming"].includes(event.status),
+  );
+  const totalEvents = data?.page.total ?? data?.items?.length ?? 0;
+  const completionPercent = totalEvents
+    ? Math.round((completedEvents.length / totalEvents) * 100)
+    : 0;
+  const filterCounts = {
+    all: totalEvents,
+    completed: completedEvents.length,
+    upcoming: upcomingEvents.length,
+  };
   const restart = () => {
     if (pages.length > 1) {
       setPages([{}]);
@@ -203,39 +281,78 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
   return (
     <>
       <div className="calendar-toolbar">
-        <p>
-          {year} calendar ·{" "}
-          {data?.page.total != null
-            ? `${data.page.total} events`
-            : query.isLoading || query.isFetching
-              ? "Loading event count"
-              : "Event count not supplied"}
-        </p>
+        <p>{year} season</p>
         <div className="calendar-toolbar-actions">
-          {latestResult && (
-            <ActionLink
-              to={`/events/${encodeURIComponent(latestResult.id)}?season=${year}`}
-            >
-              Open latest result
-            </ActionLink>
-          )}
-          {nextRace && (
-            <ActionLink
-              to={`/events/${encodeURIComponent(nextRace.id)}?season=${year}`}
-            >
-              Open next race
-            </ActionLink>
-          )}
           <Button variant="quiet" disabled={query.isFetching} onClick={restart}>
             Refresh calendar
           </Button>
         </div>
       </div>
-      <Panel title="Every round">
+      <section className="calendar-season-context" aria-label={`${year} season context`}>
+        <div className="calendar-season-progress">
+          <div className="calendar-season-progress-heading">
+            <div>
+              <p className="eyebrow">SEASON PROGRESS</p>
+              <strong>
+                {completedEvents.length} <span>of {totalEvents}</span>
+              </strong>
+            </div>
+            <p>
+              {latestResult
+                ? `Through ${latestResult.name}`
+                : "No completed rounds published"}
+            </p>
+          </div>
+          <div
+            className="calendar-progress-track"
+            role="progressbar"
+            aria-label="Completed events"
+            aria-valuemin="0"
+            aria-valuemax={totalEvents}
+            aria-valuenow={completedEvents.length}
+            style={{ "--calendar-progress": `${completionPercent}%` }}
+          >
+            <span />
+          </div>
+        </div>
+        <div className="calendar-context-events">
+          {latestResult && (
+            <div className="calendar-context-event calendar-context-event--latest">
+              <p>Latest completed</p>
+              <strong>{latestResult.name}</strong>
+              <span>
+                {latestResult.circuit?.displayName || "Circuit not supplied"} ·{" "}
+                {dateLabel(latestResult.schedule.date)}
+              </span>
+              <ActionLink
+                variant="quiet"
+                to={`/events/${encodeURIComponent(latestResult.id)}?season=${year}`}
+              >
+                View result
+              </ActionLink>
+            </div>
+          )}
+          {nextRace && (
+            <div className="calendar-context-event calendar-context-event--next">
+              <p>Next race</p>
+              <strong>{nextRace.name}</strong>
+              <span>
+                {nextRace.circuit?.displayName || "Circuit not supplied"} ·{" "}
+                {dateLabel(nextRace.schedule.date)}
+              </span>
+              <ActionLink
+                variant="quiet"
+                to={`/events/${encodeURIComponent(nextRace.id)}?season=${year}`}
+              >
+                View race
+              </ActionLink>
+            </div>
+          )}
+        </div>
+      </section>
+      <Panel title={`${year} race calendar`}>
         <p className="calendar-explainer">
-          Dates and statuses are shown as supplied. An unknown status does not
-          mean an event has not happened. Select a round to inspect its dataset
-          coverage.
+          Select a round to view its circuit, result and available data.
         </p>
         <DataBoundary
           query={query}
@@ -244,13 +361,30 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
         >
           {data && (
             <>
-              <div className="calendar-filter">
-                <Select
-                  label="Show rounds"
-                  value={filter}
-                  options={calendarFilters}
-                  onChange={(event) => onSelect(null, event.target.value)}
-                />
+              <div className="calendar-filter" aria-label="Filter calendar rounds">
+                <span className="calendar-filter-label">Show</span>
+                <div
+                  className="calendar-filter-options"
+                  role="group"
+                  aria-label="Round status"
+                >
+                  {calendarFilters.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={
+                        filter === option.value
+                          ? "calendar-filter-option is-active"
+                          : "calendar-filter-option"
+                      }
+                      aria-pressed={filter === option.value}
+                      onClick={() => onSelect(null, option.value)}
+                    >
+                      {option.label}
+                      <span>{filterCounts[option.value]}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
               {selectedId &&
                 !visibleEvents.some((event) => event.id === selectedId) && (
@@ -268,6 +402,11 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
                   }
                   selectedLayout={selectedLayout}
                   selectedCountry={selectedCountry}
+                  latestResultId={latestResult?.id}
+                  nextRaceId={nextRace?.id}
+                  eventDetail={selectedEventDetailQuery.currentData?.detail}
+                  eventDetailFetching={selectedEventDetailQuery.isFetching}
+                  eventDetailError={selectedEventDetailQuery.isError}
                 />
               ) : (
                 <EmptyState
