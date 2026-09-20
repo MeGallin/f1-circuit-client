@@ -36,6 +36,7 @@ const labels = {
   rainfallObservations: "Rainfall observations",
   compounds: "Compounds",
   circuit: "Circuit",
+  country: "Country",
   events: "Events",
   period: "Period",
   observations: "Observations",
