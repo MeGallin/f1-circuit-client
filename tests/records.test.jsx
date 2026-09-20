@@ -32,6 +32,43 @@ function Location() {
   return <output data-testid="location">{useLocation().search}</output>;
 }
 
+function capabilitiesResponse(
+  metrics = [
+    { key: "starts", label: "Starts" },
+    { key: "wins", label: "Wins" },
+    { key: "points", label: "Points" },
+  ],
+  metricsByScope = null,
+) {
+  return new Response(
+    JSON.stringify({
+      data: {
+        items: ["driver", "constructor", "circuit", "season"].map((scope) => ({
+          scope,
+          label: scope[0].toUpperCase() + scope.slice(1),
+          metrics: metricsByScope?.[scope] || metrics,
+          reasonCode: (metricsByScope?.[scope] || metrics).length
+            ? null
+            : "HISTORICAL_METRIC_NOT_QUALIFIED",
+          message: (metricsByScope?.[scope] || metrics).length
+            ? null
+            : `No published Records metrics are available for ${scope} yet.`,
+        })),
+        page: { total: 4, hasMore: false, nextCursor: null },
+      },
+      meta: {
+        snapshotId: "snapshot:capabilities",
+        coverage: "not-applicable",
+        freshness: "unknown",
+        verification: "unassessed",
+        warnings: [],
+        sources: [],
+      },
+    }),
+    { headers: { "Content-Type": "application/json" } },
+  );
+}
+
 test("records request preserves exact values, coverage and evidence snapshot", async () => {
   const calls = [];
   vi.stubGlobal(
@@ -39,6 +76,7 @@ test("records request preserves exact values, coverage and evidence snapshot", a
     vi.fn(async (request) => {
       const url = new URL(request.url);
       calls.push(url);
+      if (url.pathname.endsWith("/records/capabilities")) return capabilitiesResponse();
       return new Response(
         JSON.stringify({
           data: {
@@ -89,8 +127,10 @@ test("records request preserves exact values, coverage and evidence snapshot", a
 
 test("records requires a valid target before requesting", async () => {
   const fetchMock = vi.fn(
-    async () =>
-      new Response(
+    async (request) => {
+      const url = new URL(request.url);
+      if (url.pathname.endsWith("/records/capabilities")) return capabilitiesResponse();
+      return new Response(
         JSON.stringify({
           data: { items: [], page: { total: 0, hasMore: false, nextCursor: null } },
           meta: {
@@ -108,15 +148,16 @@ test("records requires a valid target before requesting", async () => {
           },
         }),
         { headers: { "Content-Type": "application/json" } },
-      ),
+      );
+    },
   );
   vi.stubGlobal("fetch", fetchMock);
   mount("/records?scope=season&metric=wins");
-  expect(screen.getByText("Choose a season")).toBeInTheDocument();
+  expect(await screen.findByText("Choose a season")).toBeInTheDocument();
   await userEvent.type(screen.getByLabelText("Season year"), "2024");
   await userEvent.click(screen.getByRole("button", { name: "Show record" }));
   expect(await screen.findByText("This metric is not published yet")).toBeInTheDocument();
-  expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(fetchMock).toHaveBeenCalledTimes(2);
 });
 
 test("records pagination carries the snapshot cursor and filter changes reset it", async () => {
@@ -126,6 +167,7 @@ test("records pagination carries the snapshot cursor and filter changes reset it
     vi.fn(async (request) => {
       const url = new URL(request.url);
       calls.push(url);
+      if (url.pathname.endsWith("/records/capabilities")) return capabilitiesResponse();
       const secondPage = url.searchParams.get("cursor") === "next-records";
       return new Response(
         JSON.stringify({
@@ -173,8 +215,10 @@ test("records pagination carries the snapshot cursor and filter changes reset it
 test("records keep draft scope and metric changes out of the URL until submit", async () => {
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () =>
-      new Response(
+    vi.fn(async (request) => {
+      const url = new URL(request.url);
+      if (url.pathname.endsWith("/records/capabilities")) return capabilitiesResponse();
+      return new Response(
         JSON.stringify({
           data: { items: [], page: { total: null, hasMore: false, nextCursor: null } },
           meta: {
@@ -192,8 +236,8 @@ test("records keep draft scope and metric changes out of the URL until submit", 
           },
         }),
         { headers: { "Content-Type": "application/json" } },
-      ),
-    ),
+      );
+    }),
   );
   mount("/records?season=2026&scope=driver&metric=wins&entityId=driver%3Aone");
   expect(await screen.findByText("This metric is not published yet")).toBeInTheDocument();
@@ -208,6 +252,7 @@ test("records keep draft scope and metric changes out of the URL until submit", 
 test("entity picker supports keyboard selection before applying a record target", async () => {
   const fetchMock = vi.fn(async (request) => {
     const url = new URL(request.url);
+    if (url.pathname.endsWith("/records/capabilities")) return capabilitiesResponse();
     if (url.pathname.endsWith("/search")) {
       return new Response(
         JSON.stringify({
@@ -258,4 +303,60 @@ test("entity picker supports keyboard selection before applying a record target"
   await userEvent.click(screen.getByRole("button", { name: "Show record" }));
   expect(await screen.findByText("This metric is not published yet")).toBeInTheDocument();
   expect(screen.getByTestId("location")).toHaveTextContent("entityId=driver%3Anico");
+});
+
+test("Records renders only the metrics returned for the selected scope", async () => {
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (request) => {
+      const url = new URL(request.url);
+      if (url.pathname.endsWith("/records/capabilities"))
+        return capabilitiesResponse([], {
+          driver: [{ key: "wins", label: "Wins" }],
+          constructor: [],
+          circuit: [{ key: "wins", label: "Wins" }],
+          season: [{ key: "wins", label: "Wins" }],
+        });
+      return new Response(
+        JSON.stringify({
+          data: { items: [], page: { total: null, hasMore: false, nextCursor: null } },
+          meta: {
+            snapshotId: "snapshot:empty",
+            coverage: "unavailable",
+            freshness: "unknown",
+            verification: "unassessed",
+            warnings: [],
+            sources: [],
+          },
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }),
+  );
+  mount("/records?scope=driver&metric=wins&entityId=driver%3Arosberg");
+  const metric = await screen.findByLabelText("Metric");
+  expect(within(metric).getByRole("option", { name: "Wins" })).toBeInTheDocument();
+  expect(within(metric).queryByRole("option", { name: "Podiums" })).not.toBeInTheDocument();
+
+  await userEvent.selectOptions(screen.getByLabelText("Scope"), "constructor");
+  expect(screen.getByText("No published metrics for Constructor")).toBeInTheDocument();
+  expect(screen.queryByLabelText("Metric")).not.toBeInTheDocument();
+});
+
+test("direct podium URLs explain the unavailable capability without advertising Podiums", async () => {
+  const fetchMock = vi.fn(async (request) => {
+    const url = new URL(request.url);
+    if (url.pathname.endsWith("/records/capabilities")) return capabilitiesResponse([]);
+    throw new Error(`Records should not be requested for an unsupported metric: ${url}`);
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  mount("/records?season=2026&scope=driver&metric=podiums&entityId=driver%3Arosberg");
+
+  expect(
+    await screen.findByText("Podiums is not a published Records metric"),
+  ).toBeInTheDocument();
+  expect(screen.queryByRole("option", { name: "Podiums" })).not.toBeInTheDocument();
+  expect(fetchMock.mock.calls.every(([request]) =>
+    !new URL(request.url).pathname.endsWith("/records"),
+  )).toBe(true);
 });

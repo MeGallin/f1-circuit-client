@@ -12,6 +12,20 @@
   margin: var(--apex-space-5) var(--apex-space-6) 0;
   color: var(--apex-color-warning);
 }
+.records-capability-status {
+  display: grid;
+  gap: var(--apex-space-2);
+  align-content: end;
+  min-height: var(--apex-size-control);
+  padding: var(--apex-space-3) 0;
+}
+.records-capability-status strong {
+  font-size: var(--apex-type-body-size);
+}
+.records-capability-status span {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
 .records-query-summary {
   display: grid;
   gap: var(--apex-space-5);

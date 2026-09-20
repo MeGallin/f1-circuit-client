@@ -1,12 +1,16 @@
 import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useGetRecordsQuery } from "../api/archiveApi";
+import {
+  useGetRecordCapabilitiesQuery,
+  useGetRecordsQuery,
+} from "../api/archiveApi";
 import {
   ActionLink,
   Button,
   DataBoundary,
   DataTable,
   EmptyState,
+  ErrorState,
   Input,
   PageHeading,
   Panel,
@@ -24,14 +28,6 @@ export const recordScopes = [
   { value: "constructor", label: "Constructor" },
   { value: "circuit", label: "Circuit" },
   { value: "season", label: "Season" },
-];
-export const recordMetrics = [
-  { value: "starts", label: "Starts" },
-  { value: "wins", label: "Wins" },
-  { value: "podiums", label: "Podiums" },
-  { value: "poles", label: "Pole positions" },
-  { value: "fastest-laps", label: "Fastest laps" },
-  { value: "points", label: "Points" },
 ];
 
 function setFilterParams(params, values) {
@@ -66,8 +62,21 @@ function scopeLabel(scope) {
   return recordScopes.find((item) => item.value === scope)?.label || scope;
 }
 
-function metricLabel(metric) {
-  return recordMetrics.find((item) => item.value === metric)?.label || metric;
+function metricLabel(metric, options = []) {
+  return (
+    options.find((item) => item.value === metric)?.label ||
+    metric
+      ?.replaceAll("-", " ")
+      .replace(/^./, (character) => character.toUpperCase()) ||
+    "Metric"
+  );
+}
+
+function capabilityOptions(capability) {
+  return (capability?.metrics || []).map((metric) => ({
+    value: metric.key,
+    label: metric.label,
+  }));
 }
 
 function coverageLabel(coverage) {
@@ -95,13 +104,22 @@ function warningFor(data) {
   return data?.meta?.warnings?.find((warning) => warning?.code) || null;
 }
 
-function RecordState({ data, scope, metric, year, entity }) {
+function RecordState({ data, scope, metric, year, entity, metricOptions, capability }) {
   const warning = warningFor(data);
+  const selectedMetricLabel = metricLabel(metric, metricOptions);
+  if (!capability) {
+    return (
+      <EmptyState
+        title={`${selectedMetricLabel} is not a published Records metric`}
+        description={`The archive does not publish ${selectedMetricLabel.toLowerCase()} for ${scopeLabel(scope).toLowerCase()} records yet. Choose a published metric for this scope when one is available; no result has been inferred.`}
+      />
+    );
+  }
   if (warning?.code === "HISTORICAL_METRIC_NOT_QUALIFIED") {
     return (
       <EmptyState
         title="This metric is not published yet"
-        description={`The published archive does not have this ${metricLabel(metric).toLowerCase()} result yet. Try another metric or review source coverage; this view will not fill the gap with an estimate.`}
+        description={`The published archive does not have this ${selectedMetricLabel.toLowerCase()} result yet. Try another metric or review source coverage; this view will not fill the gap with an estimate.`}
       />
     );
   }
@@ -115,16 +133,16 @@ function RecordState({ data, scope, metric, year, entity }) {
   }
   return (
     <EmptyState
-      title={`No published ${metricLabel(metric).toLowerCase()} record`}
+      title={`No published ${selectedMetricLabel.toLowerCase()} record`}
       description={`There is no published result for ${recordTargetLabel({ scope, year, entity })}. Check the scope, metric and period, or review source coverage.`}
     />
   );
 }
 
-function RecordEvidence({ row, metric, targetLabel, periodLabel, snapshotId, from }) {
+function RecordEvidence({ row, metric, metricOptions, targetLabel, periodLabel, snapshotId, from }) {
   const path = evidencePath(row, snapshotId, from);
   if (!path) return "Not supplied";
-  const rowLabel = row.key || metricLabel(metric);
+  const rowLabel = row.key || metricLabel(metric, metricOptions);
   return (
     <TextLink to={path} aria-label={`View ${rowLabel} evidence for ${targetLabel}, ${periodLabel}`}>
       View {rowLabel} evidence
@@ -132,13 +150,24 @@ function RecordEvidence({ row, metric, targetLabel, periodLabel, snapshotId, fro
   );
 }
 
-function RecordMobileList({ rows, metric, targetLabel, periodLabel, snapshotId, from }) {
+function RecordMobileList({
+  rows,
+  metric,
+  metricOptions,
+  targetLabel,
+  periodLabel,
+  snapshotId,
+  from,
+}) {
   return (
-    <ul className="records-mobile-list" aria-label={`${metricLabel(metric)} records`}>
+    <ul
+      className="records-mobile-list"
+      aria-label={`${metricLabel(metric, metricOptions)} records`}
+    >
       {rows.map((row) => (
         <li className="records-mobile-card" key={row.id || `${row.key}:${row.value}`}>
           <div className="records-mobile-card__headline">
-            <span>{row.key || metricLabel(metric)}</span>
+            <span>{row.key || metricLabel(metric, metricOptions)}</span>
             <strong>{row.value ?? "Not available"}</strong>
           </div>
           <dl>
@@ -164,6 +193,7 @@ function RecordMobileList({ rows, metric, targetLabel, periodLabel, snapshotId, 
                 <RecordEvidence
                   row={row}
                   metric={metric}
+                  metricOptions={metricOptions}
                   targetLabel={targetLabel}
                   periodLabel={periodLabel}
                   snapshotId={snapshotId}
@@ -178,8 +208,16 @@ function RecordMobileList({ rows, metric, targetLabel, periodLabel, snapshotId, 
   );
 }
 
-function RecordResults({ rows, metric, targetLabel, periodLabel, snapshotId, from }) {
-  const caption = `${metricLabel(metric)} for ${targetLabel}, ${periodLabel}`;
+function RecordResults({
+  rows,
+  metric,
+  metricOptions,
+  targetLabel,
+  periodLabel,
+  snapshotId,
+  from,
+}) {
+  const caption = `${metricLabel(metric, metricOptions)} for ${targetLabel}, ${periodLabel}`;
   return (
     <div className="records-results">
       <div className="records-desktop-table">
@@ -217,6 +255,7 @@ function RecordResults({ rows, metric, targetLabel, periodLabel, snapshotId, fro
                 <RecordEvidence
                   row={row}
                   metric={metric}
+                  metricOptions={metricOptions}
                   targetLabel={targetLabel}
                   periodLabel={periodLabel}
                   snapshotId={snapshotId}
@@ -231,6 +270,7 @@ function RecordResults({ rows, metric, targetLabel, periodLabel, snapshotId, fro
         <RecordMobileList
           rows={rows}
           metric={metric}
+          metricOptions={metricOptions}
           targetLabel={targetLabel}
           periodLabel={periodLabel}
           snapshotId={snapshotId}
@@ -247,6 +287,8 @@ function RecordsFilters({
   entityId,
   year,
   navigationSeason,
+  capabilities,
+  capabilitiesLoading,
   onSubmit,
   onResolvedEntity,
 }) {
@@ -258,6 +300,13 @@ function RecordsFilters({
     year || (scope === "season" ? navigationSeason : ""),
   );
   const [formError, setFormError] = useState("");
+  const formCapability = capabilities?.items?.find(
+    (item) => item.scope === formScope,
+  );
+  const metricOptions = capabilityOptions(formCapability);
+  const selectedMetric = metricOptions.some((item) => item.value === formMetric)
+    ? formMetric
+    : metricOptions[0]?.value || "";
   const handleResolvedEntity = useCallback(
     (entity) => {
       setFormEntity(entity);
@@ -286,7 +335,7 @@ function RecordsFilters({
     setFormError("");
     onSubmit({
       scope: formScope,
-      metric: formMetric,
+      metric: selectedMetric,
       entityId: formScope === "season" ? "" : formEntityId.trim(),
       year: formScope === "season" ? selectedYear : "",
       entity: formEntity,
@@ -310,16 +359,31 @@ function RecordsFilters({
           }}
           options={recordScopes}
         />
-        <Select
-          label="Metric"
-          name="metric"
-          value={formMetric}
-          onChange={(event) => {
-            setFormMetric(event.target.value);
-            setFormError("");
-          }}
-          options={recordMetrics}
-        />
+        {capabilitiesLoading ? (
+          <div className="records-capability-status" role="status">
+            <strong>Loading published metrics</strong>
+            <span>Checking which Records metrics are available for this scope.</span>
+          </div>
+        ) : metricOptions.length ? (
+          <Select
+            label="Metric"
+            name="metric"
+            value={selectedMetric}
+            onChange={(event) => {
+              setFormMetric(event.target.value);
+              setFormError("");
+            }}
+            options={metricOptions}
+          />
+        ) : (
+          <div className="records-capability-status" role="status">
+            <strong>No published metrics for {scopeLabel(formScope)}</strong>
+            <span>
+              {formCapability?.message ||
+                "Published Records options are unavailable for this scope."}
+            </span>
+          </div>
+        )}
         {formScope === "season" ? (
           <Input
             label="Season year"
@@ -351,7 +415,9 @@ function RecordsFilters({
             placeholder={`Search ${scopeLabel(formScope).toLowerCase()}s by name`}
           />
         )}
-        <Button type="submit">Show record</Button>
+        <Button type="submit" disabled={capabilitiesLoading || !metricOptions.length}>
+          Show record
+        </Button>
       </form>
       {formError && (
         <p className="records-form-error" role="alert">
@@ -372,11 +438,18 @@ export default function Records() {
   const seasonScope = scope === "season";
   const yearNumber = Number(year);
   const validScope = recordScopes.some((item) => item.value === scope);
-  const validMetric = recordMetrics.some((item) => item.value === metric);
+  const capabilitiesQuery = useGetRecordCapabilitiesQuery();
+  const capabilities = capabilitiesQuery.currentData;
+  const scopeCapability = capabilities?.items?.find((item) => item.scope === scope);
+  const metricOptions = capabilityOptions(scopeCapability);
+  const metricCapability = metricOptions.find((item) => item.value === metric);
   const validTarget = seasonScope
     ? Number.isInteger(yearNumber) && yearNumber >= MIN_ARCHIVE_YEAR
     : entityId.trim().length > 0 && entityId.length <= 160;
+  const validMetric = Boolean(metricCapability);
   const valid = validScope && validMetric && validTarget;
+  const capabilityLoading =
+    capabilitiesQuery.isLoading || capabilitiesQuery.isFetching;
   const [committedEntity, setCommittedEntity] = useState(null);
 
   const query = useGetRecordsQuery(
@@ -453,6 +526,8 @@ export default function Records() {
           entityId={entityId}
           year={year}
           navigationSeason={navigationSeason}
+          capabilities={capabilities}
+          capabilitiesLoading={capabilityLoading}
           onSubmit={submit}
           onResolvedEntity={handleCommittedEntity}
         />
@@ -460,7 +535,7 @@ export default function Records() {
           <div>
             <p className="records-query-kicker">Current selection</p>
             <h3 id="records-query-heading">
-              {metricLabel(metric)} for {entityLabel}
+              {metricLabel(metric, metricOptions)} for {entityLabel}
             </h3>
           </div>
           <dl>
@@ -478,14 +553,34 @@ export default function Records() {
             </div>
           </dl>
         </section>
-        {!valid ? (
+        {capabilitiesQuery.isError && !capabilities ? (
+          <ErrorState
+            status={capabilitiesQuery.error?.status}
+            onRetry={capabilitiesQuery.refetch}
+          />
+        ) : capabilityLoading && !capabilities ? (
+          <DataBoundary
+            query={capabilitiesQuery}
+            loadingLabel="Loading published Records capabilities"
+          />
+        ) : !validTarget ? (
           <EmptyState
             title={seasonScope ? "Choose a season" : "Choose an entity"}
             description={
               seasonScope
                 ? `Enter a season year from ${MIN_ARCHIVE_YEAR} onward to request a published metric.`
-                : `Choose a ${scopeLabel(scope).toLowerCase()} by name, then choose a metric.`
+              : `Choose a ${scopeLabel(scope).toLowerCase()} by name, then choose a metric.`
             }
+          />
+        ) : !validMetric ? (
+          <RecordState
+            data={null}
+            scope={scope}
+            metric={metric}
+            metricOptions={metricOptions}
+            year={year}
+            entity={committedTarget}
+            capability={metricCapability}
           />
         ) : (
           <DataBoundary
@@ -497,6 +592,7 @@ export default function Records() {
               <RecordResults
                 rows={data.items}
                 metric={metric}
+                metricOptions={metricOptions}
                 targetLabel={entityLabel}
                 periodLabel={selectionPeriod}
                 snapshotId={snapshotId}
@@ -507,8 +603,10 @@ export default function Records() {
                 data={data}
                 scope={scope}
                 metric={metric}
+                metricOptions={metricOptions}
                 year={year}
                 entity={committedTarget}
+                capability={metricCapability}
               />
             )}
             {data && (data.page.hasMore || params.has("cursor")) && (
@@ -543,7 +641,7 @@ export default function Records() {
             )}
           </DataBoundary>
         )}
-        <SourceNote meta={data?.meta} />
+        <SourceNote meta={data?.meta || capabilities?.meta} />
       </Panel>
     </>
   );
