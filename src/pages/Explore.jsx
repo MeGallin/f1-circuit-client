@@ -109,7 +109,7 @@ export default function Explore() {
             maxLength={500}
             required
             minLength={2}
-            placeholder="Try: Who won the 2024 British Grand Prix?"
+            placeholder="e.g. Who won the 2024 British Grand Prix?"
           />
           <div className="explore-question-actions">
             <Button type="submit" disabled={query.isLoading}>

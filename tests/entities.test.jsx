@@ -203,6 +203,9 @@ test("existing archive question URLs load their answer", async () => {
 });
 test("explore provides task-led browse paths before a search is entered", () => {
   mount("/explore?season=2024");
+  expect(
+    screen.getByPlaceholderText("e.g. Who won the 2024 British Grand Prix?"),
+  ).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Find a race" })).toHaveAttribute(
     "href",
     "/calendar?season=2024",
