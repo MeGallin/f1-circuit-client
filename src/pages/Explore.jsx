@@ -1,421 +1,173 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useAskQuestionMutation, useGetSeasonsQuery } from "../api/archiveApi";
+import ArchiveQuestionResult from "../components/ArchiveQuestionResult";
 import {
-  useGetSeasonsQuery,
-  useGetHistoryQuery,
-  useSearchEntitiesQuery,
-} from "../api/archiveApi";
-import {
+  ActionLink,
+  Button,
+  ErrorState,
+  Input,
   PageHeading,
   Panel,
-  Input,
   Select,
-  Button,
-  ActionLink,
-  TextLink,
-  ErrorState,
   Skeleton,
   SourceNote,
 } from "../components/ui";
-import {
-  entityPath,
-  changeFilters,
-  CollectionPages,
-  refreshSelection,
-} from "../features/entities/shared";
+import { changeFilters } from "../features/entities/shared";
 import { runtimeYear, selectSeasonOptions } from "../features/season/selectors";
 import "../styles/entities.css";
-export const searchKinds = [
-  { value: "", label: "All records" },
-  ...[
-    ["driver", "Drivers"],
-    ["constructor", "Constructors"],
-    ["circuit", "Circuits"],
-    ["event", "Events"],
-    ["season", "Seasons"],
-  ].map(([value, label]) => ({ value, label })),
-];
+import "../styles/questions.css";
 
-const kindLabels = Object.fromEntries(
-  searchKinds
-    .filter((option) => option.value)
-    .map((option) => [option.value, option.label.slice(0, -1)]),
-);
-const searchExamples = ["Hamilton", "Silverstone", "2024"];
+const initialContext = {
+  year: null,
+  eventId: null,
+  sessionId: null,
+  driverId: null,
+  constructorId: null,
+};
 
-function kindLabel(kind) {
-  return kindLabels[kind] || "Record";
-}
-
-function resultPath(row, season) {
-  return (
-    entityPath(row.kind, row.entity.id, season) ||
-    (row.kind === "season"
-      ? `/?season=${encodeURIComponent(row.entity.displayName)}`
-      : `/events/${encodeURIComponent(row.entity.id)}${row.context && /^\d{4}$/.test(row.context) ? `?season=${row.context}` : ""}`)
-  );
-}
-
-function normalizeSearchQuery(value) {
-  return value.replace(/[,+]+/g, " ").replace(/\s+/g, " ").trim();
-}
-
-const relatedTargetKinds = new Set(["driver", "constructor", "circuit"]);
-const relatedOutputKinds = new Set(["event", "constructor", "circuit"]);
-
-function relatedTitle(kind, displayName) {
-  if (kind === "constructor") return `Teams in ${displayName}'s race history`;
-  if (kind === "circuit") return `Circuits in ${displayName}'s race history`;
-  return `${displayName}'s race history`;
-}
-
-function relatedRecords(outputKind, targetKind, history) {
-  const seen = new Set();
-
-  return (history?.items || []).reduce((rows, row) => {
-    const event =
-      row.eventContext?.event || (targetKind === "circuit" ? row : null);
-    const entity =
-      outputKind === "event"
-        ? event && {
-            id: event.id,
-            displayName: event.name || event.displayName,
-          }
-        : outputKind === "constructor"
-          ? row.entry?.constructor
-          : event?.circuit;
-
-    if (!entity?.id || seen.has(entity.id)) return rows;
-    seen.add(entity.id);
-    rows.push({
-      kind: outputKind,
-      entity: {
-        ...entity,
-        displayName: entity.displayName || entity.name || entity.id,
-      },
-      context: event?.year ? String(event.year) : null,
-    });
-    return rows;
-  }, []);
+function questionContext(season) {
+  const year = Number(season);
+  return Number.isInteger(year) ? { ...initialContext, year } : initialContext;
 }
 
 export default function Explore() {
   const [params, setParams] = useSearchParams();
-  const q = params.get("q") || "";
-  const requestedKind = params.get("type") || "";
-  const kind = searchKinds.some((option) => option.value === requestedKind)
-    ? requestedKind
-    : "";
   const season = params.get("season") || String(runtimeYear());
-  const searchQuery = normalizeSearchQuery(q);
+  const queryText = params.get("q") || "";
+  const [text, setText] = useState(queryText);
+  const [ask, query] = useAskQuestionMutation();
   const seasons = useGetSeasonsQuery();
   const seasonOptions = selectSeasonOptions(seasons.currentData);
-  const valid =
-    searchQuery.length >= 2 &&
-    searchQuery.length <= 100 &&
-    searchKinds.some((option) => option.value === kind);
-  const query = useSearchEntitiesQuery(
-    {
-      q: searchQuery,
-      kind: kind || undefined,
-      cursor: params.get("cursor") || undefined,
-      snapshotId: params.get("snapshot") || undefined,
-    },
-    { skip: !valid },
-  );
-  const data = query.currentData;
-  const relatedLookupEnabled =
-    valid &&
-    Boolean(kind) &&
-    relatedOutputKinds.has(kind) &&
-    query.isSuccess &&
-    data?.items.length === 0;
-  const relatedSearch = useSearchEntitiesQuery(
-    { q: searchQuery, cursor: undefined, snapshotId: undefined },
-    { skip: !relatedLookupEnabled },
-  );
-  const relatedEntity = relatedSearch.currentData?.items.find((row) =>
-    relatedTargetKinds.has(row.kind),
-  );
-  const relatedHistory = useGetHistoryQuery(
-    relatedEntity
-      ? {
-          kind: relatedEntity.kind,
-          id: relatedEntity.entity.id,
-          snapshotId: relatedSearch.currentData?.meta?.snapshotId,
-        }
-      : {},
-    { skip: !relatedEntity },
-  );
-  const relatedRows = relatedRecords(
-    kind,
-    relatedEntity?.kind,
-    relatedHistory.currentData,
-  );
-  const clearSearch = () =>
-    setParams(changeFilters(params, { q: "", type: "" }));
-  const runExample = (value) =>
-    setParams(changeFilters(params, { q: value, type: "" }));
-  const comparePath = `/compare?${new URLSearchParams({ season })}`;
-  const allRecordsParams = new URLSearchParams(params);
-  allRecordsParams.delete("type");
-  allRecordsParams.delete("cursor");
-  allRecordsParams.delete("snapshot");
-  const allRecordsPath = `/explore?${allRecordsParams.toString()}`;
-  const seasonSelectOptions = seasonOptions.length
+  const resolvedSeasonOptions = seasonOptions.length
     ? seasonOptions
     : [{ value: season, label: `${season} season` }];
+
+  useEffect(() => {
+    if (queryText.trim())
+      void ask({ text: queryText.trim(), context: questionContext(season) });
+  }, [ask, queryText, season]);
+
+  const submit = (event) => {
+    event.preventDefault();
+    const nextText = text.trim();
+    if (nextText.length < 2 || nextText.length > 500) return;
+    setParams(changeFilters(params, { q: nextText, type: "" }));
+  };
+
+  const clearQuestion = () => {
+    setText("");
+    setParams(changeFilters(params, { q: "", type: "" }));
+  };
+
+  const handleChoice = (choice) => {
+    const suffix = choice.label ? ` ${choice.label.toLowerCase()}` : "";
+    void ask({
+      text: `${text.trim()}${suffix}`,
+      context: choice.context || questionContext(season),
+    });
+  };
+
   return (
     <>
       <PageHeading
         eyebrow="EXPLORE THE ARCHIVE"
-        title="People, teams & places"
-        description="Search published drivers, constructors, circuits, events and seasons. Open a record for its history and evidence."
+        title="Ask the archive"
+        description="Use ordinary language to explore published drivers, constructors, circuits, events and seasons. Answers are built from the archive database and include their evidence."
         actions={
           <div className="explore-page-actions">
             <Select
               label="Season context"
               value={season}
-              options={seasonSelectOptions}
-              onChange={(e) => setParams({ season: e.target.value })}
+              options={resolvedSeasonOptions}
+              onChange={(event) => setParams({ season: event.target.value })}
             />
-            <ActionLink variant="quiet" to={comparePath}>
+            <ActionLink
+              variant="quiet"
+              to={`/compare?season=${encodeURIComponent(season)}`}
+            >
               Compare two records
             </ActionLink>
           </div>
         }
       />
-      <Panel title="Search the archive">
+      <Panel title="What do you want to know?">
         <p className="explore-search-note">
-          Results come from the published archive snapshot. Search is not
-          limited to the selected season. Separate multiple terms with spaces
-          or commas to search for any of them.
+          Ask a question about the published archive. The selected season is
+          used as context when your wording includes a relative period such as
+          “last four years”.
         </p>
         <form
-          key={`${q}:${kind}`}
-          className="entity-filters explore-search-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const form = new FormData(e.currentTarget);
-            setParams(
-              changeFilters(params, {
-                q: String(form.get("q")).trim(),
-                type: form.get("type"),
-              }),
-            );
-          }}
+          className="questions-form explore-question-form"
+          onSubmit={submit}
         >
           <Input
-            label="Name, circuit, race or season"
-            name="q"
-            defaultValue={q}
+            label="Question"
+            name="question"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            maxLength={500}
             required
             minLength={2}
-            maxLength={100}
-            placeholder="Try Hamilton, Silverstone or 2024"
+            placeholder="Try: Who won the 2024 British Grand Prix?"
           />
-          <Select
-            label="Record type"
-            name="type"
-            defaultValue={kind}
-            options={searchKinds}
-          />
-          <Button type="submit">Search</Button>
-        </form>
-        {!valid ? (
-          <div className="explore-idle-state">
-            <h3>Start with a search</h3>
-            <p>
-              Search people, teams, circuits, races or seasons, then open a
-              published record for its history.
-            </p>
-            <div className="explore-suggestions" aria-label="Example searches">
-              <span>Try</span>
-              {searchExamples.map((example) => (
-                <button
-                  key={example}
-                  type="button"
-                  className="explore-suggestion"
-                  onClick={() => runExample(example)}
-                >
-                  {example}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <>
-            {query.isLoading || (!data && query.isFetching) ? (
-              <Skeleton label="Searching the archive" />
-            ) : query.isError && !data ? (
-              <ErrorState
-                status={query.error?.status}
-                onRetry={() => refreshSelection(params, setParams, query)}
-              />
-            ) : data?.items.length ? (
-              <div className="explore-results" aria-live="polite">
-                <div className="explore-results-heading">
-                  <div>
-                    <p className="eyebrow">SEARCH RESULTS</p>
-                    <h3>
-                      {data.page.total ?? data.items.length}{" "}
-                      {data.page.total === 1 ? "result" : "results"}
-                    </h3>
-                  </div>
-                  <Button variant="quiet" type="button" onClick={clearSearch}>
-                    Clear search
-                  </Button>
-                </div>
-                {query.isError && data && (
-                  <ErrorState
-                    status={query.error?.status}
-                    onRetry={() => refreshSelection(params, setParams, query)}
-                  />
-                )}
-                <ul className="entity-list">
-                  {data.items.map((row) => (
-                    <li key={row.id}>
-                      <div className="explore-result-copy">
-                        <TextLink to={resultPath(row, season)}>
-                          {row.entity.displayName || "Record name not supplied"}
-                        </TextLink>
-                        <div className="explore-result-meta">
-                          <span className="explore-result-kind">
-                            {kindLabel(row.kind)}
-                          </span>
-                          {row.context && (
-                            <span className="explore-result-context">
-                              {/^\d{4}$/.test(row.context)
-                                ? `Season ${row.context}`
-                                : row.context}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <CollectionPages {...{ data, query, params, setParams }} />
-              </div>
-            ) : (
-              <>
-                <div className="explore-empty-state" role="status">
-                  <h3>
-                    No {kind ? kindLabel(kind).toLowerCase() : "records"} match{" "}
-                    “{q}”
-                  </h3>
-                  <p>
-                    {kind
-                      ? "Search matches names inside the selected record type. To find races or teams associated with a person, search All records first."
-                      : "Try a different name, circuit, race or season, or search all record types."}
-                  </p>
-                  <div className="explore-empty-actions">
-                    {kind && (
-                      <ActionLink variant="quiet" to={allRecordsPath}>
-                        Search all records
-                      </ActionLink>
-                    )}
-                    <Button variant="quiet" type="button" onClick={clearSearch}>
-                      Clear search
-                    </Button>
-                  </div>
-                </div>
-                {relatedLookupEnabled && (
-                  <div className="explore-related-state" aria-live="polite">
-                    {relatedSearch.isLoading ? (
-                      <Skeleton label="Finding related archive records" />
-                    ) : relatedEntity ? (
-                      <>
-                        <div className="explore-related-heading">
-                          <div>
-                            <p className="eyebrow">RELATED ARCHIVE</p>
-                            <h3>
-                              {relatedTitle(
-                                kind,
-                                relatedEntity.entity.displayName,
-                              )}
-                            </h3>
-                            <p>
-                              Found from the published history for{" "}
-                              <TextLink to={resultPath(relatedEntity, season)}>
-                                {relatedEntity.entity.displayName}
-                              </TextLink>
-                              .
-                            </p>
-                          </div>
-                          <ActionLink
-                            variant="quiet"
-                            to={resultPath(relatedEntity, season)}
-                          >
-                            Open profile
-                          </ActionLink>
-                        </div>
-                        {relatedHistory.isLoading ? (
-                          <Skeleton label="Loading related records" />
-                        ) : relatedRows.length ? (
-                          <ul className="entity-list explore-related-list">
-                            {relatedRows.slice(0, 6).map((row) => (
-                              <li key={`${row.kind}:${row.entity.id}`}>
-                                <div className="explore-result-copy">
-                                  <TextLink to={resultPath(row, season)}>
-                                    {row.entity.displayName}
-                                  </TextLink>
-                                  <div className="explore-result-meta">
-                                    <span className="explore-result-kind">
-                                      {kindLabel(row.kind)}
-                                    </span>
-                                    {row.context && (
-                                      <span className="explore-result-context">
-                                        Season {row.context}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="explore-related-empty">
-                            No related records are published for this selection.
-                          </p>
-                        )}
-                        {relatedRows.length > 6 && (
-                          <p className="muted explore-related-note">
-                            Showing 6 related records. Open the profile for the
-                            full history.
-                          </p>
-                        )}
-                      </>
-                    ) : null}
-                  </div>
-                )}
-              </>
+          <div className="explore-question-actions">
+            <Button type="submit" disabled={query.isLoading}>
+              {query.isLoading ? "Checking the archive…" : "Ask the archive"}
+            </Button>
+            {query.data && (
+              <Button variant="quiet" type="button" onClick={clearQuestion}>
+                Clear question
+              </Button>
             )}
-            <SourceNote meta={data?.meta} />
-          </>
+          </div>
+        </form>
+        {!queryText ? (
+          <div className="explore-idle-state">
+            <h3>Start with a question</h3>
+            <p>
+              Ask about a race, driver, constructor, circuit or season in your
+              own words. The archive will ask for clarification when the wording
+              is ambiguous.
+            </p>
+          </div>
+        ) : query.isLoading ? (
+          <Skeleton label="Interpreting the published archive" />
+        ) : query.isError ? (
+          <ErrorState
+            status={query.error?.status}
+            onRetry={() =>
+              void ask({ text: queryText, context: questionContext(season) })
+            }
+          />
+        ) : (
+          <ArchiveQuestionResult
+            result={query.data?.questionResult}
+            onChoice={handleChoice}
+          />
         )}
+        <SourceNote meta={query.data?.meta} />
       </Panel>
       <Panel title="Browse another route">
         <nav className="explore-browse" aria-label="Browse archive routes">
-          <ActionLink to={`/calendar?season=${season}`}>Find a race</ActionLink>
-          <ActionLink to={`/standings?season=${season}&kind=drivers`}>
+          <ActionLink to={`/calendar?season=${encodeURIComponent(season)}`}>
+            Find a race
+          </ActionLink>
+          <ActionLink
+            to={`/standings?season=${encodeURIComponent(season)}&kind=drivers`}
+          >
             Browse drivers
           </ActionLink>
-          <ActionLink to={`/standings?season=${season}&kind=constructors`}>
+          <ActionLink
+            to={`/standings?season=${encodeURIComponent(season)}&kind=constructors`}
+          >
             Browse constructors
           </ActionLink>
-          <ActionLink to={`/explore?season=${season}&type=circuit`}>
-            Search circuits
-          </ActionLink>
-          <ActionLink to={`/explore?season=${season}&type=event`}>
-            Search events
-          </ActionLink>
-          <ActionLink to={`/explore?season=${season}&type=season`}>
-            Search seasons
-          </ActionLink>
+          <ActionLink to="/records">Browse published records</ActionLink>
         </nav>
         <p className="muted explore-browse-note">
-          Use the calendar and standings for structured browsing, or narrow the
-          search to a specific record type.
+          Use the archive question box for natural-language queries, or browse a
+          structured route when you already know what you want to inspect.
         </p>
       </Panel>
     </>

@@ -144,92 +144,62 @@ test("entity endpoints match the pinned contract and nullable comparison mapping
   ).toBeNull();
   expect(() => objectResponse({ data: {}, meta }, "profile")).toThrow();
 });
-test("search submits names and maps canonical profile links with season and pinned pagination", async () => {
-  const calls = mock((url) =>
-    url.pathname.endsWith("/seasons")
-      ? seasons
-      : collection(
-          [{ id: entity.id, kind: "driver", entity, context: null }],
-          !url.searchParams.has("cursor"),
-        ),
-  );
-  const searchCalls = () => calls.filter((url) => url.pathname.endsWith("/search"));
-  mount("/explore?season=2024");
-  expect(screen.getByText("Start with a search")).toBeInTheDocument();
-  await userEvent.type(
-    screen.getByLabelText("Name, circuit, race or season"),
-    "Example",
-  );
-  await userEvent.selectOptions(screen.getByLabelText("Record type"), "driver");
-  await userEvent.click(
-    screen.getByRole("button", { name: "Search", exact: true }),
-  );
-  expect(
-    await screen.findByRole("link", { name: "Example Driver" }),
-  ).toHaveAttribute("href", "/drivers/driver%3Aone?season=2024");
-  expect(screen.getByText("Driver")).toBeInTheDocument();
-  await userEvent.click(screen.getByRole("button", { name: "Next page" }));
-  await waitFor(() => expect(searchCalls()).toHaveLength(2));
-  expect(searchCalls()[1].searchParams.get("snapshotId")).toBe("stable");
-  expect(searchCalls()[1].searchParams.get("kind")).toBe("driver");
-  expect(searchCalls()[1].searchParams.get("q")).toBe("Example");
-  await userEvent.click(
-    await screen.findByRole("button", { name: "Clear search" }),
-  );
-  expect(await screen.findByText("Start with a search")).toBeInTheDocument();
-  expect(screen.getByTestId("location")).toHaveTextContent("?season=2024");
-});
-test("empty search results explain the query and offer recovery", async () => {
-  mock((url) =>
-    url.pathname.endsWith("/seasons") ? seasons : collection([]),
-  );
-  mount("/explore?season=2024&q=zzzzzzzz");
-  expect(
-    await screen.findByRole("heading", { name: /No records match/ }),
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText(
-      "Try a different name, circuit, race or season, or search all record types.",
-    ),
-  ).toBeInTheDocument();
-  await userEvent.click(screen.getByRole("button", { name: "Clear search" }));
-  expect(await screen.findByText("Start with a search")).toBeInTheDocument();
-});
-test("filtered searches offer related archive history from published records", async () => {
+test("archive questions submit natural language and render an evidence-backed answer", async () => {
+  const questionResult = {
+    status: "answered",
+    resolvedIntent: "event_winner",
+    templateKey: "event_winner",
+    values: {
+      answer: "Example One won the Synthetic Grand Prix.",
+      event: "Synthetic Grand Prix",
+      driver: "Example One",
+    },
+    evidenceIds: ["evidence:one"],
+  };
   const calls = mock((url) => {
     if (url.pathname.endsWith("/seasons")) return seasons;
-    if (url.pathname.endsWith("/search"))
-      return url.searchParams.get("kind") === "event"
-        ? collection([])
-        : collection([{ id: entity.id, kind: "driver", entity, context: null }]);
-    if (url.pathname.endsWith("/results")) return collection([result]);
-    return { data: { profile }, meta };
+    if (url.pathname.endsWith("/questions"))
+      return { data: { questionResult }, meta };
+    throw new Error(`Unexpected request: ${url}`);
   });
-  mount("/explore?season=2024&type=event&q=Example");
-  expect(
-    await screen.findByRole("heading", {
-      name: "No event match “Example”",
-    }),
-  ).toBeInTheDocument();
-  expect(
-    await screen.findByRole("heading", {
-      name: "Example Driver's race history",
-    }),
-  ).toBeInTheDocument();
-  expect(
-    await screen.findByRole("link", { name: "Example Grand Prix" }),
-  ).toHaveAttribute("href", "/events/event%3Aone?season=2024");
-  expect(screen.getByRole("link", { name: "Search all records" })).toHaveAttribute(
-    "href",
-    "/explore?season=2024&q=Example",
+  mount("/explore?season=2024");
+  expect(screen.getByText("Start with a question")).toBeInTheDocument();
+  await userEvent.type(
+    screen.getByLabelText("Question"),
+    "Who won the Synthetic Grand Prix?",
   );
+  await userEvent.click(screen.getByRole("button", { name: "Ask the archive" }));
   expect(
-    calls.some(
-      (url) =>
-        url.pathname.endsWith("/drivers/driver%3Aone/results") &&
-        url.searchParams.get("snapshotId") === "stable",
-    ),
-  ).toBe(true);
+    await screen.findByText("Example One won the Synthetic Grand Prix."),
+  ).toBeInTheDocument();
+  expect(screen.getByText("Synthetic Grand Prix")).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "View source evidence" })).toHaveAttribute(
+    "href",
+    "/evidence/evidence%3Aone",
+  );
+  const request = calls.find((url) => url.pathname.endsWith("/questions"));
+  expect(request).toBeTruthy();
+  expect(screen.getByTestId("location")).toHaveTextContent(
+    "?season=2024&q=Who+won+the+Synthetic+Grand+Prix%3F",
+  );
+});
+test("existing archive question URLs load their answer", async () => {
+  mock((url) => {
+    if (url.pathname.endsWith("/seasons")) return seasons;
+    if (url.pathname.endsWith("/questions"))
+      return {
+        data: {
+          questionResult: {
+            status: "answered",
+            values: { answer: "Example One won." },
+          },
+        },
+        meta,
+      };
+    throw new Error(`Unexpected request: ${url}`);
+  });
+  mount("/explore?season=2024&q=Who%20won%3F");
+  expect(await screen.findByText("Example One won.")).toBeInTheDocument();
 });
 test("explore provides task-led browse paths before a search is entered", () => {
   mount("/explore?season=2024");
@@ -241,10 +211,9 @@ test("explore provides task-led browse paths before a search is entered", () => 
     "href",
     "/standings?season=2024&kind=drivers",
   );
-  expect(screen.getByRole("link", { name: "Search circuits" })).toHaveAttribute(
-    "href",
-    "/explore?season=2024&type=circuit",
-  );
+  expect(
+    screen.getByRole("link", { name: "Browse published records" }),
+  ).toHaveAttribute("href", "/records");
 });
 test("profile history keeps decimal points and resets pagination when the season changes", async () => {
   const calls = mock((url) =>

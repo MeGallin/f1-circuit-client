@@ -61,7 +61,11 @@ test("question form posts structured context and renders exact values with evide
               status: "answered",
               resolvedIntent: "driver.wins",
               templateKey: "driver.metric",
-              values: { value: "0.50", covered: true },
+              values: {
+                answer: "Lewis Hamilton has 0.50 wins in the archive.",
+                value: "0.50",
+                covered: true,
+              },
               evidenceIds: ["evidence:one"],
             },
           },
@@ -88,10 +92,14 @@ test("question form posts structured context and renders exact values with evide
     await screen.findByRole("option", { name: /Example Driver/ }),
   );
   await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
-  expect(await screen.findByText("driver.wins")).toBeInTheDocument();
+  expect(
+    await screen.findByText("Lewis Hamilton has 0.50 wins in the archive."),
+  ).toBeInTheDocument();
   expect(screen.getByText("0.50")).toBeInTheDocument();
   expect(screen.getByText("true")).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "evidence:one" })).toHaveAttribute(
+  expect(
+    screen.getByRole("link", { name: "View source evidence" }),
+  ).toHaveAttribute(
     "href",
     "/evidence/evidence%3Aone",
   );
@@ -152,13 +160,9 @@ test("question clarification stays explicit and offers supplied choices", async 
   expect(screen.getByRole("button", { name: "2024 season" })).toBeInTheDocument();
 });
 
-test("disabled question capability is explained before any submission", () => {
+test("question capability is available before any submission", () => {
+  vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   mount();
-  expect(screen.getByRole("status")).toHaveTextContent("disabled");
-  expect(screen.getByText("Questions are not available yet")).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Browse published records" })).toHaveAttribute(
-    "href",
-    "/records",
-  );
-  expect(screen.queryByRole("button", { name: "Ask question" })).not.toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Ask a question" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Ask question" })).toBeInTheDocument();
 });
