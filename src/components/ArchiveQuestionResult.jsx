@@ -86,7 +86,6 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
       <div className="question-result" role="status">
         <StatusBadge tone="warning">{result.status}</StatusBadge>
         <p className="question-result-message">{result.message}</p>
-        {result.reasonCode && <p className="muted">{result.reasonCode}</p>}
       </div>
     );
   }
