@@ -104,28 +104,49 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
       <p className="question-answer">
         {values.answer || "The archive returned an answer."}
       </p>
-      {detailEntries.length ? (
-        <dl className="question-values">
-          {detailEntries.map(([key, value]) => (
-            <div key={key}>
-              <dt>{labels[key] || key}</dt>
-              <dd>{displayValue(value)}</dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-      {result.evidenceIds?.length ? (
-        <div className="question-evidence">
-          <strong>Evidence</strong>
-          <ul>
-            {result.evidenceIds.map((evidenceId) => (
-              <li key={evidenceId}>
-                <TextLink to={`/evidence/${encodeURIComponent(evidenceId)}`}>
-                  View source evidence
-                </TextLink>
-              </li>
-            ))}
-          </ul>
+      {detailEntries.length || result.evidenceIds?.length ? (
+        <div className="question-disclosures">
+          {detailEntries.length ? (
+            <details className="question-disclosure">
+              <summary className="question-disclosure-summary">
+                <span>Archive details</span>
+                <span className="question-disclosure-meta">
+                  {detailEntries.length} fields
+                  <span className="question-disclosure-indicator" aria-hidden="true" />
+                </span>
+              </summary>
+              <dl className="question-values">
+                {detailEntries.map(([key, value]) => (
+                  <div key={key}>
+                    <dt>{labels[key] || key}</dt>
+                    <dd>{displayValue(value)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
+          ) : null}
+          {result.evidenceIds?.length ? (
+            <details className="question-disclosure">
+              <summary className="question-disclosure-summary">
+                <span>Source evidence</span>
+                <span className="question-disclosure-meta">
+                  {result.evidenceIds.length} {result.evidenceIds.length === 1 ? "source" : "sources"}
+                  <span className="question-disclosure-indicator" aria-hidden="true" />
+                </span>
+              </summary>
+              <div className="question-evidence">
+                <ul>
+                  {result.evidenceIds.map((evidenceId) => (
+                    <li key={evidenceId}>
+                      <TextLink to={`/evidence/${encodeURIComponent(evidenceId)}`}>
+                        View source evidence
+                      </TextLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          ) : null}
         </div>
       ) : (
         <p className="muted">No evidence references supplied.</p>
