@@ -83,7 +83,10 @@ test("mobile navigation keeps primary tasks visible and groups secondary routes"
   expect(screen.getByRole("link", { name: "Overview" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Calendar" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Standings" })).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Explore" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Explore" })).toHaveAttribute(
+    "href",
+    "/explore",
+  );
   const more = screen.getByRole("button", { name: "More" });
   expect(more).toHaveAttribute("aria-expanded", "false");
   await userEvent.click(more);

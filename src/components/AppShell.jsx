@@ -66,8 +66,10 @@ export function Navigation({ mobile = false }) {
   if (eventId) navigationParams.set("event", eventId);
   if (!navigationParams.has("season"))
     navigationParams.set("season", String(runtimeYear()));
-  const target = (to) =>
-    `${to}${navigationParams.size ? `?${navigationParams}` : ""}`;
+  const target = (to) => {
+    if (to === "/explore") return to;
+    return `${to}${navigationParams.size ? `?${navigationParams}` : ""}`;
+  };
   const isSecondaryActive = secondaryNavigation.some(({ to }) =>
     to === "/" ? pathname === "/" : pathname.startsWith(to),
   );

@@ -180,7 +180,7 @@ test("archive questions submit natural language and render an evidence-backed an
   const request = calls.find((url) => url.pathname.endsWith("/questions"));
   expect(request).toBeTruthy();
   expect(screen.getByTestId("location")).toHaveTextContent(
-    "?season=2024&q=Who+won+the+Synthetic+Grand+Prix%3F",
+    "?q=Who+won+the+Synthetic+Grand+Prix%3F",
   );
 });
 test("existing archive question URLs load their answer", async () => {
@@ -202,7 +202,7 @@ test("existing archive question URLs load their answer", async () => {
   expect(await screen.findByText("Example One won.")).toBeInTheDocument();
 });
 test("explore provides task-led browse paths before a search is entered", () => {
-  mount("/explore?season=2024");
+  mount("/explore");
   expect(
     screen.getByPlaceholderText("e.g. Who won the 2024 British Grand Prix?"),
   ).toBeInTheDocument();
@@ -211,11 +211,11 @@ test("explore provides task-led browse paths before a search is entered", () => 
   ).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Find a race" })).toHaveAttribute(
     "href",
-    "/calendar?season=2024",
+    `/calendar?season=${new Date().getUTCFullYear()}`,
   );
   expect(screen.getByRole("link", { name: "Browse drivers" })).toHaveAttribute(
     "href",
-    "/standings?season=2024&kind=drivers",
+    `/standings?season=${new Date().getUTCFullYear()}&kind=drivers`,
   );
   expect(
     screen.getByRole("link", { name: "Browse published records" }),
