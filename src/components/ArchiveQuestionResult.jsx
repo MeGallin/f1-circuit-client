@@ -50,6 +50,7 @@ const labels = {
   round: "Round",
   toYear: "To year",
   year: "Year",
+  winners: "Race winners",
 };
 
 function displayValue(value) {
