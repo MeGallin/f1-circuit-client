@@ -219,7 +219,7 @@ test("explore provides task-led browse paths before a search is entered", () => 
   );
   expect(
     screen.getByRole("link", { name: "Browse published records" }),
-  ).toHaveAttribute("href", "/records");
+  ).toHaveAttribute("href", "/records?season=2026");
 });
 test("profile history keeps decimal points and resets pagination when the season changes", async () => {
   const calls = mock((url) =>

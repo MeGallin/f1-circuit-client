@@ -1,3 +1,4 @@
+import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useAskQuestionMutation, useGetEventQuery } from "../api/archiveApi";
 import ArchiveQuestionResult from "../components/ArchiveQuestionResult";
@@ -60,7 +61,7 @@ function SessionPicker({ eventId, value, onChange }) {
   );
 }
 
-function QuestionUnavailable() {
+function QuestionUnavailable({ recordsPath }) {
   return (
     <Panel title="Questions are not available yet">
       <div className="question-capability" role="status">
@@ -75,7 +76,7 @@ function QuestionUnavailable() {
           information with its source and evidence attached.
         </p>
         <div className="question-capability-actions">
-          <ActionLink to="/records">Browse published records</ActionLink>
+          <ActionLink to={recordsPath}>Browse published records</ActionLink>
           <ActionLink to="/explore">Explore drivers and circuits</ActionLink>
         </div>
       </div>
@@ -84,7 +85,10 @@ function QuestionUnavailable() {
 }
 
 export default function Questions() {
+  const [params] = useSearchParams();
   const enabled = import.meta.env.VITE_ENABLE_QUESTION_LAYER !== "false";
+  const season = params.get("season");
+  const recordsPath = season ? `/records?season=${encodeURIComponent(season)}` : "/records";
   const [context, setContext] = useState(initialContext);
   const [contextLabels, setContextLabels] = useState({});
   const [text, setText] = useState("");
@@ -114,10 +118,10 @@ export default function Questions() {
             ? "Ask a supported, read-only question. Answers use deterministic archive templates and always show the supplied evidence references."
             : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."
         }
-        actions={<ActionLink to="/records">Browse records</ActionLink>}
+        actions={<ActionLink to={recordsPath}>Browse records</ActionLink>}
       />
       {!enabled ? (
-        <QuestionUnavailable />
+        <QuestionUnavailable recordsPath={recordsPath} />
       ) : (
         <Panel title="Ask a question">
           <form className="questions-form" onSubmit={submit}>

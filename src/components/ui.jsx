@@ -328,9 +328,9 @@ export function Skeleton({ label = "Loading historical data" }) {
     </div>
   );
 }
-export function DataBoundary({ query, children, empty, onRetry }) {
+export function DataBoundary({ query, children, empty, onRetry, loadingLabel }) {
   if (query.isLoading || (!query.currentData && query.isFetching))
-    return <Skeleton />;
+    return <Skeleton label={loadingLabel} />;
   if (query.isError && !query.currentData)
     return (
       <ErrorState
@@ -433,13 +433,26 @@ export function Pagination({
 }
 export function SourceNote({ meta }) {
   if (!meta) return null;
-  const coverage = meta.coverage || "unknown";
-  const verification = meta.verification?.replaceAll("-", " ") || "Unassessed";
+  const coverageLabels = {
+    complete: "Complete coverage",
+    partial: "Partial coverage",
+    unavailable: "Coverage unavailable",
+    "not-applicable": "Not applicable",
+  };
+  const verificationLabels = {
+    "source-only": "Source only",
+    unassessed: "Not assessed",
+    reconciled: "Reconciled",
+    conflict: "Conflict flagged",
+  };
+  const coverage = coverageLabels[meta.coverage] || "Coverage not supplied";
+  const verification =
+    verificationLabels[meta.verification] || "Verification not supplied";
   return (
     <aside className="source-note" aria-label="Data provenance">
       <div className="source-summary">
         <StatusBadge>{verification}</StatusBadge>
-        <span>{coverage} coverage</span>
+        <span>{coverage}</span>
         {freshnessLabel(meta) && <span>{freshnessLabel(meta)}</span>}
         <TextLink to="/sources">About the data</TextLink>
       </div>

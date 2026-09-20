@@ -219,7 +219,8 @@
   border-bottom: 0;
 }
 .entity-picker-option:hover,
-.entity-picker-option:focus-visible {
+.entity-picker-option:focus-visible,
+.entity-picker-option[aria-selected="true"] {
   background: var(--apex-color-hover);
 }
 .entity-picker-message {
