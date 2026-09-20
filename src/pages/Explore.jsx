@@ -93,9 +93,10 @@ export default function Explore() {
       />
       <Panel title="What do you want to know?">
         <p className="explore-search-note">
-          Ask a question about the published archive. The selected season is
-          used as context when your wording includes a relative period such as
-          “last four years”.
+          Ask a complete question about the published archive, for example,
+          “Who won the 2024 British Grand Prix?” The selected season is used as
+          context when your wording includes a relative period such as “last
+          four years”.
         </p>
         <form
           className="questions-form explore-question-form"
