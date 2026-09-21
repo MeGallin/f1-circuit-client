@@ -153,6 +153,34 @@ export default function Questions() {
                 {text.length}/500 characters
               </span>
             </div>
+            <section
+              className="question-examples"
+              aria-labelledby="question-examples-heading"
+            >
+              <div className="question-examples-heading">
+                <h3 id="question-examples-heading">Example prompts</h3>
+                <p className="muted">Select one to edit before you ask.</p>
+              </div>
+              <div className="question-example-list">
+                {[
+                  "Who won the 2024 British Grand Prix?",
+                  "How many wins does Lewis Hamilton have?",
+                ].map((example) => (
+                  <button
+                    className="question-example"
+                    key={example}
+                    type="button"
+                    onClick={() => setText(example)}
+                  >
+                    <span>{example}</span>
+                    <span className="question-example-action">Use example</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+            <div className="question-form-actions">
+              <Button type="submit">Ask question</Button>
+            </div>
             <details className="question-context-disclosure">
               <summary className="question-disclosure-summary">
                 <span>Add context</span>
@@ -239,34 +267,6 @@ export default function Questions() {
                 </div>
               </fieldset>
             </details>
-            <section
-              className="question-examples"
-              aria-labelledby="question-examples-heading"
-            >
-              <div className="question-examples-heading">
-                <h3 id="question-examples-heading">Example prompts</h3>
-                <p className="muted">Select one to edit before you ask.</p>
-              </div>
-              <div className="question-example-list">
-                {[
-                  "Who won the 2024 British Grand Prix?",
-                  "How many wins does Lewis Hamilton have?",
-                ].map((example) => (
-                  <button
-                    className="question-example"
-                    key={example}
-                    type="button"
-                    onClick={() => setText(example)}
-                  >
-                    <span>{example}</span>
-                    <span className="question-example-action">Use example</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-            <div className="question-form-actions">
-              <Button type="submit">Ask question</Button>
-            </div>
           </form>
           <div className="question-output">
             <EmptyState

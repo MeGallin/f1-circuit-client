@@ -219,6 +219,17 @@ test("question context is collapsed and examples only fill the composer", async 
   expect(
     screen.queryByRole("heading", { name: "Archive result" }),
   ).not.toBeInTheDocument();
+  const form = screen
+    .getByRole("region", { name: "Write a complete question" })
+    .querySelector("form");
+  const childIndex = (selector) =>
+    [...form.children].indexOf(form.querySelector(selector));
+  expect(childIndex(".question-examples")).toBeLessThan(
+    childIndex(".question-form-actions"),
+  );
+  expect(childIndex(".question-form-actions")).toBeLessThan(
+    childIndex(".question-context-disclosure"),
+  );
   expect(
     screen.getByText("Add context").closest("details"),
   ).not.toHaveAttribute("open");
