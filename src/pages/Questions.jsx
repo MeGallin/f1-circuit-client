@@ -88,7 +88,6 @@ export default function Questions() {
   const [context, setContext] = useState(initialContext);
   const [contextLabels, setContextLabels] = useState({});
   const [text, setText] = useState(() => params.get("q") || "");
-  const [formKey, setFormKey] = useState(0);
   const [ask, query] = useAskQuestionMutation();
   const submit = async (event, selectedContext = context) => {
     event?.preventDefault();
@@ -109,7 +108,6 @@ export default function Questions() {
     setText("");
     setContext(initialContext);
     setContextLabels({});
-    setFormKey((value) => value + 1);
     query.reset();
   };
   return (
@@ -131,9 +129,9 @@ export default function Questions() {
       />
       {!enabled ? (
         <QuestionUnavailable />
-      ) : (
+      ) : query.isUninitialized ? (
         <Panel title="Write a complete question">
-          <form key={formKey} className="questions-form" onSubmit={submit}>
+          <form className="questions-form" onSubmit={submit}>
             <div className="field questions-form__text">
               <label htmlFor="question-text">Question</label>
               <textarea
@@ -144,25 +142,16 @@ export default function Questions() {
                 maxLength={500}
                 rows={4}
                 placeholder="e.g. Who won the 2024 British Grand Prix?"
+                aria-describedby="question-help question-count"
                 required
               />
-              <span className="muted">{text.length}/500 characters</span>
-            </div>
-            <div className="question-examples" aria-label="Question examples">
-              <span className="muted">Try a complete question:</span>
-              {[
-                "Who won the 2024 British Grand Prix?",
-                "How many wins does Lewis Hamilton have?",
-              ].map((example) => (
-                <button
-                  className="question-example"
-                  key={example}
-                  type="button"
-                  onClick={() => setText(example)}
-                >
-                  {example}
-                </button>
-              ))}
+              <p id="question-help" className="muted question-form-help">
+                Ask in one sentence. Add context below to narrow the question to
+                a season, event, driver, constructor or session.
+              </p>
+              <span id="question-count" className="muted" aria-live="polite">
+                {text.length}/500 characters
+              </span>
             </div>
             <details className="question-context-disclosure">
               <summary className="question-disclosure-summary">
@@ -250,47 +239,81 @@ export default function Questions() {
                 </div>
               </fieldset>
             </details>
-            <Button type="submit" disabled={query.isLoading}>
-              {query.isLoading ? "Interpreting…" : "Ask question"}
-            </Button>
+            <section
+              className="question-examples"
+              aria-labelledby="question-examples-heading"
+            >
+              <div className="question-examples-heading">
+                <h3 id="question-examples-heading">Example prompts</h3>
+                <p className="muted">Select one to edit before you ask.</p>
+              </div>
+              <div className="question-example-list">
+                {[
+                  "Who won the 2024 British Grand Prix?",
+                  "How many wins does Lewis Hamilton have?",
+                ].map((example) => (
+                  <button
+                    className="question-example"
+                    key={example}
+                    type="button"
+                    onClick={() => setText(example)}
+                  >
+                    <span>{example}</span>
+                    <span className="question-example-action">Use example</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+            <div className="question-form-actions">
+              <Button type="submit">Ask question</Button>
+            </div>
           </form>
-          {query.isUninitialized ? (
+          <div className="question-output">
             <EmptyState
               title="Ready when you are"
               description="The archive will interpret the question only after you submit it."
             />
-          ) : query.isLoading ? (
-            <Skeleton label="Interpreting the published archive" />
-          ) : query.isError ? (
-            <>
-              <ErrorState
-                status={query.error?.status}
-                onRetry={() => void ask({ text, context })}
-              />
-              <div className="question-result-actions">
-                <Button variant="secondary" onClick={clearQuestion}>
-                  Clear question
-                </Button>
-              </div>
-            </>
-          ) : (
-            <ArchiveQuestionResult
-              result={query.data?.questionResult}
-              onChoice={handleChoice}
-              onClear={clearQuestion}
-            />
-          )}
-          {text.trim() && (
-            <div className="question-browse-link">
+          </div>
+        </Panel>
+      ) : (
+        <Panel
+          title="Archive result"
+          action={
+            <Button variant="secondary" onClick={clearQuestion}>
+              Clear question
+            </Button>
+          }
+        >
+          <div className="question-result-view">
+            <div className="question-submitted">
+              <span className="question-result-label">Submitted question</span>
+              <p className="question-result-question">{text}</p>
+            </div>
+            <div className="question-output">
+              {query.isLoading ? (
+                <Skeleton label="Interpreting the published archive" />
+              ) : query.isError ? (
+                <ErrorState
+                  status={query.error?.status}
+                  onRetry={() => void ask({ text, context })}
+                />
+              ) : (
+                <ArchiveQuestionResult
+                  result={query.data?.questionResult}
+                  onChoice={handleChoice}
+                />
+              )}
+            </div>
+            {text.trim() ? (
               <ActionLink
                 variant="quiet"
                 to={`/explore?q=${encodeURIComponent(text.trim())}`}
               >
                 Browse matching archive items
               </ActionLink>
-            </div>
-          )}
-          <SourceNote meta={query.data?.meta} />
+            ) : null}
+            <SourceNote meta={query.data?.meta} />
+          </div>
         </Panel>
       )}
     </>

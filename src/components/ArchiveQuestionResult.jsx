@@ -61,25 +61,20 @@ function displayValue(value) {
   return JSON.stringify(value);
 }
 
-function QuestionResultHeading({ label, tone = "warning", onClear }) {
+function QuestionResultHeading({ label, tone = "warning" }) {
   return (
     <div className="question-result-heading">
       <StatusBadge tone={tone}>{label}</StatusBadge>
-      {onClear ? (
-        <Button variant="secondary" onClick={onClear}>
-          Clear question
-        </Button>
-      ) : null}
     </div>
   );
 }
 
-export default function ArchiveQuestionResult({ result, onChoice, onClear }) {
+export default function ArchiveQuestionResult({ result, onChoice }) {
   if (!result) return null;
   if (result.status === "clarification") {
     return (
       <div className="question-result" role="status">
-        <QuestionResultHeading label="Clarification needed" onClear={onClear} />
+        <QuestionResultHeading label="Clarification needed" />
         <p className="question-result-message">{result.message}</p>
         {result.choices?.length ? (
           <div className="question-choices">
@@ -100,7 +95,7 @@ export default function ArchiveQuestionResult({ result, onChoice, onClear }) {
   if (result.status !== "answered") {
     return (
       <div className="question-result" role="status">
-        <QuestionResultHeading label={result.status} onClear={onClear} />
+        <QuestionResultHeading label={result.status} />
         <p className="question-result-message">{result.message}</p>
       </div>
     );
@@ -111,11 +106,7 @@ export default function ArchiveQuestionResult({ result, onChoice, onClear }) {
   );
   return (
     <div className="question-result" role="status">
-      <QuestionResultHeading
-        label="Answer from the archive"
-        tone="success"
-        onClear={onClear}
-      />
+      <QuestionResultHeading label="Answer from the archive" tone="success" />
       <div className="question-answer-block">
         <span className="question-answer-label">Answer</span>
         <p className="question-answer">
