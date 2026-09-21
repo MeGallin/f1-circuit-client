@@ -124,6 +124,7 @@ test("question form toggles to an answer result and resets to the form", async (
   expect(clearButton).toHaveFocus();
   await userEvent.keyboard("{Enter}");
   expect(screen.getByLabelText("Question")).toHaveValue("");
+  expect(screen.getByLabelText("Example question")).toHaveValue("");
   expect(
     screen.queryByText("Lewis Hamilton has 0.50 wins in the archive."),
   ).not.toBeInTheDocument();
@@ -191,27 +192,31 @@ test("question capability is available before any submission", () => {
   expect(
     screen.getByRole("button", { name: "Ask question" }),
   ).toBeInTheDocument();
-  expect(screen.getByText(/Ask in one sentence/)).toBeInTheDocument();
+  expect(screen.getByPlaceholderText(/Ask about a race/)).toBeInTheDocument();
   expect(
     screen.getByText(
-      "The published archive covers Formula 1 seasons from 2000 onward.",
+      "Questions use published archive data and show its source coverage.",
     ),
   ).toBeInTheDocument();
 });
 
-test("question context is collapsed and examples only fill the composer", async () => {
+test("example selector fills the composer without submitting", async () => {
   vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
+  const fetchMock = vi.fn();
+  vi.stubGlobal("fetch", fetchMock);
   mount();
-  expect(
-    screen.getByRole("heading", { name: "Example prompts" }),
-  ).toBeInTheDocument();
-  await userEvent.click(
-    screen.getByRole("button", {
-      name: /How many wins does Lewis Hamilton have\?.*Use example/,
-    }),
+  const exampleSelect = screen.getByLabelText("Example question");
+  const options = [...exampleSelect.querySelectorAll("option")];
+  expect(options).toHaveLength(11);
+  expect(options[0]).toHaveTextContent("Choose an example question");
+  exampleSelect.focus();
+  expect(exampleSelect).toHaveFocus();
+  await userEvent.selectOptions(
+    exampleSelect,
+    "Which driver has had the most fifth-place finishes?",
   );
   expect(screen.getByLabelText("Question")).toHaveValue(
-    "How many wins does Lewis Hamilton have?",
+    "Which driver has had the most fifth-place finishes?",
   );
   expect(
     screen.getByRole("button", { name: "Ask question" }),
@@ -219,12 +224,16 @@ test("question context is collapsed and examples only fill the composer", async 
   expect(
     screen.queryByRole("heading", { name: "Archive result" }),
   ).not.toBeInTheDocument();
+  expect(fetchMock).not.toHaveBeenCalled();
   const form = screen
     .getByRole("region", { name: "Write a complete question" })
     .querySelector("form");
   const childIndex = (selector) =>
     [...form.children].indexOf(form.querySelector(selector));
-  expect(childIndex(".question-examples")).toBeLessThan(
+  expect(
+    [...form.children].indexOf(exampleSelect.closest(".field")),
+  ).toBeLessThan(childIndex(".questions-form__text"));
+  expect(childIndex(".questions-form__text")).toBeLessThan(
     childIndex(".question-form-actions"),
   );
   expect(childIndex(".question-form-actions")).toBeLessThan(
@@ -233,6 +242,11 @@ test("question context is collapsed and examples only fill the composer", async 
   expect(
     screen.getByText("Add context").closest("details"),
   ).not.toHaveAttribute("open");
+  expect(
+    screen.getByText(
+      "The published archive currently covers Formula 1 data from the 2000 season onward. Earlier seasons are not included at this stage.",
+    ),
+  ).toBeInTheDocument();
 });
 
 test("loading switches to a focused result view with a clear action", async () => {

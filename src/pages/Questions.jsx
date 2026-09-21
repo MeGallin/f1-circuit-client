@@ -26,6 +26,19 @@ const initialContext = {
   constructorId: null,
 };
 
+const questionExamples = [
+  "Who won the 2024 British Grand Prix?",
+  "How many wins does Lewis Hamilton have?",
+  "Which driver has the most first-place finishes?",
+  "Which driver has had the most second-place finishes?",
+  "Which driver has had the most fifth-place finishes?",
+  "Who has the most podium finishes in position 3?",
+  "Which constructor scored the most points in 2023?",
+  "How many races did Max Verstappen win in 2023?",
+  "Who won the 2000 World Championship?",
+  "Which circuit hosted the 2022 Italian Grand Prix?",
+];
+
 function contextFromForm(form, current) {
   const year = String(form.get("year") || "").trim();
   return {
@@ -121,7 +134,7 @@ export default function Questions() {
               ? "Ask a question in ordinary language. Answers are built from the published archive and show their evidence."
               : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."}
             <span className="question-coverage-note">
-              The published archive covers Formula 1 seasons from 2000 onward.
+              Questions use published archive data and show its source coverage.
             </span>
           </>
         }
@@ -132,6 +145,21 @@ export default function Questions() {
       ) : query.isUninitialized ? (
         <Panel title="Write a complete question">
           <form className="questions-form" onSubmit={submit}>
+            <Select
+              id="question-example"
+              label="Example question"
+              defaultValue=""
+              options={[
+                { value: "", label: "Choose an example question" },
+                ...questionExamples.map((example) => ({
+                  value: example,
+                  label: example,
+                })),
+              ]}
+              onChange={(event) => {
+                if (event.target.value) setText(event.target.value);
+              }}
+            />
             <div className="field questions-form__text">
               <label htmlFor="question-text">Question</label>
               <textarea
@@ -141,43 +169,14 @@ export default function Questions() {
                 onChange={(event) => setText(event.target.value)}
                 maxLength={500}
                 rows={4}
-                placeholder="e.g. Who won the 2024 British Grand Prix?"
-                aria-describedby="question-help question-count"
+                placeholder="Ask about a race, driver, constructor, circuit, season or session..."
+                aria-describedby="question-count"
                 required
               />
-              <p id="question-help" className="muted question-form-help">
-                Ask in one sentence. Add context below to narrow the question to
-                a season, event, driver, constructor or session.
-              </p>
               <span id="question-count" className="muted" aria-live="polite">
                 {text.length}/500 characters
               </span>
             </div>
-            <section
-              className="question-examples"
-              aria-labelledby="question-examples-heading"
-            >
-              <div className="question-examples-heading">
-                <h3 id="question-examples-heading">Example prompts</h3>
-                <p className="muted">Select one to edit before you ask.</p>
-              </div>
-              <div className="question-example-list">
-                {[
-                  "Who won the 2024 British Grand Prix?",
-                  "How many wins does Lewis Hamilton have?",
-                ].map((example) => (
-                  <button
-                    className="question-example"
-                    key={example}
-                    type="button"
-                    onClick={() => setText(example)}
-                  >
-                    <span>{example}</span>
-                    <span className="question-example-action">Use example</span>
-                  </button>
-                ))}
-              </div>
-            </section>
             <div className="question-form-actions">
               <Button type="submit">Ask question</Button>
             </div>
@@ -271,7 +270,19 @@ export default function Questions() {
           <div className="question-output">
             <EmptyState
               title="Ready when you are"
-              description="The archive will interpret the question only after you submit it."
+              description={
+                <>
+                  <span>
+                    The archive will interpret the question only after you
+                    submit it.
+                  </span>
+                  <span className="question-coverage-note">
+                    The published archive currently covers Formula 1 data from
+                    the 2000 season onward. Earlier seasons are not included at
+                    this stage.
+                  </span>
+                </>
+              }
             />
           </div>
         </Panel>
