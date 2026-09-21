@@ -82,10 +82,7 @@ test("question form posts structured context and renders exact values with evide
     }),
   );
   mount();
-  await userEvent.type(
-    screen.getByLabelText("Question"),
-    "How many wins?",
-  );
+  await userEvent.type(screen.getByLabelText("Question"), "How many wins?");
   expect(screen.getByText("Add context")).toBeInTheDocument();
   expect(screen.getByLabelText("Season year")).not.toBeVisible();
   await userEvent.click(screen.getByText("Add context"));
@@ -101,11 +98,11 @@ test("question form posts structured context and renders exact values with evide
   expect(screen.getByText("0.50")).toBeInTheDocument();
   expect(screen.getByText("true")).toBeInTheDocument();
   expect(
+    screen.getByRole("button", { name: "Clear question" }),
+  ).toBeInTheDocument();
+  expect(
     screen.getByRole("link", { name: "View source evidence" }),
-  ).toHaveAttribute(
-    "href",
-    "/evidence/evidence%3Aone",
-  );
+  ).toHaveAttribute("href", "/evidence/evidence%3Aone");
   expect(body).toEqual({
     text: "How many wins?",
     context: {
@@ -116,6 +113,12 @@ test("question form posts structured context and renders exact values with evide
       constructorId: null,
     },
   });
+  await userEvent.click(screen.getByRole("button", { name: "Clear question" }));
+  expect(screen.getByLabelText("Question")).toHaveValue("");
+  expect(
+    screen.queryByText("Lewis Hamilton has 0.50 wins in the archive."),
+  ).not.toBeInTheDocument();
+  expect(await screen.findByText("Ready when you are")).toBeInTheDocument();
 });
 
 test("question clarification stays explicit and offers supplied choices", async () => {
@@ -159,16 +162,31 @@ test("question clarification stays explicit and offers supplied choices", async 
   mount();
   await userEvent.type(screen.getByLabelText("Question"), "Who won?");
   await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
-  expect(await screen.findByText("Which season do you mean?")).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "2024 season" })).toBeInTheDocument();
+  expect(
+    await screen.findByText("Which season do you mean?"),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "2024 season" }),
+  ).toBeInTheDocument();
 });
 
 test("question capability is available before any submission", () => {
   vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   mount();
-  expect(screen.getByRole("heading", { name: "Ask the archive" })).toBeInTheDocument();
-  expect(screen.getByRole("heading", { name: "Write a complete question" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "Ask question" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: "Ask the archive" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: "Write a complete question" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Ask question" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      "The published archive covers Formula 1 seasons from 2000 onward.",
+    ),
+  ).toBeInTheDocument();
 });
 
 test("question context is collapsed and examples only fill the composer", async () => {
@@ -176,12 +194,57 @@ test("question context is collapsed and examples only fill the composer", async 
   mount();
   expect(screen.getByText("Try a complete question:")).toBeInTheDocument();
   await userEvent.click(
-    screen.getByRole("button", { name: "How many wins does Lewis Hamilton have?" }),
+    screen.getByRole("button", {
+      name: "How many wins does Lewis Hamilton have?",
+    }),
   );
   expect(screen.getByLabelText("Question")).toHaveValue(
     "How many wins does Lewis Hamilton have?",
   );
-  expect(screen.getByText("Add context").closest("details")).not.toHaveAttribute(
-    "open",
+  expect(
+    screen.getByText("Add context").closest("details"),
+  ).not.toHaveAttribute("open");
+});
+
+test("unavailable answers stay explicit and can be cleared", async () => {
+  vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            data: {
+              questionResult: {
+                status: "unavailable",
+                message: "The optional interpreter is not available.",
+                reasonCode: "QUESTION_INTERPRETER_DISABLED",
+              },
+            },
+            meta: {
+              snapshotId: "snapshot:one",
+              coverage: "partial",
+              freshness: "fresh",
+              verification: "source-only",
+              sources: [],
+            },
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        ),
+    ),
   );
+  mount();
+  await userEvent.type(
+    screen.getByLabelText("Question"),
+    "Which driver has the most finishes?",
+  );
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  expect(
+    await screen.findByText("The optional interpreter is not available."),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Clear question" }),
+  ).toBeInTheDocument();
+  await userEvent.click(screen.getByRole("button", { name: "Clear question" }));
+  expect(await screen.findByText("Ready when you are")).toBeInTheDocument();
 });

@@ -61,12 +61,25 @@ function displayValue(value) {
   return JSON.stringify(value);
 }
 
-export default function ArchiveQuestionResult({ result, onChoice }) {
+function QuestionResultHeading({ label, tone = "warning", onClear }) {
+  return (
+    <div className="question-result-heading">
+      <StatusBadge tone={tone}>{label}</StatusBadge>
+      {onClear ? (
+        <Button variant="secondary" onClick={onClear}>
+          Clear question
+        </Button>
+      ) : null}
+    </div>
+  );
+}
+
+export default function ArchiveQuestionResult({ result, onChoice, onClear }) {
   if (!result) return null;
   if (result.status === "clarification") {
     return (
       <div className="question-result" role="status">
-        <StatusBadge tone="warning">Clarification needed</StatusBadge>
+        <QuestionResultHeading label="Clarification needed" onClear={onClear} />
         <p className="question-result-message">{result.message}</p>
         {result.choices?.length ? (
           <div className="question-choices">
@@ -87,7 +100,7 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
   if (result.status !== "answered") {
     return (
       <div className="question-result" role="status">
-        <StatusBadge tone="warning">{result.status}</StatusBadge>
+        <QuestionResultHeading label={result.status} onClear={onClear} />
         <p className="question-result-message">{result.message}</p>
       </div>
     );
@@ -98,12 +111,17 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
   );
   return (
     <div className="question-result" role="status">
-      <div className="question-result-heading">
-        <StatusBadge tone="success">Answer from the archive</StatusBadge>
+      <QuestionResultHeading
+        label="Answer from the archive"
+        tone="success"
+        onClear={onClear}
+      />
+      <div className="question-answer-block">
+        <span className="question-answer-label">Answer</span>
+        <p className="question-answer">
+          {values.answer || "The archive returned an answer."}
+        </p>
       </div>
-      <p className="question-answer">
-        {values.answer || "The archive returned an answer."}
-      </p>
       {detailEntries.length || result.evidenceIds?.length ? (
         <div className="question-disclosures">
           {detailEntries.length ? (
@@ -112,7 +130,10 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
                 <span>Archive details</span>
                 <span className="question-disclosure-meta">
                   {detailEntries.length} fields
-                  <span className="question-disclosure-indicator" aria-hidden="true" />
+                  <span
+                    className="question-disclosure-indicator"
+                    aria-hidden="true"
+                  />
                 </span>
               </summary>
               <dl className="question-values">
@@ -130,15 +151,21 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
               <summary className="question-disclosure-summary">
                 <span>Source evidence</span>
                 <span className="question-disclosure-meta">
-                  {result.evidenceIds.length} {result.evidenceIds.length === 1 ? "source" : "sources"}
-                  <span className="question-disclosure-indicator" aria-hidden="true" />
+                  {result.evidenceIds.length}{" "}
+                  {result.evidenceIds.length === 1 ? "source" : "sources"}
+                  <span
+                    className="question-disclosure-indicator"
+                    aria-hidden="true"
+                  />
                 </span>
               </summary>
               <div className="question-evidence">
                 <ul>
                   {result.evidenceIds.map((evidenceId) => (
                     <li key={evidenceId}>
-                      <TextLink to={`/evidence/${encodeURIComponent(evidenceId)}`}>
+                      <TextLink
+                        to={`/evidence/${encodeURIComponent(evidenceId)}`}
+                      >
                         View source evidence
                       </TextLink>
                     </li>

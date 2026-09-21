@@ -72,16 +72,41 @@
   gap: var(--apex-space-5);
   flex-wrap: wrap;
 }
+.question-coverage-note {
+  display: block;
+  margin-top: var(--apex-space-3);
+  font-size: var(--apex-type-caption-size);
+}
+.question-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-4);
+  padding: 0 var(--apex-space-6) var(--apex-space-6);
+}
 .question-result-message {
   margin: 0;
 }
+.question-answer-block {
+  display: grid;
+  gap: var(--apex-space-2);
+  max-width: 65ch;
+  padding: var(--apex-space-5) 0 var(--apex-space-5) var(--apex-space-5);
+  border-left: 3px solid var(--apex-color-accent);
+}
+.question-answer-label {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .question-answer {
-  max-width: 58ch;
   margin: 0;
   color: var(--apex-color-text);
-  font-size: var(--apex-type-section-size);
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: var(--apex-type-prose-size);
+  font-weight: 500;
+  line-height: var(--apex-type-prose-line);
 }
 .question-disclosures {
   display: grid;

@@ -88,6 +88,7 @@ export default function Questions() {
   const [context, setContext] = useState(initialContext);
   const [contextLabels, setContextLabels] = useState({});
   const [text, setText] = useState(() => params.get("q") || "");
+  const [formKey, setFormKey] = useState(0);
   const [ask, query] = useAskQuestionMutation();
   const submit = async (event, selectedContext = context) => {
     event?.preventDefault();
@@ -104,15 +105,27 @@ export default function Questions() {
     const suffix = choice.label ? ` ${choice.label.toLowerCase()}` : "";
     void ask({ text: `${text}${suffix}`, context: choice.context });
   };
+  const clearQuestion = () => {
+    setText("");
+    setContext(initialContext);
+    setContextLabels({});
+    setFormKey((value) => value + 1);
+    query.reset();
+  };
   return (
     <>
       <PageHeading
         eyebrow="ASK THE ARCHIVE"
         title="Ask the archive"
         description={
-          enabled
-            ? "Ask a question in ordinary language. Answers are built from the published archive and show their evidence."
-            : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."
+          <>
+            {enabled
+              ? "Ask a question in ordinary language. Answers are built from the published archive and show their evidence."
+              : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."}
+            <span className="question-coverage-note">
+              The published archive covers Formula 1 seasons from 2000 onward.
+            </span>
+          </>
         }
         actions={<ActionLink to="/explore">Explore the archive</ActionLink>}
       />
@@ -120,7 +133,7 @@ export default function Questions() {
         <QuestionUnavailable />
       ) : (
         <Panel title="Write a complete question">
-          <form className="questions-form" onSubmit={submit}>
+          <form key={formKey} className="questions-form" onSubmit={submit}>
             <div className="field questions-form__text">
               <label htmlFor="question-text">Question</label>
               <textarea
@@ -137,24 +150,29 @@ export default function Questions() {
             </div>
             <div className="question-examples" aria-label="Question examples">
               <span className="muted">Try a complete question:</span>
-              {["Who won the 2024 British Grand Prix?", "How many wins does Lewis Hamilton have?"]
-                .map((example) => (
-                  <button
-                    className="question-example"
-                    key={example}
-                    type="button"
-                    onClick={() => setText(example)}
-                  >
-                    {example}
-                  </button>
-                ))}
+              {[
+                "Who won the 2024 British Grand Prix?",
+                "How many wins does Lewis Hamilton have?",
+              ].map((example) => (
+                <button
+                  className="question-example"
+                  key={example}
+                  type="button"
+                  onClick={() => setText(example)}
+                >
+                  {example}
+                </button>
+              ))}
             </div>
             <details className="question-context-disclosure">
               <summary className="question-disclosure-summary">
                 <span>Add context</span>
                 <span className="question-disclosure-meta">
                   Optional
-                  <span className="question-disclosure-indicator" aria-hidden="true" />
+                  <span
+                    className="question-disclosure-indicator"
+                    aria-hidden="true"
+                  />
                 </span>
               </summary>
               <fieldset>
@@ -244,14 +262,22 @@ export default function Questions() {
           ) : query.isLoading ? (
             <Skeleton label="Interpreting the published archive" />
           ) : query.isError ? (
-            <ErrorState
-              status={query.error?.status}
-              onRetry={() => void ask({ text, context })}
-            />
+            <>
+              <ErrorState
+                status={query.error?.status}
+                onRetry={() => void ask({ text, context })}
+              />
+              <div className="question-result-actions">
+                <Button variant="secondary" onClick={clearQuestion}>
+                  Clear question
+                </Button>
+              </div>
+            </>
           ) : (
             <ArchiveQuestionResult
               result={query.data?.questionResult}
               onChoice={handleChoice}
+              onClear={clearQuestion}
             />
           )}
           {text.trim() && (
