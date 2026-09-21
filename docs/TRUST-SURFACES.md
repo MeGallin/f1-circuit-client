@@ -1,20 +1,32 @@
-# Trust surfaces — 19 September 2026
+# Trust surfaces — 21 September 2026
 
-The client now exposes the API's provenance and qualification rules directly in the user-facing routes. This checkpoint is local only; no frontend deployment or repository push was performed.
+The client exposes the API's provenance rules directly in the user-facing routes. The dedicated Records surface is intentionally deferred; this checkpoint is local only and no frontend deployment was performed.
 
 ## Routes
 
-- `/records`: requests the contract's `scope`, `metric`, and required `entityId` or season `year`. Values remain strings when supplied as strings. Each row keeps its coverage, definition version and evidence link. Cursor pages retain the returned snapshot ID.
 - `/evidence/:evidenceId`: shows publication identity, field paths, selected values, verification and coverage, selection reasons, rules, nested source assertions and safe HTTP(S) references. A missing or expired record stays in the shared error state.
 - `/questions`: sends a read-only `POST /questions` request with a bounded question and explicit nullable context fields. Answered values are rendered without generated factual prose. Clarification choices are supplied by the API and can be selected; unsupported and disabled responses remain explicit.
 
-All three routes reuse the Apex controls, data boundaries and provenance disclosure. They do not infer totals, fill missing values, or treat provider health as event completeness.
+These routes reuse the Apex controls, data boundaries and provenance disclosure. They do not infer totals, fill missing values, or treat provider health as event completeness.
+
+## Deferred Records surface
+
+The dedicated `/records` page, navigation entry, browse links, client API hooks, and API operations are removed until a later version. This does not remove generic archive records, race records, profile history, or normalized database records; it removes only the standalone Records experience and its unsupported contract.
+
+Reintroduce the feature only when all of the following are true:
+
+- qualified backend aggregates exist for each advertised scope and metric, with explicit historical scoring and credit rules;
+- every published value has source and evidence lineage, coverage metadata, and a stable snapshot contract;
+- one API-owned, scope-aware capability contract can drive the client controls without static or misleading options; and
+- populated, partial, unavailable, error, pagination, accessibility, and responsive UI journeys are covered by real contract-shaped tests.
+
+The previous implementation remains recoverable through focused Git history; no source archive data was deleted.
 
 ## Verification
 
 - `npm run check`: ESLint passed, 13 test files / 48 tests passed, and the production Vite build passed.
 - `git diff --check`: clean at the checkpoint commits.
-- Browser review: `/records?scope=season&metric=points&year=2024` showed the real API's explicit no-published-record state and provenance; `/questions` showed the bounded form, nullable context controls and initial state.
+- Browser review: `/questions` showed the bounded form, nullable context controls and initial state. Direct `/records` is now handled by the application not-found state.
 - The deployed API's current `/questions` response was checked directly and returned HTTP 200 with `status: unavailable` and `reasonCode: FEATURE_DISABLED`; the client is designed to display that response without implying that question interpretation is active.
 
 ## Limits

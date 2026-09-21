@@ -151,28 +151,6 @@ export const archiveApi = createApi({
       }),
       transformResponse: (r) => objectResponse(r, "evidence"),
     }),
-    getRecords: builder.query({
-      query: ({
-        scope,
-        metric,
-        entityId,
-        year,
-        cursor,
-        snapshotId,
-        limit = 50,
-      }) => ({
-        url: "/records",
-        params: { scope, metric, entityId, year, cursor, snapshotId, limit },
-      }),
-      transformResponse: collectionResponse,
-    }),
-    getRecordCapabilities: builder.query({
-      query: ({ cursor, snapshotId, limit = 50 } = {}) => ({
-        url: "/records/capabilities",
-        params: { cursor, snapshotId, limit },
-      }),
-      transformResponse: collectionResponse,
-    }),
     askQuestion: builder.mutation({
       query: ({ text, context }) => ({
         url: "/questions",
@@ -312,8 +290,6 @@ export const {
   useGetEventQuery,
   useGetImpactQuery,
   useGetEvidenceQuery,
-  useGetRecordsQuery,
-  useGetRecordCapabilitiesQuery,
   useAskQuestionMutation,
   useGetSessionDataQuery,
   useGetSeasonsQuery,

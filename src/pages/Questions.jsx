@@ -1,4 +1,3 @@
-import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useAskQuestionMutation, useGetEventQuery } from "../api/archiveApi";
 import ArchiveQuestionResult from "../components/ArchiveQuestionResult";
@@ -61,7 +60,7 @@ function SessionPicker({ eventId, value, onChange }) {
   );
 }
 
-function QuestionUnavailable({ recordsPath }) {
+function QuestionUnavailable() {
   return (
     <Panel title="Questions are not available yet">
       <div className="question-capability" role="status">
@@ -76,7 +75,6 @@ function QuestionUnavailable({ recordsPath }) {
           information with its source and evidence attached.
         </p>
         <div className="question-capability-actions">
-          <ActionLink to={recordsPath}>Browse published records</ActionLink>
           <ActionLink to="/explore">Explore drivers and circuits</ActionLink>
         </div>
       </div>
@@ -85,10 +83,7 @@ function QuestionUnavailable({ recordsPath }) {
 }
 
 export default function Questions() {
-  const [params] = useSearchParams();
   const enabled = import.meta.env.VITE_ENABLE_QUESTION_LAYER !== "false";
-  const season = params.get("season");
-  const recordsPath = season ? `/records?season=${encodeURIComponent(season)}` : "/records";
   const [context, setContext] = useState(initialContext);
   const [contextLabels, setContextLabels] = useState({});
   const [text, setText] = useState("");
@@ -118,10 +113,10 @@ export default function Questions() {
             ? "Ask a supported, read-only question. Answers use deterministic archive templates and always show the supplied evidence references."
             : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."
         }
-        actions={<ActionLink to={recordsPath}>Browse records</ActionLink>}
+        actions={<ActionLink to="/explore">Explore the archive</ActionLink>}
       />
       {!enabled ? (
-        <QuestionUnavailable recordsPath={recordsPath} />
+        <QuestionUnavailable />
       ) : (
         <Panel title="Ask a question">
           <form className="questions-form" onSubmit={submit}>

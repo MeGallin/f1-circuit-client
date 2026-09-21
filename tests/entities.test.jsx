@@ -218,8 +218,8 @@ test("explore provides task-led browse paths before a search is entered", () => 
     `/standings?season=${new Date().getUTCFullYear()}&kind=drivers`,
   );
   expect(
-    screen.getByRole("link", { name: "Browse published records" }),
-  ).toHaveAttribute("href", "/records?season=2026");
+    screen.queryByRole("link", { name: "Browse published records" }),
+  ).not.toBeInTheDocument();
 });
 test("profile history keeps decimal points and resets pagination when the season changes", async () => {
   const calls = mock((url) =>

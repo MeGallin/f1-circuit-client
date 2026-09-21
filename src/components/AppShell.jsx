@@ -10,7 +10,6 @@ import {
   DatabaseIcon,
   PaletteIcon,
   MagnifyingGlassIcon,
-  ChartLineUpIcon,
   ChatCircleTextIcon,
   DotsThreeIcon,
 } from "@phosphor-icons/react";
@@ -21,7 +20,6 @@ const navigation = [
   { to: "/calendar", label: "Calendar", icon: CalendarBlankIcon },
   { to: "/standings", label: "Standings", icon: RankingIcon },
   { to: "/explore", label: "Explore", icon: MagnifyingGlassIcon },
-  { to: "/records", label: "Records", icon: ChartLineUpIcon },
   { to: "/questions", label: "Ask", icon: ChatCircleTextIcon },
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
@@ -35,7 +33,6 @@ export function routeTitle(pathname) {
   if (pathname === "/standings") return "Championship standings";
   if (pathname === "/sources") return "Sources and coverage";
   if (pathname.startsWith("/evidence/")) return "Evidence detail";
-  if (pathname === "/records") return "Archive records";
   if (pathname === "/questions") return "Ask the archive";
   if (pathname === "/explore") return "Explore the archive";
   if (pathname === "/compare") return "Compare archive metrics";

@@ -136,9 +136,6 @@ export default function Explore() {
           >
             Browse constructors
           </ActionLink>
-          <ActionLink to={`/records?season=${encodeURIComponent(browseSeason)}`}>
-            Browse published records
-          </ActionLink>
         </nav>
         <p className="muted explore-browse-note">
           Use the archive question box for natural-language queries, or browse a

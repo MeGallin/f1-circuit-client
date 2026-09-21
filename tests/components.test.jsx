@@ -76,7 +76,7 @@ test("refreshing keeps current data visible and announces the update", () => {
 });
 test("mobile navigation keeps primary tasks visible and groups secondary routes", async () => {
   render(
-    <MemoryRouter initialEntries={["/records?season=2026"]}>
+    <MemoryRouter initialEntries={["/questions?season=2026"]}>
       <Navigation mobile />
     </MemoryRouter>,
   );
@@ -91,7 +91,7 @@ test("mobile navigation keeps primary tasks visible and groups secondary routes"
   expect(more).toHaveAttribute("aria-expanded", "false");
   await userEvent.click(more);
   expect(more).toHaveAttribute("aria-expanded", "true");
-  expect(screen.getByRole("link", { name: "Records" })).toBeInTheDocument();
+  expect(screen.queryByRole("link", { name: "Records" })).not.toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Ask" })).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Sources" })).toBeInTheDocument();
   expect(more).toHaveClass("active");
