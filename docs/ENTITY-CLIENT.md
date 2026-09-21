@@ -2,12 +2,12 @@
 
 ## Routes and behavior
 
-- `/explore`: provider search by name and record type, URL filters, canonical profile/event/season navigation, cursor pagination pinned to a publication snapshot.
+- `/explore`: deterministic published-archive search by name or keyword, scope-aware All/Drivers/Constructors/Circuits/Events/Seasons filters, canonical profile/event/season navigation, and cursor pagination pinned to a publication snapshot. It never calls the question layer.
 - `/drivers/:id` and `/constructors/:id`: published identity, nullable profile facts/metrics, paginated classification history, season filtering, and championship progression (`view=progression`).
 - `/circuits/:id`: published location, paginated event history and layout records (`view=layouts`). Supplied layout assets are external links, with attribution/licence shown when available.
 - `/compare`: driver, constructor, circuit or season selection; name search for entities; exact metric and season-range query state; explicit unavailable coverage. Fractional values stay strings, missing values remain missing. Circuit points and invalid/reversed ranges are blocked.
 
-Explore is available in desktop/mobile navigation. Standings and race entries link to profiles. Existing Apex components, JavaScript, Redux Toolkit/RTK Query, responsive tokens and provenance display are reused; no dependencies were added. Favicon is now a declared local SVG.
+Explore is available in desktop/mobile navigation. `/questions` is the separate AI-assisted natural-language archive route; its optional context is collapsed by default and its answer/details/evidence disclosures remain source-backed. Standings and race entries link to profiles. Existing Apex components, JavaScript, Redux Toolkit/RTK Query, responsive tokens and provenance display are reused; no dependencies were added. Favicon is now a declared local SVG.
 
 ## Verification
 

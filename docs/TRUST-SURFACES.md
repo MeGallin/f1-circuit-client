@@ -4,8 +4,9 @@ The client exposes the API's provenance rules directly in the user-facing routes
 
 ## Routes
 
+- `/explore`: deterministic search over the published archive using the API's canonical entity kinds. Search results preserve the returned snapshot and cursor, expose the supplied entity path and evidence ID, and show partial coverage without turning missing data into a match.
 - `/evidence/:evidenceId`: shows publication identity, field paths, selected values, verification and coverage, selection reasons, rules, nested source assertions and safe HTTP(S) references. A missing or expired record stays in the shared error state.
-- `/questions`: sends a read-only `POST /questions` request with a bounded question and explicit nullable context fields. Answered values are rendered without generated factual prose. Clarification choices are supplied by the API and can be selected; unsupported and disabled responses remain explicit.
+- `/questions`: sends a read-only `POST /questions` request with a bounded natural-language question and explicit nullable context fields. The optional context is collapsed initially. Answered values are rendered without generated factual prose; answer details and evidence remain disclosures. Clarification choices are supplied by the API and can be selected; unsupported and disabled responses remain explicit.
 
 These routes reuse the Apex controls, data boundaries and provenance disclosure. They do not infer totals, fill missing values, or treat provider health as event completeness.
 

@@ -144,70 +144,110 @@ test("entity endpoints match the pinned contract and nullable comparison mapping
   ).toBeNull();
   expect(() => objectResponse({ data: {}, meta }, "profile")).toThrow();
 });
-test("archive questions submit natural language and render an evidence-backed answer", async () => {
-  const questionResult = {
-    status: "answered",
-    resolvedIntent: "event_winner",
-    templateKey: "event_winner",
-    values: {
-      answer: "Example One won the Synthetic Grand Prix.",
-      event: "Synthetic Grand Prix",
-      driver: "Example One",
+test("explore searches structured entities, filters kinds and preserves URL state", async () => {
+  const items = [
+    {
+      id: "driver:hamilton",
+      kind: "driver",
+      entity: {
+        id: "driver:hamilton",
+        displayName: "Lewis Hamilton",
+        clientPath: "/drivers/driver%3Ahamilton",
+      },
+      evidenceId: "evidence:driver",
+      context: null,
     },
-    evidenceIds: ["evidence:one"],
-  };
+    {
+      id: "constructor:mercedes",
+      kind: "constructor",
+      entity: {
+        id: "constructor:mercedes",
+        displayName: "Mercedes",
+        clientPath: "/constructors/constructor%3Amercedes",
+      },
+      evidenceId: "evidence:constructor",
+      context: null,
+    },
+  ];
   const calls = mock((url) => {
-    if (url.pathname.endsWith("/seasons")) return seasons;
-    if (url.pathname.endsWith("/questions"))
-      return { data: { questionResult }, meta };
-    throw new Error(`Unexpected request: ${url}`);
+    if (!url.pathname.endsWith("/search"))
+      throw new Error(`Unexpected request: ${url}`);
+    const kind = url.searchParams.get("kind");
+    return collection(kind ? items.filter((item) => item.kind === kind) : items);
   });
   mount("/explore?season=2024");
-  expect(screen.getByText("Start with a question")).toBeInTheDocument();
-  await userEvent.type(
-    screen.getByLabelText("Question"),
-    "Who won the Synthetic Grand Prix?",
-  );
-  await userEvent.click(screen.getByRole("button", { name: "Ask the archive" }));
-  expect(
-    await screen.findByText("Example One won the Synthetic Grand Prix."),
-  ).toBeInTheDocument();
-  expect(screen.getByText("Synthetic Grand Prix")).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "View source evidence" })).toHaveAttribute(
+  expect(screen.getByRole("heading", { name: "Explore the archive" })).toBeInTheDocument();
+  expect(screen.getAllByRole("tab")).toHaveLength(6);
+  await userEvent.type(screen.getByLabelText(/Find a driver/), "Hamilton");
+  await userEvent.click(screen.getByRole("button", { name: "Search the archive" }));
+  expect(await screen.findByText("Lewis Hamilton")).toBeInTheDocument();
+  expect(screen.queryByText("Answer from the archive")).not.toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "View evidence for Lewis Hamilton" })).toHaveAttribute(
     "href",
-    "/evidence/evidence%3Aone",
+    "/evidence/evidence%3Adriver",
   );
-  const request = calls.find((url) => url.pathname.endsWith("/questions"));
-  expect(request).toBeTruthy();
-  expect(screen.getByTestId("location")).toHaveTextContent(
-    "?q=Who+won+the+Synthetic+Grand+Prix%3F",
+  expect(screen.getByRole("link", { name: "Lewis Hamilton" })).toHaveAttribute(
+    "href",
+    "/drivers/driver%3Ahamilton",
   );
+  const first = calls.at(-1);
+  expect(first.pathname).toBe("/api/v1/search");
+  expect(first.searchParams.get("q")).toBe("Hamilton");
+  expect(first.searchParams.has("kind")).toBe(false);
+  expect(screen.getByTestId("location")).toHaveTextContent("season=2024");
+  await userEvent.click(screen.getByRole("tab", { name: "Drivers" }));
+  await waitFor(() =>
+    expect(calls.at(-1).searchParams.get("kind")).toBe("driver"),
+  );
+  expect(screen.getByTestId("location")).toHaveTextContent("kind=driver");
+  expect(screen.queryByText("Mercedes")).not.toBeInTheDocument();
 });
-test("existing archive question URLs load their answer", async () => {
-  mock((url) => {
-    if (url.pathname.endsWith("/seasons")) return seasons;
-    if (url.pathname.endsWith("/questions"))
-      return {
-        data: {
-          questionResult: {
-            status: "answered",
-            values: { answer: "Example One won." },
+test("explore keeps cursor pagination on the returned snapshot and has a recoverable empty state", async () => {
+  const calls = mock((url) => {
+    if (!url.pathname.endsWith("/search"))
+      throw new Error(`Unexpected request: ${url}`);
+    if (url.searchParams.get("q") === "zzzz") return collection([]);
+    return {
+      ...collection([
+        {
+          id: "driver:one",
+          kind: "driver",
+          entity: {
+            id: "driver:one",
+            displayName: "Example Driver",
+            clientPath: "/drivers/driver%3Aone",
           },
+          evidenceId: "evidence:one",
+          context: null,
         },
-        meta,
-      };
-    throw new Error(`Unexpected request: ${url}`);
+      ], true),
+      meta: { ...meta, snapshotId: "snapshot:search" },
+    };
   });
-  mount("/explore?season=2024&q=Who%20won%3F");
-  expect(await screen.findByText("Example One won.")).toBeInTheDocument();
+  mount("/explore");
+  await userEvent.type(screen.getByLabelText(/Find a driver/), "Example");
+  await userEvent.click(screen.getByRole("button", { name: "Search the archive" }));
+  await screen.findByText("Example Driver");
+  await userEvent.click(screen.getByRole("button", { name: "Next page" }));
+  await waitFor(() =>
+    expect(calls.at(-1).searchParams.get("cursor")).toBe("next"),
+  );
+  expect(calls.at(-1).searchParams.get("snapshotId")).toBe("snapshot:search");
+  expect(screen.getByTestId("location")).toHaveTextContent("snapshot=snapshot%3Asearch");
+  await userEvent.click(screen.getByRole("button", { name: "Clear search" }));
+  await userEvent.type(screen.getByLabelText(/Find a driver/), "zzzz");
+  await userEvent.click(screen.getByRole("button", { name: "Search the archive" }));
+  expect(await screen.findByText("No published matches for “zzzz”")).toBeInTheDocument();
+  expect(screen.getAllByRole("button", { name: "Clear search" })).toHaveLength(2);
+  expect(calls.some((url) => url.pathname.endsWith("/questions"))).toBe(false);
 });
 test("explore provides task-led browse paths before a search is entered", () => {
   mount("/explore");
   expect(
-    screen.getByPlaceholderText("e.g. Who won the 2024 British Grand Prix?"),
+    screen.getByPlaceholderText("e.g. Hamilton, Silverstone or 2008"),
   ).toBeInTheDocument();
   expect(
-    screen.getByText(/Ask a complete question about the published archive/),
+    screen.getByText(/Find a published archive item/),
   ).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Find a race" })).toHaveAttribute(
     "href",

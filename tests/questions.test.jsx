@@ -86,6 +86,9 @@ test("question form posts structured context and renders exact values with evide
     screen.getByLabelText("Question"),
     "How many wins?",
   );
+  expect(screen.getByText("Add context")).toBeInTheDocument();
+  expect(screen.getByLabelText("Season year")).not.toBeVisible();
+  await userEvent.click(screen.getByText("Add context"));
   await userEvent.type(screen.getByLabelText("Season year"), "2024");
   await userEvent.type(screen.getByLabelText("Driver"), "Example");
   await userEvent.click(
@@ -163,6 +166,22 @@ test("question clarification stays explicit and offers supplied choices", async 
 test("question capability is available before any submission", () => {
   vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   mount();
-  expect(screen.getByRole("heading", { name: "Ask a question" })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Ask the archive" })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Write a complete question" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Ask question" })).toBeInTheDocument();
+});
+
+test("question context is collapsed and examples only fill the composer", async () => {
+  vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
+  mount();
+  expect(screen.getByText("Try a complete question:")).toBeInTheDocument();
+  await userEvent.click(
+    screen.getByRole("button", { name: "How many wins does Lewis Hamilton have?" }),
+  );
+  expect(screen.getByLabelText("Question")).toHaveValue(
+    "How many wins does Lewis Hamilton have?",
+  );
+  expect(screen.getByText("Add context").closest("details")).not.toHaveAttribute(
+    "open",
+  );
 });

@@ -15,6 +15,7 @@ import {
   StatusBadge,
 } from "../components/ui";
 import EntityPicker from "../components/EntityPicker";
+import { useSearchParams } from "react-router-dom";
 import "../styles/questions.css";
 
 const initialContext = {
@@ -62,20 +63,19 @@ function SessionPicker({ eventId, value, onChange }) {
 
 function QuestionUnavailable() {
   return (
-    <Panel title="Questions are not available yet">
+    <Panel title="Ask is not available yet">
       <div className="question-capability" role="status">
         <StatusBadge tone="warning">Unavailable</StatusBadge>
         <p>
-          The optional question layer is disabled in this archive build. No
-          model is used, and no question can supply facts outside the published
-          API records.
+          The AI-assisted question route is not enabled in this archive build.
+          It will only answer from published archive data when it is available.
         </p>
         <p className="muted">
-          Use the deterministic archive journeys below to find the same
-          information with its source and evidence attached.
+          Use Explore to find published drivers, constructors, circuits, events
+          and seasons with their source and evidence attached.
         </p>
         <div className="question-capability-actions">
-          <ActionLink to="/explore">Explore drivers and circuits</ActionLink>
+          <ActionLink to="/explore">Explore the archive</ActionLink>
         </div>
       </div>
     </Panel>
@@ -83,10 +83,11 @@ function QuestionUnavailable() {
 }
 
 export default function Questions() {
+  const [params] = useSearchParams();
   const enabled = import.meta.env.VITE_ENABLE_QUESTION_LAYER !== "false";
   const [context, setContext] = useState(initialContext);
   const [contextLabels, setContextLabels] = useState({});
-  const [text, setText] = useState("");
+  const [text, setText] = useState(() => params.get("q") || "");
   const [ask, query] = useAskQuestionMutation();
   const submit = async (event, selectedContext = context) => {
     event?.preventDefault();
@@ -107,10 +108,10 @@ export default function Questions() {
     <>
       <PageHeading
         eyebrow="ASK THE ARCHIVE"
-        title="Questions"
+        title="Ask the archive"
         description={
           enabled
-            ? "Ask a supported, read-only question. Answers use deterministic archive templates and always show the supplied evidence references."
+            ? "Ask a question in ordinary language. Answers are built from the published archive and show their evidence."
             : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."
         }
         actions={<ActionLink to="/explore">Explore the archive</ActionLink>}
@@ -118,7 +119,7 @@ export default function Questions() {
       {!enabled ? (
         <QuestionUnavailable />
       ) : (
-        <Panel title="Ask a question">
+        <Panel title="Write a complete question">
           <form className="questions-form" onSubmit={submit}>
             <div className="field questions-form__text">
               <label htmlFor="question-text">Question</label>
@@ -129,84 +130,108 @@ export default function Questions() {
                 onChange={(event) => setText(event.target.value)}
                 maxLength={500}
                 rows={4}
-                placeholder="Try: How many wins does Lewis Hamilton have?"
+                placeholder="e.g. Who won the 2024 British Grand Prix?"
                 required
               />
               <span className="muted">{text.length}/500 characters</span>
             </div>
-            <fieldset>
-              <legend>Optional context</legend>
-              <p className="muted">
-                Use published names when you want to pin the interpretation to a
-                specific race, driver, team or session.
-              </p>
-              <div className="questions-context">
-                <Input
-                  label="Season year"
-                  name="year"
-                  type="number"
-                  min="2000"
-                  max="2100"
-                />
-                <EntityPicker
-                  label="Event"
-                  kind="event"
-                  value={context.eventId || ""}
-                  displayName={contextLabels.event || ""}
-                  onChange={(id, item) => {
-                    setContext((current) => ({
-                      ...current,
-                      eventId: id || null,
-                      sessionId: null,
-                    }));
-                    setContextLabels((current) => ({
-                      ...current,
-                      event: item?.entity?.displayName || "",
-                      session: "",
-                    }));
-                  }}
-                />
-                <SessionPicker
-                  eventId={context.eventId}
-                  value={context.sessionId}
-                  onChange={(id) =>
-                    setContext((current) => ({ ...current, sessionId: id }))
-                  }
-                />
-                <EntityPicker
-                  label="Driver"
-                  kind="driver"
-                  value={context.driverId || ""}
-                  displayName={contextLabels.driver || ""}
-                  onChange={(id, item) => {
-                    setContext((current) => ({
-                      ...current,
-                      driverId: id || null,
-                    }));
-                    setContextLabels((current) => ({
-                      ...current,
-                      driver: item?.entity?.displayName || "",
-                    }));
-                  }}
-                />
-                <EntityPicker
-                  label="Constructor"
-                  kind="constructor"
-                  value={context.constructorId || ""}
-                  displayName={contextLabels.constructor || ""}
-                  onChange={(id, item) => {
-                    setContext((current) => ({
-                      ...current,
-                      constructorId: id || null,
-                    }));
-                    setContextLabels((current) => ({
-                      ...current,
-                      constructor: item?.entity?.displayName || "",
-                    }));
-                  }}
-                />
-              </div>
-            </fieldset>
+            <div className="question-examples" aria-label="Question examples">
+              <span className="muted">Try a complete question:</span>
+              {["Who won the 2024 British Grand Prix?", "How many wins does Lewis Hamilton have?"]
+                .map((example) => (
+                  <button
+                    className="question-example"
+                    key={example}
+                    type="button"
+                    onClick={() => setText(example)}
+                  >
+                    {example}
+                  </button>
+                ))}
+            </div>
+            <details className="question-context-disclosure">
+              <summary className="question-disclosure-summary">
+                <span>Add context</span>
+                <span className="question-disclosure-meta">
+                  Optional
+                  <span className="question-disclosure-indicator" aria-hidden="true" />
+                </span>
+              </summary>
+              <fieldset>
+                <legend>Optional context</legend>
+                <p className="muted">
+                  Pin the interpretation to a published season, race, driver,
+                  team or session when the wording could mean more than one
+                  thing.
+                </p>
+                <div className="questions-context">
+                  <Input
+                    label="Season year"
+                    name="year"
+                    type="number"
+                    min="2000"
+                    max="2100"
+                  />
+                  <EntityPicker
+                    label="Event"
+                    kind="event"
+                    value={context.eventId || ""}
+                    displayName={contextLabels.event || ""}
+                    onChange={(id, item) => {
+                      setContext((current) => ({
+                        ...current,
+                        eventId: id || null,
+                        sessionId: null,
+                      }));
+                      setContextLabels((current) => ({
+                        ...current,
+                        event: item?.entity?.displayName || "",
+                        session: "",
+                      }));
+                    }}
+                  />
+                  <SessionPicker
+                    eventId={context.eventId}
+                    value={context.sessionId}
+                    onChange={(id) =>
+                      setContext((current) => ({ ...current, sessionId: id }))
+                    }
+                  />
+                  <EntityPicker
+                    label="Driver"
+                    kind="driver"
+                    value={context.driverId || ""}
+                    displayName={contextLabels.driver || ""}
+                    onChange={(id, item) => {
+                      setContext((current) => ({
+                        ...current,
+                        driverId: id || null,
+                      }));
+                      setContextLabels((current) => ({
+                        ...current,
+                        driver: item?.entity?.displayName || "",
+                      }));
+                    }}
+                  />
+                  <EntityPicker
+                    label="Constructor"
+                    kind="constructor"
+                    value={context.constructorId || ""}
+                    displayName={contextLabels.constructor || ""}
+                    onChange={(id, item) => {
+                      setContext((current) => ({
+                        ...current,
+                        constructorId: id || null,
+                      }));
+                      setContextLabels((current) => ({
+                        ...current,
+                        constructor: item?.entity?.displayName || "",
+                      }));
+                    }}
+                  />
+                </div>
+              </fieldset>
+            </details>
             <Button type="submit" disabled={query.isLoading}>
               {query.isLoading ? "Interpreting…" : "Ask question"}
             </Button>
@@ -228,6 +253,16 @@ export default function Questions() {
               result={query.data?.questionResult}
               onChoice={handleChoice}
             />
+          )}
+          {text.trim() && (
+            <div className="question-browse-link">
+              <ActionLink
+                variant="quiet"
+                to={`/explore?q=${encodeURIComponent(text.trim())}`}
+              >
+                Browse matching archive items
+              </ActionLink>
+            </div>
           )}
           <SourceNote meta={query.data?.meta} />
         </Panel>

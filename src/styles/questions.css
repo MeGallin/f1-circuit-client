@@ -16,20 +16,6 @@
   font: inherit;
   line-height: 1.5;
 }
-.explore-question-form {
-  padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
-}
-.explore-question-form .field input {
-  min-height: 3.25rem;
-  font-size: var(--apex-type-body-large-size);
-}
-.explore-question-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--apex-space-4);
-}
 .questions-form fieldset {
   border: 1px solid var(--apex-color-line);
   padding: var(--apex-space-5);
@@ -43,6 +29,37 @@
   display: grid;
   gap: var(--apex-space-5);
   margin-top: var(--apex-space-5);
+}
+.question-examples {
+  display: grid;
+  gap: var(--apex-space-3);
+  color: var(--apex-color-muted);
+}
+.question-example {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--apex-color-link);
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.question-example:hover,
+.question-example:focus-visible {
+  color: var(--apex-color-text);
+}
+.question-context-disclosure {
+  border-top: 1px solid var(--apex-color-line);
+}
+.question-context-disclosure fieldset {
+  margin-bottom: var(--apex-space-5);
+}
+.question-browse-link {
+  padding: 0 var(--apex-space-6) var(--apex-space-2);
 }
 .question-result {
   display: grid;
@@ -147,6 +164,10 @@
 @media (min-width: 768px) {
   .questions-context {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .question-examples {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
   }
 }
 .question-capability {
