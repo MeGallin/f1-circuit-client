@@ -18,11 +18,10 @@ if ($resolvedTarget -ne $expectedTarget) {
   throw "Refusing to deploy to an unexpected target. Expected $expectedTarget but received $resolvedTarget."
 }
 
-Write-Host "Building the client against https://f1-circuit-api.onrender.com ..."
-$env:VITE_API_BASE_URL = 'https://f1-circuit-api.onrender.com'
+Write-Host "Building the client in production mode using .env.production ..."
 Push-Location $projectRoot
 try {
-  npm run build
+  npm run build -- --mode production
   if ($LASTEXITCODE -ne 0) {
     throw "The production build failed with exit code $LASTEXITCODE. The deployment target was not changed."
   }
