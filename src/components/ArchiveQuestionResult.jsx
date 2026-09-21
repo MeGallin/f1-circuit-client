@@ -69,6 +69,16 @@ function QuestionResultHeading({ label, tone = "warning" }) {
   );
 }
 
+function QuestionResultSuggestion({ suggestion }) {
+  if (!suggestion) return null;
+  return (
+    <div className="question-result-suggestion">
+      <span className="question-result-suggestion-label">Try rewording it</span>
+      <p>{suggestion}</p>
+    </div>
+  );
+}
+
 export default function ArchiveQuestionResult({ result, onChoice }) {
   if (!result) return null;
   if (result.status === "clarification") {
@@ -76,6 +86,7 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
       <div className="question-result" role="status">
         <QuestionResultHeading label="Clarification needed" />
         <p className="question-result-message">{result.message}</p>
+        <QuestionResultSuggestion suggestion={result.suggestion} />
         {result.choices?.length ? (
           <div className="question-choices">
             {result.choices.map((choice, index) => (
@@ -97,6 +108,7 @@ export default function ArchiveQuestionResult({ result, onChoice }) {
       <div className="question-result" role="status">
         <QuestionResultHeading label={result.status} />
         <p className="question-result-message">{result.message}</p>
+        <QuestionResultSuggestion suggestion={result.suggestion} />
       </div>
     );
   }

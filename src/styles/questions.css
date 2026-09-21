@@ -101,6 +101,25 @@
 .question-result-message {
   margin: 0;
 }
+.question-result-suggestion {
+  display: grid;
+  gap: var(--apex-space-2);
+  max-width: 65ch;
+  padding: var(--apex-space-4) var(--apex-space-5);
+  border-left: 2px solid var(--apex-color-accent);
+  background: var(--apex-color-elevated);
+}
+.question-result-suggestion-label {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.question-result-suggestion p {
+  margin: 0;
+}
 .question-answer-block {
   display: grid;
   gap: var(--apex-space-2);

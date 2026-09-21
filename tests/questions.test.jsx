@@ -366,3 +366,48 @@ test("unavailable answers stay explicit and can be cleared", async () => {
   await userEvent.click(screen.getByRole("button", { name: "Clear question" }));
   expect(await screen.findByText("Ready when you are")).toBeInTheDocument();
 });
+
+test("failed answers show a concrete rewording suggestion", async () => {
+  vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            data: {
+              questionResult: {
+                status: "unsupported",
+                message: "That question is not supported by the archive query layer yet.",
+                reasonCode: "QUESTION_INTENT_UNSUPPORTED",
+                suggestion:
+                  'Try rewording it as: “Which circuit hosted the 2022 Italian Grand Prix?”',
+              },
+            },
+            meta: {
+              snapshotId: "snapshot:one",
+              coverage: "unavailable",
+              freshness: "fresh",
+              verification: "unassessed",
+              sources: [],
+            },
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        ),
+    ),
+  );
+  mount();
+  await userEvent.type(
+    screen.getByLabelText("Question"),
+    "What is the archive's favourite colour?",
+  );
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  expect(
+    await screen.findByText("Try rewording it", { exact: true }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      'Try rewording it as: “Which circuit hosted the 2022 Italian Grand Prix?”',
+    ),
+  ).toBeInTheDocument();
+});
