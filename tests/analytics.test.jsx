@@ -11,6 +11,10 @@ import {
   rankComparisonRows,
   sortConstructorContributionRows,
 } from "../src/features/analytics/components/AnalyticsCharts";
+import {
+  buildSeasonIntelligenceModel,
+  formatAnalyticsDate,
+} from "../src/features/analytics/seasonIntelligence";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -90,4 +94,28 @@ test("driver comparison ranking follows the selected metric direction", () => {
   expect(
     rankComparisonRows(rows, "averageFinish").map((row) => row.name),
   ).toEqual(["Driver Three", "Driver One", "Driver Two"]);
+});
+
+test("season intelligence keeps the published overview relationships intact", () => {
+  const model = buildSeasonIntelligenceModel({
+    progress: { completedEvents: 14, totalEvents: 23, percentage: 61 },
+    championshipLeader: { driverName: "Andrea Kimi Antonelli", points: 266 },
+    constructorLeader: { constructorName: "Mercedes", points: 454 },
+    latestRace: {
+      name: "Spanish Grand Prix",
+      podium: [
+        { position: 2, driverName: "Max Verstappen" },
+        { position: 1, driverName: "Andrea Kimi Antonelli" },
+      ],
+    },
+    nextRace: { name: "Azerbaijan Grand Prix" },
+  });
+
+  expect(model.progressLabel).toBe("14 / 23");
+  expect(model.progressPercentage).toBe("61%");
+  expect(model.latestWinner.driverName).toBe("Andrea Kimi Antonelli");
+  expect(model.podium.map((entry) => entry.position)).toEqual([1, 2]);
+  expect(formatAnalyticsDate("2026-09-26T11:00:00Z")).toBe(
+    "Sat, 26 Sept 2026",
+  );
 });

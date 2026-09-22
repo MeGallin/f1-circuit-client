@@ -22,6 +22,7 @@ import {
   PointsProgressionChart,
   QualifyingVsFinishChart,
 } from "../features/analytics/components/AnalyticsCharts";
+import AnalyticsIntelligence from "../features/analytics/components/AnalyticsIntelligence";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -69,8 +70,6 @@ export function updateAnalyticsFilterParams(params, key, value) {
 
 function StatStrip({ stats }) {
   const items = [
-    ["Events", stats.totalEvents],
-    ["Completed", stats.completedEvents],
     ["Points scored", stats.totalPoints],
     ["Drivers", stats.driverCount],
     ["Constructors", stats.constructorCount],
@@ -271,7 +270,8 @@ export default function Analytics() {
       >
         {dashboard && (
           <>
-            <Panel title="Season at a glance" eyebrow="QUICK STATS">
+            <AnalyticsIntelligence intelligence={dashboard.seasonIntelligence} />
+            <Panel title="Archive totals" eyebrow="DATA SCOPE">
               <StatStrip stats={dashboard.quickStats} />
             </Panel>
             <div className="analytics-chart-grid">
