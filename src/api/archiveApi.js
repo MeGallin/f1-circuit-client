@@ -253,6 +253,44 @@ export const archiveApi = createApi({
       transformResponse: collectionResponse,
       providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
     }),
+    getAnalyticsDashboard: builder.query({
+      query: ({
+        season,
+        fromRound,
+        toRound,
+        driverIds,
+        constructorIds,
+        circuitIds,
+        sessionType = "race",
+        snapshotId,
+      }) => ({
+        url: "/analytics/dashboard",
+        params: {
+          season,
+          fromRound,
+          toRound,
+          driverIds: driverIds?.join(","),
+          constructorIds: constructorIds?.join(","),
+          circuitIds: circuitIds?.join(","),
+          sessionType,
+          snapshotId,
+        },
+      }),
+      transformResponse: (r) => objectResponse(r, "analyticsDashboard"),
+    }),
+    getDriverComparison: builder.query({
+      query: ({ season, fromRound, toRound, drivers, snapshotId }) => ({
+        url: "/analytics/driver-comparison",
+        params: {
+          season,
+          fromRound,
+          toRound,
+          drivers: drivers?.join(","),
+          snapshotId,
+        },
+      }),
+      transformResponse: (r) => objectResponse(r, "driverComparison"),
+    }),
   }),
 });
 export function collectionResponse(response) {
@@ -295,4 +333,6 @@ export const {
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
   useGetCalendarQuery,
+  useGetAnalyticsDashboardQuery,
+  useGetDriverComparisonQuery,
 } = archiveApi;

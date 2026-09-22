@@ -11,6 +11,7 @@ import {
   PaletteIcon,
   MagnifyingGlassIcon,
   ChatCircleTextIcon,
+  ChartLineUpIcon,
   DotsThreeIcon,
 } from "@phosphor-icons/react";
 import { Select } from "./ui";
@@ -21,6 +22,7 @@ const navigation = [
   { to: "/standings", label: "Standings", icon: RankingIcon },
   { to: "/explore", label: "Explore", icon: MagnifyingGlassIcon },
   { to: "/questions", label: "Ask", icon: ChatCircleTextIcon },
+  { to: "/analytics", label: "Analytics", icon: ChartLineUpIcon },
   { to: "/sources", label: "Sources", icon: DatabaseIcon },
 ];
 const primaryNavigation = navigation.slice(0, 4);
@@ -34,6 +36,7 @@ export function routeTitle(pathname) {
   if (pathname === "/sources") return "Sources and coverage";
   if (pathname.startsWith("/evidence/")) return "Evidence detail";
   if (pathname === "/questions") return "Ask the archive";
+  if (pathname === "/analytics") return "Performance analytics";
   if (pathname === "/explore") return "Explore the archive";
   if (pathname === "/compare") return "Compare archive metrics";
   if (pathname.startsWith("/drivers/")) return "Driver profile";
@@ -79,12 +82,7 @@ export function Navigation({ mobile = false }) {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [moreOpen]);
   const link = ({ to, label, icon: Icon }, onClick) => (
-    <NavLink
-      end={to === "/"}
-      key={to}
-      to={target(to)}
-      onClick={onClick}
-    >
+    <NavLink end={to === "/"} key={to} to={target(to)} onClick={onClick}>
       <Icon aria-hidden size={21} weight="regular" />
       <span>{label}</span>
     </NavLink>
@@ -95,7 +93,9 @@ export function Navigation({ mobile = false }) {
         {primaryNavigation.map((item) => link(item, () => setMoreOpen(false)))}
         <div className="nav-more">
           <button
-            className={isSecondaryActive ? "nav-more-toggle active" : "nav-more-toggle"}
+            className={
+              isSecondaryActive ? "nav-more-toggle active" : "nav-more-toggle"
+            }
             type="button"
             aria-expanded={moreOpen}
             aria-controls="mobile-more-menu"
@@ -106,7 +106,9 @@ export function Navigation({ mobile = false }) {
           </button>
           {moreOpen && (
             <div id="mobile-more-menu" className="nav-more-menu">
-              {secondaryNavigation.map((item) => link(item, () => setMoreOpen(false)))}
+              {secondaryNavigation.map((item) =>
+                link(item, () => setMoreOpen(false)),
+              )}
             </div>
           )}
         </div>

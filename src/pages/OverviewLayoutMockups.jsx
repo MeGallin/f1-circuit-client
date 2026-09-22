@@ -15,17 +15,86 @@ const standings = [
   ["10", "10", "Pierre Gasly", "Alpine F1 Team", "41"],
 ];
 
-const focusVariant = {
-  id: "race-week",
-  label: "Season around the race",
-  title: "Put the season around the race",
-  summary:
-    "The next event is a quiet prompt at the top. The latest race and championship carry the main reading. The previous event closes the story below season progress.",
-};
+const layoutVariants = [
+  {
+    id: "countdown-hero",
+    label: "OPTION 01 · COUNTDOWN HERO",
+    title: "Make the start time the first thing seen",
+    summary:
+      "Lead with the live countdown, then anchor it to the race name, circuit, and start date. The primary question is answered immediately: when does it begin?",
+  },
+  {
+    id: "split-header",
+    label: "OPTION 02 · SPLIT HEADER",
+    title: "Balance time and identity in one read",
+    summary:
+      "Keep the event identity on the left and give the countdown a dedicated right-hand stage. The action stays visible without competing with the time.",
+  },
+  {
+    id: "command-strip",
+    label: "OPTION 03 · COMMAND STRIP",
+    title: "Make the next race scan like a control strip",
+    summary:
+      "Put the event name first, then expose the start date, status, and countdown as a compact operational rail. It uses the available width without adding vertical bulk.",
+  },
+  {
+    id: "integrated-event",
+    label: "OPTION 04 · INTEGRATED EVENT",
+    title: "Let the countdown finish the event story",
+    summary:
+      "Use a single event band with a clear identity row and a restrained countdown footer. The next block feels complete before the latest result begins.",
+  },
+  {
+    id: "race-ticket",
+    label: "OPTION 05 · RACE TICKET",
+    title: "Treat the next race like a start pass",
+    summary:
+      "Create a clear ticket-like hierarchy: event on the left, time in the middle, and one obvious calendar action on the right. The information remains grounded, not decorative.",
+  },
+  {
+    id: "countdown-band",
+    label: "OPTION 06 · COUNTDOWN BAND",
+    title: "Give the countdown a full-width stage",
+    summary:
+      "Keep the race identity compact at the top, then let the countdown run across the available width as the visual anchor of the block.",
+  },
+  {
+    id: "light-board",
+    label: "OPTION 07 · LIGHT BOARD",
+    title: "Read it like a race-control display",
+    summary:
+      "Use disciplined columns and hard alignment to make the start time feel operational. Every value has a place, and the action is immediately understood.",
+  },
+  {
+    id: "number-rail",
+    label: "OPTION 08 · NUMBER RAIL",
+    title: "Let round 15 orient the story",
+    summary:
+      "Use the round as a strong visual rail, then place the race identity and countdown alongside it. This makes the season position and the next action legible together.",
+  },
+  {
+    id: "focus-card",
+    label: "OPTION 09 · FOCUS CARD",
+    title: "Frame the countdown as the decision point",
+    summary:
+      "Keep the countdown in a distinct, high-contrast module and let the event details explain what it refers to. The calendar action follows the same reading path.",
+  },
+  {
+    id: "start-line",
+    label: "OPTION 10 · START LINE",
+    title: "Put the race name under the clock",
+    summary:
+      "Start with the time and start date, then reveal the event identity beneath it. This is the strongest countdown-led direction for a race-week mindset.",
+  },
+];
 
 function MockupAction({ children, primary = false }) {
   return (
-    <span className={primary ? "mockup-action mockup-action--primary" : "mockup-action"}>
+    <span
+      className={
+        primary ? "mockup-action mockup-action--primary" : "mockup-action"
+      }
+    >
       {children}
       <ArrowRightIcon size={16} aria-hidden />
     </span>
@@ -47,7 +116,10 @@ function MockupPodium() {
       </div>
       <div className="mockup-podium">
         {podium.map(([name, number, team, position, points, place]) => (
-          <div className={`mockup-podium-item mockup-podium-item--${place}`} key={position}>
+          <div
+            className={`mockup-podium-item mockup-podium-item--${place}`}
+            key={position}
+          >
             <div className="mockup-podium-driver">
               <div className="mockup-podium-driver-line">
                 <DriverNumber number={number} />
@@ -71,7 +143,9 @@ function MockupRaceHero() {
     <section className="mockup-race-hero" aria-label="Latest completed race">
       <div className="mockup-race-topline">
         <span>LATEST COMPLETED RACE</span>
-        <b><RaceStatus status="completed">completed</RaceStatus></b>
+        <b>
+          <RaceStatus status="completed">completed</RaceStatus>
+        </b>
       </div>
       <div className="mockup-race-identity">
         <div className="mockup-race-copy">
@@ -80,14 +154,18 @@ function MockupRaceHero() {
           <CircuitName name="Madring" />
         </div>
         <div className="mockup-track-state">
-          <div className="mockup-track-placeholder">Track layout not supplied</div>
+          <div className="mockup-track-placeholder">
+            Track layout not supplied
+          </div>
           <span>Madring circuit visual</span>
         </div>
       </div>
       <MockupPodium />
       <div className="mockup-race-actions">
         <MockupAction>Open race detail</MockupAction>
-        <span><CalendarBlankIcon size={16} aria-hidden /> 13 Sept 2026</span>
+        <span>
+          <CalendarBlankIcon size={16} aria-hidden /> 13 Sept 2026
+        </span>
       </div>
     </section>
   );
@@ -95,13 +173,20 @@ function MockupRaceHero() {
 
 function MockupEventStrip() {
   return (
-    <section className="mockup-event-progress" aria-label="Season progress preview">
+    <section
+      className="mockup-event-progress"
+      aria-label="Season progress preview"
+    >
       <div className="mockup-event-progress-heading">
         <div>
           <span>SEASON PROGRESS</span>
-          <strong>14 <small>of 23 events</small></strong>
+          <strong>
+            14 <small>of 23 events</small>
+          </strong>
         </div>
-        <span className="mockup-event-progress-note">Results through Spanish Grand Prix</span>
+        <span className="mockup-event-progress-note">
+          Results through Spanish Grand Prix
+        </span>
       </div>
       <div className="mockup-event-strip" aria-hidden="true">
         {Array.from({ length: 23 }, (_, index) => (
@@ -109,8 +194,12 @@ function MockupEventStrip() {
         ))}
       </div>
       <div className="mockup-event-legend">
-        <span><i className="is-complete" /> Completed</span>
-        <span><i /> Upcoming</span>
+        <span>
+          <i className="is-complete" /> Completed
+        </span>
+        <span>
+          <i /> Upcoming
+        </span>
         <b>Tap or click a marker to inspect that round.</b>
       </div>
     </section>
@@ -129,7 +218,10 @@ function MockupAdjacentEvent({
   className,
 }) {
   return (
-    <section className={`mockup-adjacent-event ${className}`} aria-label={label}>
+    <section
+      className={`mockup-adjacent-event ${className}`}
+      aria-label={label}
+    >
       <div className="mockup-adjacent-event-heading">
         <span>{label}</span>
       </div>
@@ -141,37 +233,270 @@ function MockupAdjacentEvent({
       </div>
       <div className="mockup-adjacent-event-date">
         <b>{date}</b>
-        <small><RaceStatus status={status}>{status}</RaceStatus></small>
+        <small>
+          <RaceStatus status={status}>{status}</RaceStatus>
+        </small>
       </div>
       {action && <MockupAction>{action}</MockupAction>}
     </section>
   );
 }
 
-function MockupNextEvent() {
-  return <MockupAdjacentEvent
-    className="mockup-next-event"
-    label="NEXT EVENT"
-    round="15"
-    name="Azerbaijan Grand Prix"
-    track="Baku City Circuit"
-    countdown="Countdown to race start · 06 days 19 hours"
-    date="26 Sept 2026"
-    status="scheduled"
-    action="Explore the calendar"
-  />;
+function MockupNextEvent({ variant }) {
+  const eventIdentity = (className = "") => (
+    <div className={`mockup-next-event-identity ${className}`.trim()}>
+      <b className="mockup-adjacent-event-round">15</b>
+      <div className="mockup-adjacent-event-copy">
+        <strong>Azerbaijan Grand Prix</strong>
+        <p>Baku City Circuit</p>
+      </div>
+    </div>
+  );
+
+  const eventDate = () => (
+    <div className="mockup-adjacent-event-date">
+      <b>26 Sept 2026 · 11:00 UTC</b>
+      <small>
+        <RaceStatus status="scheduled">scheduled</RaceStatus>
+      </small>
+    </div>
+  );
+
+  const countdown = (className = "") => (
+    <div className={`mockup-next-event-countdown ${className}`.trim()}>
+      <span>COUNTDOWN TO RACE START</span>
+      <b>
+        04 <small>days</small> 04 <small>H</small> 06 <small>M</small> 11{" "}
+        <small>S</small>
+      </b>
+    </div>
+  );
+
+  const action = <MockupAction>Explore the calendar</MockupAction>;
+
+  if (variant === "countdown-hero") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--countdown-hero"
+        aria-label="Next event"
+      >
+        {countdown("mockup-next-event-countdown--hero")}
+        <div className="mockup-next-event-hero-copy">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventIdentity()}
+        </div>
+        <div className="mockup-next-event-hero-meta">
+          {eventDate()}
+          {action}
+        </div>
+      </section>
+    );
+  }
+
+  if (variant === "command-strip") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--command"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-heading">
+          <span>NEXT EVENT</span>
+        </div>
+        {eventIdentity()}
+        {eventDate()}
+        {countdown()}
+        {action}
+      </section>
+    );
+  }
+
+  if (variant === "integrated-event") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--integrated"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-topline">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventDate()}
+          {action}
+        </div>
+        {eventIdentity()}
+        <div className="mockup-next-event-countdown-row">
+          {countdown()}
+          <span>Race start is the next meaningful moment in the season.</span>
+        </div>
+      </section>
+    );
+  }
+
+  if (variant === "race-ticket") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--ticket"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-ticket-copy">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventIdentity()}
+        </div>
+        {countdown("mockup-next-event-countdown--ticket")}
+        <div className="mockup-next-event-ticket-meta">
+          {eventDate()}
+          {action}
+        </div>
+      </section>
+    );
+  }
+
+  if (variant === "countdown-band") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--countdown-band"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-band-topline">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventIdentity()}
+          {eventDate()}
+          {action}
+        </div>
+        {countdown("mockup-next-event-countdown--hero")}
+      </section>
+    );
+  }
+
+  if (variant === "light-board") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--light-board"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-board-label">
+          <span>NEXT EVENT</span>
+          <b>15</b>
+        </div>
+        <div className="mockup-next-event-board-copy">
+          <strong>Azerbaijan Grand Prix</strong>
+          <p>Baku City Circuit</p>
+        </div>
+        {countdown("mockup-next-event-countdown--hero")}
+        <div className="mockup-next-event-board-meta">
+          {eventDate()}
+          {action}
+        </div>
+      </section>
+    );
+  }
+
+  if (variant === "number-rail") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--number-rail"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-number-rail">
+          <span>ROUND</span>
+          <b>15</b>
+          <i>of 23</i>
+        </div>
+        <div className="mockup-next-event-number-copy">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventIdentity("mockup-next-event-identity--no-round")}
+        </div>
+        {countdown("mockup-next-event-countdown--hero")}
+        <div className="mockup-next-event-number-meta">
+          {eventDate()}
+          {action}
+        </div>
+      </section>
+    );
+  }
+
+  if (variant === "focus-card") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--focus-card"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-focus-copy">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventIdentity()}
+          {eventDate()}
+        </div>
+        <div className="mockup-next-event-focus-countdown">
+          {countdown("mockup-next-event-countdown--hero")}
+          {action}
+        </div>
+      </section>
+    );
+  }
+
+  if (variant === "start-line") {
+    return (
+      <section
+        className="mockup-next-event mockup-next-event--start-line"
+        aria-label="Next event"
+      >
+        <div className="mockup-next-event-start-topline">
+          <div className="mockup-next-event-heading">
+            <span>NEXT EVENT</span>
+          </div>
+          {eventDate()}
+        </div>
+        {countdown("mockup-next-event-countdown--hero")}
+        <div className="mockup-next-event-start-identity">
+          {eventIdentity()}
+          {action}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section
+      className="mockup-next-event mockup-next-event--split"
+      aria-label="Next event"
+    >
+      <div className="mockup-next-event-main">
+        <div className="mockup-next-event-heading">
+          <span>NEXT EVENT</span>
+        </div>
+        {eventIdentity()}
+      </div>
+      <div className="mockup-next-event-schedule">
+        {eventDate()}
+        {countdown()}
+      </div>
+      {action}
+    </section>
+  );
 }
 
 function MockupPreviousEvent() {
-  return <MockupAdjacentEvent
-    className="mockup-previous-event"
-    label="PREVIOUS EVENT"
-    round="13"
-    name="Italian Grand Prix"
-    track="Autodromo Nazionale di Monza"
-    date="06 Sept 2026"
-    status="completed"
-  />;
+  return (
+    <MockupAdjacentEvent
+      className="mockup-previous-event"
+      label="PREVIOUS EVENT"
+      round="13"
+      name="Italian Grand Prix"
+      track="Autodromo Nazionale di Monza"
+      date="06 Sept 2026"
+      status="completed"
+    />
+  );
 }
 
 function MockupStandings() {
@@ -195,7 +520,10 @@ function MockupStandings() {
               </div>
               <small>{team}</small>
             </div>
-            <b>{points}<small>PTS</small></b>
+            <b>
+              {points}
+              <small>PTS</small>
+            </b>
           </li>
         ))}
       </ol>
@@ -220,7 +548,9 @@ function MockupProvenance() {
 
 function LayoutFrame({ variant }) {
   return (
-    <section className={`overview-mockup-frame overview-mockup-frame--${variant.id}`}>
+    <section
+      className={`overview-mockup-frame overview-mockup-frame--${variant.id}`}
+    >
       <header className="overview-mockup-frame-heading">
         <div>
           <span>{variant.label}</span>
@@ -229,8 +559,10 @@ function LayoutFrame({ variant }) {
         <p>{variant.summary}</p>
       </header>
       <div className="overview-mockup-surface">
-        <div className="mockup-surface-freshness">Results through Spanish Grand Prix · 2026-09-13</div>
-        <MockupNextEvent />
+        <div className="mockup-surface-freshness">
+          Results through Spanish Grand Prix · 2026-09-13
+        </div>
+        <MockupNextEvent variant={variant.id} />
         <MockupRaceHero />
         <MockupStandings />
         <MockupEventStrip />
@@ -248,11 +580,15 @@ export default function OverviewLayoutMockups() {
         <p className="eyebrow">OVERVIEW LAYOUT STUDY</p>
         <h1>Put the season around the race</h1>
         <p>
-          One focused mock-up of the season overview. The next event is visible without competing with the latest result. The previous event closes the story after season progress.
+          Ten distinct directions for the same season overview. The data and
+          supporting sections stay constant so the decision is about hierarchy,
+          attention, and how quickly the next race can be understood.
         </p>
       </header>
       <div className="overview-mockup-list">
-        <LayoutFrame variant={focusVariant} />
+        {layoutVariants.map((variant) => (
+          <LayoutFrame key={variant.id} variant={variant} />
+        ))}
       </div>
     </div>
   );

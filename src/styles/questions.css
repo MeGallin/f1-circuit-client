@@ -123,7 +123,8 @@
 .question-answer-block {
   display: grid;
   gap: var(--apex-space-2);
-  max-width: 65ch;
+  width: 100%;
+  max-width: none;
   padding: var(--apex-space-5) 0 var(--apex-space-5) var(--apex-space-5);
   border-left: 3px solid var(--apex-color-accent);
 }

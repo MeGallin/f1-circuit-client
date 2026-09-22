@@ -292,9 +292,71 @@ function AdjacentEventBand({ event, label, next = false }) {
   if (!event) return null;
   const status = event.status || "unknown";
   const statusLabel = status === "unknown" ? "Status not supplied" : status;
+
+  if (next) {
+    const startsAt = event.schedule?.startsAt;
+    const hasPreciseStart =
+      Number.isFinite(Date.parse(startsAt || "")) &&
+      ["minute", "second"].includes(event.schedule?.timePrecision);
+    const startLabel = hasPreciseStart
+      ? new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "UTC",
+          timeZoneName: "short",
+        }).format(new Date(startsAt))
+      : dateLabel(event.schedule?.date);
+
+    return (
+      <section
+        className="overview-adjacent-event overview-adjacent-event--next overview-adjacent-event--countdown-hero"
+        aria-label={label}
+      >
+        <div className="overview-adjacent-event-countdown">
+          <RaceCountdown
+            startsAt={startsAt}
+            timePrecision={event.schedule?.timePrecision}
+            variant="wide"
+            showTargetTime={false}
+          />
+        </div>
+        <div className="overview-adjacent-event-hero-copy">
+          <div className="overview-adjacent-event-heading">
+            <span>{label}</span>
+          </div>
+          <div className="overview-adjacent-event-identity">
+            <b className="overview-adjacent-event-round">
+              {event.round ?? "N/A"}
+            </b>
+            <div className="overview-adjacent-event-copy">
+              <strong>{event.name}</strong>
+              <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
+            </div>
+          </div>
+        </div>
+        <div className="overview-adjacent-event-hero-meta">
+          <div className="overview-adjacent-event-date">
+            <b>{startLabel}</b>
+            <small>
+              <RaceStatus status={status}>{statusLabel}</RaceStatus>
+            </small>
+          </div>
+          <ActionLink
+            to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
+          >
+            Explore the calendar
+          </ActionLink>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
-      className={`overview-adjacent-event overview-adjacent-event--${next ? "next" : "previous"}`}
+      className="overview-adjacent-event overview-adjacent-event--previous"
       aria-label={label}
     >
       <div className="overview-adjacent-event-heading">
@@ -306,25 +368,11 @@ function AdjacentEventBand({ event, label, next = false }) {
         <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
       </div>
       <div className="overview-adjacent-event-date">
-        {!next && <b>{dateLabel(event.schedule?.date)}</b>}
+        <b>{dateLabel(event.schedule?.date)}</b>
         <small>
           <RaceStatus status={status}>{statusLabel}</RaceStatus>
         </small>
       </div>
-      {next && (
-        <RaceCountdown
-          startsAt={event.schedule?.startsAt}
-          timePrecision={event.schedule?.timePrecision}
-          variant="wide"
-        />
-      )}
-      {next && (
-        <ActionLink
-          to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
-        >
-          Explore the calendar
-        </ActionLink>
-      )}
     </section>
   );
 }

@@ -588,8 +588,88 @@
   background: color-mix(in srgb, var(--apex-color-surface) 56%, transparent);
 }
 
-.overview-adjacent-event--next .race-countdown {
+.overview-adjacent-event--countdown-hero {
+  grid-template-columns: minmax(19rem, 0.9fr) minmax(0, 1fr) auto;
+  grid-template-areas: "countdown copy meta";
+  align-items: center;
+  gap: var(--apex-space-8);
+  padding-block: var(--apex-space-8);
+  border-bottom: 0;
+}
+
+.overview-adjacent-event-countdown {
   grid-area: countdown;
+  min-width: 0;
+  padding-right: var(--apex-space-7);
+  border-right: 1px solid var(--apex-color-line);
+}
+
+.overview-adjacent-event-countdown .race-countdown {
+  margin: 0;
+  padding: 0;
+  border-top: 0;
+}
+
+.overview-adjacent-event-countdown .race-countdown--wide .race-countdown-meta {
+  align-items: baseline;
+}
+
+.overview-adjacent-event-countdown .race-countdown--wide .race-countdown-parts {
+  justify-content: flex-start;
+  gap: var(--apex-space-4);
+  padding-top: var(--apex-space-4);
+}
+
+.overview-adjacent-event-countdown
+  .race-countdown--wide
+  .race-countdown-part {
+  gap: var(--apex-space-2);
+}
+
+.overview-adjacent-event-countdown
+  .race-countdown--wide
+  .race-countdown-part
+  strong {
+  font-size: clamp(2.35rem, 4.7vw, 4.2rem);
+  letter-spacing: -0.04em;
+}
+
+.overview-adjacent-event-hero-copy {
+  display: grid;
+  grid-area: copy;
+  min-width: 0;
+  gap: var(--apex-space-5);
+}
+
+.overview-adjacent-event-hero-copy .overview-adjacent-event-heading,
+.overview-adjacent-event-hero-copy .overview-adjacent-event-copy,
+.overview-adjacent-event-hero-copy .overview-adjacent-event-round {
+  grid-area: auto;
+}
+
+.overview-adjacent-event-identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--apex-space-5);
+}
+
+.overview-adjacent-event-hero-meta {
+  display: grid;
+  grid-area: meta;
+  justify-items: end;
+  align-content: center;
+  gap: var(--apex-space-5);
+  min-width: max-content;
+}
+
+.overview-adjacent-event-hero-meta .overview-adjacent-event-date {
+  grid-area: auto;
+  white-space: nowrap;
+}
+
+.overview-adjacent-event-hero-meta > .button {
+  grid-area: auto;
 }
 
 .overview-adjacent-event--previous {
@@ -604,18 +684,22 @@
 }
 
 .overview-adjacent-event-heading span {
-  color: var(--apex-color-muted);
+  color: var(--apex-color-link);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-eyebrow-size);
   letter-spacing: var(--apex-type-eyebrow-tracking);
   text-transform: uppercase;
 }
 
+.overview-adjacent-event--next .overview-adjacent-event-heading span {
+  color: var(--apex-color-accent);
+}
+
 .overview-adjacent-event-round {
   grid-area: round;
   color: var(--apex-color-muted);
   font-family: var(--apex-font-display);
-  font-size: var(--apex-type-section-size);
+  font-size: var(--apex-type-metric-size);
   font-weight: 400;
   line-height: 0.9;
 }
@@ -630,10 +714,23 @@
 .overview-adjacent-event-copy strong {
   position: relative;
   top: -0.2rem;
+  font-size: var(--apex-type-section-size);
+  line-height: 1.2;
+}
+
+.overview-adjacent-event-copy p {
+  color: var(--apex-color-muted);
   font-size: var(--apex-type-body-size);
 }
 
-.overview-adjacent-event-copy p,
+.overview-adjacent-event--next .overview-adjacent-event-round {
+  font-size: clamp(2.75rem, 4.5vw, 3.5rem);
+}
+
+.overview-adjacent-event--next .overview-adjacent-event-copy strong {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
 .overview-adjacent-event-copy .race-countdown {
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
@@ -793,6 +890,42 @@
       "round action action";
   }
 
+  .overview-adjacent-event--countdown-hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "countdown"
+      "copy"
+      "meta";
+    align-items: start;
+    gap: var(--apex-space-6);
+  }
+
+  .overview-adjacent-event--countdown-hero .overview-adjacent-event-countdown {
+    padding-right: 0;
+    padding-bottom: var(--apex-space-5);
+    border-right: 0;
+    border-bottom: 1px solid var(--apex-color-line);
+  }
+
+  .overview-adjacent-event--countdown-hero .overview-adjacent-event-hero-meta {
+    justify-items: start;
+    min-width: 0;
+  }
+
+  .overview-adjacent-event--countdown-hero
+    .overview-adjacent-event-hero-meta
+    .overview-adjacent-event-date {
+    text-align: left;
+    white-space: normal;
+  }
+
+  .overview-adjacent-event--countdown-hero
+    .overview-adjacent-event-countdown
+    .race-countdown--wide
+    .race-countdown-parts {
+    justify-content: flex-start;
+  }
+
   .overview-adjacent-event > .button {
     grid-area: action;
     justify-self: start;
@@ -835,6 +968,46 @@
       "date date"
       "action action";
     margin-inline: 0;
+    padding-inline: var(--apex-space-7);
+  }
+
+  .overview-adjacent-event--countdown-hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "countdown"
+      "copy"
+      "meta";
+    padding-inline: var(--apex-space-7);
+  }
+
+  .overview-adjacent-event--countdown-hero .overview-adjacent-event-identity {
+    gap: var(--apex-space-4);
+  }
+
+  .overview-adjacent-event--countdown-hero
+    .overview-adjacent-event-countdown
+    .race-countdown-meta {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .overview-adjacent-event--countdown-hero
+    .overview-adjacent-event-countdown
+    .race-countdown--wide
+    .race-countdown-parts {
+    gap: var(--apex-space-3);
+  }
+
+  .overview-adjacent-event--countdown-hero
+    .overview-adjacent-event-countdown
+    .race-countdown--wide
+    .race-countdown-part
+    strong {
+    font-size: clamp(1.75rem, 11vw, 2.8rem);
+  }
+
+  .overview-adjacent-event--countdown-hero .overview-adjacent-event-hero-meta {
+    justify-items: start;
   }
 
   .overview-adjacent-event--previous {

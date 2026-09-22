@@ -91,7 +91,13 @@ function targetTimeLabel(startsAt) {
   }).format(new Date(startsAt));
 }
 
-export function RaceCountdown({ startsAt, timePrecision, now, variant = "default" }) {
+export function RaceCountdown({
+  startsAt,
+  timePrecision,
+  now,
+  variant = "default",
+  showTargetTime = true,
+}) {
   const [currentTime, setCurrentTime] = useState(() => now ?? Date.now());
   useEffect(() => {
     if (now != null) return undefined;
@@ -130,9 +136,11 @@ export function RaceCountdown({ startsAt, timePrecision, now, variant = "default
       {variant === "wide" ? (
         <div className="race-countdown-meta">
           <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>
-          <time dateTime={new Date(targetMs).toISOString()}>
-            Starts {targetTimeLabel(startsAt)}
-          </time>
+          {showTargetTime && (
+            <time dateTime={new Date(targetMs).toISOString()}>
+              Starts {targetTimeLabel(startsAt)}
+            </time>
+          )}
         </div>
       ) : (
         <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>

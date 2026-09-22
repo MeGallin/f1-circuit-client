@@ -209,9 +209,15 @@
   text-align: center;
 }
 
-.mockup-podium-item--second { order: 1; }
-.mockup-podium-item--winner { order: 2; }
-.mockup-podium-item--third { order: 3; }
+.mockup-podium-item--second {
+  order: 1;
+}
+.mockup-podium-item--winner {
+  order: 2;
+}
+.mockup-podium-item--third {
+  order: 3;
+}
 
 .mockup-podium-driver {
   display: grid;
@@ -266,8 +272,12 @@
   line-height: 0.9;
 }
 
-.mockup-podium-item--second .mockup-podium-block strong { font-size: 2.45rem; }
-.mockup-podium-item--third .mockup-podium-block strong { font-size: 1.35rem; }
+.mockup-podium-item--second .mockup-podium-block strong {
+  font-size: 2.45rem;
+}
+.mockup-podium-item--third .mockup-podium-block strong {
+  font-size: 1.35rem;
+}
 
 .mockup-race-actions {
   display: flex;
@@ -633,7 +643,8 @@
   }
 
   .overview-mockup-frame--race-week .mockup-standings {
-    border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+    border-top: var(--apex-shape-active-indicator) solid
+      var(--apex-color-accent);
   }
 }
 
@@ -759,5 +770,693 @@
   .mockup-provenance span + span {
     padding-left: 0;
     border-left: 0;
+  }
+}
+
+/* Next-event comparison directions. These are intentionally composed from the
+   same reading tokens as the live overview; only the information hierarchy changes. */
+.mockup-next-event {
+  display: grid;
+  grid-area: next;
+  min-width: 0;
+  margin-right: var(--apex-space-7);
+  margin-left: var(--apex-space-7);
+  padding: var(--apex-space-6) 0;
+  border-bottom: 1px solid var(--apex-color-line);
+  background: color-mix(in srgb, var(--apex-color-surface) 56%, transparent);
+}
+
+.mockup-next-event-heading {
+  min-width: 0;
+}
+
+.mockup-next-event-identity {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  min-width: 0;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event-identity > .mockup-adjacent-event-round,
+.mockup-next-event-identity > .mockup-adjacent-event-copy {
+  grid-area: auto;
+}
+
+.mockup-next-event-identity .mockup-adjacent-event-round {
+  color: var(--apex-color-text);
+  margin-top: 0.1rem;
+}
+
+.mockup-next-event-identity .mockup-adjacent-event-copy {
+  gap: var(--apex-space-1);
+}
+
+.mockup-next-event-identity .mockup-adjacent-event-copy strong {
+  top: 0;
+  font-size: var(--apex-type-subheading-size);
+}
+
+.mockup-next-event-identity .mockup-adjacent-event-copy p {
+  margin: 0;
+}
+
+.mockup-next-event .mockup-adjacent-event-date {
+  align-content: center;
+}
+
+.mockup-next-event-countdown {
+  display: grid;
+  min-width: 0;
+  gap: var(--apex-space-2);
+}
+
+.mockup-next-event-countdown > span {
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.mockup-next-event-countdown > b {
+  color: var(--apex-color-text);
+  font-family: var(--apex-font-display);
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mockup-next-event-countdown > b small {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  font-weight: 400;
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.mockup-next-event--split {
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, auto) auto;
+  grid-template-areas: "main schedule action";
+  align-items: center;
+  gap: var(--apex-space-7);
+}
+
+.mockup-next-event-main {
+  display: grid;
+  grid-area: main;
+  min-width: 0;
+  gap: var(--apex-space-4);
+}
+
+.mockup-next-event-schedule {
+  display: grid;
+  grid-area: schedule;
+  min-width: 0;
+  gap: var(--apex-space-4);
+  justify-items: end;
+}
+
+.mockup-next-event--split > .mockup-action {
+  grid-area: action;
+}
+
+.mockup-next-event--command {
+  grid-template-columns:
+    auto minmax(0, 1fr) minmax(14rem, auto) minmax(15rem, auto)
+    auto;
+  grid-template-areas: "heading identity date countdown action";
+  align-items: center;
+  gap: var(--apex-space-6);
+}
+
+.mockup-next-event--command > .mockup-next-event-heading {
+  grid-area: heading;
+}
+
+.mockup-next-event--command > .mockup-next-event-identity {
+  grid-area: identity;
+}
+
+.mockup-next-event--command > .mockup-adjacent-event-date {
+  grid-area: date;
+  justify-self: end;
+}
+
+.mockup-next-event--command > .mockup-next-event-countdown {
+  grid-area: countdown;
+}
+
+.mockup-next-event--command > .mockup-action {
+  grid-area: action;
+}
+
+.mockup-next-event--integrated {
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apex-space-6);
+}
+
+.mockup-next-event-topline .mockup-adjacent-event-date {
+  margin-left: auto;
+}
+
+.mockup-next-event-countdown-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--apex-space-6);
+  padding-top: var(--apex-space-5);
+  border-top: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event-countdown-row > span {
+  max-width: 34ch;
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+  text-align: right;
+}
+
+@media (max-width: 899px) {
+  .mockup-next-event--split,
+  .mockup-next-event--command {
+    grid-template-columns: 1fr;
+    grid-template-areas: "main" "schedule" "action";
+    align-items: start;
+  }
+
+  .mockup-next-event--command {
+    grid-template-areas: "heading" "identity" "date" "countdown" "action";
+  }
+
+  .mockup-next-event--split > .mockup-action,
+  .mockup-next-event--command > .mockup-action {
+    justify-self: start;
+  }
+
+  .mockup-next-event-schedule {
+    justify-items: start;
+  }
+
+  .mockup-next-event--command > .mockup-adjacent-event-date {
+    justify-self: start;
+  }
+
+  .mockup-next-event-topline {
+    align-items: start;
+    flex-wrap: wrap;
+  }
+
+  .mockup-next-event-topline .mockup-adjacent-event-date {
+    margin-left: 0;
+  }
+
+  .mockup-next-event-countdown-row {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .mockup-next-event-countdown-row > span {
+    max-width: none;
+    text-align: left;
+  }
+}
+
+@media (max-width: 599px) {
+  .mockup-next-event {
+    margin-right: 0;
+    margin-left: 0;
+    padding: var(--apex-space-6);
+  }
+
+  .mockup-next-event-identity {
+    gap: var(--apex-space-4);
+  }
+
+  .mockup-next-event-identity .mockup-adjacent-event-copy strong {
+    font-size: var(--apex-type-body-size);
+  }
+
+  .mockup-next-event-countdown > b {
+    font-size: 1.35rem;
+  }
+}
+
+/* Ten distinct next-event compositions for visual comparison. The countdown
+   is deliberately promoted in several directions; the surrounding overview
+   remains unchanged so the hierarchy can be judged in context. */
+.mockup-next-event-countdown--hero > b {
+  font-size: clamp(2.35rem, 4.7vw, 4.2rem);
+  letter-spacing: -0.04em;
+}
+
+.mockup-next-event--countdown-hero {
+  grid-template-columns: minmax(19rem, 0.9fr) minmax(0, 1fr) auto;
+  grid-template-areas: "countdown copy meta";
+  align-items: center;
+  gap: var(--apex-space-8);
+  padding-top: var(--apex-space-8);
+  padding-bottom: var(--apex-space-8);
+  border-bottom: var(--apex-shape-active-indicator) solid
+    var(--apex-color-accent);
+}
+
+.mockup-next-event--countdown-hero > .mockup-next-event-countdown {
+  grid-area: countdown;
+  padding-right: var(--apex-space-7);
+  border-right: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event-hero-copy {
+  display: grid;
+  grid-area: copy;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event-hero-meta {
+  display: grid;
+  grid-area: meta;
+  justify-items: end;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event-hero-meta > .mockup-adjacent-event-date,
+.mockup-next-event-ticket-meta > .mockup-adjacent-event-date,
+.mockup-next-event-board-meta > .mockup-adjacent-event-date,
+.mockup-next-event-number-meta > .mockup-adjacent-event-date,
+.mockup-next-event-focus-copy > .mockup-adjacent-event-date {
+  grid-area: auto;
+}
+
+.mockup-next-event--countdown-hero .mockup-next-event-hero-meta .mockup-action {
+  justify-self: end;
+}
+
+.mockup-next-event--ticket {
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, auto) auto;
+  grid-template-areas: "copy countdown meta";
+  align-items: center;
+  gap: var(--apex-space-8);
+  border-top: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event-ticket-copy {
+  display: grid;
+  grid-area: copy;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event--ticket > .mockup-next-event-countdown {
+  grid-area: countdown;
+  padding: var(--apex-space-5) var(--apex-space-7);
+  border-right: 1px solid var(--apex-color-line);
+  border-left: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event-countdown--ticket > b {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+.mockup-next-event-ticket-meta {
+  display: grid;
+  grid-area: meta;
+  justify-items: end;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event--countdown-band {
+  gap: var(--apex-space-6);
+  padding-top: var(--apex-space-7);
+  padding-bottom: var(--apex-space-7);
+}
+
+.mockup-next-event-band-topline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--apex-space-6);
+}
+
+.mockup-next-event-band-topline > .mockup-next-event-identity {
+  grid-column: 2;
+}
+
+.mockup-next-event-band-topline > .mockup-adjacent-event-date {
+  grid-column: 3;
+}
+
+.mockup-next-event-band-topline > .mockup-action {
+  grid-column: 4;
+}
+
+.mockup-next-event--countdown-band > .mockup-next-event-countdown {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--apex-space-6);
+  padding-top: var(--apex-space-6);
+  border-top: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event--countdown-band > .mockup-next-event-countdown > b {
+  font-size: clamp(2.8rem, 6vw, 5.2rem);
+}
+
+.mockup-next-event--light-board {
+  grid-template-columns: auto minmax(0, 1fr) minmax(19rem, auto) auto;
+  grid-template-areas: "board-label board-copy countdown board-meta";
+  align-items: center;
+  gap: var(--apex-space-7);
+  padding-top: var(--apex-space-7);
+  padding-bottom: var(--apex-space-7);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+  background: var(--apex-color-elevated);
+}
+
+.mockup-next-event-board-label {
+  display: grid;
+  grid-area: board-label;
+  align-self: stretch;
+  align-content: space-between;
+  gap: var(--apex-space-5);
+  padding-right: var(--apex-space-6);
+  border-right: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event-board-label span,
+.mockup-next-event-number-rail span,
+.mockup-next-event-number-rail i {
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-eyebrow-size);
+  letter-spacing: var(--apex-type-eyebrow-tracking);
+  text-transform: uppercase;
+}
+
+.mockup-next-event-board-label b {
+  color: var(--apex-color-accent-text);
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-type-section-size);
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.mockup-next-event-board-copy {
+  display: grid;
+  grid-area: board-copy;
+  gap: var(--apex-space-2);
+}
+
+.mockup-next-event-board-copy strong {
+  font-size: var(--apex-type-subheading-size);
+}
+
+.mockup-next-event-board-copy p {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+
+.mockup-next-event--light-board > .mockup-next-event-countdown {
+  grid-area: countdown;
+}
+
+.mockup-next-event-board-meta {
+  display: grid;
+  grid-area: board-meta;
+  justify-items: end;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event--number-rail {
+  grid-template-columns: auto minmax(0, 1fr) minmax(17rem, auto) auto;
+  grid-template-areas: "number copy countdown meta";
+  align-items: center;
+  gap: var(--apex-space-7);
+}
+
+.mockup-next-event-number-rail {
+  display: grid;
+  grid-area: number;
+  align-self: stretch;
+  align-content: space-between;
+  gap: var(--apex-space-4);
+  padding-right: var(--apex-space-6);
+  border-right: 1px solid var(--apex-color-line);
+}
+
+.mockup-next-event-number-rail b {
+  font-family: var(--apex-font-display);
+  font-size: clamp(3.5rem, 6vw, 5.2rem);
+  font-weight: 400;
+  line-height: 0.8;
+}
+
+.mockup-next-event-number-rail i {
+  font-style: normal;
+}
+
+.mockup-next-event-number-copy {
+  display: grid;
+  grid-area: copy;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event-identity--no-round {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mockup-next-event-identity--no-round > .mockup-adjacent-event-round {
+  display: none;
+}
+
+.mockup-next-event--number-rail > .mockup-next-event-countdown {
+  grid-area: countdown;
+}
+
+.mockup-next-event-number-meta {
+  display: grid;
+  grid-area: meta;
+  justify-items: end;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event--focus-card {
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.92fr);
+  grid-template-areas: "focus-copy focus-countdown";
+  align-items: stretch;
+  gap: var(--apex-space-8);
+  padding-top: var(--apex-space-7);
+  padding-bottom: var(--apex-space-7);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+}
+
+.mockup-next-event-focus-copy {
+  display: grid;
+  grid-area: focus-copy;
+  align-content: center;
+  gap: var(--apex-space-5);
+}
+
+.mockup-next-event-focus-countdown {
+  display: grid;
+  grid-area: focus-countdown;
+  align-content: center;
+  gap: var(--apex-space-6);
+  padding: var(--apex-space-7);
+  border: 1px solid var(--apex-color-accent-border);
+  background: color-mix(in srgb, var(--apex-color-accent) 10%, transparent);
+}
+
+.mockup-next-event-focus-countdown .mockup-action {
+  justify-self: start;
+}
+
+.mockup-next-event--start-line {
+  gap: var(--apex-space-6);
+  padding-top: var(--apex-space-7);
+  padding-bottom: var(--apex-space-7);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
+}
+
+.mockup-next-event-start-topline,
+.mockup-next-event-start-identity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apex-space-6);
+}
+
+.mockup-next-event-start-topline .mockup-adjacent-event-date {
+  margin-left: auto;
+}
+
+.mockup-next-event--start-line > .mockup-next-event-countdown {
+  justify-items: center;
+  padding: var(--apex-space-5) 0;
+  text-align: center;
+}
+
+.mockup-next-event--start-line > .mockup-next-event-countdown > b {
+  font-size: clamp(3rem, 7vw, 6rem);
+}
+
+.mockup-next-event-start-identity .mockup-next-event-identity {
+  flex: 1;
+}
+
+@media (max-width: 899px) {
+  .mockup-next-event--countdown-hero,
+  .mockup-next-event--ticket,
+  .mockup-next-event--light-board,
+  .mockup-next-event--number-rail,
+  .mockup-next-event--focus-card {
+    grid-template-columns: 1fr;
+    grid-template-areas: "countdown" "copy" "meta";
+    align-items: start;
+    gap: var(--apex-space-6);
+  }
+
+  .mockup-next-event--countdown-hero > .mockup-next-event-countdown,
+  .mockup-next-event--ticket > .mockup-next-event-countdown {
+    padding-right: 0;
+    padding-bottom: var(--apex-space-5);
+    border-right: 0;
+    border-bottom: 1px solid var(--apex-color-line);
+  }
+
+  .mockup-next-event--countdown-hero .mockup-action,
+  .mockup-next-event--ticket .mockup-action,
+  .mockup-next-event--countdown-band .mockup-action,
+  .mockup-next-event--light-board .mockup-action,
+  .mockup-next-event--number-rail .mockup-action,
+  .mockup-next-event--focus-card .mockup-action,
+  .mockup-next-event--start-line .mockup-action {
+    grid-area: auto;
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: start;
+  }
+
+  .mockup-next-event-hero-meta,
+  .mockup-next-event-ticket-meta,
+  .mockup-next-event-board-meta,
+  .mockup-next-event-number-meta {
+    justify-items: start;
+  }
+
+  .mockup-next-event-hero-meta > .mockup-adjacent-event-date,
+  .mockup-next-event-ticket-meta > .mockup-adjacent-event-date,
+  .mockup-next-event-board-meta > .mockup-adjacent-event-date,
+  .mockup-next-event-number-meta > .mockup-adjacent-event-date {
+    justify-self: start;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .mockup-next-event--ticket > .mockup-next-event-countdown {
+    grid-area: countdown;
+  }
+
+  .mockup-next-event--ticket .mockup-next-event-ticket-copy {
+    grid-area: copy;
+  }
+
+  .mockup-next-event--ticket .mockup-next-event-ticket-meta {
+    grid-area: meta;
+  }
+
+  .mockup-next-event--light-board {
+    grid-template-areas: "board-label" "board-copy" "countdown" "board-meta";
+  }
+
+  .mockup-next-event-board-label {
+    align-items: center;
+    grid-template-columns: auto auto;
+    padding-right: 0;
+    padding-bottom: var(--apex-space-4);
+    border-right: 0;
+    border-bottom: 1px solid var(--apex-color-line);
+  }
+
+  .mockup-next-event-board-label b {
+    justify-self: end;
+  }
+
+  .mockup-next-event--number-rail {
+    grid-template-areas: "number" "copy" "countdown" "meta";
+  }
+
+  .mockup-next-event-number-rail {
+    align-items: baseline;
+    grid-template-columns: auto auto 1fr;
+    padding-right: 0;
+    padding-bottom: var(--apex-space-4);
+    border-right: 0;
+    border-bottom: 1px solid var(--apex-color-line);
+  }
+
+  .mockup-next-event-number-rail b {
+    justify-self: end;
+  }
+
+  .mockup-next-event-number-rail i {
+    justify-self: end;
+  }
+
+  .mockup-next-event--focus-card {
+    grid-template-areas: "focus-countdown" "focus-copy";
+  }
+
+  .mockup-next-event-start-topline,
+  .mockup-next-event-start-identity {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .mockup-next-event-start-topline .mockup-adjacent-event-date {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  .mockup-next-event-countdown--hero > b,
+  .mockup-next-event--start-line > .mockup-next-event-countdown > b,
+  .mockup-next-event--countdown-band > .mockup-next-event-countdown > b {
+    font-size: 2.35rem;
+  }
+
+  .mockup-next-event--countdown-band > .mockup-next-event-countdown {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .mockup-next-event-band-topline {
+    grid-template-columns: 1fr;
+    gap: var(--apex-space-5);
+  }
+
+  .mockup-next-event-band-topline > .mockup-next-event-identity,
+  .mockup-next-event-band-topline > .mockup-adjacent-event-date,
+  .mockup-next-event-band-topline > .mockup-action {
+    grid-column: 1;
+  }
+
+  .mockup-next-event-band-topline > .mockup-adjacent-event-date {
+    justify-self: start;
+  }
+
+  .mockup-next-event-board-copy strong {
+    font-size: var(--apex-type-body-size);
+  }
+
+  .mockup-next-event-focus-countdown {
+    padding: var(--apex-space-6);
   }
 }

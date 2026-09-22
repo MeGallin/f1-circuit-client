@@ -1,0 +1,58 @@
+import { useEffect, useRef } from "react";
+import * as echarts from "echarts/core";
+import {
+  BarChart,
+  HeatmapChart,
+  LineChart,
+  ScatterChart,
+} from "echarts/charts";
+import {
+  GridComponent,
+  LegendComponent,
+  TooltipComponent,
+  VisualMapComponent,
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
+
+echarts.use([
+  BarChart,
+  HeatmapChart,
+  LineChart,
+  ScatterChart,
+  GridComponent,
+  LegendComponent,
+  TooltipComponent,
+  VisualMapComponent,
+  CanvasRenderer,
+]);
+
+export default function EChart({ option, height = 300, label }) {
+  const node = useRef(null);
+  const chart = useRef(null);
+  useEffect(() => {
+    if (!node.current) return undefined;
+    chart.current = echarts.init(node.current, undefined, {
+      renderer: "canvas",
+    });
+    const resize = () => chart.current?.resize();
+    const observer = new ResizeObserver(resize);
+    observer.observe(node.current);
+    return () => {
+      observer.disconnect();
+      chart.current?.dispose();
+      chart.current = null;
+    };
+  }, []);
+  useEffect(() => {
+    chart.current?.setOption(option, { notMerge: true });
+  }, [option]);
+  return (
+    <div
+      ref={node}
+      className="analytics-chart"
+      style={{ height }}
+      role="img"
+      aria-label={label}
+    />
+  );
+}

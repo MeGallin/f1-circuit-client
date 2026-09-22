@@ -14,6 +14,7 @@ import { lazy, Suspense } from "react";
 const Design = import.meta.env.DEV
   ? lazy(() => import("../pages/Design"))
   : null;
+const Analytics = lazy(() => import("../pages/Analytics"));
 import { Route, Routes, useSearchParams } from "react-router-dom";
 const Audit = import.meta.env.DEV
   ? lazy(() => import("../pages/DevAudit"))
@@ -26,13 +27,24 @@ export default function App() {
     <AppShell>
       <Routes>
         <Route path="/" element={<Overview />} />
-        <Route path="/design/overview-layouts" element={<OverviewLayoutMockups />} />
+        <Route
+          path="/design/overview-layouts"
+          element={<OverviewLayoutMockups />}
+        />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/events/:eventId" element={<RaceDetail />} />
         <Route path="/standings" element={<Standings />} />
         <Route path="/sources" element={<Sources />} />
         <Route path="/evidence/:evidenceId" element={<Evidence />} />
         <Route path="/questions" element={<Questions />} />
+        <Route
+          path="/analytics"
+          element={
+            <Suspense fallback={<p>Loading performance analytics…</p>}>
+              <Analytics />
+            </Suspense>
+          }
+        />
         <Route path="/explore" element={<Explore />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/drivers/:id" element={<Profile kind="driver" />} />
