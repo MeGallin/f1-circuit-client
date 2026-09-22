@@ -26,6 +26,7 @@ import {
   buildAnalyticsOverviewModel,
 } from "../src/features/analytics/components/AnalyticsOverviewStrip";
 import { buildRaceBreakdownModel } from "../src/features/analytics/components/AnalyticsRaceBreakdown";
+import { buildDriverSpotlightModel } from "../src/features/analytics/components/AnalyticsPerformanceSnapshot";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -198,6 +199,18 @@ test("race breakdown turns published totals into comparable ring metrics", () =>
   expect(model[0].value).toBe(18);
   expect(model[0].percentage).toBe(10);
   expect(model[3].detail).toBe("171 classified · 9 DNF");
+});
+
+test("driver spotlight exposes the published recent form sequence", () => {
+  const model = buildDriverSpotlightModel({
+    driverName: "Example One",
+    constructor: { displayName: "Example Team" },
+    recentForm: [null, 4, 2, 1, 3, 2],
+    positionsGained: 5,
+  });
+
+  expect(model.form).toEqual([4, 2, 1, 3, 2]);
+  expect(model.positionsGained).toBe(5);
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {

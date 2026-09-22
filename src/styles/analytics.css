@@ -317,6 +317,46 @@
   font-size: var(--apex-type-metric-size);
   line-height: 1;
 }
+.analytics-spotlight-form {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--apex-space-4);
+  margin-top: var(--apex-space-7);
+  padding-top: var(--apex-space-4);
+  border-top: 1px solid var(--apex-color-line);
+}
+.analytics-spotlight-form > div {
+  display: grid;
+  gap: var(--apex-space-1);
+}
+.analytics-spotlight-form span,
+.analytics-spotlight-form small {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.analytics-spotlight-form ol {
+  display: flex;
+  gap: var(--apex-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.analytics-spotlight-form li {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+  color: var(--apex-color-text);
+  font-family: var(--apex-font-numeric);
+  font-weight: 700;
+}
+.analytics-spotlight-form > small {
+  text-align: right;
+}
 .analytics-snapshot-note {
   display: flex;
   grid-column: 1 / -1;
@@ -725,6 +765,13 @@
   }
   .analytics-snapshot-value-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analytics-spotlight-form {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .analytics-spotlight-form > small {
+    text-align: left;
   }
   .analytics-race-breakdown {
     gap: var(--apex-space-4);

@@ -1,6 +1,15 @@
 import { ChartLineUpIcon, GaugeIcon, TrophyIcon } from "@phosphor-icons/react";
 import AnalyticsRaceBreakdown from "./AnalyticsRaceBreakdown";
 
+export function buildDriverSpotlightModel(leader) {
+  return {
+    name: leader?.driverName || "Leader not supplied",
+    constructor: leader?.constructor?.displayName || "Constructor not supplied",
+    form: (leader?.recentForm || []).filter((position) => position != null).slice(-5),
+    positionsGained: leader?.positionsGained ?? null,
+  };
+}
+
 function SnapshotValue({ label, value, detail }) {
   return (
     <div className="analytics-snapshot-value">
@@ -15,6 +24,7 @@ export default function AnalyticsPerformanceSnapshot({ intelligence }) {
   const leader = intelligence?.championshipLeader;
   const breakdown = intelligence?.raceBreakdown || {};
   if (!leader && !Object.keys(breakdown).length) return null;
+  const spotlight = buildDriverSpotlightModel(leader);
 
   return (
     <div className="analytics-performance-snapshot">
@@ -42,6 +52,25 @@ export default function AnalyticsPerformanceSnapshot({ intelligence }) {
             }
           />
         </div>
+        {spotlight.form.length ? (
+          <div className="analytics-spotlight-form">
+            <div>
+              <span>Recent form</span>
+              <small>Last {spotlight.form.length} races</small>
+            </div>
+            <ol aria-label={`${spotlight.name} recent form`}>
+              {spotlight.form.map((position, index) => (
+                <li key={`${position}-${index}`}>{position}</li>
+              ))}
+            </ol>
+            {spotlight.positionsGained != null && (
+              <small>
+                {spotlight.positionsGained >= 0 ? "+" : ""}
+                {spotlight.positionsGained} positions gained
+              </small>
+            )}
+          </div>
+        ) : null}
       </section>
       <section className="analytics-snapshot-card">
         <div className="analytics-snapshot-heading">
