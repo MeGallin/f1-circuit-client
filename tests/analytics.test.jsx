@@ -15,6 +15,7 @@ import {
   buildSeasonIntelligenceModel,
   formatAnalyticsDate,
 } from "../src/features/analytics/seasonIntelligence";
+import { buildChampionshipSnapshotModel } from "../src/features/analytics/components/AnalyticsChampionshipSnapshot";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -94,6 +95,26 @@ test("driver comparison ranking follows the selected metric direction", () => {
   expect(
     rankComparisonRows(rows, "averageFinish").map((row) => row.name),
   ).toEqual(["Driver Three", "Driver One", "Driver Two"]);
+});
+
+test("championship snapshot ranks published drivers and constructors independently", () => {
+  const model = buildChampionshipSnapshotModel({
+    comparison: {
+      drivers: [
+        { id: "driver:two", name: "Driver Two", metrics: { points: 180, wins: 3, podiums: 7 } },
+        { id: "driver:one", name: "Driver One", metrics: { points: 220, wins: 5, podiums: 9 } },
+      ],
+    },
+    constructors: [
+      { constructorId: "constructor:one", constructorName: "Team One", totalPoints: 310, drivers: [] },
+      { constructorId: "constructor:two", constructorName: "Team Two", totalPoints: 340, drivers: [{ id: "driver:two" }] },
+    ],
+    driverSeries: [{ driverId: "driver:one", number: 7 }],
+  });
+
+  expect(model.drivers.map((row) => row.name)).toEqual(["Driver One", "Driver Two"]);
+  expect(model.drivers[0].number).toBe(7);
+  expect(model.teams.map((row) => row.name)).toEqual(["Team Two", "Team One"]);
 });
 
 test("season intelligence keeps the published overview relationships intact", () => {

@@ -34,6 +34,7 @@ import {
 } from "../features/analytics/components/AnalyticsCharts";
 import AnalyticsIntelligence from "../features/analytics/components/AnalyticsIntelligence";
 import AnalyticsPerformanceSnapshot from "../features/analytics/components/AnalyticsPerformanceSnapshot";
+import AnalyticsChampionshipSnapshot from "../features/analytics/components/AnalyticsChampionshipSnapshot";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -290,6 +291,13 @@ export default function Analytics() {
             </Panel>
             <Panel title="Archive totals" eyebrow="DATA SCOPE" icon={DatabaseIcon}>
               <StatStrip stats={dashboard.quickStats} />
+            </Panel>
+            <Panel title="Championship snapshot" eyebrow="CURRENT ORDER" icon={TrophyIcon}>
+              <AnalyticsChampionshipSnapshot
+                comparison={comparison}
+                constructors={dashboard.constructorContribution}
+                driverSeries={dashboard.pointsProgression.series}
+              />
             </Panel>
             <div className="analytics-chart-grid">
               <Panel title="Points progression" eyebrow="CHAMPIONSHIP" icon={ChartLineUpIcon}>
