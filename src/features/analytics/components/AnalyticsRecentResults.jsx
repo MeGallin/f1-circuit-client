@@ -1,5 +1,23 @@
+import { formatAnalyticsDate } from "../seasonIntelligence";
+
 export function buildRecentResultsModel(race) {
   return (race?.results || race?.podium || []).slice(0, 5);
+}
+
+export function buildRecentResultsMetadata(
+  race,
+  results = buildRecentResultsModel(race),
+) {
+  const fastestLap = race?.fastestLap;
+  return {
+    publishedResults: results.length,
+    raceDate:
+      formatAnalyticsDate(race?.schedule?.startsAt || race?.schedule?.date) ||
+      "Not published",
+    fastestLap: fastestLap?.driverName
+      ? `${fastestLap.driverName}${fastestLap.lapNumber ? ` · Lap ${fastestLap.lapNumber}` : ""}`
+      : "Not published",
+  };
 }
 
 export function formatResultGap(gap) {
@@ -38,6 +56,7 @@ function ResultRow({ result }) {
 
 export default function AnalyticsRecentResults({ race }) {
   const results = buildRecentResultsModel(race);
+  const metadata = buildRecentResultsMetadata(race, results);
   if (!race || !results.length) {
     return (
       <p className="muted">
@@ -65,6 +84,23 @@ export default function AnalyticsRecentResults({ race }) {
           />
         ))}
       </ol>
+      <div
+        className="analytics-recent-results-meta"
+        aria-label="Latest race metadata"
+      >
+        <div>
+          <span>Published results</span>
+          <strong>{metadata.publishedResults}</strong>
+        </div>
+        <div>
+          <span>Race date</span>
+          <strong>{metadata.raceDate}</strong>
+        </div>
+        <div>
+          <span>Fastest lap</span>
+          <strong>{metadata.fastestLap}</strong>
+        </div>
+      </div>
     </div>
   );
 }

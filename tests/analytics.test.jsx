@@ -20,6 +20,7 @@ import {
 import { buildChampionshipSnapshotModel } from "../src/features/analytics/components/AnalyticsChampionshipSnapshot";
 import {
   buildRecentResultsModel,
+  buildRecentResultsMetadata,
   formatResultGap,
 } from "../src/features/analytics/components/AnalyticsRecentResults";
 import { buildAnalyticsSessionReadoutModel } from "../src/features/analytics/components/AnalyticsSessionReadout";
@@ -152,6 +153,33 @@ test("recent results can render a published podium-only payload", () => {
     "Example One",
     "Example Two",
   ]);
+});
+
+test("recent results expose honest race metadata for the expanded panel", () => {
+  const results = buildRecentResultsModel({
+    schedule: { startsAt: "2026-09-13T13:00:00Z" },
+    results: [{ position: 1, driverName: "Example One" }],
+    fastestLap: { driverName: "Example Two", lapNumber: 49 },
+  });
+
+  expect(buildRecentResultsMetadata({}, results)).toEqual({
+    publishedResults: 1,
+    raceDate: "Not published",
+    fastestLap: "Not published",
+  });
+  expect(
+    buildRecentResultsMetadata(
+      {
+        schedule: { startsAt: "2026-09-13T13:00:00Z" },
+        fastestLap: { driverName: "Example Two", lapNumber: 49 },
+      },
+      results,
+    ),
+  ).toEqual({
+    publishedResults: 1,
+    raceDate: "Sun, 13 Sept 2026",
+    fastestLap: "Example Two · Lap 49",
+  });
 });
 
 test("session readout stays grounded in the published race evidence", () => {
