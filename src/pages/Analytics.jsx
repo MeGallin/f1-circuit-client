@@ -84,6 +84,7 @@ export function buildAnalyticsPanelLinks({
   season,
   latestRaceId,
   latestCircuitId,
+  leaderId,
 } = {}) {
   return {
     calendar: `/calendar?season=${season}`,
@@ -94,6 +95,9 @@ export function buildAnalyticsPanelLinks({
     latestCircuit: latestCircuitId
       ? `/circuits/${encodeURIComponent(latestCircuitId)}?season=${season}`
       : `/calendar?season=${season}`,
+    leader: leaderId
+      ? `/drivers/${encodeURIComponent(leaderId)}?season=${season}`
+      : `/standings?season=${season}`,
   };
 }
 
@@ -320,6 +324,7 @@ export default function Analytics() {
     season,
     latestRaceId: dashboard?.seasonIntelligence?.latestRace?.id,
     latestCircuitId,
+    leaderId: dashboard?.seasonIntelligence?.championshipLeader?.driverId,
   });
   return (
     <div className="entity-stack analytics-page">
@@ -390,6 +395,7 @@ export default function Analytics() {
               title="Performance snapshot"
               eyebrow="RACE INTELLIGENCE"
               icon={TrophyIcon}
+              action={<ActionLink variant="quiet" to={panelLinks.leader}>View driver</ActionLink>}
             >
               <AnalyticsPerformanceSnapshot
                 intelligence={dashboard.seasonIntelligence}

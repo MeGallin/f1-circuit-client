@@ -56,12 +56,14 @@ test("analytics panel links preserve the selected season and published entities"
       season: 2026,
       latestRaceId: "event:2026:spanish-grand-prix",
       latestCircuitId: "circuit:madring",
+      leaderId: "driver:antonelli",
     }),
   ).toEqual({
     calendar: "/calendar?season=2026",
     standings: "/standings?season=2026",
     latestRace: "/events/event%3A2026%3Aspanish-grand-prix?season=2026",
     latestCircuit: "/circuits/circuit%3Amadring?season=2026",
+    leader: "/drivers/driver%3Aantonelli?season=2026",
   });
 });
 
