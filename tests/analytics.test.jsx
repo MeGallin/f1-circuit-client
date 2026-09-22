@@ -16,6 +16,14 @@ import {
   formatAnalyticsDate,
 } from "../src/features/analytics/seasonIntelligence";
 import { buildChampionshipSnapshotModel } from "../src/features/analytics/components/AnalyticsChampionshipSnapshot";
+import {
+  buildRecentResultsModel,
+  formatResultGap,
+} from "../src/features/analytics/components/AnalyticsRecentResults";
+import {
+  formatAnalyticsFreshness,
+  buildAnalyticsOverviewModel,
+} from "../src/features/analytics/components/AnalyticsOverviewStrip";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -80,6 +88,59 @@ test("analytics chart labels use compact circuit names and ranked constructors",
   ).toEqual(["Mercedes", "Ferrari"]);
 });
 
+test("recent results preserve race order and readable gaps", () => {
+  const results = buildRecentResultsModel({
+    name: "Synthetic Grand Prix",
+    results: [
+      {
+        position: 1,
+        driverName: "Example One",
+        constructorName: "Example Team",
+        points: 25,
+        gap: { kind: "leader" },
+      },
+      {
+        position: 2,
+        driverName: "Example Two",
+        constructorName: "Example Team",
+        points: 18,
+        gap: { kind: "time", milliseconds: 12345 },
+      },
+    ],
+  });
+
+  expect(results.map((result) => result.position)).toEqual([1, 2]);
+  expect(formatResultGap(results[0].gap)).toBe("Winner");
+  expect(formatResultGap(results[1].gap)).toBe("+12.345s");
+});
+
+test("analytics overview model exposes rates and snapshot freshness", () => {
+  const model = buildAnalyticsOverviewModel({
+    quickStats: {
+      completedEvents: 14,
+      totalEvents: 23,
+      podiumRate: 28.6,
+      dnfRate: 4.8,
+    },
+    seasonIntelligence: {
+      progress: { percentage: 61 },
+      championshipLeader: { driverName: "Example One", points: 169 },
+      constructorLeader: { constructorName: "Example Team", points: 276 },
+    },
+    meta: {
+      freshness: "fresh",
+      lastSuccessfulRetrieval: "2026-09-21T15:00:00Z",
+    },
+  });
+
+  expect(model.podiumRate.value).toBe("28.6%");
+  expect(model.dnfRate.value).toBe("4.8%");
+  expect(model.leader.value).toBe("Example One");
+  expect(model.constructorLeader.value).toBe("Example Team");
+  expect(formatAnalyticsFreshness(null)).toBe("Not available");
+  expect(formatAnalyticsFreshness("2026-09-21T15:00:00Z")).toBe("21 Sept 2026");
+});
+
 test("driver comparison ranking follows the selected metric direction", () => {
   const rows = [
     { name: "Driver One", points: 80, averageFinish: 4.2 },
@@ -101,18 +162,39 @@ test("championship snapshot ranks published drivers and constructors independent
   const model = buildChampionshipSnapshotModel({
     comparison: {
       drivers: [
-        { id: "driver:two", name: "Driver Two", metrics: { points: 180, wins: 3, podiums: 7 } },
-        { id: "driver:one", name: "Driver One", metrics: { points: 220, wins: 5, podiums: 9 } },
+        {
+          id: "driver:two",
+          name: "Driver Two",
+          metrics: { points: 180, wins: 3, podiums: 7 },
+        },
+        {
+          id: "driver:one",
+          name: "Driver One",
+          metrics: { points: 220, wins: 5, podiums: 9 },
+        },
       ],
     },
     constructors: [
-      { constructorId: "constructor:one", constructorName: "Team One", totalPoints: 310, drivers: [] },
-      { constructorId: "constructor:two", constructorName: "Team Two", totalPoints: 340, drivers: [{ id: "driver:two" }] },
+      {
+        constructorId: "constructor:one",
+        constructorName: "Team One",
+        totalPoints: 310,
+        drivers: [],
+      },
+      {
+        constructorId: "constructor:two",
+        constructorName: "Team Two",
+        totalPoints: 340,
+        drivers: [{ id: "driver:two" }],
+      },
     ],
     driverSeries: [{ driverId: "driver:one", number: 7 }],
   });
 
-  expect(model.drivers.map((row) => row.name)).toEqual(["Driver One", "Driver Two"]);
+  expect(model.drivers.map((row) => row.name)).toEqual([
+    "Driver One",
+    "Driver Two",
+  ]);
   expect(model.drivers[0].number).toBe(7);
   expect(model.teams.map((row) => row.name)).toEqual(["Team Two", "Team One"]);
 });
@@ -136,7 +218,5 @@ test("season intelligence keeps the published overview relationships intact", ()
   expect(model.progressPercentage).toBe("61%");
   expect(model.latestWinner.driverName).toBe("Andrea Kimi Antonelli");
   expect(model.podium.map((entry) => entry.position)).toEqual([1, 2]);
-  expect(formatAnalyticsDate("2026-09-26T11:00:00Z")).toBe(
-    "Sat, 26 Sept 2026",
-  );
+  expect(formatAnalyticsDate("2026-09-26T11:00:00Z")).toBe("Sat, 26 Sept 2026");
 });

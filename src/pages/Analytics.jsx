@@ -37,6 +37,8 @@ import {
 import AnalyticsIntelligence from "../features/analytics/components/AnalyticsIntelligence";
 import AnalyticsPerformanceSnapshot from "../features/analytics/components/AnalyticsPerformanceSnapshot";
 import AnalyticsChampionshipSnapshot from "../features/analytics/components/AnalyticsChampionshipSnapshot";
+import AnalyticsOverviewStrip from "../features/analytics/components/AnalyticsOverviewStrip";
+import AnalyticsRecentResults from "../features/analytics/components/AnalyticsRecentResults";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -73,9 +75,13 @@ export function buildDriverComparisonRequest(params) {
 export function updateAnalyticsFilterParams(params, key, value) {
   const next = new URLSearchParams(params);
   if (key === "season") {
-    ["driverIds", "constructorIds", "circuitIds", "fromRound", "toRound"].forEach(
-      (dependentKey) => next.delete(dependentKey),
-    );
+    [
+      "driverIds",
+      "constructorIds",
+      "circuitIds",
+      "fromRound",
+      "toRound",
+    ].forEach((dependentKey) => next.delete(dependentKey));
   }
   if (value) next.set(key, value);
   else next.delete(key);
@@ -84,7 +90,11 @@ export function updateAnalyticsFilterParams(params, key, value) {
 
 function StatStrip({ stats }) {
   const items = [
-    [FlagCheckeredIcon, "Races completed", `${stats.completedEvents} / ${stats.totalEvents}`],
+    [
+      FlagCheckeredIcon,
+      "Races completed",
+      `${stats.completedEvents} / ${stats.totalEvents}`,
+    ],
     [ChartLineUpIcon, "Points scored", stats.totalPoints],
     [UsersThreeIcon, "Drivers", stats.driverCount],
     [BuildingsIcon, "Constructors", stats.constructorCount],
@@ -258,6 +268,8 @@ export default function Analytics() {
   const comparison =
     comparisonQuery.currentData?.driverComparison ||
     dashboard?.defaultComparison;
+  const responseMeta =
+    dashboardQuery.currentData?.meta || dashboardQuery.data?.meta;
   return (
     <div className="entity-stack analytics-page">
       <PageHeading
@@ -271,7 +283,11 @@ export default function Analytics() {
           </ActionLink>
         }
       />
-      <Panel title="Shape the view" eyebrow="ARCHIVE FILTERS" icon={SlidersHorizontalIcon}>
+      <Panel
+        title="Shape the view"
+        eyebrow="ARCHIVE FILTERS"
+        icon={SlidersHorizontalIcon}
+      >
         <FilterBar
           dashboard={filterDashboard}
           params={params}
@@ -290,8 +306,19 @@ export default function Analytics() {
       >
         {dashboard && (
           <>
-            <AnalyticsIntelligence intelligence={dashboard.seasonIntelligence} />
-            <Panel title="Performance snapshot" eyebrow="RACE INTELLIGENCE" icon={TrophyIcon}>
+            <AnalyticsOverviewStrip
+              quickStats={dashboard.quickStats}
+              seasonIntelligence={dashboard.seasonIntelligence}
+              meta={responseMeta}
+            />
+            <AnalyticsIntelligence
+              intelligence={dashboard.seasonIntelligence}
+            />
+            <Panel
+              title="Performance snapshot"
+              eyebrow="RACE INTELLIGENCE"
+              icon={TrophyIcon}
+            >
               <AnalyticsPerformanceSnapshot
                 intelligence={dashboard.seasonIntelligence}
               />
@@ -300,11 +327,16 @@ export default function Analytics() {
               <StatStrip
                 stats={{
                   ...dashboard.quickStats,
-                  publishedEntries: dashboard.seasonIntelligence?.raceBreakdown?.entries,
+                  publishedEntries:
+                    dashboard.seasonIntelligence?.raceBreakdown?.entries,
                 }}
               />
             </Panel>
-            <Panel title="Championship snapshot" eyebrow="CURRENT ORDER" icon={TrophyIcon}>
+            <Panel
+              title="Championship snapshot"
+              eyebrow="CURRENT ORDER"
+              icon={TrophyIcon}
+            >
               <AnalyticsChampionshipSnapshot
                 comparison={comparison}
                 constructors={dashboard.constructorContribution}
@@ -312,10 +344,18 @@ export default function Analytics() {
               />
             </Panel>
             <div className="analytics-chart-grid">
-              <Panel title="Points progression" eyebrow="CHAMPIONSHIP" icon={ChartLineUpIcon}>
+              <Panel
+                title="Points progression"
+                eyebrow="CHAMPIONSHIP"
+                icon={ChartLineUpIcon}
+              >
                 <PointsProgressionChart data={dashboard.pointsProgression} />
               </Panel>
-              <Panel title="Qualifying versus finish" eyebrow="RACE PACE" icon={GaugeIcon}>
+              <Panel
+                title="Qualifying versus finish"
+                eyebrow="RACE PACE"
+                icon={GaugeIcon}
+              >
                 {dashboard.qualifyingVsFinish.length ? (
                   <QualifyingVsFinishChart
                     rows={dashboard.qualifyingVsFinish}
@@ -343,7 +383,11 @@ export default function Analytics() {
                   />
                 )}
               </Panel>
-              <Panel title="Circuit performance" eyebrow="TRACK PATTERNS" icon={FlagCheckeredIcon}>
+              <Panel
+                title="Circuit performance"
+                eyebrow="TRACK PATTERNS"
+                icon={FlagCheckeredIcon}
+              >
                 {dashboard.circuitPerformance.cells.length ? (
                   <CircuitPerformanceChart
                     data={dashboard.circuitPerformance}
@@ -356,8 +400,21 @@ export default function Analytics() {
                 )}
               </Panel>
             </div>
-            <Panel title="Driver comparison" eyebrow="COMPARATIVE VIEW" icon={RankingIcon}>
+            <Panel
+              title="Driver comparison"
+              eyebrow="COMPARATIVE VIEW"
+              icon={RankingIcon}
+            >
               <Comparison data={comparison} />
+            </Panel>
+            <Panel
+              title="Latest race results"
+              eyebrow="RACE SUMMARY"
+              icon={FlagCheckeredIcon}
+            >
+              <AnalyticsRecentResults
+                race={dashboard.seasonIntelligence?.latestRace}
+              />
             </Panel>
             <Panel title="Archive highlights" eyebrow="READOUT">
               <ul className="analytics-insights">
@@ -369,9 +426,7 @@ export default function Analytics() {
           </>
         )}
       </DataBoundary>
-      <SourceNote
-        meta={dashboardQuery.currentData?.meta || dashboardQuery.data?.meta}
-      />
+      <SourceNote meta={responseMeta} />
     </div>
   );
 }
