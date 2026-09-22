@@ -80,6 +80,23 @@ export function buildDriverComparisonRequest(params) {
   };
 }
 
+export function buildAnalyticsPanelLinks({
+  season,
+  latestRaceId,
+  latestCircuitId,
+} = {}) {
+  return {
+    calendar: `/calendar?season=${season}`,
+    standings: `/standings?season=${season}`,
+    latestRace: latestRaceId
+      ? `/events/${encodeURIComponent(latestRaceId)}?season=${season}`
+      : `/calendar?season=${season}`,
+    latestCircuit: latestCircuitId
+      ? `/circuits/${encodeURIComponent(latestCircuitId)}?season=${season}`
+      : `/calendar?season=${season}`,
+  };
+}
+
 export function updateAnalyticsFilterParams(params, key, value) {
   const next = new URLSearchParams(params);
   if (key === "season") {
@@ -299,6 +316,11 @@ export default function Analytics() {
     latestCircuitLayoutsQuery.currentData?.items,
     season,
   );
+  const panelLinks = buildAnalyticsPanelLinks({
+    season,
+    latestRaceId: dashboard?.seasonIntelligence?.latestRace?.id,
+    latestCircuitId,
+  });
   return (
     <div className="entity-stack analytics-page">
       <PageHeading
@@ -347,6 +369,7 @@ export default function Analytics() {
               title="Weekend timeline"
               eyebrow="SEASON FLOW"
               icon={CalendarBlankIcon}
+              action={<ActionLink variant="quiet" to={panelLinks.calendar}>View calendar</ActionLink>}
             >
               <AnalyticsWeekendTimeline events={dashboard.weekendTimeline} />
             </Panel>
@@ -354,6 +377,7 @@ export default function Analytics() {
               title="Circuit insight"
               eyebrow="TRACK CONTEXT"
               icon={MapTrifoldIcon}
+              action={<ActionLink variant="quiet" to={panelLinks.latestCircuit}>View circuit</ActionLink>}
             >
               <AnalyticsCircuitInsight
                 circuit={latestCircuit}
@@ -395,6 +419,7 @@ export default function Analytics() {
               title="Championship snapshot"
               eyebrow="CURRENT ORDER"
               icon={TrophyIcon}
+              action={<ActionLink variant="quiet" to={panelLinks.standings}>View standings</ActionLink>}
             >
               <AnalyticsChampionshipSnapshot
                 comparison={comparison}
@@ -470,6 +495,7 @@ export default function Analytics() {
               title="Latest race results"
               eyebrow="RACE SUMMARY"
               icon={FlagCheckeredIcon}
+              action={<ActionLink variant="quiet" to={panelLinks.latestRace}>View race</ActionLink>}
             >
               <AnalyticsRecentResults
                 race={dashboard.seasonIntelligence?.latestRace}

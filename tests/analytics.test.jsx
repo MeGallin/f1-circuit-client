@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import {
   buildAnalyticsRequest,
   buildDriverComparisonRequest,
+  buildAnalyticsPanelLinks,
   updateAnalyticsFilterParams,
 } from "../src/pages/Analytics";
 import {
@@ -46,6 +47,21 @@ test("driver comparison request keeps the complete analytics scope", () => {
     circuitIds: ["circuit:monza"],
     sessionType: "qualifying",
     snapshotId: undefined,
+  });
+});
+
+test("analytics panel links preserve the selected season and published entities", () => {
+  expect(
+    buildAnalyticsPanelLinks({
+      season: 2026,
+      latestRaceId: "event:2026:spanish-grand-prix",
+      latestCircuitId: "circuit:madring",
+    }),
+  ).toEqual({
+    calendar: "/calendar?season=2026",
+    standings: "/standings?season=2026",
+    latestRace: "/events/event%3A2026%3Aspanish-grand-prix?season=2026",
+    latestCircuit: "/circuits/circuit%3Amadring?season=2026",
   });
 });
 
