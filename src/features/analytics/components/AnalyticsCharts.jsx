@@ -1,16 +1,40 @@
 import EChart from "./EChart";
+import { APEX_CHART, APEX_SIZES } from "../../../design-system/apex.tokens";
 
-const axis = {
-  axisLine: { lineStyle: { color: "#48515c" } },
-  axisLabel: { color: "#aab4bf" },
-};
-const grid = { left: 48, right: 24, top: 28, bottom: 56, containLabel: true };
-const tooltip = {
-  trigger: "axis",
-  backgroundColor: "#171b20",
-  borderColor: "#48515c",
-  textStyle: { color: "#f3f5f7" },
-};
+function readColor(token, fallback) {
+  if (typeof document === "undefined") return fallback;
+  return (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue(`--apex-color-${token}`)
+      .trim() || fallback
+  );
+}
+
+export function getChartTheme() {
+  const colors = {
+    line: readColor("line", "#333d47"),
+    muted: readColor("muted", "#a6afb8"),
+    text: readColor("text", "#f0f2f3"),
+    surface: readColor("surface", "#15191e"),
+    accent: readColor("accent", "#f0524d"),
+    warning: readColor("warning", "#e7bd6d"),
+    info: readColor("info", "#87b8de"),
+  };
+  return {
+    colors,
+    axis: {
+      axisLine: { lineStyle: { color: colors.line } },
+      axisLabel: { color: colors.muted },
+    },
+    grid: { ...APEX_CHART.grid, containLabel: true },
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: colors.surface,
+      borderColor: colors.line,
+      textStyle: { color: colors.text },
+    },
+  };
+}
 
 export function compactDriverName(name) {
   const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
@@ -40,6 +64,7 @@ export function sortConstructorContributionRows(rows) {
 }
 
 export function PointsProgressionChart({ data }) {
+  const theme = getChartTheme();
   const events = data?.events || [];
   const allSeries = [...(data?.series || [])].sort(
     (a, b) =>
@@ -53,7 +78,7 @@ export function PointsProgressionChart({ data }) {
     type: "line",
     smooth: false,
     symbol: "circle",
-    symbolSize: 7,
+    symbolSize: APEX_CHART.lineSymbolSize,
     data: item.points,
   }));
   const fullNameByLabel = new Map(
@@ -77,9 +102,9 @@ export function PointsProgressionChart({ data }) {
       description={`${visibleSeries.length} leading drivers shown across ${events.length} events by cumulative points. Full driver names are available in the chart tooltip.`}
       option={{
         animation: false,
-        grid: { ...grid, bottom: 76 },
+        grid: { ...theme.grid, bottom: APEX_CHART.pointsLegendBottom },
         tooltip: {
-          ...tooltip,
+          ...theme.tooltip,
           formatter: (params) => {
             const point = params[0];
             const event = events[point?.dataIndex];
@@ -97,22 +122,22 @@ export function PointsProgressionChart({ data }) {
         },
         legend: {
           bottom: 0,
-          itemWidth: 16,
-          itemGap: 12,
+          itemWidth: APEX_CHART.legendItemWidth,
+          itemGap: APEX_CHART.legendItemGap,
           type: "scroll",
-          textStyle: { color: "#aab4bf" },
+          textStyle: { color: theme.colors.muted },
         },
         xAxis: {
           type: "category",
           data: events.map((event) => `R${event.round}`),
-          ...axis,
+          ...theme.axis,
           axisLabel: {
-            ...axis.axisLabel,
+            ...theme.axis.axisLabel,
             interval: labelInterval,
             hideOverlap: true,
           },
         },
-        yAxis: { type: "value", ...axis },
+        yAxis: { type: "value", ...theme.axis },
         series,
       }}
     />
@@ -120,32 +145,33 @@ export function PointsProgressionChart({ data }) {
 }
 
 export function QualifyingVsFinishChart({ rows }) {
+  const theme = getChartTheme();
   return (
     <EChart
       label="Qualifying position compared with race finish"
       description={`${rows.length} qualifying and race-position comparisons are plotted. Points closer to the upper-left represent stronger starting and finishing positions.`}
       option={{
         animation: false,
-        grid,
-        tooltip: { ...tooltip, trigger: "item" },
+        grid: theme.grid,
+        tooltip: { ...theme.tooltip, trigger: "item" },
         xAxis: {
           name: "Qualifying",
           type: "value",
           inverse: true,
           minInterval: 1,
-          ...axis,
+          ...theme.axis,
         },
         yAxis: {
           name: "Finish",
           type: "value",
           inverse: true,
           minInterval: 1,
-          ...axis,
+          ...theme.axis,
         },
         series: [
           {
             type: "scatter",
-            symbolSize: 12,
+            symbolSize: APEX_CHART.scatterSymbolSize,
             data: rows.map((row) => ({
               value: [row.qualifyingPosition, row.finishPosition],
               name: `${row.driverName} · ${row.eventName}`,
@@ -158,8 +184,16 @@ export function QualifyingVsFinishChart({ rows }) {
 }
 
 export function ConstructorContributionChart({ rows }) {
+  const theme = getChartTheme();
   const sortedRows = sortConstructorContributionRows(rows);
-  const height = Math.max(300, Math.min(520, sortedRows.length * 36 + 96));
+  const height = Math.max(
+    APEX_SIZES.chartMinHeight,
+    Math.min(
+      APEX_SIZES.chartMaxHeight,
+      sortedRows.length * APEX_SIZES.chartRowHeight +
+        APEX_SIZES.chartVerticalPadding,
+    ),
+  );
   return (
     <EChart
       label="Constructor points contribution"
@@ -167,18 +201,18 @@ export function ConstructorContributionChart({ rows }) {
       description={`${sortedRows.length} constructors ranked by their published race-points contribution.`}
       option={{
         animation: false,
-        grid: { ...grid, left: 8, right: 44, top: 20, bottom: 28 },
+        grid: { ...APEX_CHART.constructorGrid, containLabel: true },
         tooltip: {
-          ...tooltip,
+          ...theme.tooltip,
           trigger: "item",
           formatter: (params) => `${params.name}<br />Points: ${params.value}`,
         },
         xAxis: {
           type: "value",
           min: 0,
-          ...axis,
+          ...theme.axis,
           axisLabel: {
-            color: "#aab4bf",
+            color: theme.colors.muted,
             formatter: (value) => String(value),
           },
         },
@@ -186,28 +220,28 @@ export function ConstructorContributionChart({ rows }) {
           type: "category",
           inverse: true,
           data: sortedRows.map((row) => row.constructorName),
-          ...axis,
+          ...theme.axis,
           axisLabel: {
-            color: "#aab4bf",
-            width: 124,
+            color: theme.colors.muted,
+            width: APEX_CHART.constructorLabelWidth,
             overflow: "truncate",
-            margin: 6,
+            margin: APEX_CHART.constructorLabelMargin,
           },
         },
         series: [
           {
             type: "bar",
-            barMaxWidth: 24,
+            barMaxWidth: APEX_CHART.barMaxWidth,
             label: {
               show: true,
               position: "right",
-              color: "#f3f5f7",
+              color: theme.colors.text,
             },
             data: sortedRows.map((row) => ({
               name: row.constructorName,
               value: row.totalPoints,
             })),
-            itemStyle: { color: "#f04f4f" },
+            itemStyle: { color: theme.colors.accent },
           },
         ],
       }}
@@ -216,6 +250,7 @@ export function ConstructorContributionChart({ rows }) {
 }
 
 export function CircuitPerformanceChart({ data }) {
+  const theme = getChartTheme();
   const circuits = data?.circuits || [];
   const drivers = data?.drivers || [];
   const cells = data?.cells || [];
@@ -232,7 +267,14 @@ export function CircuitPerformanceChart({ data }) {
     ])
     .filter(([, circuitIndex, value]) => circuitIndex >= 0 && value != null);
   const maxFinish = Math.max(3, ...values.map(([, , value]) => Number(value)));
-  const height = Math.max(320, Math.min(560, circuits.length * 18 + 96));
+  const height = Math.max(
+    APEX_SIZES.heatmapMinHeight,
+    Math.min(
+      APEX_SIZES.heatmapMaxHeight,
+      circuits.length * APEX_SIZES.heatmapRowHeight +
+        APEX_SIZES.chartVerticalPadding,
+    ),
+  );
   return (
     <EChart
       label="Leading driver finish positions by circuit"
@@ -240,9 +282,9 @@ export function CircuitPerformanceChart({ data }) {
       description={`${circuits.length} circuits and ${visibleDrivers.length} drivers are shown as finish-position cells. Full names are available in the chart tooltip.`}
       option={{
         animation: false,
-        grid: { ...grid, left: 4, right: 8, top: 40, bottom: 76 },
+        grid: { ...APEX_CHART.circuitGrid, containLabel: true },
         tooltip: {
-          ...tooltip,
+          ...theme.tooltip,
           trigger: "item",
           formatter: (params) => {
             const [driverIndex, circuitIndex, value] = params.value;
@@ -252,24 +294,24 @@ export function CircuitPerformanceChart({ data }) {
         xAxis: {
           type: "category",
           data: visibleDrivers.map((driver) => compactDriverName(driver.name)),
-          ...axis,
+          ...theme.axis,
           axisLabel: {
-            color: "#aab4bf",
-            rotate: 25,
-            width: 72,
+            color: theme.colors.muted,
+            rotate: APEX_CHART.circuitLabelRotation,
+            width: APEX_CHART.circuitDriverLabelWidth,
             overflow: "truncate",
           },
         },
         yAxis: {
           type: "category",
           data: circuits.map((circuit) => compactCircuitName(circuit.name)),
-          ...axis,
+          ...theme.axis,
           axisLabel: {
-            color: "#aab4bf",
-            width: 108,
+            color: theme.colors.muted,
+            width: APEX_CHART.circuitLabelWidth,
             overflow: "truncate",
             align: "right",
-            margin: 4,
+            margin: APEX_CHART.circuitLabelMargin,
           },
         },
         visualMap: {
@@ -278,10 +320,12 @@ export function CircuitPerformanceChart({ data }) {
           calculable: false,
           orient: "horizontal",
           left: "center",
-          bottom: 4,
+          bottom: APEX_CHART.heatmapLegendBottom,
           text: ["Later finish", "Winner"],
-          textStyle: { color: "#aab4bf" },
-          inRange: { color: ["#f04f4f", "#ef9c4a", "#4b6372"] },
+          textStyle: { color: theme.colors.muted },
+          inRange: {
+            color: [theme.colors.accent, theme.colors.warning, theme.colors.info],
+          },
         },
         series: [{ type: "heatmap", data: values }],
       }}
@@ -324,6 +368,7 @@ export function DriverComparisonChart({
   metric = "points",
   showAll = false,
 }) {
+  const theme = getChartTheme();
   const config =
     comparisonMetricConfig[metric] || comparisonMetricConfig.points;
   const rankedRows = rankComparisonRows(rows, metric);
@@ -338,7 +383,14 @@ export function DriverComparisonChart({
   }
   const formatValue = (value) =>
     config.decimals ? value.toFixed(config.decimals) : String(value);
-  const height = Math.max(320, Math.min(960, visibleRows.length * 36 + 96));
+  const height = Math.max(
+    APEX_SIZES.comparisonMinHeight,
+    Math.min(
+      APEX_SIZES.comparisonMaxHeight,
+      visibleRows.length * APEX_SIZES.chartRowHeight +
+        APEX_SIZES.chartVerticalPadding,
+    ),
+  );
   return (
     <EChart
       label={`Driver comparison ranked by ${config.label.toLowerCase()}`}
@@ -346,9 +398,9 @@ export function DriverComparisonChart({
       description={`${visibleRows.length} drivers ranked by ${config.label.toLowerCase()}. Exact figures are available in the expandable table below the chart.`}
       option={{
         animation: false,
-        grid: { left: 8, right: 56, top: 20, bottom: 36, containLabel: true },
+        grid: { ...APEX_CHART.comparisonGrid, containLabel: true },
         tooltip: {
-          ...tooltip,
+          ...theme.tooltip,
           trigger: "item",
           formatter: (params) => {
             const row = visibleRows[params.dataIndex];
@@ -358,9 +410,9 @@ export function DriverComparisonChart({
         xAxis: {
           type: "value",
           min: 0,
-          ...axis,
+          ...theme.axis,
           axisLabel: {
-            color: "#aab4bf",
+            color: theme.colors.muted,
             formatter: (value) => formatValue(value),
           },
         },
@@ -370,13 +422,17 @@ export function DriverComparisonChart({
           data: visibleRows.map(
             (row, index) => `${index + 1}. ${compactDriverName(row.name)}`,
           ),
-          ...axis,
-          axisLabel: { color: "#aab4bf", width: 124, overflow: "truncate" },
+          ...theme.axis,
+          axisLabel: {
+            color: theme.colors.muted,
+            width: APEX_CHART.constructorLabelWidth,
+            overflow: "truncate",
+          },
         },
         series: [
           {
             type: "bar",
-            barMaxWidth: 22,
+            barMaxWidth: APEX_CHART.comparisonBarMaxWidth,
             data: visibleRows.map((row) => ({
               name: row.name,
               value: row.chartValue,
@@ -384,10 +440,10 @@ export function DriverComparisonChart({
             label: {
               show: true,
               position: "right",
-              color: "#f3f5f7",
+              color: theme.colors.text,
               formatter: (params) => formatValue(params.value),
             },
-            itemStyle: { color: "#f04f4f" },
+            itemStyle: { color: theme.colors.accent },
           },
         ],
       }}

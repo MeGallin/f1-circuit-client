@@ -18,7 +18,7 @@
 .race-focus {
   padding: var(--apex-space-8);
   border: 1px solid var(--apex-color-line);
-  border-top: 3px solid var(--apex-color-accent);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
   background: var(--apex-color-surface);
   border-radius: var(--apex-shape-radius);
   display: flex;
@@ -35,7 +35,7 @@
 }
 .race-focus-top .eyebrow {
   font-size: var(--apex-type-caption-size);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--apex-type-kicker-tracking);
 }
 .race-focus-content {
   display: grid;
@@ -320,7 +320,7 @@
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
   border-bottom: 1px solid var(--apex-color-line);
-  border-left: 3px solid transparent;
+  border-left: var(--apex-shape-active-indicator) solid transparent;
 }
 .calendar-row:last-child {
   border-bottom: 0;
@@ -337,7 +337,7 @@
   color: var(--apex-color-accent);
   font-size: var(--apex-type-eyebrow-size) !important;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--apex-type-kicker-tracking);
   text-transform: uppercase;
 }
 .calendar-row strong,

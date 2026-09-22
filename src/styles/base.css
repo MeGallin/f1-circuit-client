@@ -18,8 +18,8 @@ body {
   background-size: cover;
   color: var(--apex-color-text);
   font-family: var(--apex-font-body);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: var(--apex-type-body-size);
+  line-height: var(--apex-type-body-line);
 }
 html[data-theme="light"] body {
   background-image:
@@ -64,7 +64,7 @@ h1 {
   font-size: var(--apex-type-title-size);
 }
 h2 {
-  font-size: 2rem;
+  font-size: var(--apex-type-subheading-size);
 }
 img {
   max-width: 100%;

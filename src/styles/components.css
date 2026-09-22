@@ -8,7 +8,7 @@
   min-width: 0;
 }
 .topbar {
-  min-height: 64px;
+  min-height: var(--apex-layout-topbar-height);
   padding: var(--apex-space-6);
   border-bottom: 1px solid var(--apex-color-line);
   display: flex;
@@ -18,7 +18,8 @@
 }
 .mobile-brand {
   font-family: var(--apex-font-display);
-  font-size: 1.5rem;
+  font-size: var(--apex-type-mobile-brand-size);
+  line-height: var(--apex-type-mobile-brand-line);
   color: var(--apex-color-text);
   text-decoration: none;
   font-weight: 700;
@@ -130,11 +131,11 @@
 .text-link {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--apex-size-target);
   font-weight: 700;
 }
 .panel {
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   background: var(--apex-color-surface);
   border-radius: var(--apex-shape-radius);
   min-width: 0;
@@ -147,7 +148,7 @@
   justify-content: space-between;
   gap: var(--apex-space-5);
   flex-wrap: wrap;
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .panel-heading h2 {
   font-family: var(--apex-font-body);
@@ -176,13 +177,13 @@
 .field select,
 .field input {
   width: 100%;
-  min-height: 44px;
-  border: 1px solid var(--apex-color-control-border);
+  min-height: var(--apex-size-target);
+  border: var(--apex-shape-border) solid var(--apex-color-control-border);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
   color: var(--apex-color-text);
   padding: var(--apex-space-4) var(--apex-space-5);
-  font-size: 1rem;
+  font-size: var(--apex-type-control-mobile-size);
   max-width: 100%;
 }
 .field input::placeholder {
@@ -201,7 +202,7 @@
   justify-content: space-between;
   gap: var(--apex-space-5);
   padding: var(--apex-space-3) var(--apex-space-4);
-  border: 1px solid var(--apex-color-control-border);
+  border: var(--apex-shape-border) solid var(--apex-color-control-border);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
 }
@@ -222,7 +223,7 @@
   display: grid;
   max-height: 18rem;
   overflow: auto;
-  border: 1px solid var(--apex-color-control-border);
+  border: var(--apex-shape-border) solid var(--apex-color-control-border);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
 }
@@ -232,7 +233,7 @@
   min-height: var(--apex-size-target);
   padding: var(--apex-space-4) var(--apex-space-5);
   border: 0;
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   background: transparent;
   color: var(--apex-color-text);
   text-align: left;
@@ -258,19 +259,19 @@
 }
 .filters .field {
   flex: 1;
-  min-width: 140px;
+  min-width: var(--apex-layout-field-min-width);
 }
 .tabs {
   display: flex;
   overflow-x: auto;
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   gap: var(--apex-space-6);
   padding-inline: var(--apex-space-6);
 }
 .tabs button {
   border: 0;
-  border-bottom: 3px solid transparent;
-  min-height: 52px;
+  border-bottom: var(--apex-shape-active-indicator) solid transparent;
+  min-height: var(--apex-size-control-tall);
   background: none;
   color: var(--apex-color-muted);
   font-weight: 700;
@@ -450,7 +451,7 @@
   gap: var(--apex-space-5);
 }
 .skeleton i {
-  height: 24px;
+  height: var(--apex-size-skeleton-row);
   background: var(--apex-color-elevated);
   border-radius: var(--apex-shape-radius);
 }
@@ -529,7 +530,7 @@ summary {
   padding-block: var(--apex-space-5);
 }
 .footer {
-  padding: var(--apex-space-8) var(--apex-page-gutter) 100px;
+  padding: var(--apex-space-8) var(--apex-page-gutter) var(--apex-layout-mobile-footer-space);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -649,7 +650,7 @@ summary {
     top: 0;
     height: 100dvh;
     overflow: auto;
-    border-right: 1px solid var(--apex-color-line);
+    border-right: var(--apex-shape-border) solid var(--apex-color-line);
     background: var(--apex-color-surface);
     padding: var(--apex-space-8) var(--apex-space-6);
   }
@@ -658,8 +659,8 @@ summary {
     align-items: center;
     gap: var(--apex-space-4);
     font-family: var(--apex-font-display);
-    font-size: 2rem;
-    line-height: 0.95;
+    font-size: var(--apex-type-brand-size);
+    line-height: var(--apex-type-brand-line);
     color: var(--apex-color-text);
     text-decoration: none;
     font-weight: 700;
@@ -669,12 +670,12 @@ summary {
   }
   .brand-secondary {
     display: block;
-    font-size: 1.25rem;
-    letter-spacing: 0.1em;
+    font-size: var(--apex-type-brand-secondary-size);
+    letter-spacing: var(--apex-type-brand-secondary-tracking);
   }
   .rail-caption {
     font-family: var(--apex-font-numeric);
-    font-size: 0.5625rem;
+    font-size: var(--apex-type-eyebrow-size);
     letter-spacing: 0.06em;
     color: var(--apex-color-muted);
     margin-block: var(--apex-space-6) var(--apex-space-10);
@@ -690,7 +691,7 @@ summary {
     color: var(--apex-color-muted);
     text-decoration: none;
     padding: var(--apex-space-5);
-    border-left: 3px solid transparent;
+    border-left: var(--apex-shape-active-indicator) solid transparent;
     font-size: var(--apex-type-body-size);
   }
   .rail-nav a.active {
@@ -713,7 +714,7 @@ summary {
     display: flex;
     gap: var(--apex-space-4);
     align-items: center;
-    min-height: 44px;
+    min-height: var(--apex-size-target);
   }
   .mobile-nav,
   .mobile-brand {
@@ -726,7 +727,7 @@ summary {
     display: block;
     font-family: var(--apex-font-numeric);
     letter-spacing: 0.08em;
-    font-size: 0.625rem;
+    font-size: var(--apex-type-eyebrow-size);
     color: var(--apex-color-muted);
   }
   .page {

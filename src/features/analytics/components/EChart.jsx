@@ -13,6 +13,7 @@ import {
   VisualMapComponent,
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 
 echarts.use([
   BarChart,
@@ -26,7 +27,12 @@ echarts.use([
   CanvasRenderer,
 ]);
 
-export default function EChart({ option, height = 300, label, description }) {
+export default function EChart({
+  option,
+  height = APEX_SIZES.chartHeight,
+  label,
+  description,
+}) {
   const node = useRef(null);
   const chart = useRef(null);
   const descriptionId = useId();

@@ -10,7 +10,7 @@
   color: var(--apex-color-accent);
   font-size: var(--apex-type-eyebrow-size);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--apex-type-kicker-tracking);
 }
 .race-countdown-parts {
   display: flex;

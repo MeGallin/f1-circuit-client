@@ -204,6 +204,13 @@
         "weight": 400,
         "tracking": ".13em"
       },
+      "kicker": {
+        "family": "numeric",
+        "size": 10,
+        "lineHeight": 1.6,
+        "weight": 400,
+        "tracking": ".08em"
+      },
       "table": {
         "family": "body",
         "size": 12,
@@ -237,6 +244,27 @@
         "size": 18,
         "lineHeight": 1.3,
         "weight": 400,
+        "tracking": "0"
+      },
+      "brand": {
+        "family": "display",
+        "size": 32,
+        "lineHeight": 0.95,
+        "weight": 700,
+        "tracking": "0"
+      },
+      "brandSecondary": {
+        "family": "display",
+        "size": 20,
+        "lineHeight": 0.95,
+        "weight": 700,
+        "tracking": ".1em"
+      },
+      "mobileBrand": {
+        "family": "display",
+        "size": 24,
+        "lineHeight": 1.08,
+        "weight": 700,
         "tracking": "0"
       }
     }
@@ -275,7 +303,14 @@
     "racePaddingTablet": 24,
     "racePaddingMobile": 25,
     "titlePaddingTop": 33,
-    "titlePaddingBottom": 28
+    "titlePaddingBottom": 28,
+    "topbarHeight": 64,
+    "mobileFooterSpace": 100,
+    "fieldMinWidth": 140,
+    "standingRankColumn": 58,
+    "calendarRoundColumn": 80,
+    "calendarDateColumn": 145,
+    "calendarStatusColumn": 120
   },
   "breakpoints": {
     "mobile": 0,
@@ -301,7 +336,64 @@
     "drawerMax": 420,
     "tooltipMax": 280,
     "chartHeight": 300,
-    "emptyMin": 180
+    "emptyMin": 180,
+    "controlCompact": 36,
+    "controlSmall": 40,
+    "controlTall": 52,
+    "iconFrame": 40,
+    "avatar": 72,
+    "skeletonRow": 24,
+    "textareaMin": 120,
+    "progressTrack": 6,
+    "chartMinHeight": 300,
+    "chartMaxHeight": 520,
+    "heatmapMinHeight": 320,
+    "heatmapMaxHeight": 560,
+    "comparisonMinHeight": 320,
+    "comparisonMaxHeight": 960,
+    "chartRowHeight": 36,
+    "heatmapRowHeight": 18,
+    "chartVerticalPadding": 96
+  },
+  "chart": {
+    "grid": {
+      "left": 48,
+      "right": 24,
+      "top": 28,
+      "bottom": 56
+    },
+    "pointsLegendBottom": 76,
+    "constructorGrid": {
+      "left": 8,
+      "right": 44,
+      "top": 20,
+      "bottom": 28
+    },
+    "circuitGrid": {
+      "left": 4,
+      "right": 8,
+      "top": 40,
+      "bottom": 76
+    },
+    "comparisonGrid": {
+      "left": 8,
+      "right": 56,
+      "top": 20,
+      "bottom": 36
+    },
+    "constructorLabelWidth": 124,
+    "circuitDriverLabelWidth": 72,
+    "circuitLabelWidth": 108,
+    "lineSymbolSize": 7,
+    "legendItemWidth": 16,
+    "legendItemGap": 12,
+    "barMaxWidth": 24,
+    "comparisonBarMaxWidth": 22,
+    "scatterSymbolSize": 12,
+    "heatmapLegendBottom": 4,
+    "constructorLabelMargin": 6,
+    "circuitLabelMargin": 4,
+    "circuitLabelRotation": 25
   },
   "motion": {
     "instant": 0,

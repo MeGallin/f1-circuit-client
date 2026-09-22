@@ -10,7 +10,7 @@
 .questions-form__text textarea {
   width: 100%;
   resize: vertical;
-  min-height: 120px;
+  min-height: var(--apex-size-textarea-min);
   border: 1px solid var(--apex-color-control-border);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
@@ -67,7 +67,7 @@
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--apex-type-kicker-tracking);
   text-transform: uppercase;
 }
 .question-result-question {
@@ -126,14 +126,14 @@
   width: 100%;
   max-width: none;
   padding: var(--apex-space-5) 0 var(--apex-space-5) var(--apex-space-5);
-  border-left: 3px solid var(--apex-color-accent);
+  border-left: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
 }
 .question-answer-label {
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--apex-type-kicker-tracking);
   text-transform: uppercase;
 }
 .question-answer {

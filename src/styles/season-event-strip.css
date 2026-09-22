@@ -4,8 +4,8 @@
   align-items: center;
   gap: var(--apex-space-2);
   padding: var(--apex-space-3) var(--apex-space-2);
-  border-top: 1px solid var(--apex-color-line);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 
 .season-event-guidance {

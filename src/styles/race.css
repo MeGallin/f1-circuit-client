@@ -4,7 +4,7 @@
   padding: var(--apex-space-7);
   background: var(--apex-color-surface);
   border: 1px solid var(--apex-color-line);
-  border-top: 3px solid var(--apex-color-accent);
+  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
   border-radius: var(--apex-shape-radius);
 }
 .race-circuit-visual {
@@ -24,7 +24,7 @@
 }
 .race-coverage summary {
   cursor: pointer;
-  min-height: 44px;
+  min-height: var(--apex-size-target);
   color: var(--apex-color-text);
 }
 .race-session-picker,
@@ -57,7 +57,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--apex-space-2);
-  min-height: 44px;
+  min-height: var(--apex-size-target);
   padding: var(--apex-space-3) var(--apex-space-4);
   border: 1px solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);

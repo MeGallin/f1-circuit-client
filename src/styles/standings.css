@@ -18,10 +18,10 @@
 }
 .standing-rows > li {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: var(--apex-layout-standing-rank-column) minmax(0, 1fr);
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
   align-items: center;
 }
 .standing-rank {

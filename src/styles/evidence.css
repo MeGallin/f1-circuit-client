@@ -14,7 +14,7 @@
   border-top: 1px solid var(--apex-color-line);
 }
 .evidence-technical summary {
-  min-height: 44px;
+  min-height: var(--apex-size-target);
   color: var(--apex-color-link);
   cursor: pointer;
 }
@@ -64,7 +64,7 @@
 }
 .evidence-field summary {
   cursor: pointer;
-  min-height: 44px;
+  min-height: var(--apex-size-target);
   color: var(--apex-color-link);
 }
 .evidence-assertions {
@@ -77,7 +77,7 @@
   gap: var(--apex-space-2);
   padding: var(--apex-space-4);
   background: var(--apex-color-elevated);
-  border-left: 3px solid var(--apex-color-accent);
+  border-left: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
   font-size: var(--apex-type-caption-size);
 }
 .evidence-assertions a {

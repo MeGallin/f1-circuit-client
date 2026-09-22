@@ -9,7 +9,7 @@
 .analytics-overview-strip {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-overview-metric {
@@ -63,6 +63,14 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
 }
+.analytics-page .panel > .panel-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: flex-start;
+}
+.analytics-page .panel > .panel-heading > .button {
+  justify-self: start;
+}
 .analytics-dashboard-grid--three {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -83,7 +91,7 @@
 .analytics-stat-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-stat {
@@ -115,7 +123,7 @@
 .analytics-intelligence-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-intelligence-metric {
@@ -160,7 +168,7 @@
 .analytics-race-context-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-race-context {
@@ -300,7 +308,7 @@
 .analytics-weekend-timeline ol {
   display: grid;
   grid-template-columns: repeat(5, minmax(11rem, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   margin: 0;
   padding: 0;
   overflow-x: auto;
@@ -484,7 +492,7 @@
 .analytics-form-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-form-insight-metric {
@@ -517,7 +525,7 @@
 .analytics-performance-snapshot {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-snapshot-card {
@@ -698,10 +706,19 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--apex-space-7);
 }
+.analytics-chart-grid > .panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.analytics-chart-grid > .panel > .analytics-chart {
+  flex: 1 1 auto;
+  min-height: 0;
+}
 .analytics-championship-snapshot {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
 .analytics-championship-group {
@@ -787,7 +804,7 @@
 }
 .analytics-chart {
   width: 100%;
-  min-height: 260px;
+  min-height: var(--apex-size-chart-min-height);
 }
 
 .analytics-session-readout {
@@ -865,7 +882,7 @@
 .analytics-session-evidence-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1px;
+  gap: var(--apex-shape-border);
   margin-top: var(--apex-space-6);
   background: var(--apex-color-line);
 }
@@ -979,28 +996,6 @@
 .analytics-recent-results ol {
   flex: 0 0 auto;
 }
-.analytics-recent-results-meta {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: auto;
-  background: var(--apex-color-line);
-}
-.analytics-recent-results-meta > div {
-  display: grid;
-  gap: var(--apex-space-2);
-  min-width: 0;
-  padding: var(--apex-space-4);
-  background: var(--apex-color-elevated);
-}
-.analytics-recent-results-meta span {
-  color: var(--apex-color-muted);
-  font-size: var(--apex-type-caption-size);
-}
-.analytics-recent-results-meta strong {
-  overflow-wrap: anywhere;
-  font-size: var(--apex-type-body-size);
-}
 .analytics-recent-results-heading {
   display: flex;
   align-items: flex-start;
@@ -1023,7 +1018,7 @@
 }
 .analytics-recent-results ol {
   display: grid;
-  gap: 1px;
+  gap: var(--apex-shape-border);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1213,8 +1208,5 @@
   .analytics-recent-result-outcome {
     grid-column: 2;
     text-align: left;
-  }
-  .analytics-recent-results-meta {
-    grid-template-columns: 1fr;
   }
 }
