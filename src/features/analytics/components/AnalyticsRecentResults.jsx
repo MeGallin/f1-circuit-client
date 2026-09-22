@@ -1,5 +1,5 @@
 export function buildRecentResultsModel(race) {
-  return (race?.results || []).slice(0, 5);
+  return (race?.results || race?.podium || []).slice(0, 5);
 }
 
 export function formatResultGap(gap) {

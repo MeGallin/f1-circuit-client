@@ -39,6 +39,7 @@ import AnalyticsPerformanceSnapshot from "../features/analytics/components/Analy
 import AnalyticsChampionshipSnapshot from "../features/analytics/components/AnalyticsChampionshipSnapshot";
 import AnalyticsOverviewStrip from "../features/analytics/components/AnalyticsOverviewStrip";
 import AnalyticsRecentResults from "../features/analytics/components/AnalyticsRecentResults";
+import AnalyticsSessionReadout from "../features/analytics/components/AnalyticsSessionReadout";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -416,12 +417,11 @@ export default function Analytics() {
                 race={dashboard.seasonIntelligence?.latestRace}
               />
             </Panel>
-            <Panel title="Archive highlights" eyebrow="READOUT">
-              <ul className="analytics-insights">
-                {dashboard.insights.map((insight) => (
-                  <li key={insight}>{insight}</li>
-                ))}
-              </ul>
+            <Panel title="Race readout" eyebrow="SESSION CONTEXT" icon={ChartLineUpIcon}>
+              <AnalyticsSessionReadout
+                race={dashboard.seasonIntelligence?.latestRace}
+                insights={dashboard.insights}
+              />
             </Panel>
           </>
         )}

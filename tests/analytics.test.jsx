@@ -20,6 +20,7 @@ import {
   buildRecentResultsModel,
   formatResultGap,
 } from "../src/features/analytics/components/AnalyticsRecentResults";
+import { buildAnalyticsSessionReadoutModel } from "../src/features/analytics/components/AnalyticsSessionReadout";
 import {
   formatAnalyticsFreshness,
   buildAnalyticsOverviewModel,
@@ -113,6 +114,42 @@ test("recent results preserve race order and readable gaps", () => {
   expect(results.map((result) => result.position)).toEqual([1, 2]);
   expect(formatResultGap(results[0].gap)).toBe("Winner");
   expect(formatResultGap(results[1].gap)).toBe("+12.345s");
+});
+
+test("recent results can render a published podium-only payload", () => {
+  const results = buildRecentResultsModel({
+    podium: [
+      { position: 1, driverName: "Example One" },
+      { position: 2, driverName: "Example Two" },
+    ],
+  });
+
+  expect(results.map((result) => result.driverName)).toEqual([
+    "Example One",
+    "Example Two",
+  ]);
+});
+
+test("session readout stays grounded in the published race evidence", () => {
+  const model = buildAnalyticsSessionReadoutModel({
+    race: {
+      name: "Synthetic Grand Prix",
+      round: 8,
+      circuit: { displayName: "Example Circuit" },
+      results: [
+        { position: 1, driverName: "Example One", constructorName: "Example Team" },
+        { position: 2, driverName: "Example Two" },
+      ],
+      fastestLap: { driverName: "Example Two", lapNumber: 41 },
+    },
+    insights: ["The latest event is published.", "Example Team leads the selection."],
+  });
+
+  expect(model.race.title).toBe("Synthetic Grand Prix");
+  expect(model.race.winner).toBe("Example One");
+  expect(model.race.resultCount).toBe(2);
+  expect(model.race.fastestLap).toBe("Example Two · Lap 41");
+  expect(model.insights).toHaveLength(2);
 });
 
 test("analytics overview model exposes rates and snapshot freshness", () => {
