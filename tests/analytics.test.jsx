@@ -29,6 +29,7 @@ import { buildRaceBreakdownModel } from "../src/features/analytics/components/An
 import { buildDriverSpotlightModel } from "../src/features/analytics/components/AnalyticsPerformanceSnapshot";
 import { buildAnalyticsWeekendTimelineModel } from "../src/features/analytics/components/AnalyticsWeekendTimeline";
 import { buildAnalyticsCircuitInsightModel } from "../src/features/analytics/components/AnalyticsCircuitInsight";
+import { buildAnalyticsFormInsightsModel } from "../src/features/analytics/components/AnalyticsFormInsights";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -251,6 +252,33 @@ test("circuit insight derives coverage and best finish from published cells", ()
   expect(model.publishedFinishes).toBe(2);
   expect(model.driverCount).toBe(2);
   expect(model.bestFinish).toEqual({ position: 1, driverName: "Example One" });
+});
+
+test("form insights derive rates and constructor gap from published metrics", () => {
+  const model = buildAnalyticsFormInsightsModel({
+    leader: {
+      driverId: "driver:one",
+      driverName: "Example One",
+      recentForm: [3, 1, 2],
+    },
+    comparison: {
+      drivers: [
+        {
+          id: "driver:one",
+          metrics: { races: 10, podiums: 6, dnfRate: 0.1 },
+        },
+      ],
+    },
+    constructors: [
+      { constructorName: "Example Team", totalPoints: 300 },
+      { constructorName: "Second Team", totalPoints: 240 },
+    ],
+  });
+
+  expect(model.form).toEqual([3, 1, 2]);
+  expect(model.podiumRate.value).toBe("60%");
+  expect(model.dnfRate.value).toBe("10%");
+  expect(model.constructorGap.value).toBe("+60 pts");
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {

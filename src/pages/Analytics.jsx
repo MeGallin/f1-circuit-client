@@ -45,6 +45,7 @@ import AnalyticsRecentResults from "../features/analytics/components/AnalyticsRe
 import AnalyticsSessionReadout from "../features/analytics/components/AnalyticsSessionReadout";
 import AnalyticsWeekendTimeline from "../features/analytics/components/AnalyticsWeekendTimeline";
 import AnalyticsCircuitInsight from "../features/analytics/components/AnalyticsCircuitInsight";
+import AnalyticsFormInsights from "../features/analytics/components/AnalyticsFormInsights";
 import { selectLayout } from "../components/visuals";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
@@ -362,6 +363,17 @@ export default function Analytics() {
             >
               <AnalyticsPerformanceSnapshot
                 intelligence={dashboard.seasonIntelligence}
+              />
+            </Panel>
+            <Panel
+              title="Form & insights"
+              eyebrow="PERFORMANCE READOUT"
+              icon={ChartLineUpIcon}
+            >
+              <AnalyticsFormInsights
+                leader={dashboard.seasonIntelligence?.championshipLeader}
+                comparison={comparison}
+                constructors={dashboard.constructorContribution}
               />
             </Panel>
             <Panel title="Quick stats" eyebrow="DATA SCOPE" icon={DatabaseIcon}>
