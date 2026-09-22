@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router-dom";
 import {
   CalendarBlankIcon,
   ChartLineUpIcon,
-  BuildingsIcon,
   DatabaseIcon,
   FlagCheckeredIcon,
   GaugeIcon,
@@ -13,7 +12,6 @@ import {
   SlidersHorizontalIcon,
   TrophyIcon,
   UsersThreeIcon,
-  WarningCircleIcon,
 } from "@phosphor-icons/react";
 import {
   useGetAnalyticsDashboardQuery,
@@ -99,18 +97,19 @@ export function updateAnalyticsFilterParams(params, key, value) {
 }
 
 export function buildAnalyticsQuickStatsModel(stats = {}) {
-  const percentage = (value) => (value == null ? "Not available" : `${value}%`);
   return [
+    [TrophyIcon, "Race winners", stats.raceWinnerCount ?? "Not available"],
+    [
+      MedalIcon,
+      "Drivers on podium",
+      stats.podiumDriverCount ?? "Not available",
+    ],
     [
       FlagCheckeredIcon,
-      "Races completed",
-      `${stats.completedEvents} / ${stats.totalEvents}`,
+      "Published starts",
+      stats.publishedStarts ?? "Not available",
     ],
-    [ChartLineUpIcon, "Points scored", stats.totalPoints],
-    [MedalIcon, "Podium rate", percentage(stats.podiumRate)],
-    [WarningCircleIcon, "DNF rate", percentage(stats.dnfRate)],
-    [UsersThreeIcon, "Drivers", stats.driverCount],
-    [BuildingsIcon, "Constructors", stats.constructorCount],
+    [ChartLineUpIcon, "Fastest laps", stats.fastestLapCount ?? "Not available"],
   ];
 }
 

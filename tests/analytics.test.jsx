@@ -282,27 +282,21 @@ test("form insights derive rates and constructor gap from published metrics", ()
   expect(model.constructorGap.value).toBe("+60 pts");
 });
 
-test("quick stats prioritise user-facing performance measures", () => {
+test("quick stats expose complementary archive-backed measures", () => {
   const model = buildAnalyticsQuickStatsModel({
-    completedEvents: 14,
-    totalEvents: 23,
-    totalPoints: 1414,
-    podiumRate: 28.6,
-    dnfRate: 4.8,
-    driverCount: 23,
-    constructorCount: 11,
+    raceWinnerCount: 5,
+    podiumDriverCount: 8,
+    publishedStarts: 301,
+    fastestLapCount: 14,
   });
 
   expect(model.map(([, label]) => label)).toEqual([
-    "Races completed",
-    "Points scored",
-    "Podium rate",
-    "DNF rate",
-    "Drivers",
-    "Constructors",
+    "Race winners",
+    "Drivers on podium",
+    "Published starts",
+    "Fastest laps",
   ]);
-  expect(model[2][2]).toBe("28.6%");
-  expect(model[3][2]).toBe("4.8%");
+  expect(model.map(([, , value]) => value)).toEqual([5, 8, 301, 14]);
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {
