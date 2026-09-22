@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import * as echarts from "echarts/core";
 import {
   BarChart,
@@ -26,9 +26,10 @@ echarts.use([
   CanvasRenderer,
 ]);
 
-export default function EChart({ option, height = 300, label }) {
+export default function EChart({ option, height = 300, label, description }) {
   const node = useRef(null);
   const chart = useRef(null);
+  const descriptionId = useId();
   useEffect(() => {
     if (!node.current) return undefined;
     chart.current = echarts.init(node.current, undefined, {
@@ -47,12 +48,20 @@ export default function EChart({ option, height = 300, label }) {
     chart.current?.setOption(option, { notMerge: true });
   }, [option]);
   return (
-    <div
-      ref={node}
-      className="analytics-chart"
-      style={{ height }}
-      role="img"
-      aria-label={label}
-    />
+    <>
+      {description && (
+        <p className="sr-only" id={descriptionId}>
+          {description}
+        </p>
+      )}
+      <div
+        ref={node}
+        className="analytics-chart"
+        style={{ height }}
+        role="img"
+        aria-label={label}
+        aria-describedby={description ? descriptionId : undefined}
+      />
+    </>
   );
 }

@@ -13,6 +13,7 @@ import {
   PageHeading,
   Panel,
   Select,
+  SourceNote,
 } from "../components/ui";
 import {
   CircuitPerformanceChart,
@@ -26,6 +27,45 @@ import "../styles/analytics.css";
 
 const values = (params, key) =>
   (params.get(key) || "").split(",").filter(Boolean);
+
+export function buildAnalyticsRequest(params) {
+  return {
+    season: Number(params.get("season") || runtimeYear()),
+    fromRound: params.get("fromRound") || undefined,
+    toRound: params.get("toRound") || undefined,
+    driverIds: values(params, "driverIds"),
+    constructorIds: values(params, "constructorIds"),
+    circuitIds: values(params, "circuitIds"),
+    sessionType: params.get("sessionType") || "race",
+    snapshotId: params.get("snapshotId") || undefined,
+  };
+}
+
+export function buildDriverComparisonRequest(params) {
+  const request = buildAnalyticsRequest(params);
+  return {
+    season: request.season,
+    fromRound: request.fromRound,
+    toRound: request.toRound,
+    drivers: request.driverIds,
+    constructorIds: request.constructorIds,
+    circuitIds: request.circuitIds,
+    sessionType: request.sessionType,
+    snapshotId: request.snapshotId,
+  };
+}
+
+export function updateAnalyticsFilterParams(params, key, value) {
+  const next = new URLSearchParams(params);
+  if (key === "season") {
+    ["driverIds", "constructorIds", "circuitIds", "fromRound", "toRound"].forEach(
+      (dependentKey) => next.delete(dependentKey),
+    );
+  }
+  if (value) next.set(key, value);
+  else next.delete(key);
+  return next;
+}
 
 function StatStrip({ stats }) {
   const items = [
@@ -52,16 +92,13 @@ function FilterBar({ dashboard, params, setParams }) {
   const filters = dashboard?.filters || {};
   const options = dashboard?.filterOptions || {};
   const update = (key, value) => {
-    const next = new URLSearchParams(params);
-    if (value) next.set(key, value);
-    else next.delete(key);
-    setParams(next);
+    setParams(updateAnalyticsFilterParams(params, key, value));
   };
   return (
     <div className="analytics-filters">
       <Select
         label="Season"
-        value={String(filters.season || "")}
+        value={params.get("season") || String(filters.season || "")}
         options={(options.seasons || []).map((item) => ({
           value: String(item.year),
           label: item.name,
@@ -70,7 +107,7 @@ function FilterBar({ dashboard, params, setParams }) {
       />
       <Select
         label="Session"
-        value={filters.sessionType || "race"}
+        value={params.get("sessionType") || filters.sessionType || "race"}
         options={(options.sessionTypes || ["race"]).map((item) => ({
           value: item,
           label: item[0].toUpperCase() + item.slice(1),
@@ -79,7 +116,7 @@ function FilterBar({ dashboard, params, setParams }) {
       />
       <Select
         label="Driver"
-        value={filters.driverIds?.[0] || ""}
+        value={params.get("driverIds") || filters.driverIds?.[0] || ""}
         options={[
           { value: "", label: "All drivers" },
           ...(options.drivers || []).map((item) => ({
@@ -91,7 +128,9 @@ function FilterBar({ dashboard, params, setParams }) {
       />
       <Select
         label="Constructor"
-        value={filters.constructorIds?.[0] || ""}
+        value={
+          params.get("constructorIds") || filters.constructorIds?.[0] || ""
+        }
         options={[
           { value: "", label: "All constructors" },
           ...(options.constructors || []).map((item) => ({
@@ -103,7 +142,7 @@ function FilterBar({ dashboard, params, setParams }) {
       />
       <Select
         label="Circuit"
-        value={filters.circuitIds?.[0] || ""}
+        value={params.get("circuitIds") || filters.circuitIds?.[0] || ""}
         options={[
           { value: "", label: "All circuits" },
           ...(options.circuits || []).map((item) => ({
@@ -187,23 +226,15 @@ function Comparison({ data }) {
 
 export default function Analytics() {
   const [params, setParams] = useSearchParams();
-  const season = Number(params.get("season") || runtimeYear());
-  const driverIds = values(params, "driverIds");
-  const constructorIds = values(params, "constructorIds");
-  const circuitIds = values(params, "circuitIds");
-  const request = {
-    season,
-    fromRound: params.get("fromRound") || undefined,
-    toRound: params.get("toRound") || undefined,
-    driverIds,
-    constructorIds,
-    circuitIds,
-    sessionType: params.get("sessionType") || "race",
-  };
+  const request = buildAnalyticsRequest(params);
+  const { season, driverIds } = request;
   const dashboardQuery = useGetAnalyticsDashboardQuery(request);
   const dashboard = dashboardQuery.currentData?.analyticsDashboard;
+  const filterDashboard =
+    dashboardQuery.currentData?.analyticsDashboard ||
+    dashboardQuery.data?.analyticsDashboard;
   const comparisonQuery = useGetDriverComparisonQuery(
-    { season, drivers: driverIds },
+    buildDriverComparisonRequest(params),
     { skip: !dashboard || driverIds.length < 2 },
   );
   const comparison =
@@ -223,7 +254,7 @@ export default function Analytics() {
       />
       <Panel title="Shape the view" eyebrow="ARCHIVE FILTERS">
         <FilterBar
-          dashboard={dashboard}
+          dashboard={filterDashboard}
           params={params}
           setParams={setParams}
         />
@@ -300,6 +331,9 @@ export default function Analytics() {
           </>
         )}
       </DataBoundary>
+      <SourceNote
+        meta={dashboardQuery.currentData?.meta || dashboardQuery.data?.meta}
+      />
     </div>
   );
 }

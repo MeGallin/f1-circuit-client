@@ -279,13 +279,25 @@ export const archiveApi = createApi({
       transformResponse: (r) => objectResponse(r, "analyticsDashboard"),
     }),
     getDriverComparison: builder.query({
-      query: ({ season, fromRound, toRound, drivers, snapshotId }) => ({
+      query: ({
+        season,
+        fromRound,
+        toRound,
+        drivers,
+        constructorIds,
+        circuitIds,
+        sessionType = "race",
+        snapshotId,
+      }) => ({
         url: "/analytics/driver-comparison",
         params: {
           season,
           fromRound,
           toRound,
           drivers: drivers?.join(","),
+          constructorIds: constructorIds?.join(","),
+          circuitIds: circuitIds?.join(","),
+          sessionType,
           snapshotId,
         },
       }),
