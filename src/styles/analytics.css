@@ -328,6 +328,65 @@
   background: var(--apex-color-surface);
   font-size: var(--apex-type-caption-size);
 }
+.analytics-race-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--apex-space-5);
+  margin-top: var(--apex-space-7);
+}
+.analytics-breakdown-metric {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-4);
+  min-width: 0;
+}
+.analytics-breakdown-ring {
+  position: relative;
+  display: grid;
+  flex: 0 0 4.5rem;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--apex-color-accent) var(--ring-progress),
+    var(--apex-color-line) var(--ring-progress)
+  );
+}
+.analytics-breakdown-ring::before {
+  content: "";
+  position: absolute;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 50%;
+  background: var(--apex-color-surface);
+}
+.analytics-breakdown-ring > div {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+.analytics-breakdown-ring strong {
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-subheading-size);
+  line-height: 1;
+}
+.analytics-breakdown-ring small,
+.analytics-breakdown-copy small {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.analytics-breakdown-copy {
+  display: grid;
+  gap: var(--apex-space-1);
+  min-width: 0;
+}
+.analytics-breakdown-copy > svg {
+  color: var(--apex-color-accent-text);
+}
+.analytics-breakdown-copy strong {
+  overflow-wrap: anywhere;
+}
 .analytics-chart-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -589,6 +648,9 @@
   }
   .analytics-snapshot-value-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analytics-race-breakdown {
+    gap: var(--apex-space-4);
   }
   .analytics-snapshot-note {
     padding-inline: var(--apex-space-6);

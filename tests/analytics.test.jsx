@@ -24,6 +24,7 @@ import {
   formatAnalyticsFreshness,
   buildAnalyticsOverviewModel,
 } from "../src/features/analytics/components/AnalyticsOverviewStrip";
+import { buildRaceBreakdownModel } from "../src/features/analytics/components/AnalyticsRaceBreakdown";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -139,6 +140,27 @@ test("analytics overview model exposes rates and snapshot freshness", () => {
   expect(model.constructorLeader.value).toBe("Example Team");
   expect(formatAnalyticsFreshness(null)).toBe("Not available");
   expect(formatAnalyticsFreshness("2026-09-21T15:00:00Z")).toBe("21 Sept 2026");
+});
+
+test("race breakdown turns published totals into comparable ring metrics", () => {
+  const model = buildRaceBreakdownModel({
+    starts: 180,
+    classified: 171,
+    dnfs: 9,
+    wins: 18,
+    podiums: 54,
+    fastestLaps: 18,
+  });
+
+  expect(model.map((metric) => metric.label)).toEqual([
+    "Race wins",
+    "Podiums",
+    "Fastest laps",
+    "Finishing status",
+  ]);
+  expect(model[0].value).toBe(18);
+  expect(model[0].percentage).toBe(10);
+  expect(model[3].detail).toBe("171 classified · 9 DNF");
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {

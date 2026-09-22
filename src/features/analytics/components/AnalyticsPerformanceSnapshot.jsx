@@ -1,4 +1,5 @@
 import { ChartLineUpIcon, GaugeIcon, TrophyIcon } from "@phosphor-icons/react";
+import AnalyticsRaceBreakdown from "./AnalyticsRaceBreakdown";
 
 function SnapshotValue({ label, value, detail }) {
   return (
@@ -34,33 +35,31 @@ export default function AnalyticsPerformanceSnapshot({ intelligence }) {
           <SnapshotValue label="Podiums" value={leader?.podiums} />
           <SnapshotValue
             label="Average finish"
-            value={leader?.averageFinish == null ? null : leader.averageFinish.toFixed(1)}
+            value={
+              leader?.averageFinish == null
+                ? null
+                : leader.averageFinish.toFixed(1)
+            }
           />
         </div>
       </section>
       <section className="analytics-snapshot-card">
         <div className="analytics-snapshot-heading">
           <div>
-            <p className="eyebrow">SEASON BREAKDOWN</p>
-            <h3>Published race metrics</h3>
-            <p className="muted">Calculated from {breakdown.entries ?? "—"} published entries.</p>
+            <p className="eyebrow">RACE BREAKDOWN</p>
+            <h3>Published outcomes</h3>
+            <p className="muted">
+              Calculated from {breakdown.entries ?? "—"} published entries.
+            </p>
           </div>
           <TrophyIcon size={24} aria-hidden />
         </div>
-        <div className="analytics-snapshot-value-grid">
-          <SnapshotValue label="Race wins" value={breakdown.wins} />
-          <SnapshotValue label="Podiums" value={breakdown.podiums} />
-          <SnapshotValue label="Fastest laps" value={breakdown.fastestLaps} />
-          <SnapshotValue
-            label="DNFs"
-            value={breakdown.dnfs}
-            detail={breakdown.starts != null ? `${breakdown.starts} starts` : null}
-          />
-        </div>
+        <AnalyticsRaceBreakdown breakdown={breakdown} />
       </section>
       <p className="analytics-snapshot-note">
         <GaugeIcon size={16} aria-hidden />
-        Metrics stay empty when the published archive does not supply the underlying result.
+        Metrics stay empty when the published archive does not supply the
+        underlying result.
       </p>
     </div>
   );
