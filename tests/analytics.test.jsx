@@ -30,6 +30,7 @@ import { buildDriverSpotlightModel } from "../src/features/analytics/components/
 import { buildAnalyticsWeekendTimelineModel } from "../src/features/analytics/components/AnalyticsWeekendTimeline";
 import { buildAnalyticsCircuitInsightModel } from "../src/features/analytics/components/AnalyticsCircuitInsight";
 import { buildAnalyticsFormInsightsModel } from "../src/features/analytics/components/AnalyticsFormInsights";
+import { buildAnalyticsQuickStatsModel } from "../src/pages/Analytics";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -279,6 +280,29 @@ test("form insights derive rates and constructor gap from published metrics", ()
   expect(model.podiumRate.value).toBe("60%");
   expect(model.dnfRate.value).toBe("10%");
   expect(model.constructorGap.value).toBe("+60 pts");
+});
+
+test("quick stats prioritise user-facing performance measures", () => {
+  const model = buildAnalyticsQuickStatsModel({
+    completedEvents: 14,
+    totalEvents: 23,
+    totalPoints: 1414,
+    podiumRate: 28.6,
+    dnfRate: 4.8,
+    driverCount: 23,
+    constructorCount: 11,
+  });
+
+  expect(model.map(([, label]) => label)).toEqual([
+    "Races completed",
+    "Points scored",
+    "Podium rate",
+    "DNF rate",
+    "Drivers",
+    "Constructors",
+  ]);
+  expect(model[2][2]).toBe("28.6%");
+  expect(model[3][2]).toBe("4.8%");
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {

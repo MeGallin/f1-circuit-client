@@ -8,10 +8,12 @@ import {
   FlagCheckeredIcon,
   GaugeIcon,
   MapTrifoldIcon,
+  MedalIcon,
   RankingIcon,
   SlidersHorizontalIcon,
   TrophyIcon,
   UsersThreeIcon,
+  WarningCircleIcon,
 } from "@phosphor-icons/react";
 import {
   useGetAnalyticsDashboardQuery,
@@ -96,19 +98,24 @@ export function updateAnalyticsFilterParams(params, key, value) {
   return next;
 }
 
-function StatStrip({ stats }) {
-  const items = [
+export function buildAnalyticsQuickStatsModel(stats = {}) {
+  const percentage = (value) => (value == null ? "Not available" : `${value}%`);
+  return [
     [
       FlagCheckeredIcon,
       "Races completed",
       `${stats.completedEvents} / ${stats.totalEvents}`,
     ],
     [ChartLineUpIcon, "Points scored", stats.totalPoints],
+    [MedalIcon, "Podium rate", percentage(stats.podiumRate)],
+    [WarningCircleIcon, "DNF rate", percentage(stats.dnfRate)],
     [UsersThreeIcon, "Drivers", stats.driverCount],
     [BuildingsIcon, "Constructors", stats.constructorCount],
-    [MapTrifoldIcon, "Circuits", stats.circuitCount],
-    [DatabaseIcon, "Published entries", stats.publishedEntries],
   ];
+}
+
+function StatStrip({ stats }) {
+  const items = buildAnalyticsQuickStatsModel(stats);
   return (
     <div className="analytics-stat-grid">
       {items.map(([Icon, label, value]) => (
