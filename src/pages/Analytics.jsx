@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   ChartLineUpIcon,
+  BuildingsIcon,
   DatabaseIcon,
   FlagCheckeredIcon,
   GaugeIcon,
+  MapTrifoldIcon,
   RankingIcon,
   SlidersHorizontalIcon,
   TrophyIcon,
@@ -82,16 +84,21 @@ export function updateAnalyticsFilterParams(params, key, value) {
 
 function StatStrip({ stats }) {
   const items = [
-    ["Points scored", stats.totalPoints],
-    ["Drivers", stats.driverCount],
-    ["Constructors", stats.constructorCount],
-    ["Circuits", stats.circuitCount],
+    [FlagCheckeredIcon, "Races completed", `${stats.completedEvents} / ${stats.totalEvents}`],
+    [ChartLineUpIcon, "Points scored", stats.totalPoints],
+    [UsersThreeIcon, "Drivers", stats.driverCount],
+    [BuildingsIcon, "Constructors", stats.constructorCount],
+    [MapTrifoldIcon, "Circuits", stats.circuitCount],
+    [DatabaseIcon, "Published entries", stats.publishedEntries],
   ];
   return (
     <div className="analytics-stat-grid">
-      {items.map(([label, value]) => (
+      {items.map(([Icon, label, value]) => (
         <div className="analytics-stat" key={label}>
-          <span>{label}</span>
+          <div className="analytics-stat-heading">
+            <Icon size={18} aria-hidden />
+            <span>{label}</span>
+          </div>
           <strong>{value ?? "—"}</strong>
         </div>
       ))}
@@ -289,8 +296,13 @@ export default function Analytics() {
                 intelligence={dashboard.seasonIntelligence}
               />
             </Panel>
-            <Panel title="Archive totals" eyebrow="DATA SCOPE" icon={DatabaseIcon}>
-              <StatStrip stats={dashboard.quickStats} />
+            <Panel title="Quick stats" eyebrow="DATA SCOPE" icon={DatabaseIcon}>
+              <StatStrip
+                stats={{
+                  ...dashboard.quickStats,
+                  publishedEntries: dashboard.seasonIntelligence?.raceBreakdown?.entries,
+                }}
+              />
             </Panel>
             <Panel title="Championship snapshot" eyebrow="CURRENT ORDER" icon={TrophyIcon}>
               <AnalyticsChampionshipSnapshot
