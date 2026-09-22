@@ -49,6 +49,20 @@
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
 }
+.analytics-dashboard-grid {
+  display: grid;
+  align-items: start;
+  gap: var(--apex-space-7);
+}
+.analytics-dashboard-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.analytics-dashboard-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.analytics-dashboard-grid > .panel {
+  min-width: 0;
+}
 .analytics-stat-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -966,6 +980,9 @@
   .analytics-chart-grid {
     grid-template-columns: 1fr;
   }
+  .analytics-dashboard-grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .analytics-championship-snapshot {
     grid-template-columns: 1fr;
   }
@@ -987,6 +1004,10 @@
   }
   .analytics-intelligence-metrics,
   .analytics-stat-grid {
+    grid-template-columns: 1fr;
+  }
+  .analytics-dashboard-grid--two,
+  .analytics-dashboard-grid--three {
     grid-template-columns: 1fr;
   }
   .analytics-intelligence-metric {

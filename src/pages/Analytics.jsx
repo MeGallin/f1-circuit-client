@@ -308,7 +308,11 @@ export default function Analytics() {
   const latestCircuit = dashboard?.seasonIntelligence?.latestRace?.circuit;
   const latestCircuitId = latestCircuit?.id;
   const latestCircuitProfileQuery = useGetProfileQuery(
-    { kind: "circuit", id: latestCircuitId, snapshotId: responseMeta?.snapshotId },
+    {
+      kind: "circuit",
+      id: latestCircuitId,
+      snapshotId: responseMeta?.snapshotId,
+    },
     { skip: !latestCircuitId },
   );
   const latestCircuitLayoutsQuery = useGetLayoutsQuery(
@@ -370,69 +374,109 @@ export default function Analytics() {
             <AnalyticsIntelligence
               intelligence={dashboard.seasonIntelligence}
             />
-            <Panel
-              title="Weekend timeline"
-              eyebrow="SEASON FLOW"
-              icon={CalendarBlankIcon}
-              action={<ActionLink variant="quiet" to={panelLinks.calendar}>View calendar</ActionLink>}
-            >
-              <AnalyticsWeekendTimeline events={dashboard.weekendTimeline} />
-            </Panel>
-            <Panel
-              title="Circuit insight"
-              eyebrow="TRACK CONTEXT"
-              icon={MapTrifoldIcon}
-              action={<ActionLink variant="quiet" to={panelLinks.latestCircuit}>View circuit</ActionLink>}
-            >
-              <AnalyticsCircuitInsight
-                circuit={latestCircuit}
-                profile={latestCircuitProfile}
-                layout={latestCircuitLayout}
-                performance={dashboard.circuitPerformance}
-              />
-            </Panel>
-            <Panel
-              title="Performance snapshot"
-              eyebrow="RACE INTELLIGENCE"
-              icon={TrophyIcon}
-              action={<ActionLink variant="quiet" to={panelLinks.leader}>View driver</ActionLink>}
-            >
-              <AnalyticsPerformanceSnapshot
-                intelligence={dashboard.seasonIntelligence}
-              />
-            </Panel>
-            <Panel
-              title="Form & insights"
-              eyebrow="PERFORMANCE READOUT"
-              icon={ChartLineUpIcon}
-            >
-              <AnalyticsFormInsights
-                leader={dashboard.seasonIntelligence?.championshipLeader}
-                comparison={comparison}
-                constructors={dashboard.constructorContribution}
-              />
-            </Panel>
-            <Panel title="Quick stats" eyebrow="DATA SCOPE" icon={DatabaseIcon}>
-              <StatStrip
-                stats={{
-                  ...dashboard.quickStats,
-                  publishedEntries:
-                    dashboard.seasonIntelligence?.raceBreakdown?.entries,
-                }}
-              />
-            </Panel>
-            <Panel
-              title="Championship snapshot"
-              eyebrow="CURRENT ORDER"
-              icon={TrophyIcon}
-              action={<ActionLink variant="quiet" to={panelLinks.standings}>View standings</ActionLink>}
-            >
-              <AnalyticsChampionshipSnapshot
-                comparison={comparison}
-                constructors={dashboard.constructorContribution}
-                driverSeries={dashboard.pointsProgression.series}
-              />
-            </Panel>
+            <div className="analytics-dashboard-grid analytics-dashboard-grid--two">
+              <Panel
+                title="Weekend timeline"
+                eyebrow="SEASON FLOW"
+                icon={CalendarBlankIcon}
+                action={
+                  <ActionLink variant="quiet" to={panelLinks.calendar}>
+                    View calendar
+                  </ActionLink>
+                }
+              >
+                <AnalyticsWeekendTimeline events={dashboard.weekendTimeline} />
+              </Panel>
+              <Panel
+                title="Performance snapshot"
+                eyebrow="RACE INTELLIGENCE"
+                icon={TrophyIcon}
+                action={
+                  <ActionLink variant="quiet" to={panelLinks.leader}>
+                    View driver
+                  </ActionLink>
+                }
+              >
+                <AnalyticsPerformanceSnapshot
+                  intelligence={dashboard.seasonIntelligence}
+                />
+              </Panel>
+            </div>
+            <div className="analytics-dashboard-grid analytics-dashboard-grid--three">
+              <Panel
+                title="Circuit insight"
+                eyebrow="TRACK CONTEXT"
+                icon={MapTrifoldIcon}
+                action={
+                  <ActionLink variant="quiet" to={panelLinks.latestCircuit}>
+                    View circuit
+                  </ActionLink>
+                }
+              >
+                <AnalyticsCircuitInsight
+                  circuit={latestCircuit}
+                  profile={latestCircuitProfile}
+                  layout={latestCircuitLayout}
+                  performance={dashboard.circuitPerformance}
+                />
+              </Panel>
+              <Panel
+                title="Form & insights"
+                eyebrow="PERFORMANCE READOUT"
+                icon={ChartLineUpIcon}
+              >
+                <AnalyticsFormInsights
+                  leader={dashboard.seasonIntelligence?.championshipLeader}
+                  comparison={comparison}
+                  constructors={dashboard.constructorContribution}
+                />
+              </Panel>
+              <Panel
+                title="Quick stats"
+                eyebrow="DATA SCOPE"
+                icon={DatabaseIcon}
+              >
+                <StatStrip
+                  stats={{
+                    ...dashboard.quickStats,
+                    publishedEntries:
+                      dashboard.seasonIntelligence?.raceBreakdown?.entries,
+                  }}
+                />
+              </Panel>
+            </div>
+            <div className="analytics-dashboard-grid analytics-dashboard-grid--two">
+              <Panel
+                title="Championship snapshot"
+                eyebrow="CURRENT ORDER"
+                icon={TrophyIcon}
+                action={
+                  <ActionLink variant="quiet" to={panelLinks.standings}>
+                    View standings
+                  </ActionLink>
+                }
+              >
+                <AnalyticsChampionshipSnapshot
+                  comparison={comparison}
+                  constructors={dashboard.constructorContribution}
+                  driverSeries={dashboard.pointsProgression.series}
+                />
+              </Panel>
+              <Panel
+                title="Latest race results"
+                eyebrow="RACE SUMMARY"
+                icon={FlagCheckeredIcon}
+                action={
+                  <ActionLink variant="quiet" to={panelLinks.latestRace}>
+                    View race
+                  </ActionLink>
+                }
+              >
+                <AnalyticsRecentResults
+                  race={dashboard.seasonIntelligence?.latestRace}
+                />
+              </Panel>
+            </div>
             <div className="analytics-chart-grid">
               <Panel
                 title="Points progression"
@@ -498,16 +542,10 @@ export default function Analytics() {
               <Comparison data={comparison} />
             </Panel>
             <Panel
-              title="Latest race results"
-              eyebrow="RACE SUMMARY"
-              icon={FlagCheckeredIcon}
-              action={<ActionLink variant="quiet" to={panelLinks.latestRace}>View race</ActionLink>}
+              title="Race readout"
+              eyebrow="SESSION CONTEXT"
+              icon={ChartLineUpIcon}
             >
-              <AnalyticsRecentResults
-                race={dashboard.seasonIntelligence?.latestRace}
-              />
-            </Panel>
-            <Panel title="Race readout" eyebrow="SESSION CONTEXT" icon={ChartLineUpIcon}>
               <AnalyticsSessionReadout
                 race={dashboard.seasonIntelligence?.latestRace}
                 insights={dashboard.insights}
