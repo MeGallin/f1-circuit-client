@@ -58,10 +58,16 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .analytics-dashboard-grid--three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .analytics-dashboard-grid > .panel {
   min-width: 0;
+}
+.analytics-dashboard-grid--three > .panel:last-child {
+  grid-column: 1 / -1;
+}
+.analytics-dashboard-grid--three .analytics-form-insights {
+  grid-template-columns: 1fr;
 }
 .analytics-stat-grid {
   display: grid;
@@ -981,7 +987,10 @@
     grid-template-columns: 1fr;
   }
   .analytics-dashboard-grid--three {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+  }
+  .analytics-dashboard-grid--three > .panel:last-child {
+    grid-column: auto;
   }
   .analytics-championship-snapshot {
     grid-template-columns: 1fr;
