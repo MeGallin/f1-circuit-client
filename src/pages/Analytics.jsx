@@ -134,6 +134,43 @@ export function buildAnalyticsQuickStatsModel(stats = {}) {
   ];
 }
 
+export function buildAnalyticsStats({
+  stats = {},
+  comparison = {},
+  raceBreakdown = {},
+} = {}) {
+  const drivers = comparison?.drivers || [];
+  const publishedStarts = stats.publishedStarts ?? raceBreakdown.starts;
+  const fastestLapCount = stats.fastestLapCount ?? raceBreakdown.fastestLaps;
+  const podiums = raceBreakdown.podiums;
+  const dnfs = raceBreakdown.dnfs;
+  return {
+    ...stats,
+    raceWinnerCount:
+      stats.raceWinnerCount ??
+      (drivers.length
+        ? drivers.filter((driver) => Number(driver.metrics?.wins) > 0).length
+        : undefined),
+    podiumDriverCount:
+      stats.podiumDriverCount ??
+      (drivers.length
+        ? drivers.filter((driver) => Number(driver.metrics?.podiums) > 0).length
+        : undefined),
+    publishedStarts,
+    fastestLapCount,
+    podiumRate:
+      stats.podiumRate ??
+      (publishedStarts
+        ? Math.round((Number(podiums || 0) / publishedStarts) * 1000) / 10
+        : undefined),
+    dnfRate:
+      stats.dnfRate ??
+      (publishedStarts
+        ? Math.round((Number(dnfs || 0) / publishedStarts) * 1000) / 10
+        : undefined),
+  };
+}
+
 function StatStrip({ stats }) {
   const items = buildAnalyticsQuickStatsModel(stats);
   return (
@@ -330,6 +367,24 @@ export default function Analytics() {
     latestCircuitId,
     leaderId: dashboard?.seasonIntelligence?.championshipLeader?.driverId,
   });
+  const raceBreakdown = dashboard?.seasonIntelligence?.raceBreakdown || {};
+  const analyticsStats = buildAnalyticsStats({
+    stats: dashboard?.quickStats,
+    comparison,
+    raceBreakdown,
+  });
+  const weekendTimeline = dashboard?.weekendTimeline?.length
+    ? dashboard.weekendTimeline
+    : [
+        dashboard?.seasonIntelligence?.latestRace && {
+          ...dashboard.seasonIntelligence.latestRace,
+          completed: true,
+        },
+        dashboard?.seasonIntelligence?.nextRace && {
+          ...dashboard.seasonIntelligence.nextRace,
+          completed: false,
+        },
+      ].filter(Boolean);
   return (
     <div className="entity-stack analytics-page">
       <PageHeading
@@ -367,41 +422,39 @@ export default function Analytics() {
         {dashboard && (
           <>
             <AnalyticsOverviewStrip
-              quickStats={dashboard.quickStats}
+              quickStats={analyticsStats}
               seasonIntelligence={dashboard.seasonIntelligence}
               meta={responseMeta}
             />
             <AnalyticsIntelligence
               intelligence={dashboard.seasonIntelligence}
             />
-            <div className="analytics-dashboard-grid analytics-dashboard-grid--two">
-              <Panel
-                title="Weekend timeline"
-                eyebrow="SEASON FLOW"
-                icon={CalendarBlankIcon}
-                action={
-                  <ActionLink variant="quiet" to={panelLinks.calendar}>
-                    View calendar
-                  </ActionLink>
-                }
-              >
-                <AnalyticsWeekendTimeline events={dashboard.weekendTimeline} />
-              </Panel>
-              <Panel
-                title="Performance snapshot"
-                eyebrow="RACE INTELLIGENCE"
-                icon={TrophyIcon}
-                action={
-                  <ActionLink variant="quiet" to={panelLinks.leader}>
-                    View driver
-                  </ActionLink>
-                }
-              >
-                <AnalyticsPerformanceSnapshot
-                  intelligence={dashboard.seasonIntelligence}
-                />
-              </Panel>
-            </div>
+            <Panel
+              title="Weekend timeline"
+              eyebrow="SEASON FLOW"
+              icon={CalendarBlankIcon}
+              action={
+                <ActionLink variant="quiet" to={panelLinks.calendar}>
+                  View calendar
+                </ActionLink>
+              }
+            >
+              <AnalyticsWeekendTimeline events={weekendTimeline} />
+            </Panel>
+            <Panel
+              title="Performance snapshot"
+              eyebrow="RACE INTELLIGENCE"
+              icon={TrophyIcon}
+              action={
+                <ActionLink variant="quiet" to={panelLinks.leader}>
+                  View driver
+                </ActionLink>
+              }
+            >
+              <AnalyticsPerformanceSnapshot
+                intelligence={dashboard.seasonIntelligence}
+              />
+            </Panel>
             <div className="analytics-dashboard-grid analytics-dashboard-grid--three">
               <Panel
                 title="Circuit insight"
@@ -438,7 +491,7 @@ export default function Analytics() {
               >
                 <StatStrip
                   stats={{
-                    ...dashboard.quickStats,
+                    ...analyticsStats,
                     publishedEntries:
                       dashboard.seasonIntelligence?.raceBreakdown?.entries,
                   }}

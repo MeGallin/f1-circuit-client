@@ -3,6 +3,7 @@ import {
   buildAnalyticsRequest,
   buildDriverComparisonRequest,
   buildAnalyticsPanelLinks,
+  buildAnalyticsStats,
   updateAnalyticsFilterParams,
 } from "../src/pages/Analytics";
 import {
@@ -160,12 +161,19 @@ test("session readout stays grounded in the published race evidence", () => {
       round: 8,
       circuit: { displayName: "Example Circuit" },
       results: [
-        { position: 1, driverName: "Example One", constructorName: "Example Team" },
+        {
+          position: 1,
+          driverName: "Example One",
+          constructorName: "Example Team",
+        },
         { position: 2, driverName: "Example Two" },
       ],
       fastestLap: { driverName: "Example Two", lapNumber: 41 },
     },
-    insights: ["The latest event is published.", "Example Team leads the selection."],
+    insights: [
+      "The latest event is published.",
+      "Example Team leads the selection.",
+    ],
   });
 
   expect(model.race.title).toBe("Synthetic Grand Prix");
@@ -256,7 +264,11 @@ test("weekend timeline centres the display on the next published event", () => {
 
 test("circuit insight derives coverage and best finish from published cells", () => {
   const model = buildAnalyticsCircuitInsightModel({
-    circuit: { id: "circuit:example", displayName: "Example Circuit", country: "Exampleland" },
+    circuit: {
+      id: "circuit:example",
+      displayName: "Example Circuit",
+      country: "Exampleland",
+    },
     profile: { country: "Exampleland" },
     performance: {
       drivers: [
@@ -319,6 +331,28 @@ test("quick stats expose complementary archive-backed measures", () => {
     "Fastest laps",
   ]);
   expect(model.map(([, , value]) => value)).toEqual([5, 8, 301, 14]);
+});
+
+test("analytics stats preserve API values and derive missing values from published context", () => {
+  const model = buildAnalyticsStats({
+    stats: { completedEvents: 14, totalEvents: 23 },
+    comparison: {
+      drivers: [
+        { metrics: { wins: 2, podiums: 4 } },
+        { metrics: { wins: 0, podiums: 1 } },
+        { metrics: { wins: 1, podiums: 0 } },
+      ],
+    },
+    raceBreakdown: { starts: 20, podiums: 6, dnfs: 2, fastestLaps: 3 },
+  });
+
+  expect(model.completedEvents).toBe(14);
+  expect(model.raceWinnerCount).toBe(2);
+  expect(model.podiumDriverCount).toBe(2);
+  expect(model.publishedStarts).toBe(20);
+  expect(model.fastestLapCount).toBe(3);
+  expect(model.podiumRate).toBe(30);
+  expect(model.dnfRate).toBe(10);
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {
