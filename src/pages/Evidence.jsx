@@ -1,4 +1,5 @@
 import { useParams, useSearchParams } from "react-router-dom";
+import { FileTextIcon } from "@phosphor-icons/react";
 import {
   ActionLink,
   DataBoundary,
@@ -101,6 +102,7 @@ export default function Evidence() {
         eyebrow="PROVENANCE RECORD"
         title="Evidence detail"
         description="Field-level source assertions for a published archive record. Verification and coverage remain exactly as supplied."
+        icon={FileTextIcon}
         actions={
           <ActionLink to={backPath}>
             {requestedBackPath ? "Back to selected record" : "Back to sources"}

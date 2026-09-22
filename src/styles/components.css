@@ -43,6 +43,17 @@
   gap: var(--apex-space-6);
   padding-bottom: var(--apex-space-9);
 }
+.page-heading-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--apex-space-5);
+  min-width: 0;
+}
+.page-heading-icon {
+  flex: 0 0 auto;
+  margin-top: var(--apex-space-5);
+  color: var(--apex-color-link);
+}
 .page-heading h1 {
   font-size: var(--apex-type-title-mobile-size);
   margin-top: var(--apex-space-3);
@@ -141,6 +152,17 @@
 .panel-heading h2 {
   font-family: var(--apex-font-body);
   font-size: var(--apex-type-section-size);
+}
+.panel-heading-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--apex-space-4);
+  min-width: 0;
+}
+.panel-heading-icon {
+  flex: 0 0 auto;
+  margin-top: var(--apex-space-1);
+  color: var(--apex-color-accent-text);
 }
 .field {
   display: grid;

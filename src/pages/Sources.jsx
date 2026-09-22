@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { DatabaseIcon } from "@phosphor-icons/react";
 import { useGetSourcesQuery } from "../api/archiveApi";
 import {
   PageHeading,
@@ -29,6 +30,7 @@ export default function Sources() {
         eyebrow="BEHIND THE RECORD"
         title="Sources & coverage"
         description="Published provider status and retrieval history. A healthy provider does not imply complete event coverage."
+        icon={DatabaseIcon}
         actions={
           <Button variant="quiet" disabled={query.isFetching} onClick={reset}>
             Refresh status

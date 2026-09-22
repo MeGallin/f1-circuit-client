@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { ArrowsLeftRightIcon } from "@phosphor-icons/react";
 import {
   useGetComparisonQuery,
   useGetSeasonsQuery,
@@ -131,6 +132,7 @@ export default function Compare() {
         eyebrow="HISTORICAL COMPARISON"
         title="Compare the record"
         description="Compare matching entity types over an explicit season range. Audited metrics may be unavailable even when individual results exist."
+        icon={ArrowsLeftRightIcon}
         actions={
           <ActionLink
             to={`/explore?${new URLSearchParams({ season: params.get("season") || "2024" })}`}

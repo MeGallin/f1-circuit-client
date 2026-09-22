@@ -41,6 +41,7 @@ export function TextLink({ to, children, ...props }) {
 export function Panel({
   title,
   eyebrow,
+  icon: Icon,
   action,
   children,
   className = "",
@@ -55,7 +56,8 @@ export function Panel({
     >
       {title && (
         <div className="panel-heading">
-          <div>
+          <div className={Icon ? "panel-heading-copy" : undefined}>
+            {Icon && <Icon className="panel-heading-icon" aria-hidden size={20} />}
             {eyebrow && <p className="eyebrow panel-eyebrow">{eyebrow}</p>}
             <h2 id={id}>{title}</h2>
           </div>
@@ -66,13 +68,16 @@ export function Panel({
     </section>
   );
 }
-export function PageHeading({ eyebrow, title, description, actions }) {
+export function PageHeading({ eyebrow, title, description, actions, icon: Icon }) {
   return (
     <header className="page-heading">
-      <div>
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1 tabIndex={-1}>{title}</h1>
-        {description && <p className="muted page-description">{description}</p>}
+      <div className={Icon ? "page-heading-copy" : undefined}>
+        {Icon && <Icon className="page-heading-icon" aria-hidden size={26} />}
+        <div>
+          {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+          <h1 tabIndex={-1}>{title}</h1>
+          {description && <p className="muted page-description">{description}</p>}
+        </div>
       </div>
       {actions && <div className="page-actions">{actions}</div>}
     </header>

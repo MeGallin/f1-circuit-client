@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router-dom";
+import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { useSearchEntitiesQuery } from "../api/archiveApi";
 import {
   ActionLink,
@@ -181,6 +182,7 @@ export default function Explore() {
         eyebrow="EXPLORE THE ARCHIVE"
         title="Explore the archive"
         description="Find published drivers, constructors, circuits, events and seasons from the historical archive."
+        icon={MagnifyingGlassIcon}
         actions={
           <div className="explore-page-actions">
             <ActionLink variant="quiet" to="/compare">
@@ -189,7 +191,7 @@ export default function Explore() {
           </div>
         }
       />
-      <Panel title="Search the archive">
+      <Panel title="Search the archive" icon={MagnifyingGlassIcon}>
         <p className="explore-search-note">
           Search the published archive by name or keyword. Results are not
           limited to a season

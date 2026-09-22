@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
+  ChartLineUpIcon,
+  DatabaseIcon,
+  FlagCheckeredIcon,
+  GaugeIcon,
+  RankingIcon,
+  SlidersHorizontalIcon,
+  TrophyIcon,
+  UsersThreeIcon,
+} from "@phosphor-icons/react";
+import {
   useGetAnalyticsDashboardQuery,
   useGetDriverComparisonQuery,
 } from "../api/archiveApi";
@@ -246,13 +256,14 @@ export default function Analytics() {
         eyebrow="PERFORMANCE ANALYTICS"
         title="Performance Analytics"
         description="Read the published archive as a season-wide performance story: points progression, qualifying pace, team contribution, and circuit patterns."
+        icon={ChartLineUpIcon}
         actions={
           <ActionLink variant="quiet" to={`/explore?season=${season}`}>
             Explore the archive
           </ActionLink>
         }
       />
-      <Panel title="Shape the view" eyebrow="ARCHIVE FILTERS">
+      <Panel title="Shape the view" eyebrow="ARCHIVE FILTERS" icon={SlidersHorizontalIcon}>
         <FilterBar
           dashboard={filterDashboard}
           params={params}
@@ -272,19 +283,19 @@ export default function Analytics() {
         {dashboard && (
           <>
             <AnalyticsIntelligence intelligence={dashboard.seasonIntelligence} />
-            <Panel title="Performance snapshot" eyebrow="RACE INTELLIGENCE">
+            <Panel title="Performance snapshot" eyebrow="RACE INTELLIGENCE" icon={TrophyIcon}>
               <AnalyticsPerformanceSnapshot
                 intelligence={dashboard.seasonIntelligence}
               />
             </Panel>
-            <Panel title="Archive totals" eyebrow="DATA SCOPE">
+            <Panel title="Archive totals" eyebrow="DATA SCOPE" icon={DatabaseIcon}>
               <StatStrip stats={dashboard.quickStats} />
             </Panel>
             <div className="analytics-chart-grid">
-              <Panel title="Points progression" eyebrow="CHAMPIONSHIP">
+              <Panel title="Points progression" eyebrow="CHAMPIONSHIP" icon={ChartLineUpIcon}>
                 <PointsProgressionChart data={dashboard.pointsProgression} />
               </Panel>
-              <Panel title="Qualifying versus finish" eyebrow="RACE PACE">
+              <Panel title="Qualifying versus finish" eyebrow="RACE PACE" icon={GaugeIcon}>
                 {dashboard.qualifyingVsFinish.length ? (
                   <QualifyingVsFinishChart
                     rows={dashboard.qualifyingVsFinish}
@@ -299,6 +310,7 @@ export default function Analytics() {
               <Panel
                 title="Constructor contribution"
                 eyebrow="TEAM PERFORMANCE"
+                icon={UsersThreeIcon}
               >
                 {dashboard.constructorContribution.length ? (
                   <ConstructorContributionChart
@@ -311,7 +323,7 @@ export default function Analytics() {
                   />
                 )}
               </Panel>
-              <Panel title="Circuit performance" eyebrow="TRACK PATTERNS">
+              <Panel title="Circuit performance" eyebrow="TRACK PATTERNS" icon={FlagCheckeredIcon}>
                 {dashboard.circuitPerformance.cells.length ? (
                   <CircuitPerformanceChart
                     data={dashboard.circuitPerformance}
@@ -324,7 +336,7 @@ export default function Analytics() {
                 )}
               </Panel>
             </div>
-            <Panel title="Driver comparison" eyebrow="COMPARATIVE VIEW">
+            <Panel title="Driver comparison" eyebrow="COMPARATIVE VIEW" icon={RankingIcon}>
               <Comparison data={comparison} />
             </Panel>
             <Panel title="Archive highlights" eyebrow="READOUT">

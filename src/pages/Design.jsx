@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PaletteIcon } from "@phosphor-icons/react";
 import {
   Button,
   Panel,
@@ -22,6 +23,7 @@ export default function Design() {
         eyebrow="APEX / COMPONENT CHECKPOINT"
         title="Built for the details."
         description="Reusable controls and states. Demonstration content below is not race data."
+        icon={PaletteIcon}
       />
       <Panel title="Interface vocabulary">
         <Tabs

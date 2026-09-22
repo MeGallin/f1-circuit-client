@@ -1,6 +1,7 @@
 import { EntityLink } from "../features/entities/shared";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { useDispatch } from "react-redux";
+import { RankingIcon } from "@phosphor-icons/react";
 import {
   archiveApi,
   useGetSeasonsQuery,
@@ -255,6 +256,7 @@ export default function Standings() {
         eyebrow="THE CHAMPIONSHIP PICTURE"
         title="Season standings"
         description="Driver and constructor rankings, with the source behind every point."
+        icon={RankingIcon}
         actions={
           options.length > 0 && (
             <Select
@@ -304,7 +306,7 @@ export default function Standings() {
                 seasons={catalogue.currentData.items}
               />
             ) : (
-              <Panel title="Championship standings">
+              <Panel title="Championship standings" icon={RankingIcon}>
                 <Tabs
                   label="Championship type"
                   items={kinds}

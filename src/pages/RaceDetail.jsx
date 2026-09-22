@@ -2,6 +2,7 @@ import { EntityLink } from "../features/entities/shared";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import { FlagCheckeredIcon } from "@phosphor-icons/react";
 import {
   archiveApi,
   useGetEventQuery,
@@ -1032,6 +1033,7 @@ function Detail({ data, params, setParams, refresh }) {
         eyebrow={`ROUND ${event.round ?? "NOT SUPPLIED"} / ${event.year}`}
         title={event.name}
         description={`${event.circuit?.displayName || "Circuit not supplied"} · ${dateLabel(event.schedule.date)}`}
+        icon={FlagCheckeredIcon}
         actions={
           <ActionLink
             to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}

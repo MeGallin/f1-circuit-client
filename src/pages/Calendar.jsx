@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { CalendarBlankIcon } from "@phosphor-icons/react";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import {
   archiveApi,
@@ -350,7 +351,7 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
           )}
         </div>
       </section>
-      <Panel title={`${year} race calendar`}>
+      <Panel title={`${year} race calendar`} icon={CalendarBlankIcon}>
         <p className="calendar-explainer">
           Select a round to view its circuit, result and available data.
         </p>
@@ -468,6 +469,7 @@ export default function Calendar() {
         eyebrow="THE SEASON, ROUND BY ROUND"
         title="Season calendar"
         description="The venues, dates and available history of each Grand Prix."
+        icon={CalendarBlankIcon}
         actions={
           options.length > 0 && (
             <Select

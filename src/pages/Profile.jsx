@@ -1,4 +1,5 @@
 import { useParams, useSearchParams } from "react-router-dom";
+import { FlagCheckeredIcon, UserCircleIcon } from "@phosphor-icons/react";
 import {
   useGetProfileQuery,
   useGetHistoryQuery,
@@ -229,6 +230,7 @@ export default function Profile({ kind }) {
         eyebrow={`${kind.toUpperCase()} PROFILE`}
         title={p?.entity.displayName || "Archive profile"}
         description="Published identity and historical records. Missing coverage is not a zero result."
+        icon={kind === "circuit" ? FlagCheckeredIcon : UserCircleIcon}
         actions={
           <ActionLink
             to={`/explore?${new URLSearchParams({ season: year || "2024", type: kind })}`}

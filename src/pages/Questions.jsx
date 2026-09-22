@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChatCircleTextIcon } from "@phosphor-icons/react";
 import { useAskQuestionMutation, useGetEventQuery } from "../api/archiveApi";
 import ArchiveQuestionResult from "../components/ArchiveQuestionResult";
 import {
@@ -128,6 +129,7 @@ export default function Questions() {
       <PageHeading
         eyebrow="ASK THE ARCHIVE"
         title="Ask the archive"
+        icon={ChatCircleTextIcon}
         description={
           <>
             {enabled
@@ -143,7 +145,7 @@ export default function Questions() {
       {!enabled ? (
         <QuestionUnavailable />
       ) : query.isUninitialized ? (
-        <Panel title="Write a complete question">
+        <Panel title="Write a complete question" icon={ChatCircleTextIcon}>
           <form className="questions-form" onSubmit={submit}>
             <Select
               id="question-example"

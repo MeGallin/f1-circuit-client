@@ -1,5 +1,5 @@
 import useSeasonSearch from "../features/season/useSeasonSearch";
-import { ArrowClockwiseIcon } from "@phosphor-icons/react";
+import { ArrowClockwiseIcon, SquaresFourIcon } from "@phosphor-icons/react";
 import {
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
@@ -100,6 +100,7 @@ export default function Overview() {
         eyebrow="THE HISTORICAL ARCHIVE"
         title="Season overview"
         description="Results, context and the story behind each round."
+        icon={SquaresFourIcon}
         actions={
           options.length ? (
             <Select
