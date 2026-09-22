@@ -504,11 +504,28 @@
   flex: 0 0 auto;
   color: var(--apex-color-accent-text);
 }
+.analytics-spotlight-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-3);
+  margin-top: var(--apex-space-2);
+}
 .analytics-snapshot-heading h3 {
-  margin: var(--apex-space-2) 0 0;
+  margin: 0;
   font-family: var(--apex-font-display);
   font-size: var(--apex-type-subheading-size);
   line-height: 1.05;
+}
+.analytics-spotlight-rank {
+  display: grid;
+  justify-items: end;
+  gap: var(--apex-space-2);
+  color: var(--apex-color-accent-text);
+}
+.analytics-spotlight-rank strong {
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-subheading-size);
+  line-height: 1;
 }
 .analytics-snapshot-heading p:last-child {
   margin: var(--apex-space-2) 0 0;

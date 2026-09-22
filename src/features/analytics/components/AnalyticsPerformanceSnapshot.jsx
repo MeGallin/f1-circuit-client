@@ -5,6 +5,8 @@ export function buildDriverSpotlightModel(leader) {
   return {
     name: leader?.driverName || "Leader not supplied",
     constructor: leader?.constructor?.displayName || "Constructor not supplied",
+    position: leader?.position ?? null,
+    number: leader?.number ?? null,
     form: (leader?.recentForm || []).filter((position) => position != null).slice(-5),
     positionsGained: leader?.positionsGained ?? null,
   };
@@ -32,12 +34,22 @@ export default function AnalyticsPerformanceSnapshot({ intelligence }) {
         <div className="analytics-snapshot-heading">
           <div>
             <p className="eyebrow">DRIVER SPOTLIGHT</p>
-            <h3>{leader?.driverName || "Leader not supplied"}</h3>
+            <div className="analytics-spotlight-identity">
+              {spotlight.number && (
+                <span className="driver-number" aria-label={`Driver number ${spotlight.number}`}>
+                  {spotlight.number}
+                </span>
+              )}
+              <h3>{leader?.driverName || "Leader not supplied"}</h3>
+            </div>
             <p className="muted">
               {leader?.constructor?.displayName || "Constructor not supplied"}
             </p>
           </div>
-          <ChartLineUpIcon size={24} aria-hidden />
+          <div className="analytics-spotlight-rank">
+            {spotlight.position != null && <strong>P{spotlight.position}</strong>}
+            <ChartLineUpIcon size={24} aria-hidden />
+          </div>
         </div>
         <div className="analytics-snapshot-value-grid">
           <SnapshotValue label="Points" value={leader?.points} />

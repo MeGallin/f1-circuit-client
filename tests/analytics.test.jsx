@@ -225,6 +225,8 @@ test("race breakdown turns published totals into comparable ring metrics", () =>
 
 test("driver spotlight exposes the published recent form sequence", () => {
   const model = buildDriverSpotlightModel({
+    position: 1,
+    number: "44",
     driverName: "Example One",
     constructor: { displayName: "Example Team" },
     recentForm: [null, 4, 2, 1, 3, 2],
@@ -233,6 +235,8 @@ test("driver spotlight exposes the published recent form sequence", () => {
 
   expect(model.form).toEqual([4, 2, 1, 3, 2]);
   expect(model.positionsGained).toBe(5);
+  expect(model.position).toBe(1);
+  expect(model.number).toBe("44");
 });
 
 test("weekend timeline centres the display on the next published event", () => {
