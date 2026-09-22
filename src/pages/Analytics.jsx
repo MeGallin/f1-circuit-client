@@ -23,6 +23,7 @@ import {
   QualifyingVsFinishChart,
 } from "../features/analytics/components/AnalyticsCharts";
 import AnalyticsIntelligence from "../features/analytics/components/AnalyticsIntelligence";
+import AnalyticsPerformanceSnapshot from "../features/analytics/components/AnalyticsPerformanceSnapshot";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -271,6 +272,11 @@ export default function Analytics() {
         {dashboard && (
           <>
             <AnalyticsIntelligence intelligence={dashboard.seasonIntelligence} />
+            <Panel title="Performance snapshot" eyebrow="RACE INTELLIGENCE">
+              <AnalyticsPerformanceSnapshot
+                intelligence={dashboard.seasonIntelligence}
+              />
+            </Panel>
             <Panel title="Archive totals" eyebrow="DATA SCOPE">
               <StatStrip stats={dashboard.quickStats} />
             </Panel>

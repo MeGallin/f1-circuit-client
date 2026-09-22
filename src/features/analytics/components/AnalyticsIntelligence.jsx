@@ -89,6 +89,17 @@ function NextRace({ race }) {
     );
   }
   const startsAt = race.schedule?.startsAt || race.schedule?.date;
+  const sessionSchedule = race.sessionSchedule || [];
+  const sessionTime = (value) => {
+    if (!value) return "—";
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "UTC",
+    }).format(new Date(value));
+  };
   return (
     <section className="analytics-race-context analytics-race-context--next">
       <div className="analytics-race-context-heading">
@@ -115,6 +126,19 @@ function NextRace({ race }) {
           </small>
         )}
       </div>
+      {sessionSchedule.length > 1 && (
+        <div className="analytics-weekend-schedule">
+          <span>Weekend schedule · UTC</span>
+          <ul>
+            {sessionSchedule.map((session) => (
+              <li key={`${session.kind}-${session.schedule?.startsAt || session.schedule?.date}`}>
+                <strong>{session.label || session.kind}</strong>
+                <small>{sessionTime(session.schedule?.startsAt || session.schedule?.date)}</small>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }
