@@ -28,6 +28,7 @@ import {
 import { buildRaceBreakdownModel } from "../src/features/analytics/components/AnalyticsRaceBreakdown";
 import { buildDriverSpotlightModel } from "../src/features/analytics/components/AnalyticsPerformanceSnapshot";
 import { buildAnalyticsWeekendTimelineModel } from "../src/features/analytics/components/AnalyticsWeekendTimeline";
+import { buildAnalyticsCircuitInsightModel } from "../src/features/analytics/components/AnalyticsCircuitInsight";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -227,6 +228,29 @@ test("weekend timeline centres the display on the next published event", () => {
   expect(model.map((event) => event.round)).toEqual([2, 3, 4, 5, 6]);
   expect(model.find((event) => event.id === "r4").statusLabel).toBe("Next up");
   expect(model.find((event) => event.id === "r5").statusLabel).toBe("Upcoming");
+});
+
+test("circuit insight derives coverage and best finish from published cells", () => {
+  const model = buildAnalyticsCircuitInsightModel({
+    circuit: { id: "circuit:example", displayName: "Example Circuit", country: "Exampleland" },
+    profile: { country: "Exampleland" },
+    performance: {
+      drivers: [
+        { id: "driver:one", name: "Example One" },
+        { id: "driver:two", name: "Example Two" },
+      ],
+      cells: [
+        { circuitId: "circuit:example", driverId: "driver:one", value: 1 },
+        { circuitId: "circuit:example", driverId: "driver:two", value: 4 },
+      ],
+    },
+  });
+
+  expect(model.name).toBe("Example Circuit");
+  expect(model.country).toBe("Exampleland");
+  expect(model.publishedFinishes).toBe(2);
+  expect(model.driverCount).toBe(2);
+  expect(model.bestFinish).toEqual({ position: 1, driverName: "Example One" });
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {

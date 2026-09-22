@@ -16,6 +16,8 @@ import {
 import {
   useGetAnalyticsDashboardQuery,
   useGetDriverComparisonQuery,
+  useGetLayoutsQuery,
+  useGetProfileQuery,
 } from "../api/archiveApi";
 import {
   ActionLink,
@@ -42,6 +44,8 @@ import AnalyticsOverviewStrip from "../features/analytics/components/AnalyticsOv
 import AnalyticsRecentResults from "../features/analytics/components/AnalyticsRecentResults";
 import AnalyticsSessionReadout from "../features/analytics/components/AnalyticsSessionReadout";
 import AnalyticsWeekendTimeline from "../features/analytics/components/AnalyticsWeekendTimeline";
+import AnalyticsCircuitInsight from "../features/analytics/components/AnalyticsCircuitInsight";
+import { selectLayout } from "../components/visuals";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -273,6 +277,21 @@ export default function Analytics() {
     dashboard?.defaultComparison;
   const responseMeta =
     dashboardQuery.currentData?.meta || dashboardQuery.data?.meta;
+  const latestCircuit = dashboard?.seasonIntelligence?.latestRace?.circuit;
+  const latestCircuitId = latestCircuit?.id;
+  const latestCircuitProfileQuery = useGetProfileQuery(
+    { kind: "circuit", id: latestCircuitId, snapshotId: responseMeta?.snapshotId },
+    { skip: !latestCircuitId },
+  );
+  const latestCircuitLayoutsQuery = useGetLayoutsQuery(
+    { id: latestCircuitId, snapshotId: responseMeta?.snapshotId },
+    { skip: !latestCircuitId },
+  );
+  const latestCircuitProfile = latestCircuitProfileQuery.currentData?.profile;
+  const latestCircuitLayout = selectLayout(
+    latestCircuitLayoutsQuery.currentData?.items,
+    season,
+  );
   return (
     <div className="entity-stack analytics-page">
       <PageHeading
@@ -323,6 +342,18 @@ export default function Analytics() {
               icon={CalendarBlankIcon}
             >
               <AnalyticsWeekendTimeline events={dashboard.weekendTimeline} />
+            </Panel>
+            <Panel
+              title="Circuit insight"
+              eyebrow="TRACK CONTEXT"
+              icon={MapTrifoldIcon}
+            >
+              <AnalyticsCircuitInsight
+                circuit={latestCircuit}
+                profile={latestCircuitProfile}
+                layout={latestCircuitLayout}
+                performance={dashboard.circuitPerformance}
+              />
             </Panel>
             <Panel
               title="Performance snapshot"

@@ -327,6 +327,76 @@
   font-size: var(--apex-type-body-size);
   line-height: 1.15;
 }
+.analytics-circuit-insight {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--apex-space-6);
+}
+.analytics-circuit-visual {
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  border: 1px solid var(--apex-color-line);
+  background: var(--apex-color-elevated);
+}
+.analytics-circuit-visual .circuit-silhouette {
+  width: 100%;
+  padding-inline: var(--apex-space-5);
+}
+.analytics-circuit-copy {
+  min-width: 0;
+}
+.analytics-circuit-country {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-2);
+  margin-top: var(--apex-space-3);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.analytics-circuit-country .country-flag {
+  font-size: 1rem;
+}
+.analytics-circuit-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--apex-space-4);
+  margin: var(--apex-space-6) 0 0;
+}
+.analytics-circuit-fact {
+  min-width: 0;
+}
+.analytics-circuit-fact dt {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.analytics-circuit-fact dd {
+  margin: var(--apex-space-2) 0 0;
+  color: var(--apex-color-text);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-section-size);
+  font-weight: 700;
+}
+.analytics-circuit-fact small {
+  display: block;
+  margin-top: var(--apex-space-1);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.analytics-circuit-note {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-2);
+  margin: var(--apex-space-6) 0 0;
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.analytics-circuit-note svg {
+  flex: 0 0 auto;
+  color: var(--apex-color-accent-text);
+}
 .analytics-race-context--empty {
   min-height: 15rem;
 }
@@ -846,6 +916,12 @@
     gap: var(--apex-space-4);
   }
   .analytics-session-readout {
+    grid-template-columns: 1fr;
+  }
+  .analytics-circuit-insight {
+    grid-template-columns: 1fr;
+  }
+  .analytics-circuit-facts {
     grid-template-columns: 1fr;
   }
   .analytics-readout-values {
