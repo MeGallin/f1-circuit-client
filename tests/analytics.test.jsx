@@ -27,6 +27,7 @@ import {
 } from "../src/features/analytics/components/AnalyticsOverviewStrip";
 import { buildRaceBreakdownModel } from "../src/features/analytics/components/AnalyticsRaceBreakdown";
 import { buildDriverSpotlightModel } from "../src/features/analytics/components/AnalyticsPerformanceSnapshot";
+import { buildAnalyticsWeekendTimelineModel } from "../src/features/analytics/components/AnalyticsWeekendTimeline";
 
 test("driver comparison request keeps the complete analytics scope", () => {
   const params = new URLSearchParams(
@@ -211,6 +212,21 @@ test("driver spotlight exposes the published recent form sequence", () => {
 
   expect(model.form).toEqual([4, 2, 1, 3, 2]);
   expect(model.positionsGained).toBe(5);
+});
+
+test("weekend timeline centres the display on the next published event", () => {
+  const model = buildAnalyticsWeekendTimelineModel([
+    { id: "r1", round: 1, name: "One", completed: true },
+    { id: "r2", round: 2, name: "Two", completed: true },
+    { id: "r3", round: 3, name: "Three", completed: true },
+    { id: "r4", round: 4, name: "Four", completed: false },
+    { id: "r5", round: 5, name: "Five", completed: false },
+    { id: "r6", round: 6, name: "Six", completed: false },
+  ]);
+
+  expect(model.map((event) => event.round)).toEqual([2, 3, 4, 5, 6]);
+  expect(model.find((event) => event.id === "r4").statusLabel).toBe("Next up");
+  expect(model.find((event) => event.id === "r5").statusLabel).toBe("Upcoming");
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
+  CalendarBlankIcon,
   ChartLineUpIcon,
   BuildingsIcon,
   DatabaseIcon,
@@ -40,6 +41,7 @@ import AnalyticsChampionshipSnapshot from "../features/analytics/components/Anal
 import AnalyticsOverviewStrip from "../features/analytics/components/AnalyticsOverviewStrip";
 import AnalyticsRecentResults from "../features/analytics/components/AnalyticsRecentResults";
 import AnalyticsSessionReadout from "../features/analytics/components/AnalyticsSessionReadout";
+import AnalyticsWeekendTimeline from "../features/analytics/components/AnalyticsWeekendTimeline";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/analytics.css";
 
@@ -315,6 +317,13 @@ export default function Analytics() {
             <AnalyticsIntelligence
               intelligence={dashboard.seasonIntelligence}
             />
+            <Panel
+              title="Weekend timeline"
+              eyebrow="SEASON FLOW"
+              icon={CalendarBlankIcon}
+            >
+              <AnalyticsWeekendTimeline events={dashboard.weekendTimeline} />
+            </Panel>
             <Panel
               title="Performance snapshot"
               eyebrow="RACE INTELLIGENCE"
