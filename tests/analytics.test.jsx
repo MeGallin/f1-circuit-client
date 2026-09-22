@@ -168,7 +168,11 @@ test("session readout stays grounded in the published race evidence", () => {
         },
         { position: 2, driverName: "Example Two" },
       ],
-      fastestLap: { driverName: "Example Two", lapNumber: 41 },
+      fastestLap: {
+        driverName: "Example Two",
+        lapNumber: 41,
+        durationMs: 72169,
+      },
     },
     insights: [
       "The latest event is published.",
@@ -179,8 +183,62 @@ test("session readout stays grounded in the published race evidence", () => {
   expect(model.race.title).toBe("Synthetic Grand Prix");
   expect(model.race.winner).toBe("Example One");
   expect(model.race.resultCount).toBe(2);
-  expect(model.race.fastestLap).toBe("Example Two · Lap 41");
+  expect(model.race.fastestLap).toBe("Example Two · Lap 41 · 1:12.169");
   expect(model.insights).toHaveLength(2);
+});
+
+test("session readout presents optional published session intelligence", () => {
+  const model = buildAnalyticsSessionReadoutModel({
+    race: { name: "Synthetic Grand Prix", results: [] },
+    latestSessionHighlights: {
+      weather: {
+        coverage: "partial",
+        observations: 2,
+        airTemperatureC: { min: 24, max: 26, average: 25 },
+        rainfallObservations: 1,
+      },
+      tyres: {
+        coverage: "partial",
+        count: 2,
+        drivers: [
+          {
+            driverName: "Example One",
+            compounds: ["Medium", "Hard"],
+            stintCount: 2,
+            laps: 10,
+          },
+        ],
+      },
+      pitStops: { coverage: "partial", count: 1 },
+      overtakes: {
+        coverage: "partial",
+        count: 2,
+        leaders: [{ driverName: "Example One", count: 2 }],
+      },
+      raceControl: {
+        coverage: "partial",
+        events: 1,
+        flagEvents: 1,
+        flags: ["yellow"],
+      },
+    },
+  });
+
+  expect(model.session.cards.map((card) => card.label)).toEqual([
+    "Weather",
+    "Tyre strategy",
+    "Pit stops",
+    "Overtakes",
+    "Race control",
+  ]);
+  expect(model.session.cards[0].value).toBe("24 to 26°C");
+  expect(model.session.cards[1].value).toBe("2 stints");
+  expect(model.session.cards[2].value).toBe("1");
+  expect(model.session.cards[3].value).toBe("2");
+  expect(model.session.strategyDrivers[0].compounds).toEqual([
+    "Medium",
+    "Hard",
+  ]);
 });
 
 test("analytics overview model exposes rates and snapshot freshness", () => {

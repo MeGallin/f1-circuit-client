@@ -602,6 +602,7 @@ export default function Analytics() {
               <AnalyticsSessionReadout
                 race={dashboard.seasonIntelligence?.latestRace}
                 insights={dashboard.insights}
+                latestSessionHighlights={dashboard.latestSessionHighlights}
               />
             </Panel>
           </>
