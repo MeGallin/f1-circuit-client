@@ -31,6 +31,7 @@ import {
 } from "./selectors";
 import { entryName } from "./raceFormat";
 import { RaceCountdown } from "../../components/RaceCountdown";
+import { RaceResultStatus } from "./RaceResultStatusPanel";
 import { EventInsightDialog } from "./EventInsightDialog";
 import { SeasonEventStrip } from "./SeasonEventStrip";
 
@@ -50,11 +51,7 @@ function ResultsAvailability({
   if (!eventCount) return null;
 
   return (
-    <div
-      className="season-progress"
-      role="group"
-      aria-label="Season progress"
-    >
+    <div className="season-progress" role="group" aria-label="Season progress">
       <div className="season-progress-heading">
         <div>
           <p className="eyebrow">SEASON PROGRESS</p>
@@ -121,7 +118,9 @@ export function RaceFocus({
     snapshotId,
   });
   const calendarEvents = calendarQuery.currentData?.items || [];
-  const selectedEvent = calendarEvents.find((item) => item.id === selectedEventId);
+  const selectedEvent = calendarEvents.find(
+    (item) => item.id === selectedEventId,
+  );
   const layout = selectLayout(circuitLayouts.currentData?.items, event?.year);
   const country = circuitProfile.currentData?.profile?.country;
   if (!event)
@@ -146,16 +145,23 @@ export function RaceFocus({
         </p>
         <b>
           <RaceStatus
-            status={focusKind === "next" ? "upcoming" : event.resultStatus || event.status}
+            status={
+              focusKind === "next"
+                ? "upcoming"
+                : event.resultStatus || event.status
+            }
           >
-            {focusKind === "next" ? "upcoming" : event.resultStatus || event.status}
+            {focusKind === "next"
+              ? "upcoming"
+              : event.resultStatus || event.status}
           </RaceStatus>
         </b>
       </div>
       <div className="race-focus-content">
         <div className="race-focus-copy">
           <p className="race-round">
-            ROUND {event.round ?? "N/A"} OF {summary.season?.eventCount ?? "N/A"}
+            ROUND {event.round ?? "N/A"} OF{" "}
+            {summary.season?.eventCount ?? "N/A"}
           </p>
           <h2 id="race-focus-title">{event.name}</h2>
           <CircuitName
@@ -254,11 +260,14 @@ function RacePodium({ detail, isFetching, isError }) {
             >
               <div className="race-podium-driver">
                 <div className="race-podium-driver-line">
-                  <DriverNumber number={row.entry?.number || row.entry?.driverNumber} />
+                  <DriverNumber
+                    number={row.entry?.number || row.entry?.driverNumber}
+                  />
                   <div className="race-podium-driver-copy">
                     <strong>{entryName(row.entry)}</strong>
                     <span>
-                      {row.entry?.constructor?.displayName || "Team not supplied"}
+                      {row.entry?.constructor?.displayName ||
+                        "Team not supplied"}
                     </span>
                   </div>
                 </div>
@@ -316,12 +325,7 @@ function AdjacentEventBand({ event, label, next = false }) {
         aria-label={label}
       >
         <div className="overview-adjacent-event-countdown">
-          <RaceCountdown
-            startsAt={startsAt}
-            timePrecision={event.schedule?.timePrecision}
-            variant="wide"
-            showTargetTime={false}
-          />
+          <RaceResultStatus event={event} />
         </div>
         <div className="overview-adjacent-event-hero-copy">
           <div className="overview-adjacent-event-heading">
@@ -377,7 +381,12 @@ function AdjacentEventBand({ event, label, next = false }) {
   );
 }
 
-export function SeasonAroundRace({ summary, snapshotId, meta, onSnapshotReset }) {
+export function SeasonAroundRace({
+  summary,
+  snapshotId,
+  meta,
+  onSnapshotReset,
+}) {
   const [selectedEventId, setSelectedEventId] = useState(null);
   const calendarQuery = useGetCalendarQuery({
     year: summary.season?.year,
@@ -437,10 +446,7 @@ function CalendarContextRows({ events }) {
   return (
     <ol className="calendar-rows">
       {events.map(({ event, label, showCountdown }) => (
-        <li
-          key={event.id}
-          className="calendar-row calendar-row--context"
-        >
+        <li key={event.id} className="calendar-row calendar-row--context">
           <span className="round-number">
             <span className="sr-only">Round </span>
             {event.round == null
@@ -530,7 +536,9 @@ function LeaderList({ entries, kind }) {
             <div className="leader-driver-line">
               {kind === "drivers" && (
                 <DriverNumber
-                  number={row.number || row.entity?.number || row.entity?.driverNumber}
+                  number={
+                    row.number || row.entity?.number || row.entity?.driverNumber
+                  }
                 />
               )}
               <strong>{row.entity.displayName}</strong>

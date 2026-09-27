@@ -11,6 +11,75 @@ const request = fetchBaseQuery({
   timeout: 75000,
   credentials: "omit",
 });
+const PUBLICATION_CONFIG_ATTEMPTS = 3;
+
+function isTransientPublicConfigError(error) {
+  const status = error?.status;
+  const originalStatus = error?.originalStatus;
+  return (
+    status === "FETCH_ERROR" ||
+    status === "TIMEOUT_ERROR" ||
+    status === 429 ||
+    (Number.isInteger(status) && status >= 500) ||
+    (status === "PARSING_ERROR" &&
+      (originalStatus === 429 ||
+        (Number.isInteger(originalStatus) && originalStatus >= 500)))
+  );
+}
+
+function retryDelay(milliseconds, signal) {
+  return new Promise((resolve) => {
+    if (signal.aborted) return resolve();
+    let timer;
+    const finish = () => {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", finish);
+      resolve();
+    };
+    timer = setTimeout(finish, milliseconds);
+    signal.addEventListener("abort", finish, { once: true });
+  });
+}
+
+async function publicationConfigQuery(_arg, api, extraOptions, baseQuery) {
+  for (let attempt = 0; attempt < PUBLICATION_CONFIG_ATTEMPTS; attempt++) {
+    const response = await baseQuery(
+      { url: "/publication-config" },
+      api,
+      extraOptions,
+    );
+    if (!response.error) {
+      const automaticRaceResults = response.data?.automaticRaceResults;
+      if (
+        !automaticRaceResults ||
+        typeof automaticRaceResults.enabled !== "boolean" ||
+        automaticRaceResults.anchor !== "scheduled-race-start"
+      )
+        return {
+          error: {
+            status: "CUSTOM_ERROR",
+            error: "Unexpected publication configuration response",
+          },
+        };
+      return { data: { automaticRaceResults } };
+    }
+    if (
+      attempt === PUBLICATION_CONFIG_ATTEMPTS - 1 ||
+      !isTransientPublicConfigError(response.error) ||
+      api.signal.aborted
+    )
+      return response;
+    await retryDelay(200 * 2 ** attempt, api.signal);
+    if (api.signal.aborted) return response;
+  }
+  return {
+    error: {
+      status: "CUSTOM_ERROR",
+      error: "Publication configuration unavailable",
+    },
+  };
+}
+
 export const entityKinds = {
   driver: "drivers",
   constructor: "constructors",
@@ -50,6 +119,9 @@ export const archiveApi = createApi({
   refetchOnFocus: false,
   tagTypes: ["Seasons", "Season", "Event"],
   endpoints: (builder) => ({
+    getPublicationConfig: builder.query({
+      queryFn: publicationConfigQuery,
+    }),
     searchEntities: builder.query({
       query: ({ q, kind, cursor, snapshotId }) => ({
         url: "/search",
@@ -329,6 +401,7 @@ export function eventResponse(response) {
   return { detail: response.data.eventDetail, meta: response.meta };
 }
 export const {
+  useGetPublicationConfigQuery,
   useSearchEntitiesQuery,
   useGetProfileQuery,
   useGetHistoryQuery,

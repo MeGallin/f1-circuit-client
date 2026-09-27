@@ -33,9 +33,13 @@ test("countdown renders the exact start target and accessible timer label", () =
       now={oneWeekBefore}
     />,
   );
-  expect(screen.getByRole("timer")).toHaveAccessibleName("Race starts in 1 weeks");
+  expect(screen.getByRole("timer")).toHaveAccessibleName(
+    "Race starts in 1 weeks",
+  );
   expect(screen.queryByText("Race starts in 1 weeks")).not.toBeInTheDocument();
-  expect(screen.getByText("Starts 26 Sept 2026, 11:00 UTC")).toBeInTheDocument();
+  expect(
+    screen.getByText("Starts 26 Sept 2026, 11:00 UTC"),
+  ).toBeInTheDocument();
 });
 
 test("wide countdown keeps the start date in the header and enlarges the timer", () => {
@@ -48,13 +52,15 @@ test("wide countdown keeps the start date in the header and enlarges the timer",
     />,
   );
   expect(container.querySelector(".race-countdown--wide")).toBeInTheDocument();
-  expect(container.querySelector(".race-countdown-meta time")).toHaveTextContent(
-    "Starts 26 Sept 2026, 11:00 UTC",
-  );
+  expect(
+    container.querySelector(".race-countdown-meta time"),
+  ).toHaveTextContent("Starts 26 Sept 2026, 11:00 UTC");
   expect(screen.getByRole("timer")).toHaveAccessibleName(
     "Race starts in 2 hours, 2 minutes, 2 seconds",
   );
-  expect(screen.queryByText("Race starts in 2 hours, 2 minutes, 2 seconds")).not.toBeInTheDocument();
+  expect(
+    screen.queryByText("Race starts in 2 hours, 2 minutes, 2 seconds"),
+  ).not.toBeInTheDocument();
   expect(screen.getByText("H")).toBeInTheDocument();
   expect(screen.getByText("M")).toBeInTheDocument();
   expect(screen.getByText("S")).toBeInTheDocument();
@@ -70,11 +76,51 @@ test("wide countdown can leave the exact start target to its surrounding metadat
       showTargetTime={false}
     />,
   );
-  expect(container.querySelector(".race-countdown-meta time")).not.toBeInTheDocument();
+  expect(
+    container.querySelector(".race-countdown-meta time"),
+  ).not.toBeInTheDocument();
   expect(screen.getByText("COUNTDOWN TO NEXT RACE START")).toBeInTheDocument();
   expect(screen.getByRole("timer")).toHaveAccessibleName(
     "Race starts in 2 hours, 2 minutes, 2 seconds",
   );
+});
+
+test("a supplied clock rerender advances the countdown and crosses the elapsed boundary", () => {
+  const { rerender } = render(
+    <RaceCountdown
+      startsAt={raceStart}
+      timePrecision="second"
+      now={Date.parse("2026-09-26T10:59:58Z")}
+    />,
+  );
+  expect(screen.getByRole("timer")).toHaveAccessibleName(
+    "Race starts in 2 seconds",
+  );
+
+  rerender(
+    <RaceCountdown
+      startsAt={raceStart}
+      timePrecision="second"
+      now={Date.parse("2026-09-26T10:59:59Z")}
+    />,
+  );
+  expect(screen.getByRole("timer")).toHaveAccessibleName(
+    "Race starts in 1 seconds",
+  );
+
+  rerender(
+    <RaceCountdown
+      startsAt={raceStart}
+      timePrecision="second"
+      now={Date.parse(raceStart)}
+    />,
+  );
+  expect(
+    screen.getByText(
+      "Race start time has passed; waiting for the archive to update.",
+    ),
+  ).toBeInTheDocument();
+  expect(screen.queryByRole("timer")).not.toBeInTheDocument();
 });
 
 test("countdown refuses to invent a time from a date-only schedule", () => {

@@ -47,7 +47,11 @@ function displayUnitName(unit) {
 export function getCountdownParts(startsAt, now = Date.now()) {
   const targetMs = Date.parse(startsAt || "");
   const nowMs = typeof now === "number" ? now : Date.parse(now);
-  if (!Number.isFinite(targetMs) || !Number.isFinite(nowMs) || targetMs <= nowMs)
+  if (
+    !Number.isFinite(targetMs) ||
+    !Number.isFinite(nowMs) ||
+    targetMs <= nowMs
+  )
     return [];
 
   const target = new Date(targetMs);
@@ -64,8 +68,7 @@ export function getCountdownParts(startsAt, now = Date.now()) {
   const minutes = Math.floor(remaining / MILLISECONDS.minute);
   remaining -= minutes * MILLISECONDS.minute;
   let seconds = Math.floor(remaining / MILLISECONDS.second);
-  if (!months && !weeks && !days && !hours && !minutes && !seconds)
-    seconds = 1;
+  if (!months && !weeks && !days && !hours && !minutes && !seconds) seconds = 1;
 
   return [
     [months, "month"],
@@ -97,33 +100,37 @@ export function RaceCountdown({
   now,
   variant = "default",
   showTargetTime = true,
+  heading = "COUNTDOWN TO NEXT RACE START",
+  countdownPhrase = "Race starts in",
+  unavailableMessage = "Race start time not supplied by the schedule.",
+  elapsedMessage = "Race start time has passed; waiting for the archive to update.",
 }) {
-  const [currentTime, setCurrentTime] = useState(() => now ?? Date.now());
+  const [localTime, setLocalTime] = useState(() => Date.now());
   useEffect(() => {
     if (now != null) return undefined;
-    const timer = setInterval(() => setCurrentTime(Date.now()), 1000);
+    const timer = setInterval(() => setLocalTime(Date.now()), 1000);
     return () => clearInterval(timer);
   }, [now]);
 
+  const currentTime = now ?? localTime;
   const targetMs = Date.parse(startsAt || "");
   const parts = useMemo(
     () => getCountdownParts(startsAt, currentTime),
     [startsAt, currentTime],
   );
-  const hasPreciseTime = PRECISE_TIME.has(timePrecision) && Number.isFinite(targetMs);
+  const hasPreciseTime =
+    PRECISE_TIME.has(timePrecision) && Number.isFinite(targetMs);
 
   if (!hasPreciseTime)
     return (
       <p className="race-countdown race-countdown--unavailable">
-        Race start time not supplied by the schedule.
+        {unavailableMessage}
       </p>
     );
 
   if (!parts.length)
     return (
-      <p className="race-countdown race-countdown--elapsed">
-        Race start time has passed; waiting for the archive to update.
-      </p>
+      <p className="race-countdown race-countdown--elapsed">{elapsedMessage}</p>
     );
 
   const accessibleLabel = parts.map((part) => part.label).join(", ");
@@ -131,11 +138,11 @@ export function RaceCountdown({
     <div
       className={`race-countdown${variant === "wide" ? " race-countdown--wide" : ""}`}
       role="timer"
-      aria-label={`Race starts in ${accessibleLabel}`}
+      aria-label={`${countdownPhrase} ${accessibleLabel}`}
     >
       {variant === "wide" ? (
         <div className="race-countdown-meta">
-          <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>
+          <p className="race-countdown-heading">{heading}</p>
           {showTargetTime && (
             <time dateTime={new Date(targetMs).toISOString()}>
               Starts {targetTimeLabel(startsAt)}
@@ -143,7 +150,7 @@ export function RaceCountdown({
           )}
         </div>
       ) : (
-        <p className="race-countdown-heading">COUNTDOWN TO NEXT RACE START</p>
+        <p className="race-countdown-heading">{heading}</p>
       )}
       <div className="race-countdown-parts" aria-hidden="true">
         {parts.map((part) => (
