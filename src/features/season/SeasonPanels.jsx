@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
   Panel,
@@ -28,12 +28,17 @@ import {
   adjacentCalendarEvents,
   focusEvent,
   focusEventKind,
+  isPastScheduledEventAwaitingResults,
+  nextScheduledEvent,
+  runtimeYear,
 } from "./selectors";
 import { entryName } from "./raceFormat";
 import { RaceCountdown } from "../../components/RaceCountdown";
 import { RaceResultStatus } from "./RaceResultStatusPanel";
 import { EventInsightDialog } from "./EventInsightDialog";
 import { SeasonEventStrip } from "./SeasonEventStrip";
+
+const SEASON_EVENT_REFRESH_INTERVAL_MS = 30_000;
 
 function ResultsAvailability({
   season = {},
@@ -297,7 +302,13 @@ function RacePodium({ detail, isFetching, isError }) {
   );
 }
 
-function AdjacentEventBand({ event, label, next = false }) {
+function AdjacentEventBand({
+  event,
+  label,
+  next = false,
+  now,
+  showPendingResults = false,
+}) {
   if (!event) return null;
   const status = event.status || "unknown";
   const statusLabel = status === "unknown" ? "Status not supplied" : status;
@@ -325,7 +336,7 @@ function AdjacentEventBand({ event, label, next = false }) {
         aria-label={label}
       >
         <div className="overview-adjacent-event-countdown">
-          <RaceResultStatus event={event} />
+          <RaceResultStatus event={event} now={now} />
         </div>
         <div className="overview-adjacent-event-hero-copy">
           <div className="overview-adjacent-event-heading">
@@ -377,6 +388,11 @@ function AdjacentEventBand({ event, label, next = false }) {
           <RaceStatus status={status}>{statusLabel}</RaceStatus>
         </small>
       </div>
+      {showPendingResults && (
+        <div className="overview-adjacent-event-results">
+          <RaceResultStatus event={event} now={now} />
+        </div>
+      )}
     </section>
   );
 }
@@ -386,24 +402,70 @@ export function SeasonAroundRace({
   snapshotId,
   meta,
   onSnapshotReset,
+  now: suppliedNow,
 }) {
   const [selectedEventId, setSelectedEventId] = useState(null);
+  const [clockNow, setClockNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (suppliedNow != null) return undefined;
+    const timer = setInterval(
+      () => setClockNow(Date.now()),
+      SEASON_EVENT_REFRESH_INTERVAL_MS,
+    );
+    return () => clearInterval(timer);
+  }, [suppliedNow]);
+  const now = suppliedNow ?? clockNow;
+  const nowMs = typeof now === "number" ? now : Date.parse(now);
   const calendarQuery = useGetCalendarQuery({
     year: summary.season?.year,
     snapshotId,
   });
   const events = calendarQuery.currentData?.items || [];
+  const isCurrentSeason = Number(summary.season?.year) === runtimeYear();
   const focus = focusEvent(summary);
   const adjacent = focus?.id
     ? adjacentCalendarEvents(events, focus.id)
     : { previous: null, next: null };
-  const nextEvent = adjacent.next || summary.nextEvent || null;
-  const previousEvent = adjacent.previous || summary.previousEvent || null;
+  const nextEvent = isCurrentSeason
+    ? nextScheduledEvent(
+        calendarQuery.currentData
+          ? events
+          : [summary.nextEvent].filter(Boolean),
+        now,
+      )
+    : adjacent.next || summary.nextEvent || null;
+  const aroundNextPrevious =
+    events
+      .filter(
+        (event) =>
+          !["cancelled", "canceled", "postponed"].includes(
+            String(event.status).trim().toLowerCase(),
+          ) &&
+          ["minute", "second"].includes(event.schedule?.timePrecision) &&
+          Date.parse(event.schedule?.startsAt) <= nowMs,
+      )
+      .sort(
+        (left, right) =>
+          Date.parse(right.schedule.startsAt) -
+          Date.parse(left.schedule.startsAt),
+      )[0] || null;
+  const previousIsPending =
+    isCurrentSeason &&
+    isPastScheduledEventAwaitingResults(aroundNextPrevious, now);
+  const previousEvent = previousIsPending
+    ? aroundNextPrevious
+    : adjacent.previous || summary.previousEvent || null;
+  const statusNow = suppliedNow == null ? undefined : now;
   const selectEvent = (event) => setSelectedEventId(event.id);
 
   return (
     <section className="season-around-race" aria-label="Season around the race">
-      <AdjacentEventBand event={nextEvent} label="NEXT EVENT" next />
+      <AdjacentEventBand
+        event={nextEvent}
+        label="NEXT EVENT"
+        next
+        now={statusNow}
+      />
       <div className="season-around-race-main">
         <RaceFocus
           className="season-around-race-focus"
@@ -434,7 +496,12 @@ export function SeasonAroundRace({
           throughEventName={summary.latestCompletedEvent?.name}
         />
       </DataBoundary>
-      <AdjacentEventBand event={previousEvent} label="PREVIOUS EVENT" />
+      <AdjacentEventBand
+        event={previousEvent}
+        label="PREVIOUS EVENT"
+        now={statusNow}
+        showPendingResults={previousIsPending}
+      />
       <div className="season-around-race-provenance">
         <SourceNote meta={meta} />
       </div>

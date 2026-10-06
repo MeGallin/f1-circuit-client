@@ -164,7 +164,8 @@ export function RaceResultStatus({ event, now: suppliedNow }) {
     ) {
       invalidatedEvents.current.add(event.id);
       const tags = [{ type: "Event", id: event.id }];
-      if (event.year != null) tags.push({ type: "Season", id: event.year });
+      if (event.year != null)
+        tags.push({ type: "SeasonSummary", id: event.year });
       dispatch(archiveApi.util.invalidateTags(tags));
     }
   }, [dispatch, event?.id, event?.year, resultState]);

@@ -55,6 +55,26 @@ test("missing runtime year is explicit and historical fallback is an intentional
     vi.fn(async (req) => {
       const url = new URL(req.url);
       requests.push(url);
+      if (url.pathname.endsWith("/refresh-data"))
+        return new Response(
+          JSON.stringify({
+            status: "pending",
+            message: "The latest race result is not available from the source yet.",
+            checkedAt: null,
+            publicationId: null,
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        );
+      if (url.pathname.endsWith("/publication-config"))
+        return new Response(
+          JSON.stringify({
+            automaticRaceResults: {
+              enabled: false,
+              anchor: "scheduled-race-start",
+            },
+          }),
+          { headers: { "Content-Type": "application/json" } },
+        );
       return new Response(
         JSON.stringify(
           url.pathname.endsWith("/seasons")
@@ -86,6 +106,18 @@ test("missing runtime year is explicit and historical fallback is an intentional
   expect(screen.getByLabelText("Season")).toHaveValue(String(year));
   expect(location.search).toBe(`?season=${year}`);
   expect(requests.every((url) => url.pathname.endsWith("/seasons"))).toBe(true);
+  await userEvent.click(screen.getByRole("button", { name: "Refresh data" }));
+  expect(
+    await screen.findByText(
+      "The latest race result is not available from the source yet.",
+    ),
+  ).toBeInTheDocument();
+  expect(
+    requests.filter((url) => url.pathname.endsWith("/seasons")),
+  ).toHaveLength(2);
+  expect(requests.some((url) => url.pathname.endsWith("/refresh-data"))).toBe(
+    true,
+  );
   await userEvent.click(
     screen.getByRole("link", { name: "Explore imported 2024 data" }),
   );

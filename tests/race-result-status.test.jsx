@@ -240,7 +240,7 @@ test("a completed event with empty results is shown as unpublished", async () =>
   expect(calls.every((url) => !url.searchParams.has("snapshotId"))).toBe(true);
 });
 
-test("published rows invalidate overview Season and Event caches only once", async () => {
+test("published rows invalidate overview summary and Event caches only once", async () => {
   const start = Date.parse(event().schedule.startsAt);
   const { invalidations } = renderStatus({
     raceStatus: "completed",
@@ -256,7 +256,7 @@ test("published rows invalidate overview Season and Event caches only once", asy
   expect(invalidations).toHaveLength(1);
   expect(invalidations[0].payload).toEqual([
     { type: "Event", id: event().id },
-    { type: "Season", id: 2026 },
+    { type: "SeasonSummary", id: 2026 },
   ]);
   expect(screen.getByRole("status")).toHaveAttribute("data-state", "published");
 });

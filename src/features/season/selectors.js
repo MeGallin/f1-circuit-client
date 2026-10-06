@@ -67,8 +67,13 @@ export function focusEventKind(summary) {
 }
 export function standingCutoff({ summary, standingSnapshotId, events = [] }) {
   const snapshot = standingSnapshotId || summary?.standingSnapshotId;
-  const round = Number(String(snapshot || "").split(":").at(-1));
-  const event = events.find((item) => item.round === round) ||
+  const round = Number(
+    String(snapshot || "")
+      .split(":")
+      .at(-1),
+  );
+  const event =
+    events.find((item) => item.round === round) ||
     (round === summary?.latestCompletedEvent?.round
       ? summary.latestCompletedEvent
       : null);
@@ -90,6 +95,41 @@ export function adjacentCalendarEvents(events, eventId) {
     previous: events[index - 1] || null,
     next: events[index + 1] || null,
   };
+}
+export function nextScheduledEvent(events = [], now = Date.now()) {
+  const nowMs = typeof now === "number" ? now : Date.parse(now);
+  if (!Number.isFinite(nowMs)) return null;
+
+  let next = null;
+  let nextStart = Infinity;
+  for (const event of events) {
+    const status = String(event?.status || "")
+      .trim()
+      .toLowerCase();
+    if (["cancelled", "canceled", "postponed", "completed"].includes(status))
+      continue;
+    if (!["minute", "second"].includes(event?.schedule?.timePrecision))
+      continue;
+    const startsAt = Date.parse(event?.schedule?.startsAt || "");
+    if (Number.isFinite(startsAt) && startsAt > nowMs && startsAt < nextStart) {
+      next = event;
+      nextStart = startsAt;
+    }
+  }
+  return next;
+}
+export function isPastScheduledEventAwaitingResults(event, now = Date.now()) {
+  const status = String(event?.status || "")
+    .trim()
+    .toLowerCase();
+  if (!["scheduled", "upcoming", "unknown"].includes(status)) return false;
+  if (!["minute", "second"].includes(event?.schedule?.timePrecision))
+    return false;
+  const startsAt = Date.parse(event?.schedule?.startsAt || "");
+  const nowMs = typeof now === "number" ? now : Date.parse(now);
+  return (
+    Number.isFinite(startsAt) && Number.isFinite(nowMs) && startsAt <= nowMs
+  );
 }
 export function dateLabel(value) {
   if (!value) return "Date not supplied";

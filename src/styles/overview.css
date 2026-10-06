@@ -729,8 +729,18 @@
 .overview-adjacent-event--previous {
   grid-template-areas:
     "heading heading date date"
-    "round copy date date";
+    "round copy date date"
+    "results results results results";
   border-top: 1px solid var(--apex-color-line);
+}
+
+.overview-adjacent-event-results {
+  grid-area: results;
+  min-width: 0;
+}
+
+.overview-adjacent-event--previous .overview-result-status {
+  margin-top: 0;
 }
 
 .overview-adjacent-event-heading {
@@ -988,7 +998,8 @@
   .overview-adjacent-event--previous {
     grid-template-areas:
       "heading heading date"
-      "round copy date";
+      "round copy date"
+      "results results results";
   }
 }
 
@@ -1069,7 +1080,8 @@
       "heading heading"
       "round copy"
       "round copy"
-      "date date";
+      "date date"
+      "results results";
   }
 
   .overview-adjacent-event-date {

@@ -1,14 +1,16 @@
 import useSeasonSearch from "../features/season/useSeasonSearch";
-import { ArrowClockwiseIcon, SquaresFourIcon } from "@phosphor-icons/react";
+import { SquaresFourIcon } from "@phosphor-icons/react";
 import {
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,
 } from "../api/archiveApi";
 import {
   selectSeasonOptions,
+  runtimeYear,
   selectedSeason,
 } from "../features/season/selectors";
 import { SeasonAroundRace } from "../features/season/SeasonPanels";
+import { SeasonDataRefresh } from "../features/season/SeasonDataRefresh";
 import {
   PageHeading,
   Select,
@@ -29,17 +31,11 @@ function SeasonOverview({ year, seasons }) {
   const summary = data?.summary;
   return (
     <>
-      <div className="overview-toolbar">
-        <span>Historical archive · {year}</span>
-        <Button
-          variant="quiet"
-          onClick={query.refetch}
-          disabled={query.isFetching}
-        >
-          <ArrowClockwiseIcon aria-hidden size={18} />
-          Refresh data
-        </Button>
-      </div>
+      <SeasonDataRefresh
+        year={year}
+        archiveIsFetching={query.isFetching}
+        onArchiveRefresh={query.refetch}
+      />
       <DataBoundary query={query} empty={query.isSuccess && !summary}>
         {summary?.season.coverage === "unavailable" ? (
           <>
@@ -126,12 +122,21 @@ export default function Overview() {
               seasons={catalogue.currentData.items}
             />
           ) : (
-            <Panel title="Season selection">
-              <SeasonUnavailable
-                year={year}
-                seasons={catalogue.currentData.items}
-              />
-            </Panel>
+            <>
+              {year === runtimeYear() && (
+                <SeasonDataRefresh
+                  year={year}
+                  archiveIsFetching={catalogue.isFetching}
+                  onArchiveRefresh={catalogue.refetch}
+                />
+              )}
+              <Panel title="Season selection">
+                <SeasonUnavailable
+                  year={year}
+                  seasons={catalogue.currentData.items}
+                />
+              </Panel>
+            </>
           ))}
       </DataBoundary>
     </>

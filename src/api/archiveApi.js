@@ -12,6 +12,36 @@ const request = fetchBaseQuery({
   credentials: "omit",
 });
 const PUBLICATION_CONFIG_ATTEMPTS = 3;
+const REFRESH_DATA_STATUSES = new Set([
+  "updated",
+  "unchanged",
+  "pending",
+  "busy",
+  "cooldown",
+  "no-race",
+]);
+
+export function refreshDataResponse(response) {
+  if (
+    !response ||
+    !REFRESH_DATA_STATUSES.has(response.status) ||
+    typeof response.message !== "string" ||
+    !(
+      response.checkedAt === null ||
+      (typeof response.checkedAt === "string" &&
+        Number.isFinite(Date.parse(response.checkedAt)))
+    ) ||
+    !(
+      response.publicationId === null ||
+      typeof response.publicationId === "string"
+    ) ||
+    (response.retryAfterMs !== undefined &&
+      (!Number.isSafeInteger(response.retryAfterMs) ||
+        response.retryAfterMs < 0))
+  )
+    throw new Error("Unexpected source refresh response");
+  return response;
+}
 
 function isTransientPublicConfigError(error) {
   const status = error?.status;
@@ -117,7 +147,7 @@ export const archiveApi = createApi({
   keepUnusedDataFor: 300,
   refetchOnReconnect: true,
   refetchOnFocus: false,
-  tagTypes: ["Seasons", "Season", "Event"],
+  tagTypes: ["Seasons", "Season", "SeasonSummary", "Event", "Session"],
   endpoints: (builder) => ({
     getPublicationConfig: builder.query({
       queryFn: publicationConfigQuery,
@@ -231,6 +261,37 @@ export const archiveApi = createApi({
       }),
       transformResponse: (r) => objectResponse(r, "questionResult"),
     }),
+    refreshData: builder.mutation({
+      query: ({ season }) => ({
+        url: "/refresh-data",
+        method: "POST",
+        body: { season },
+      }),
+      transformResponse: refreshDataResponse,
+      invalidatesTags: (_response, _error, { season }) => [
+        { type: "Seasons" },
+        { type: "SeasonSummary", id: season },
+        { type: "Season", id: season },
+        { type: "Event" },
+        { type: "Session" },
+      ],
+      onQueryStarted: async (_arg, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          if (["updated", "unchanged", "pending"].includes(data.status)) {
+            const refreshConfig = dispatch(
+              archiveApi.endpoints.getPublicationConfig.initiate(undefined, {
+                forceRefetch: true,
+                subscribe: false,
+              }),
+            );
+            void refreshConfig.unwrap().catch(() => undefined);
+          }
+        } catch {
+          // Mutation errors are handled by the refresh control.
+        }
+      },
+    }),
     getSessionData: builder.query({
       query: ({
         sessionId,
@@ -263,6 +324,9 @@ export const archiveApi = createApi({
         };
       },
       transformResponse: collectionResponse,
+      providesTags: (_r, _e, { sessionId, dataset }) => [
+        { type: "Session", id: `${sessionId}:${dataset}` },
+      ],
     }),
     getSeasons: builder.query({
       async queryFn(_arg, _api, _extra, baseQuery) {
@@ -315,7 +379,7 @@ export const archiveApi = createApi({
         params: { snapshotId },
       }),
       transformResponse: summaryResponse,
-      providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
+      providesTags: (_r, _e, { year }) => [{ type: "SeasonSummary", id: year }],
     }),
     getCalendar: builder.query({
       query: ({ year, snapshotId, cursor }) => ({
@@ -414,6 +478,7 @@ export const {
   useGetImpactQuery,
   useGetEvidenceQuery,
   useAskQuestionMutation,
+  useRefreshDataMutation,
   useGetSessionDataQuery,
   useGetSeasonsQuery,
   useGetSeasonSummaryQuery,

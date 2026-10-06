@@ -13,12 +13,36 @@ import {
   selectedSeason,
   focusEvent,
   adjacentCalendarEvents,
+  isPastScheduledEventAwaitingResults,
+  nextScheduledEvent,
   previewCalendar,
   dateLabel,
 } from "../src/features/season/selectors";
 import contract from "../contracts/openapi.json";
 
 afterEach(() => vi.unstubAllGlobals());
+test("race timing selectors reject postponed events and date-only timestamps", () => {
+  const now = Date.parse("2026-10-06T12:00:00Z");
+  const event = {
+    status: "scheduled",
+    schedule: { startsAt: "2026-10-07T12:00:00Z", timePrecision: "second" },
+  };
+  expect(
+    nextScheduledEvent([{ ...event, status: "postponed" }], now),
+  ).toBeNull();
+  expect(
+    nextScheduledEvent(
+      [{ ...event, schedule: { ...event.schedule, timePrecision: "date" } }],
+      now,
+    ),
+  ).toBeNull();
+  expect(
+    isPastScheduledEventAwaitingResults(
+      { ...event, schedule: { startsAt: "2026-10-05", timePrecision: "date" } },
+      now,
+    ),
+  ).toBe(false);
+});
 test("selection uses only published seasons and refuses unavailable explicit selections", () => {
   const seasons = [
     { year: 2023, isCurrent: false },
@@ -89,6 +113,71 @@ test("calendar context identifies only the previous and next events", () => {
     previous: null,
     next: { id: "1" },
   });
+});
+test("next scheduled event skips stale, cancelled and completed calendar entries", () => {
+  const previous = {
+    id: "event:2026:azerbaijan-grand-prix",
+    round: 15,
+    status: "completed",
+    schedule: { startsAt: "2026-09-26T11:00:00Z", timePrecision: "second" },
+  };
+  const unpublished = {
+    id: "event:2026:bahrain-grand-prix-in-malaysia",
+    round: 16,
+    status: "scheduled",
+    schedule: { startsAt: "2026-10-04T07:00:00Z", timePrecision: "second" },
+  };
+  const upcoming = {
+    id: "event:2026:singapore-grand-prix",
+    round: 17,
+    status: "scheduled",
+    schedule: { startsAt: "2026-10-11T12:00:00Z", timePrecision: "second" },
+  };
+  const cancelled = {
+    id: "event:2026:cancelled-grand-prix",
+    round: 18,
+    status: "cancelled",
+    schedule: { startsAt: "2026-10-07T12:00:00Z", timePrecision: "second" },
+  };
+  const completed = {
+    id: "event:2026:completed-grand-prix",
+    round: 19,
+    status: "completed",
+    schedule: { startsAt: "2026-10-08T12:00:00Z", timePrecision: "second" },
+  };
+  const events = [upcoming, cancelled, previous, completed, unpublished];
+  const next = nextScheduledEvent(events, "2026-10-05T19:46:00Z");
+
+  expect(next).toEqual(upcoming);
+  expect(
+    adjacentCalendarEvents([previous, unpublished, upcoming], next.id).previous,
+  ).toEqual(unpublished);
+});
+test("only an elapsed scheduled predecessor with no completed result stays marked pending", () => {
+  const now = "2026-10-05T19:46:00Z";
+  const scheduled = {
+    status: "scheduled",
+    schedule: { startsAt: "2026-10-04T07:00:00Z", timePrecision: "second" },
+  };
+  expect(isPastScheduledEventAwaitingResults(scheduled, now)).toBe(true);
+  expect(
+    isPastScheduledEventAwaitingResults(
+      { ...scheduled, status: "unknown" },
+      now,
+    ),
+  ).toBe(true);
+  expect(
+    isPastScheduledEventAwaitingResults(
+      { ...scheduled, status: "completed" },
+      now,
+    ),
+  ).toBe(false);
+  expect(
+    isPastScheduledEventAwaitingResults(
+      { ...scheduled, schedule: { startsAt: "2026-10-11T12:00:00Z" } },
+      now,
+    ),
+  ).toBe(false);
 });
 test("contract envelopes keep metadata and exact fractional points unchanged", () => {
   const meta = {
