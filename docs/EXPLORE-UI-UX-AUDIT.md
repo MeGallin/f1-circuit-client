@@ -4,6 +4,19 @@ Date: 20 September 2026
 Route reviewed: `/explore?season=2025`  
 Audience: engaged Formula 1 followers, researchers and curious visitors looking for a specific person, team, circuit, race or season.
 
+## Constructor identity update — 6 October 2026
+
+Explore constructor results now use the shared canonical identity component beside
+the supplied name. Undated records use explicit season-neutral defaults; dated
+records use supplied years, not the browsing season. Unknown/year/image errors
+retain text, and badges do not imply a season-filtered search or complete archive.
+The result remains text-led with one clear destination, not a decorative image
+card. See [coverage, rights and recorded 296-test review](CONSTRUCTOR-LOGOS.md)
+and [local commit/deployment status](CHECKPOINT.md). No fresh runtime QA is claimed
+by this documentation update. The verdict, observed states, recommendations and
+unchecked release checklist below are the dated September audit, not a new audit
+or a claim that the old pre-implementation layout is still current.
+
 ## Executive verdict
 
 The Explore route has a good foundation: it is honest about the archive, the main search is backed by the normalized publication, the controls are labelled, and the route preserves search state in the URL. The dark trackside editorial system also fits the product.

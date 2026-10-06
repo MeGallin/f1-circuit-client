@@ -1,5 +1,22 @@
 # Standings route
 
+## Current constructor integration — 6 October 2026
+
+Constructor rows and driver affiliations use the shared `ConstructorIdentity` /
+`ConstructorIdentities` with the selected standings year. API ordering, names,
+points and pagination remain authoritative. Repeated contract-valid constructor
+records retain their names without duplicate React keys; unknown IDs, unsupported
+years and failed images retain text. No successor-logo aliasing is used.
+The reviewed archive covers 40 IDs, 287 ID/year pairs and 49 assets; full current
+and 2000 standings loaded 11/11 images in recorded browser checks, including
+390px current standings without page overflow. See [verification and rights](CONSTRUCTOR-LOGOS.md)
+and [commit/deployment status](CHECKPOINT.md). This prose update runs no tests.
+
+## Historical first standings slice
+
+The first-slice scope/placeholder and archive-size statements below are historical;
+overview, sources, profiles and analytics now exist.
+
 `/standings?season=2024&kind=drivers&round=12` selects driver standings after round 12. `kind=constructors` selects constructor standings. Omit `round` for latest published within the archive, never implied current real-world standings.
 
 The documented `/seasons/{year}/standings/{kind}` endpoint supplies rows, rank, exact string points, wins, nullable podiums, metadata and pagination. Rows retain API order. Missing values remain explicit. The calendar populates round choices without implying that standings for every round are imported. Missing round responses never fall back to latest. Switching championship kind preserves the round; changing season resets round and pagination.

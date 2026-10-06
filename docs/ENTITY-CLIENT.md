@@ -1,5 +1,27 @@
 # Entity and comparison client — 18 September 2026
 
+## Current constructor identity — 6 October 2026
+
+Constructor profiles and Explore cards now render local canonical badges while
+retaining API names. Undated records use explicit season-neutral defaults, not
+the browsing/current year; dated records use reviewed variants. Unknown IDs,
+unsupported years and image errors remain text. Cross-year comparison headings
+stay text rather than presenting one badge as an exact multi-year representation.
+`HistoryRows` passes each classification's `eventContext.event.year` through
+`RaceRecords` to constructor badge/link resolution; 2000/2010 records under a
+2026 URL are regression-tested. Supplied event context, rather than decoding
+opaque IDs, now supports these history rows.
+
+Recorded senior review passed lint, 296 tests across 28 files and production
+build. See [coverage/provenance/accessibility](CONSTRUCTOR-LOGOS.md) and
+[commit/deployment status](CHECKPOINT.md). No fresh tests or runtime checks are
+performed by this documentation update.
+
+## Historical entity/comparison milestone — 18 September 2026
+
+The test counts, reference-only history limitations, deployed-API behaviour and
+archive hold below describe that earlier milestone, not current verification.
+
 ## Routes and behavior
 
 - `/explore`: deterministic published-archive search by name or keyword, scope-aware All/Drivers/Constructors/Circuits/Events/Seasons filters, canonical profile/event/season navigation, and cursor pagination pinned to a publication snapshot. It never calls the question layer.

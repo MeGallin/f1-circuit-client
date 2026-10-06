@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "../styles/race-countdown.css";
 
 const PRECISE_TIME = new Set(["minute", "second"]);
+const CLOCK_UNITS = ["hour", "minute", "second"];
 const MONTHS_IN_YEAR = 12;
 const MILLISECONDS = {
   week: 7 * 24 * 60 * 60 * 1000,
@@ -134,6 +135,14 @@ export function RaceCountdown({
     );
 
   const accessibleLabel = parts.map((part) => part.label).join(", ");
+  // Keep the clock columns stable at zero without changing larger-unit or
+  // elapsed-state semantics (or the existing concise spoken duration).
+  const displayParts = [
+    ...parts.filter((part) => !CLOCK_UNITS.includes(part.unit)),
+    ...CLOCK_UNITS.map(
+      (unit) => parts.find((part) => part.unit === unit) || { unit, value: 0 },
+    ),
+  ];
   return (
     <div
       className={`race-countdown${variant === "wide" ? " race-countdown--wide" : ""}`}
@@ -153,7 +162,7 @@ export function RaceCountdown({
         <p className="race-countdown-heading">{heading}</p>
       )}
       <div className="race-countdown-parts" aria-hidden="true">
-        {parts.map((part) => (
+        {displayParts.map((part) => (
           <span className="race-countdown-part" key={part.unit}>
             <strong>{String(part.value).padStart(2, "0")}</strong>
             <span>{displayUnitName(part.unit)}</span>

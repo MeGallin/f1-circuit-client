@@ -1,5 +1,60 @@
 # Functionality validation
 
+## Countdown zero-unit correction — 6 October 2026
+
+Active `RaceCountdown` now always renders two-digit H/M/S, including `00` at
+minute/hour boundaries. The shared calculation omitted zero parts; rendering
+now supplies clock-only placeholders without changing larger-unit visibility,
+the concise spoken duration, positive subsecond minimum of one second, precise
+schedule requirements or elapsed/pending messages. No new months or estimated
+schedule values are introduced. Both standard and wide variants share the fix.
+
+Nine regressions failed before the fix because zero clock columns were absent.
+The focused countdown/result-status run passed 31 tests after the correction,
+covering live second ticks `01 → 00 → 59`, minute/hour/day rollovers, padded zero
+units, subsecond behaviour and unchanged elapsed/pending/unavailable states.
+No backend, import, dependency, production control or styling changes are needed.
+
+Fresh `npm run check` passed lint, **307 tests across 29 files**, the 49-asset
+prebuild guard and production build. Existing chunk-size and jsdom scrollTo
+warnings remain. Parent read-only browser/screenshot review after hot reload
+verified the running Singapore countdown and unchanged layout; no live `00`
+frame was captured. Zero/rollover proof comes from deterministic component tests,
+not that browser screenshot. Earlier constructor-review counts below remain
+their recorded checkpoint evidence. No API changes, imports, commits, pushes
+or deployment were performed.
+
+## Constructor integration and senior review — 6 October 2026
+
+Recorded constructor coverage is 40 canonical IDs, 287 observed ID/year pairs
+across 2000–2026, 40 explicit undated defaults and 49 local assets. This is not
+all 1950-onwards constructors or a claim of complete race data. Shared identities
+retain API names and provide decorative images, unknown/year/error fallbacks;
+historical IDs never alias to successors. Standings, affiliations, overview and
+calendar podiums, profiles/search cards, race results and analytics identities
+are covered; chart labels, native selects and cross-year comparison headings
+remain text. See [the full surface/source register](CONSTRUCTOR-LOGOS.md).
+
+Ten regressions reproduced defects before senior-review corrections: historical
+records now pass their own year to badge/link resolution; undated badges use
+explicit defaults, not ambient URL years; keyed token generation validates before
+writing and leaves base/font tokens intact; SVG namespace/base-URI/CSS-escape
+gaps are rejected; repeated team records use distinct React keys; and production
+builds validate physical assets before Vite copies them. Regressions include
+2000 Williams and 2010 Red Bull under a 2026 profile URL and missing/orphan/unsafe
+asset failure paths.
+
+Previously executed `npm run check` passed lint, **296 tests across 28 files**,
+the 49-asset guard and production build. All 49 output assets matched public
+files byte-for-byte. Existing chunk-size and jsdom scrollTo warnings remain;
+raster validation checks signatures, not full decoding. The subsequent documentation-only
+pass did not rerun tests/build, inspect production or perform imports.
+
+Local client commit is `1092bec`; push/remote and deployment status are recorded
+in [the current checkpoint](CHECKPOINT.md). Download authorisation does not clear
+copyright/trademark deployment rights. Earlier test counts below remain dated
+race-update and September evidence, not the latest constructor-review count.
+
 ## Race-update review — 6 October 2026
 
 Local Git logs confirm client `fb7cbd0` and API `734a4ed`. Both pushes are user-confirmed; deployment and production/live smoke verification for these commits are **PENDING**.

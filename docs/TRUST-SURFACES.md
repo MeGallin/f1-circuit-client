@@ -4,7 +4,24 @@
 
 Local logs confirm client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Deployment and production/live smoke verification for these commits are **PENDING**. The race-refresh review passed 141 client tests, lint/build and 133 API tests, lint/format/contract verification, Newman 114 requests / 192 assertions. Actions secrets/dispatch and real PostgreSQL multi-process locking are unverified. See [current validation](FUNCTIONALITY-VALIDATION.md) and [season refresh/provenance behavior](SEASON-SLICE.md). The route and deployed-question observations below describe the 21 September checkpoint and were not live-rechecked for this review.
 
-## Historical trust-surface checkpoint
+## Constructor artwork trust boundary — 6 October 2026
+
+Badges identify canonical constructors, not verified race facts or exact seasonal
+liveries. All 49 local assets for 40 observed IDs/287 year pairs have recorded
+[source URLs, transformations and rights limitations](CONSTRUCTOR-ASSET-SOURCES.md).
+Copyrighted download authorisation is not commercial/deployment-rights clearance;
+no endorsement, sponsor approval or unrestricted licence is implied. Names and
+publication provenance remain API-backed. Historical IDs never inherit successor
+marks, and unsupported records remain text.
+
+SVGs are external `<img>` assets, not raw markup injection. The prebuild guard
+rejects missing/orphan files, active SVGs, external references, namespace/base-URI
+and escaped-CSS gaps; raster signatures are checked, not fully decoded. Recorded
+senior review passed 296 tests across 28 files, lint and build. See
+[review/accessibility/fallback guidance](CONSTRUCTOR-LOGOS.md) and
+[local commit versus pending remote/deployment status](CHECKPOINT.md).
+
+## Historical trust-surface details — 21 September 2026
 
 The client exposes the API's provenance rules directly in the user-facing routes. The dedicated Records surface is intentionally deferred; this checkpoint is local only and no frontend deployment was performed.
 

@@ -6,7 +6,18 @@ Current-year refresh performs a bounded source check; historical refresh only re
 
 Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Recorded checks passed 141 client tests with lint/build and 133 API tests with lint/format/contract checks, Newman 114 requests / 192 assertions. Deployment and production/live smoke are **PENDING**; Actions secrets/dispatch and real PostgreSQL multi-process locking remain unverified. See [current evidence](FUNCTIONALITY-VALIDATION.md) and [season behavior](SEASON-SLICE.md). The provider-index and dataset statements in the earlier correction below are September observations, not newly verified coverage.
 
-## Historical correction — September 2026
+## Badge-year selection — 6 October 2026
+
+Constructor identity resolution is distinct from browsing-season defaults.
+Standings/season panels supply their selected year; calendar, analytics race
+results and profile history use the relevant record/event year. Shared undated
+constructor links/cards use explicit canonical defaults, not the ambient URL
+season. Their existing navigation context is retained; dated history links
+instead preserve their own record year. Regressions cover 2000 Williams and
+2010 Red Bull under a 2026 profile URL. Unknown/out-of-range records stay text;
+no modern successor logo is guessed. See [recorded constructor review](CONSTRUCTOR-LOGOS.md).
+
+## Historical selection correction — September 2026
 
 The catalogue now comes from all pages of the API seasons collection, pinned to the first publication snapshot. No frontend year range is generated. Options are newest first, with per-season coverage labels.
 

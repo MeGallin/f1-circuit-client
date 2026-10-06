@@ -15,3 +15,13 @@ See [constructor asset and accessibility guidance](CONSTRUCTOR-LOGOS.md).
 The constructor extension generates both tile roles from keyed JSON themes,
 without patching the approved base token CSS or font roles. Invalid input does
 not partially rewrite output; generation is deterministic.
+
+`ConstructorLogo` / `ConstructorIdentity` share local artwork and API-backed names
+across constructor identity surfaces. `logoTileDark` preserves the original pale
+RB/HRT artwork without recolouring. Icon sizes, spacing and radius are existing
+Apex roles. The podium selector outranks legacy descendant span rules so the
+badge sits beside the team name beneath the driver; compact panel-width queries
+remove the standings stagger and names wrap. No chart-label/select-option logos
+or global layout redesign are introduced. Recorded senior review passed 296
+tests across 28 files plus lint/build; [source and rights guidance](CONSTRUCTOR-LOGOS.md)
+remains separate from visual acceptance and deployment permission.

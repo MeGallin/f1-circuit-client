@@ -1,5 +1,20 @@
 # Primary views: local QA
 
+## Countdown zero-unit correction — 6 October 2026
+
+Nine fail-before component regressions reproduced missing zero H/M/S columns.
+Focused verification passed 31 countdown/result-status tests after the shared
+rendering fix, including actual one-second ticker rollover `01 → 00 → 59`,
+minute/hour/day boundaries and both standard/wide variants. Subsecond minimum,
+elapsed/pending/unavailable messages and larger-unit behaviour remain unchanged.
+Fresh `npm run check` passed lint, 307 tests across 29 files, the 49-asset guard
+and production build (existing chunk/scrollTo warnings). No new fixture/QA route
+remains in the repository. Parent read-only overview screenshot review after hot
+reload verified the running Singapore countdown and unchanged layout, leaving
+Dark appearance unchanged. It did not capture a live `00` frame: deterministic
+component tests provide zero/rollover evidence, not that screenshot. No production
+verification is claimed. See [validation](FUNCTIONALITY-VALIDATION.md).
+
 ## Current review evidence — 6 October 2026
 
 Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Deployment and production/live smoke verification for these commits are **PENDING**. Recorded client `npm run check` passed lint, 141 tests across 21 files and production build; final focused season/refresh regressions passed 36/36. API checks passed 133 tests, lint/format, contract verification and Newman 114 requests / 192 assertions, zero failures. Both diff checks passed. Production build retains the existing large-chunk warning.
@@ -8,11 +23,24 @@ New regression evidence covers cache invalidation without component-only summary
 
 Production-origin smoke/CORS and deployed commit versions remain pending. Actions secrets/dispatch and real PostgreSQL multi-process locking are unverified. No new accessibility/responsive certification or live import is claimed by this October review, and this prose update repeats no runtime checks. The measurements and archive coverage statements below remain the September checkpoint evidence.
 
-The later constructor-logo implementation/review has separate
-[current evidence and proof](CONSTRUCTOR-LOGOS.md), including physical assets,
-historical-year regressions and read-only Chromium verification. It does not
-claim production verification or supersede the dated accessibility certification
-below with a new certification.
+### Constructor implementation/review evidence
+
+The recorded final client check passed lint, 296 tests across 28 files, the
+49-asset prebuild guard and production build. Coverage is 40 canonical IDs and
+287 observed ID/year pairs (2000–2026), not comprehensive race-data completeness.
+The earlier expanded gallery loaded 91/91 instances; current and year-2000
+standings loaded 11/11 badges, including 390px mobile without page overflow.
+The senior-review Chromium check loaded 24/24 constructor badges in the 2010
+Bahrain classification, with archive artwork, 2010 links and no page overflow.
+System appearance/default viewport were restored. These are recorded earlier
+checks, not browser/test/build executions for the prior documentation-only pass.
+
+See [proof paths, failure-before evidence and limits](CONSTRUCTOR-LOGOS.md).
+Local implementation is committed as `1092bec`; [checkpoint status](CHECKPOINT.md)
+does not claim a confirmed logo push or deployment. This does not supersede the
+dated accessibility certification below with a new certification. Existing
+chunk/scrollTo warnings, raster signature-only validation and brand-use clearance
+limits remain explicit.
 
 ## Historical QA — 18 September 2026
 

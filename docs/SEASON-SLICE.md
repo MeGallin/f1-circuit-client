@@ -1,5 +1,16 @@
 # Season overview checkpoint
 
+## Stable active countdown clock — 6 October 2026
+
+The shared race/watch countdown keeps hours, minutes and seconds visible and
+two-digit padded even when zero: `00 S` remains between `01 S` and `59 S` at a
+minute rollover. Zero minutes/hours likewise remain rather than collapsing
+columns. Days and existing larger units retain their prior positive-only display;
+the positive subsecond one-second minimum, precise-time requirements, accessible
+spoken duration and elapsed/pending states are unchanged. This is presentation
+only, not a scheduling/polling or server cooldown change. See
+[countdown regression evidence](FUNCTIONALITY-VALIDATION.md).
+
 ## Current season-refresh behavior — 6 October 2026
 
 Current-UTC-year overview refresh calls `POST /refresh-data` with only the selected current season. The API selects the latest precise scheduled past race and can check it outside the automatic window. Historical refresh reloads the archive query without importing source data. The control distinguishes source outcomes/errors, shows a server `retryAfterMs` countdown for updated/unchanged/pending/cooldown/busy responses, and displays either the button or timer. Changing season/unmount aborts requests and clears timers; late responses cannot reload a newly selected historical season.
@@ -10,7 +21,20 @@ Automatic result monitoring retains the start+6h through start+30h default windo
 
 Local logs confirm client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Recorded checks passed 141 client tests, lint/build and 133 API tests, lint/format/contract checks, Newman 114 requests / 192 assertions. Deployment/live smoke is **PENDING**; Actions secrets/dispatch and real PostgreSQL multi-process locking are unverified. See [validation evidence](FUNCTIONALITY-VALIDATION.md). The following first-slice scope is historical; its disabled-polling statement describes general archive queries, not the later result-status monitor.
 
-## Historical first-slice behavior
+## Constructor overview integration — 6 October 2026
+
+The constructor snapshot, driver affiliations, race podium and event dialog use
+shared canonical identity badges with API names and the relevant season/event
+year. The podium badge remains beside the constructor name below the driver;
+both embedded standings tabs switch to one column based on actual panel width
+using the Apex `constructorIdentityCompact` token, without changing the approved
+band order or driver hierarchy. Names wrap; missing/year/error cases retain text.
+This presentation work does not change refresh, polling or source publication.
+See [296-test recorded review and sources](CONSTRUCTOR-LOGOS.md),
+[current commit/deployment status](CHECKPOINT.md) and
+[layout integration note](OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md).
+
+## Historical first-slice behavior and configuration
 
 Preview `/` or `/?season=2024`. This slice uses real published API data, never the synthetic OpenAPI examples. Dedicated race detail, calendar, standings and source routes remain later stages. Overview calendar expansion and driver/constructor summary tabs work within this slice.
 

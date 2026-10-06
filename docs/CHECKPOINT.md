@@ -6,10 +6,15 @@ The application now has API-backed overview, calendar, standings, race/session, 
 
 Local history confirms client `fb7cbd0` and API `734a4ed`. Both pushes are user-confirmed; deployment and production/live smoke verification are **PENDING**. Recorded checks passed 141 client tests, lint and production build, plus 133 API tests, lint/format/contract verification and Newman 114 requests / 192 assertions. Actions secrets/dispatch and real PostgreSQL multi-process locking remain unverified; the client build retains the large-chunk warning. See [local QA limits](LOCAL-QA.md). This documentation update does not run the application or perform new live checks.
 
-The subsequent uncommitted constructor-logo checkpoint covers all 40 observed
+The subsequent constructor-logo checkpoint covers all 40 observed
 2000–2026 canonical IDs, 287 ID/year pairs and 49 local assets. Senior review
 corrected per-record historical-year propagation, token generation and asset
-build guards; see [current constructor verification](CONSTRUCTOR-LOGOS.md).
+build guards, SVG validation and duplicate React keys. Recorded review checks
+passed lint, 296 tests across 28 files and production build, including the
+49-asset prebuild guard; these were not rerun for this prose update. Local client
+HEAD is `1092bec`, one commit ahead of cached `origin/main`; the logo push is not
+user-confirmed or freshly remote-verified. Deployment/live smoke remain pending.
+See [current constructor verification](CONSTRUCTOR-LOGOS.md).
 This work does not change the push/deployment status of the race-update commits.
 
 ## Historical foundation and components review

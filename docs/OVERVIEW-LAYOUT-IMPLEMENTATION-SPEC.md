@@ -8,6 +8,22 @@
 
 **Audience:** Frontend development team
 
+## Constructor integration note — 6 October 2026
+
+The approved composition below remains the design reference, not live race facts;
+its dated examples are illustrative. The implemented constructor identity layer
+adds local canonical badges beside source names in the race podium, championship
+snapshot and selected-event dialog without changing band order or driver hierarchy.
+Shared podium specificity keeps the small badge beside the team name. Constructor
+names wrap instead of truncating, and both embedded standings tabs use the Apex
+`constructorIdentityCompact` panel-width breakpoint to remove the stagger where
+space is limited. This narrowly supersedes the constructor-name truncation and
+viewport-only compact-list assumptions below, not the overall layout contract.
+Tile roles and query CSS are generated from keyed Apex JSON tokens without
+patching base/font CSS. See [identity guidance and recorded verification](CONSTRUCTOR-LOGOS.md)
+and [current commit/deployment status](CHECKPOINT.md); no deployment is authorised
+by this specification or documentation update.
+
 ## 1. Purpose and implementation rule
 
 This document is the implementation handoff for the approved overview layout. The composition shown by the mock-up is locked. The development task is to connect this composition to the existing API and reusable client components, not to rearrange the information architecture or redesign the page.

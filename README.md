@@ -22,8 +22,13 @@ artwork are included. The initial expanded delivery passed 281 tests; the senior
 follow-up passed lint, 296 tests across 28 files and production build, including
 historical-year, generator and build-asset guard regressions.
 See the current verification in [constructor guidance](docs/CONSTRUCTOR-LOGOS.md).
-This logo work is uncommitted/unpushed/undeployed;
-it is separate from the user-confirmed race-update pushes above.
+Local history now records the logo implementation/review in client `1092bec`
+(`feat: add constructor logos across the historical archive`). The cached client
+`origin/main` is one commit behind; no fresh remote check or user-confirmed logo
+push is recorded. Companion API HEAD `c7dd38d` contains documentation only and
+matches its cached origin ref, not independent remote verification. Logo deployment,
+live smoke and brand-use clearance remain pending. The race-update push confirmation
+above applies only to the earlier named commits.
 
 React with plain JavaScript, Redux Toolkit and RTK Query. The client consumes the normalized F1 Circuit API; provider credentials and database access belong on the server. The Apex design system provides reusable tokens, components and patterns.
 

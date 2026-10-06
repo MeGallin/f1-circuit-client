@@ -12,6 +12,14 @@ generated brand assets are included.
 
 ## Current archive coverage
 
+Local client history now records implementation and senior-review fixes in
+`1092bec` (`feat: add constructor logos across the historical archive`). At this
+documentation check it is one commit ahead of cached `origin/main`. No fresh
+remote verification or user confirmation of a logo push is recorded; deployment
+and live smoke remain pending. Companion API `c7dd38d` changes documentation only
+and matches its cached origin ref. Earlier race-update pushes were separately
+user-confirmed. This update changes prose only and reruns no tests/build/browser.
+
 Read-only API `/search?q=constructor:&kind=constructor` pagination and every
 published constructor standing set were audited on 6 October: 40 canonical IDs
 across 27 seasons (2000–2026). `fixtures/constructor-catalogue.js` records the
@@ -62,7 +70,7 @@ to valid news reporting. That media library was not used as an unrestricted lice
 | `audi.svg` / `constructor:audi`         | 2026 only              | [Audi-Logo 2016](https://commons.wikimedia.org/wiki/File:Audi-Logo_2016.svg); brandlogos.net/audi-auto-eps-52114.html, Strichpunkt / KMS Team; original upload log also cites audi.de | PD-textlogo; explicit trademark warning                         | [SVG](https://upload.wikimedia.org/wikipedia/commons/9/92/Audi-Logo_2016.svg)           |
 | `williams.png` / `constructor:williams` | 2023–2026              | [Williams Racing Monogram](https://commons.wikimedia.org/wiki/File:Williams_Racing_Monogram.png); own work, DJClements; described as official electric-blue monogram                  | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [PNG](https://upload.wikimedia.org/wikipedia/commons/8/87/Williams_Racing_Monogram.png) |
 
-The initial ranges below are historical **review coverage**, not current manifest
+The initial ranges above are historical **review coverage**, not current manifest
 coverage or claims that a logo debuted
 or was continuously used in those years. Mercedes uses the source's dated 2022
 manufacturer symbol; Alpine's press-kit mark, archived in 2021, is limited to the
@@ -104,7 +112,8 @@ no modern successor mark is inferred.
 - Full constructor standings and driver affiliations; overview championship
   snapshot and race podium; calendar/event-dialog podiums.
 - Constructor profile identity; shared constructor links in race/session and
-  archive result views (when a season is supplied).
+  archive result views (dated variants with supplied years; explicit canonical
+  defaults for undated identities).
 - Analytics constructor snapshot, leader metrics, driver spotlight and recent
   race/podium affiliations. Chart labels and native selects remain text.
 - Explore constructor cards use the same identity component; undated search
@@ -183,6 +192,8 @@ pre-existing long-line/layout differences.
 The 281-test expanded-delivery result below is historical evidence from before
 this follow-up, not the current review's final count.
 
+## Historical expanded-delivery verification — 6 October 2026
+
 Expanded coverage regressions failed before implementation (40 of 43 catalogue
 tests, plus the known-undated identity case). The new RB contrast-tile regression
 and both-tabs narrow-container contract each failed before their respective fixes.
@@ -206,6 +217,8 @@ Final browser proof is saved under
 `expanded-undated-ferrari-profile.png`, `expanded-standings-390-system.png`,
 `expanded-standings-390-dark.png` and `expanded-overview-1001.png`.
 
+## Historical initial nine-logo verification — 6 October 2026
+
 Identity tests first failed because the new component was absent, then passed.
 The initial delivery's `npm run check` passed lint, 191 tests across 24 files and the production
 build. The focused identity/integration/asset-safety/cascade suite passed 50 tests. The
@@ -225,4 +238,6 @@ names on one line beside 16px tiles. `overview-podium-fixed-1001.jpg` supersedes
 the earlier overview screenshots for this podium layout.
 Browser checks use only published local data; no refresh/import is needed.
 Deployment and production verification of this logo change remain pending; no
-commit, push or deployment is performed by implementation.
+commit, push or deployment was performed by the implementation/review agent.
+The subsequent local commit and still-pending remote/live verification are
+recorded at the start of this document.

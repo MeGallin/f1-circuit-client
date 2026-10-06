@@ -6,7 +6,16 @@ Current-year overview source refresh invalidates the selected-season calendar ca
 
 Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Recorded checks passed 141 client tests with lint/build and 133 API tests, contract/lint/format checks, Newman 114 requests / 192 assertions. Deployment/live smoke is **PENDING**; Actions secrets/dispatch and real PostgreSQL multi-process locking remain unverified. The first-slice scope/deployment statements below are historical.
 
-## Historical calendar slice
+## Constructor podium integration — 6 October 2026
+
+Calendar and selected-event dialog podiums use shared constructor identities,
+retaining source names and the event's actual year. Decorative images do not
+duplicate adjacent accessible names; unknown IDs, unsupported years or failed
+images retain text. This does not alter event status, selection, pagination or
+publication boundaries. See [coverage, rights and recorded review](CONSTRUCTOR-LOGOS.md)
+and [commit/deployment status](CHECKPOINT.md). No runtime checks are repeated here.
+
+## Historical first calendar slice
 
 Route: `/calendar?season=2024`. Optional `event` contains the opaque calendar event ID and selects its coverage disclosure. Season changes clear event selection. Browser history preserves selections. Unavailable seasons are never silently replaced.
 
