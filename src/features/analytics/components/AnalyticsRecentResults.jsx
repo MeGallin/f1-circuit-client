@@ -1,3 +1,5 @@
+import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
+
 export function buildRecentResultsModel(race) {
   return (race?.results || race?.podium || []).slice(0, 5);
 }
@@ -14,7 +16,7 @@ export function formatResultGap(gap) {
   return "Classified";
 }
 
-function ResultRow({ result }) {
+function ResultRow({ result, year }) {
   return (
     <li className="analytics-recent-result">
       <span className="analytics-recent-result-position">
@@ -22,7 +24,7 @@ function ResultRow({ result }) {
       </span>
       <div className="analytics-recent-result-driver">
         <strong>{result.driverName || "Driver not supplied"}</strong>
-        <small>{result.constructorName || "Constructor not supplied"}</small>
+        <small><ConstructorIdentity constructor={{ id: result.constructorId, displayName: result.constructorName }} year={year} /></small>
       </div>
       <div className="analytics-recent-result-outcome">
         <strong>
@@ -62,6 +64,7 @@ export default function AnalyticsRecentResults({ race }) {
           <ResultRow
             key={`${result.position}-${result.driverId}`}
             result={result}
+            year={race.year}
           />
         ))}
       </ol>

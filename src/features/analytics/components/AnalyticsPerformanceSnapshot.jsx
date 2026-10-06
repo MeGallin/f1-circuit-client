@@ -1,5 +1,6 @@
 import { ChartLineUpIcon, GaugeIcon, TrophyIcon } from "@phosphor-icons/react";
 import AnalyticsRaceBreakdown from "./AnalyticsRaceBreakdown";
+import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
 
 export function buildDriverSpotlightModel(leader) {
   return {
@@ -22,7 +23,7 @@ function SnapshotValue({ label, value, detail }) {
   );
 }
 
-export default function AnalyticsPerformanceSnapshot({ intelligence }) {
+export default function AnalyticsPerformanceSnapshot({ intelligence, year }) {
   const leader = intelligence?.championshipLeader;
   const breakdown = intelligence?.raceBreakdown || {};
   if (!leader && !Object.keys(breakdown).length) return null;
@@ -43,7 +44,7 @@ export default function AnalyticsPerformanceSnapshot({ intelligence }) {
               <h3>{leader?.driverName || "Leader not supplied"}</h3>
             </div>
             <p className="muted">
-              {leader?.constructor?.displayName || "Constructor not supplied"}
+              <ConstructorIdentity constructor={leader?.constructor} year={year} />
             </p>
           </div>
           <div className="analytics-spotlight-rank">

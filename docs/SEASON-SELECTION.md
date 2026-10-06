@@ -1,5 +1,13 @@
 # Season selection correction
 
+## Current selection/refresh review — 6 October 2026
+
+Current-year refresh performs a bounded source check; historical refresh only reloads archive data. Season changes remount the refresh state, abort its pending request and clear its server-driven timer. A late current-year response cannot add feedback or reload a newly selected historical season. Refresh invalidates the catalogue and selected-season summary alongside calendar/standings, event and session caches. The overview uses only the selected summary publication for dependent calendar/detail queries.
+
+Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Recorded checks passed 141 client tests with lint/build and 133 API tests with lint/format/contract checks, Newman 114 requests / 192 assertions. Deployment and production/live smoke are **PENDING**; Actions secrets/dispatch and real PostgreSQL multi-process locking remain unverified. See [current evidence](FUNCTIONALITY-VALIDATION.md) and [season behavior](SEASON-SLICE.md). The provider-index and dataset statements in the earlier correction below are September observations, not newly verified coverage.
+
+## Historical correction — September 2026
+
 The catalogue now comes from all pages of the API seasons collection, pinned to the first publication snapshot. No frontend year range is generated. Options are newest first, with per-season coverage labels.
 
 Overview, calendar and standings default dynamically to the runtime UTC calendar year, and write that selection into the URL using replace navigation. An explicit historical selection stays selected across refresh and browser history. Changing season clears dependent event/round/pagination state. Main navigation retains the selected season; home branding also retains it.

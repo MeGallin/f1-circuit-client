@@ -6,6 +6,7 @@ import {
   UsersThreeIcon,
   WarningCircleIcon,
 } from "@phosphor-icons/react";
+import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
 
 export function formatAnalyticsFreshness(value) {
   if (!value) return "Not available";
@@ -85,14 +86,14 @@ export function buildAnalyticsOverviewModel({
   };
 }
 
-function OverviewMetric({ metric }) {
+function OverviewMetric({ metric, identity }) {
   const Icon = metric.icon;
   return (
     <article className="analytics-overview-metric" role="listitem">
       <Icon size={22} aria-hidden />
       <div>
         <span>{metric.label}</span>
-        <strong>{metric.value}</strong>
+        <strong>{identity || metric.value}</strong>
         {metric.detail && <small>{metric.detail}</small>}
       </div>
     </article>
@@ -100,6 +101,7 @@ function OverviewMetric({ metric }) {
 }
 
 export default function AnalyticsOverviewStrip({
+  year,
   quickStats,
   seasonIntelligence,
   meta,
@@ -115,8 +117,8 @@ export default function AnalyticsOverviewStrip({
       role="list"
       aria-label="Season summary"
     >
-      {Object.values(model).map((metric) => (
-        <OverviewMetric key={metric.label} metric={metric} />
+      {Object.entries(model).map(([key, metric]) => (
+        <OverviewMetric key={metric.label} metric={metric} identity={key === "constructorLeader" && seasonIntelligence?.constructorLeader ? <ConstructorIdentity constructor={{ id: seasonIntelligence.constructorLeader.constructorId, displayName: seasonIntelligence.constructorLeader.constructorName }} year={year} /> : null} />
       ))}
     </div>
   );

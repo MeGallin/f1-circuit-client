@@ -1,4 +1,5 @@
 import { EntityLink } from "../features/entities/shared";
+import { ConstructorIdentities } from "../components/ConstructorIdentity";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { useDispatch } from "react-redux";
 import { RankingIcon } from "@phosphor-icons/react";
@@ -38,7 +39,7 @@ export function validRound(value) {
     (/^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value)))
   );
 }
-export function StandingRows({ rows, kind }) {
+export function StandingRows({ rows, kind, year }) {
   return (
     <ol
       className="standing-rows"
@@ -55,13 +56,12 @@ export function StandingRows({ rows, kind }) {
               <EntityLink
                 entity={row.entity}
                 kind={kind === "drivers" ? "driver" : "constructor"}
+                season={year}
               />
             </strong>
             {kind === "drivers" && (
               <p>
-                {row.constructors.length
-                  ? row.constructors.map((team) => team.displayName).join(" / ")
-                  : "Constructor not supplied"}
+                <ConstructorIdentities constructors={row.constructors} year={year} />
               </p>
             )}
           </div>
@@ -194,7 +194,7 @@ function Championship({ year, kind, params, setParams }) {
           empty={query.isSuccess && !data?.items.length}
           onRetry={query.error?.status === 409 ? restart : query.refetch}
         >
-          {data && <StandingRows rows={data.items} kind={kind} />}
+          {data && <StandingRows rows={data.items} kind={kind} year={year} />}
         </DataBoundary>
       )}
       {data && (

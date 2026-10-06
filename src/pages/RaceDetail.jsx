@@ -477,7 +477,13 @@ export function RaceRecords({
             </strong>
             <span>
               {(row.entry?.constructor ? (
-                <EntityLink entity={row.entry.constructor} kind="constructor" />
+                <EntityLink
+                  entity={row.entry.constructor}
+                  kind="constructor"
+                  season={
+                    row.eventContext?.event?.year ?? evidenceContext?.season
+                  }
+                />
               ) : null) || (row.entry ? "Constructor not supplied" : "")}
             </span>
           </div>
@@ -570,9 +576,13 @@ function resultDriver(row, names) {
   return names[row.entryId] || "Driver name not supplied";
 }
 
-function resultConstructor(row) {
+function resultConstructor(row, season) {
   return row.entry?.constructor ? (
-    <EntityLink entity={row.entry.constructor} kind="constructor" />
+    <EntityLink
+      entity={row.entry.constructor}
+      kind="constructor"
+      season={row.eventContext?.event?.year ?? season}
+    />
   ) : (
     "Constructor not supplied"
   );
@@ -597,7 +607,12 @@ function resultEvidence(row, snapshotId, evidenceContext) {
   );
 }
 
-export function RaceResultTable({ rows, names = {}, snapshotId, evidenceContext }) {
+export function RaceResultTable({
+  rows,
+  names = {},
+  snapshotId,
+  evidenceContext,
+}) {
   return (
     <DataTable
       caption="Race classification"
@@ -614,7 +629,7 @@ export function RaceResultTable({ rows, names = {}, snapshotId, evidenceContext 
         {
           key: "constructor",
           label: "Constructor",
-          render: resultConstructor,
+          render: (row) => resultConstructor(row, evidenceContext?.season),
         },
         {
           key: "status",

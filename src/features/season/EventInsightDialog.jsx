@@ -14,6 +14,7 @@ import {
 import { dateLabel } from "./selectors";
 import { entryName } from "./raceFormat";
 import "../../styles/event-dialog.css";
+import { ConstructorIdentity } from "../../components/ConstructorIdentity";
 
 function scheduleLabel(event) {
   const date = dateLabel(event.schedule?.date);
@@ -26,7 +27,7 @@ function scheduleLabel(event) {
   return `${date} · ${time} UTC`;
 }
 
-function EventPodiumPreview({ podium }) {
+function EventPodiumPreview({ podium, year }) {
   const rows = (podium || [])
     .filter((row) => row?.position >= 1 && row.position <= 3)
     .sort((a, b) => a.position - b.position);
@@ -46,7 +47,7 @@ function EventPodiumPreview({ podium }) {
             </span>
             <div>
               <strong>{entryName(row.entry)}</strong>
-              <span>{row.entry?.constructor?.displayName || "Team not supplied"}</span>
+              <span><ConstructorIdentity constructor={row.entry?.constructor} year={year} /></span>
             </div>
             <span className="event-dialog-podium-points">
               {row.points == null ? "—" : `${row.points} PTS`}
@@ -65,7 +66,7 @@ function EventDialogContent({ event, query }) {
     return <ErrorState status={query.error?.status} onRetry={query.refetch} />;
 
   const detail = query.currentData?.detail;
-  if (detail?.podium?.length) return <EventPodiumPreview podium={detail.podium} />;
+  if (detail?.podium?.length) return <EventPodiumPreview podium={detail.podium} year={event.year} />;
 
   const upcoming = ["scheduled", "upcoming"].includes(event.status);
   return (

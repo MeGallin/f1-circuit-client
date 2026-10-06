@@ -5,6 +5,7 @@ import {
   UsersThreeIcon,
 } from "@phosphor-icons/react";
 import { Panel } from "../../../components/ui";
+import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
 import {
   buildSeasonIntelligenceModel,
   formatAnalyticsDate,
@@ -26,13 +27,13 @@ function IntelligenceMetric({ icon: Icon, label, value, detail, children }) {
   );
 }
 
-function RaceEntry({ entry }) {
+function RaceEntry({ entry, year }) {
   return (
     <li className={`analytics-podium-entry analytics-podium-entry--p${entry.position}`}>
       <span className="analytics-podium-position">{entry.position}</span>
       <div>
         <strong>{entry.driverName || "Driver not supplied"}</strong>
-        <span>{entry.constructorName || "Constructor not supplied"}</span>
+        <span><ConstructorIdentity constructor={{ id: entry.constructorId, displayName: entry.constructorName }} year={year} /></span>
       </div>
       {entry.points != null && (
         <small>{entry.points} pts</small>
@@ -64,7 +65,7 @@ function LatestRace({ race, podium }) {
         <FlagCheckeredIcon size={24} aria-hidden />
       </div>
       <ol className="analytics-podium" aria-label={`${race.name} podium`}>
-        {podium.length ? podium.map((entry) => <RaceEntry entry={entry} key={entry.position} />) : (
+        {podium.length ? podium.map((entry) => <RaceEntry entry={entry} year={race.year} key={entry.position} />) : (
           <li className="analytics-race-context-empty-copy">Podium results not supplied.</li>
         )}
       </ol>
@@ -143,7 +144,7 @@ function NextRace({ race }) {
   );
 }
 
-export default function AnalyticsIntelligence({ intelligence }) {
+export default function AnalyticsIntelligence({ intelligence, year }) {
   const model = buildSeasonIntelligenceModel(intelligence);
   const leader = model.championshipLeader;
   const constructorLeader = model.constructorLeader;
@@ -165,7 +166,7 @@ export default function AnalyticsIntelligence({ intelligence }) {
         <IntelligenceMetric
           icon={UsersThreeIcon}
           label="Constructor leader"
-          value={constructorLeader?.constructorName}
+          value={constructorLeader ? <ConstructorIdentity constructor={{ id: constructorLeader.constructorId, displayName: constructorLeader.constructorName }} year={year} /> : null}
           detail={constructorLeader?.points != null ? `${constructorLeader.points} pts` : null}
         />
         <IntelligenceMetric

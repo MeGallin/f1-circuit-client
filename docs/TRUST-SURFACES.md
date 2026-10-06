@@ -1,5 +1,11 @@
 # Trust surfaces — 21 September 2026
 
+## Current review status — 6 October 2026
+
+Local logs confirm client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Deployment and production/live smoke verification for these commits are **PENDING**. The race-refresh review passed 141 client tests, lint/build and 133 API tests, lint/format/contract verification, Newman 114 requests / 192 assertions. Actions secrets/dispatch and real PostgreSQL multi-process locking are unverified. See [current validation](FUNCTIONALITY-VALIDATION.md) and [season refresh/provenance behavior](SEASON-SLICE.md). The route and deployed-question observations below describe the 21 September checkpoint and were not live-rechecked for this review.
+
+## Historical trust-surface checkpoint
+
 The client exposes the API's provenance rules directly in the user-facing routes. The dedicated Records surface is intentionally deferred; this checkpoint is local only and no frontend deployment was performed.
 
 ## Routes

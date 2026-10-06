@@ -1,4 +1,5 @@
 import { TrophyIcon, UsersThreeIcon } from "@phosphor-icons/react";
+import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
 
 export function buildChampionshipSnapshotModel({
   comparison,
@@ -35,7 +36,7 @@ export function buildChampionshipSnapshotModel({
   return { drivers, teams };
 }
 
-function SnapshotRows({ rows, kind, showNumber = false }) {
+function SnapshotRows({ rows, kind, showNumber = false, year }) {
   return (
     <ol
       className={`analytics-championship-rows analytics-championship-rows--${kind.toLowerCase()}${showNumber ? " analytics-championship-rows--numbered" : ""}`}
@@ -50,7 +51,7 @@ function SnapshotRows({ rows, kind, showNumber = false }) {
             </span>
           )}
           <span className="analytics-championship-copy">
-            <strong>{row.name || "Not supplied"}</strong>
+            <strong>{kind === "Constructor" ? <ConstructorIdentity constructor={{ id: row.id, displayName: row.name }} year={year} /> : row.name || "Not supplied"}</strong>
             <small>{row.detail}</small>
           </span>
           <span className="analytics-championship-value">
@@ -64,6 +65,7 @@ function SnapshotRows({ rows, kind, showNumber = false }) {
 }
 
 export default function AnalyticsChampionshipSnapshot({
+  year,
   comparison,
   constructors,
   driverSeries,
@@ -98,7 +100,7 @@ export default function AnalyticsChampionshipSnapshot({
           <h3 id="analytics-constructor-standings">Constructor standings</h3>
         </div>
         {model.teams.length ? (
-          <SnapshotRows rows={model.teams} kind="Constructor" />
+          <SnapshotRows rows={model.teams} kind="Constructor" year={year} />
         ) : (
           <p className="muted">No constructor points are published for this selection.</p>
         )}

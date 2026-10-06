@@ -8,6 +8,8 @@
     "dark": {
       "canvas": "#0e1013",
       "surface": "#15191e",
+      "logoTile": "#fafbfc",
+      "logoTileDark": "#15191e",
       "elevated": "#1e252c",
       "text": "#f0f2f3",
       "muted": "#a6afb8",
@@ -28,6 +30,8 @@
     "light": {
       "canvas": "#f2f4f5",
       "surface": "#fafbfc",
+      "logoTile": "#fafbfc",
+      "logoTileDark": "#15191e",
       "elevated": "#e6eaee",
       "text": "#20282e",
       "muted": "#58636b",
@@ -311,6 +315,9 @@
     "calendarRoundColumn": 80,
     "calendarDateColumn": 145,
     "calendarStatusColumn": 120
+  },
+  "containerBreakpoints": {
+    "constructorIdentityCompact": 520
   },
   "breakpoints": {
     "mobile": 0,

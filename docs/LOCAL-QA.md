@@ -1,5 +1,21 @@
 # Primary views: local QA
 
+## Current review evidence — 6 October 2026
+
+Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Deployment and production/live smoke verification for these commits are **PENDING**. Recorded client `npm run check` passed lint, 141 tests across 21 files and production build; final focused season/refresh regressions passed 36/36. API checks passed 133 tests, lint/format, contract verification and Newman 114 requests / 192 assertions, zero failures. Both diff checks passed. Production build retains the existing large-chunk warning.
+
+New regression evidence covers cache invalidation without component-only summary refetch, server-driven cooldown/busy countdowns, unmount/season-change cancellation, final/unknown pending races, suppression of older unknown races after newer completed results, postponed/date-only exclusion and ISO clocks. Parent read-only local browser review observed round 16 with Singapore round 17 next and a countdown; it did not trigger an import or verify production. See [full validation](FUNCTIONALITY-VALIDATION.md).
+
+Production-origin smoke/CORS and deployed commit versions remain pending. Actions secrets/dispatch and real PostgreSQL multi-process locking are unverified. No new accessibility/responsive certification or live import is claimed by this October review, and this prose update repeats no runtime checks. The measurements and archive coverage statements below remain the September checkpoint evidence.
+
+The later constructor-logo implementation/review has separate
+[current evidence and proof](CONSTRUCTOR-LOGOS.md), including physical assets,
+historical-year regressions and read-only Chromium verification. It does not
+claim production verification or supersede the dated accessibility certification
+below with a new certification.
+
+## Historical QA — 18 September 2026
+
 Completed 18 September 2026. Local preview: http://127.0.0.1:5173 . No deployment performed.
 
 ## Focused fixes

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import useSeasonSearch from "../features/season/useSeasonSearch";
+import { ConstructorIdentity } from "../components/ConstructorIdentity";
 import {
   archiveApi,
   useGetCalendarQuery,
@@ -181,8 +182,7 @@ export function CalendarEvents({
                           <strong>{row.position}</strong>
                           <span>{entryName(row.entry)}</span>
                           <small>
-                            {row.entry?.constructor?.displayName ||
-                              "Team not supplied"}
+                            <ConstructorIdentity constructor={row.entry?.constructor} year={event.year} />
                           </small>
                         </li>
                       ))}

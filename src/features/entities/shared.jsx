@@ -1,6 +1,7 @@
 import { useSearchParams, useInRouterContext } from "react-router-dom";
 import { entityKinds } from "../../api/archiveApi";
 import { Button, TextLink } from "../../components/ui";
+import { ConstructorIdentity } from "../../components/ConstructorIdentity";
 export function entityPath(kind, id, season) {
   if (!Object.hasOwn(entityKinds, kind)) return null;
   const query = new URLSearchParams();
@@ -10,7 +11,12 @@ export function entityPath(kind, id, season) {
 export function EntityLink(props) {
   const routed = useInRouterContext();
   if (!props.entity) return "Not supplied";
-  if (!routed || !props.entity.id) return props.entity.displayName;
+  if (!routed || !props.entity.id)
+    return props.kind === "constructor" ? (
+      <ConstructorIdentity constructor={props.entity} year={props.season} />
+    ) : (
+      props.entity.displayName
+    );
   return <RoutedEntityLink {...props} />;
 }
 function RoutedEntityLink({ entity, kind, season }) {
@@ -18,7 +24,11 @@ function RoutedEntityLink({ entity, kind, season }) {
   if (!entity) return "Not supplied";
   return (
     <TextLink to={entityPath(kind, entity.id, season || params.get("season"))}>
-      {entity.displayName}
+      {kind === "constructor" ? (
+        <ConstructorIdentity constructor={entity} year={season} />
+      ) : (
+        entity.displayName
+      )}
     </TextLink>
   );
 }

@@ -422,11 +422,13 @@ export default function Analytics() {
         {dashboard && (
           <>
             <AnalyticsOverviewStrip
+              year={dashboard.filters?.season}
               quickStats={analyticsStats}
               seasonIntelligence={dashboard.seasonIntelligence}
               meta={responseMeta}
             />
             <AnalyticsIntelligence
+              year={dashboard.filters?.season}
               intelligence={dashboard.seasonIntelligence}
             />
             <Panel
@@ -452,6 +454,7 @@ export default function Analytics() {
               }
             >
               <AnalyticsPerformanceSnapshot
+                year={dashboard.filters?.season}
                 intelligence={dashboard.seasonIntelligence}
               />
             </Panel>
@@ -510,6 +513,7 @@ export default function Analytics() {
                 }
               >
                 <AnalyticsChampionshipSnapshot
+                  year={dashboard.filters?.season}
                   comparison={comparison}
                   constructors={dashboard.constructorContribution}
                   driverSeries={dashboard.pointsProgression.series}

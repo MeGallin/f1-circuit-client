@@ -37,6 +37,7 @@ import { RaceCountdown } from "../../components/RaceCountdown";
 import { RaceResultStatus } from "./RaceResultStatusPanel";
 import { EventInsightDialog } from "./EventInsightDialog";
 import { SeasonEventStrip } from "./SeasonEventStrip";
+import { ConstructorIdentity, ConstructorIdentities } from "../../components/ConstructorIdentity";
 
 const SEASON_EVENT_REFRESH_INTERVAL_MS = 30_000;
 
@@ -178,6 +179,7 @@ export function RaceFocus({
             detail={eventDetail.currentData?.detail}
             isFetching={eventDetail.isFetching}
             isError={eventDetail.isError}
+            year={event.year}
           />
         )}
         <CircuitSilhouette
@@ -235,7 +237,7 @@ export function RaceFocus({
   );
 }
 
-function RacePodium({ detail, isFetching, isError }) {
+function RacePodium({ detail, isFetching, isError, year }) {
   const podium = (detail?.podium || [])
     .filter((row) => row?.position >= 1 && row.position <= 3)
     .sort((a, b) => a.position - b.position);
@@ -271,8 +273,7 @@ function RacePodium({ detail, isFetching, isError }) {
                   <div className="race-podium-driver-copy">
                     <strong>{entryName(row.entry)}</strong>
                     <span>
-                      {row.entry?.constructor?.displayName ||
-                        "Team not supplied"}
+                      <ConstructorIdentity constructor={row.entry?.constructor} year={year} />
                     </span>
                   </div>
                 </div>
@@ -591,9 +592,9 @@ export function CalendarPreview({
     </div>
   );
 }
-function LeaderList({ entries, kind }) {
+function LeaderList({ entries, kind, year }) {
   return (
-    <ol className="leader-list">
+    <ol className={`leader-list leader-list--${kind}`}>
       {entries.map((row) => (
         <li key={row.id}>
           <span className="leader-rank">
@@ -608,10 +609,10 @@ function LeaderList({ entries, kind }) {
                   }
                 />
               )}
-              <strong>{row.entity.displayName}</strong>
+              <strong>{kind === "constructors" ? <ConstructorIdentity constructor={row.entity} year={year} /> : row.entity.displayName}</strong>
             </div>
             {row.constructors.length > 0 && (
-              <p>{row.constructors.map((c) => c.displayName).join(" / ")}</p>
+              <p><ConstructorIdentities constructors={row.constructors} year={year} /></p>
             )}
           </div>
           <span className="leader-points">
@@ -653,7 +654,7 @@ export function StandingsPreview({ summary, embedded = false }) {
           onChange={setKind}
         >
           {rows.length ? (
-            <LeaderList entries={rows} kind={kind} />
+            <LeaderList entries={rows} kind={kind} year={summary.season.year} />
           ) : (
             <EmptyState title="Standings not yet available" />
           )}

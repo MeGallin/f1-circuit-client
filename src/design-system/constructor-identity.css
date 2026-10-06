@@ -1,0 +1,55 @@
+.constructor-identity,
+.race-podium-driver-copy .constructor-identity,
+.entity-identity .constructor-identity,
+.analytics-overview-metric .constructor-identity {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apex-space-2);
+  max-width: 100%;
+  min-width: 0;
+  vertical-align: middle;
+  color: inherit;
+  font-size: inherit;
+}
+.constructor-identity > .constructor-identity-name {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: inherit;
+  font-size: inherit;
+}
+.constructor-logo,
+.constructor-identity > .constructor-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--constructor-logo-size, var(--apex-size-icon-large));
+  width: var(--constructor-logo-size, var(--apex-size-icon-large));
+  height: var(--constructor-logo-size, var(--apex-size-icon-large));
+  padding: var(--apex-space-1);
+  border-radius: var(--apex-radius-control);
+  background: var(--apex-color-logo-tile);
+}
+.constructor-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.constructor-logo--dark,
+.constructor-identity > .constructor-logo--dark {
+  background: var(--apex-color-logo-tile-dark);
+}
+.race-podium-driver-copy .constructor-identity {
+  --constructor-logo-size: var(--apex-size-icon-small);
+  gap: var(--apex-space-1);
+}
+
+/* The containing panel, not viewport width, determines room for team names. */
+.season-around-race-standings {
+  container-type: inline-size;
+}
+.leader-list--constructors li > div strong {
+  white-space: normal;
+  overflow: visible;
+}

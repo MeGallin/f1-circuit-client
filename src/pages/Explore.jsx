@@ -18,6 +18,7 @@ import {
 import { changeFilters, CollectionPages } from "../features/entities/shared";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/entities.css";
+import { ConstructorIdentity } from "../components/ConstructorIdentity";
 
 const kindItems = [
   { value: "", label: "All" },
@@ -34,6 +35,7 @@ const kindLabels = Object.fromEntries(
 
 function SearchResultItem({ item }) {
   const name = item.entity?.displayName || item.id;
+  const identity = item.kind === "constructor" ? <ConstructorIdentity constructor={{ ...item.entity, displayName: name }} year={item.year} /> : name;
   const evidencePath = item.evidenceId
     ? `/evidence/${encodeURIComponent(item.evidenceId)}`
     : null;
@@ -49,9 +51,9 @@ function SearchResultItem({ item }) {
           )}
         </div>
         {item.entity?.clientPath ? (
-          <TextLink to={item.entity.clientPath}>{name}</TextLink>
+          <TextLink to={item.entity.clientPath}>{identity}</TextLink>
         ) : (
-          <strong>{name}</strong>
+          <strong>{identity}</strong>
         )}
       </div>
       {evidencePath && (

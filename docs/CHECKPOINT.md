@@ -1,4 +1,18 @@
-# Foundation and components review
+# Client checkpoints
+
+## Current checkpoint — 6 October 2026
+
+The application now has API-backed overview, calendar, standings, race/session, entity/comparison, analytics, source and evidence surfaces, plus separate Explore archive search and Ask database-backed questions with optional server-side interpretation; standalone Records remains deferred. The foundation-only navigation and disconnected-data statements below describe an earlier milestone, not the current application. Current-year source refresh, historical archive reload, server cooldown timers, cache invalidation and precise race/pending selection are covered in [season behavior](SEASON-SLICE.md) and [current validation](FUNCTIONALITY-VALIDATION.md).
+
+Local history confirms client `fb7cbd0` and API `734a4ed`. Both pushes are user-confirmed; deployment and production/live smoke verification are **PENDING**. Recorded checks passed 141 client tests, lint and production build, plus 133 API tests, lint/format/contract verification and Newman 114 requests / 192 assertions. Actions secrets/dispatch and real PostgreSQL multi-process locking remain unverified; the client build retains the large-chunk warning. See [local QA limits](LOCAL-QA.md). This documentation update does not run the application or perform new live checks.
+
+The subsequent uncommitted constructor-logo checkpoint covers all 40 observed
+2000–2026 canonical IDs, 287 ID/year pairs and 49 local assets. Senior review
+corrected per-record historical-year propagation, token generation and asset
+build guards; see [current constructor verification](CONSTRUCTOR-LOGOS.md).
+This work does not change the push/deployment status of the race-update commits.
+
+## Historical foundation and components review
 
 Local preview: http://127.0.0.1:5173/design. Run `npm ci` then `npm run dev` to restart. Do not deploy this checkpoint.
 
@@ -12,4 +26,4 @@ Production domain remains https://f1.livenotice.co.uk. No deployment was perform
 
 ## Next checkpoint completed
 
-The real season overview now runs at http://127.0.0.1:5173/. See SEASON-SLICE.md for API behaviour and scope. Dedicated route groups remain next; the original component specimen is still at /design.
+The real season overview now runs at http://127.0.0.1:5173/. See [SEASON-SLICE.md](SEASON-SLICE.md) for API behaviour and scope. Dedicated route groups remain next at this historical checkpoint; the original component specimen is still at /design.

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Constructor asset review fixture — not an application route</title>
+    <link rel="stylesheet" href="/src/design-system/apex.tokens.css" />
+    <style>
+      body {
+        background: var(--apex-color-surface);
+        color: var(--apex-color-text);
+        font-family: var(--apex-font-body);
+        padding: var(--apex-space-6);
+      }
+      #gallery {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--apex-space-6);
+      }
+      section {
+        border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
+        padding: var(--apex-space-4);
+      }
+      section > div {
+        margin-block: var(--apex-space-3);
+      }
+      h1 {
+        font-size: var(--apex-type-body-size);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>QA fixture: canonical defaults and dated archive variants</h1>
+    <p>
+      IDs are audit labels, not substituted application names. Same shared
+      component and Apex tokens.
+    </p>
+    <div id="gallery"></div>
+    <script type="module">
+      import React from "react";
+      import { createRoot } from "react-dom/client";
+      import { ConstructorIdentity } from "/src/components/ConstructorIdentity.jsx";
+      import { constructorLogos } from "/src/components/constructorLogos.js";
+      createRoot(document.getElementById("gallery")).render(
+        Object.entries(constructorLogos).map(([id, entry]) =>
+          React.createElement(
+            "section",
+            { key: id },
+            React.createElement(ConstructorIdentity, {
+              constructor: { id, displayName: id },
+            }),
+            ...entry.periods.map((asset) =>
+              React.createElement(
+                "div",
+                { key: asset.from },
+                React.createElement(ConstructorIdentity, {
+                  constructor: { id, displayName: String(asset.from) },
+                  year: asset.from,
+                }),
+              ),
+            ),
+          ),
+        ),
+      );
+    </script>
+  </body>
+</html>

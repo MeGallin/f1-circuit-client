@@ -1,5 +1,6 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import { FlagCheckeredIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { ConstructorIdentity } from "../components/ConstructorIdentity";
 import {
   useGetProfileQuery,
   useGetHistoryQuery,
@@ -262,7 +263,7 @@ export default function Profile({ kind }) {
                 showFallback
               />
               <div>
-                <strong>{p.entity.displayName}</strong>
+                <strong>{kind === "constructor" ? <ConstructorIdentity constructor={p.entity} year={year} /> : p.entity.displayName}</strong>
                 <span>
                   {kind === "driver"
                     ? p.nationality

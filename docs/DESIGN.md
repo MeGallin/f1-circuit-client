@@ -7,3 +7,11 @@ DESIGN_VARIANCE 5, MOTION_INTENSITY 3, VISUAL_DENSITY 6. Custom React components
 Token source: src/design-system/apex.tokens.json; generated CSS and media constants from the approved handoff. Brand roles are separate from semantic status roles. Red remains selected. Spacing, typography, 3px radii, borders, elevation, layers, motion and breakpoints live in this layer. No decorative animation.
 
 Build checkpoints: foundation, reusable components, real season overview, route groups, final verification. This is a local review build; deployment is not authorized.
+
+Constructor identity extends Apex with a neutral `logoTile` colour and the named
+`constructorIdentityCompact` container breakpoint. Icon, spacing and radius tokens
+remain shared; generated query CSS comes from `node scripts/generate-constructor-media.js`.
+See [constructor asset and accessibility guidance](CONSTRUCTOR-LOGOS.md).
+The constructor extension generates both tile roles from keyed JSON themes,
+without patching the approved base token CSS or font roles. Invalid input does
+not partially rewrite output; generation is deterministic.
