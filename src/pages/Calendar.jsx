@@ -1,10 +1,7 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { ConstructorIdentity } from "../components/ConstructorIdentity";
 import {
-  archiveApi,
   useGetCalendarQuery,
   useGetEventQuery,
   useGetLayoutsQuery,
@@ -26,7 +23,6 @@ import {
   EmptyState,
   SourceNote,
   StatusBadge,
-  Pagination,
   Skeleton,
   ErrorState,
   ActionLink,
@@ -222,9 +218,7 @@ export function CalendarEvents({
 }
 
 function SeasonCalendar({ year, selectedId, onSelect, filter }) {
-  const dispatch = useDispatch();
-  const [pages, setPages] = useState([{}]);
-  const query = useGetCalendarQuery({ year, ...pages.at(-1) });
+  const query = useGetCalendarQuery({ year });
   const data = query.currentData;
   const visibleEvents = filterCalendarEvents(data?.items, filter);
   const selectedEvent = data?.items.find((event) => event.id === selectedId);
@@ -273,12 +267,7 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
     completed: completedEvents.length,
     upcoming: upcomingEvents.length,
   };
-  const restart = () => {
-    if (pages.length > 1) {
-      setPages([{}]);
-      dispatch(archiveApi.util.invalidateTags([{ type: "Season", id: year }]));
-    } else query.refetch();
-  };
+  const restart = () => query.refetch();
   return (
     <>
       <div className="calendar-toolbar">
@@ -413,24 +402,6 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
                 <EmptyState
                   title={`No ${filter} rounds published`}
                   description="Try another calendar filter or check the source coverage note below."
-                />
-              )}
-              {(data.page.hasMore || pages.length > 1) && (
-                <Pagination
-                  page={pages.length}
-                  total={data.page.total}
-                  hasMore={data.page.hasMore}
-                  busy={query.isFetching}
-                  onPrevious={() => setPages(pages.slice(0, -1))}
-                  onNext={() =>
-                    setPages([
-                      ...pages,
-                      {
-                        cursor: data.page.nextCursor,
-                        snapshotId: data.meta.snapshotId,
-                      },
-                    ])
-                  }
                 />
               )}
             </>

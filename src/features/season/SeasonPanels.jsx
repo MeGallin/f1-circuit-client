@@ -41,54 +41,6 @@ import { ConstructorIdentity, ConstructorIdentities } from "../../components/Con
 
 const SEASON_EVENT_REFRESH_INTERVAL_MS = 30_000;
 
-function ResultsAvailability({
-  season = {},
-  events,
-  selectedEventId,
-  onSelectEvent,
-  throughEventName,
-}) {
-  const resultsCount = Number.isFinite(Number(season.resultsEventCount))
-    ? season.resultsEventCount
-    : season.completedCount;
-  const eventCount = Number.isFinite(Number(season.eventCount))
-    ? Number(season.eventCount)
-    : null;
-  if (!eventCount) return null;
-
-  return (
-    <div className="season-progress" role="group" aria-label="Season progress">
-      <div className="season-progress-heading">
-        <div>
-          <p className="eyebrow">SEASON PROGRESS</p>
-          <p className="season-progress-count">
-            <strong>{resultsCount}</strong>
-            <span>of {eventCount} events</span>
-          </p>
-        </div>
-        <span className="season-progress-note">
-          Results through {throughEventName || "latest published result"}
-        </span>
-      </div>
-      <SeasonEventStrip
-        events={events}
-        eventCount={eventCount}
-        resultsCount={resultsCount}
-        selectedEventId={selectedEventId}
-        onSelect={onSelectEvent}
-      />
-      <div className="season-progress-legend" aria-label="Event status legend">
-        <span className="season-progress-legend-item season-progress-legend-item--complete">
-          <i aria-hidden="true" /> Completed
-        </span>
-        <span className="season-progress-legend-item season-progress-legend-item--upcoming">
-          <i aria-hidden="true" /> Upcoming
-        </span>
-        <b>Tap or click a marker to inspect that round.</b>
-      </div>
-    </div>
-  );
-}
 export function RaceFocus({
   summary,
   snapshotId,
@@ -191,12 +143,11 @@ export function RaceFocus({
         />
       </div>
       {includeSeasonProgress && (
-        <ResultsAvailability
-          season={summary.season}
+        <SeasonEventStrip
+          key={summary.season?.year}
           events={calendarEvents}
           selectedEventId={selectedEventId}
-          throughEventName={summary.latestCompletedEvent?.name}
-          onSelectEvent={(selected) => {
+          onSelect={(selected) => {
             if (!isControlled) setInternalSelectedEventId(selected.id);
             onSelectEvent?.(selected);
           }}
@@ -489,12 +440,12 @@ export function SeasonAroundRace({
             : calendarQuery.refetch
         }
       >
-        <ResultsAvailability
+        <SeasonEventStrip
+          key={summary.season?.year}
           events={events}
-          onSelectEvent={selectEvent}
-          season={summary.season}
+          now={now}
+          onSelect={selectEvent}
           selectedEventId={selectedEventId}
-          throughEventName={summary.latestCompletedEvent?.name}
         />
       </DataBoundary>
       <AdjacentEventBand

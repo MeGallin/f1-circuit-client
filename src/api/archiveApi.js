@@ -382,11 +382,96 @@ export const archiveApi = createApi({
       providesTags: (_r, _e, { year }) => [{ type: "SeasonSummary", id: year }],
     }),
     getCalendar: builder.query({
-      query: ({ year, snapshotId, cursor }) => ({
-        url: `/seasons/${year}/calendar`,
-        params: { snapshotId, cursor, limit: 200 },
-      }),
-      transformResponse: collectionResponse,
+      async queryFn({ year, snapshotId }, _api, _extra, baseQuery) {
+        const items = [];
+        const visited = new Set();
+        const eventIds = new Set();
+        let cursor;
+        let first;
+        do {
+          const response = await baseQuery({
+            url: `/seasons/${year}/calendar`,
+            params: { snapshotId, cursor, limit: 200 },
+          });
+          if (response.error) return { error: response.error };
+          let page;
+          try {
+            page = collectionResponse(response.data);
+          } catch {
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Unexpected season calendar response",
+              },
+            };
+          }
+          if (typeof page.meta.snapshotId !== "string" || !page.meta.snapshotId)
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Unexpected season calendar snapshot",
+              },
+            };
+          if (snapshotId != null && page.meta.snapshotId !== snapshotId)
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Season calendar snapshot changed",
+              },
+            };
+          const { total, hasMore, nextCursor } = page.page;
+          if (
+            typeof hasMore !== "boolean" ||
+            !(total === null || (Number.isSafeInteger(total) && total >= 0)) ||
+            (first && total !== first.page.total) ||
+            (hasMore &&
+              (typeof nextCursor !== "string" ||
+                !nextCursor ||
+                !page.items.length)) ||
+            (!hasMore && nextCursor != null) ||
+            page.items.some((event) => {
+              if (
+                typeof event?.id !== "string" ||
+                !event.id ||
+                eventIds.has(event.id)
+              )
+                return true;
+              eventIds.add(event.id);
+              return false;
+            }) ||
+            (total !== null &&
+              (items.length + page.items.length > total ||
+                (hasMore
+                  ? items.length + page.items.length >= total
+                  : items.length + page.items.length !== total)))
+          )
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Incomplete season calendar",
+              },
+            };
+          first ||= page;
+          snapshotId = first.meta.snapshotId;
+          items.push(...page.items);
+          cursor = page.page.hasMore ? page.page.nextCursor : undefined;
+          if (page.page.hasMore && (!cursor || visited.has(cursor)))
+            return {
+              error: {
+                status: "CUSTOM_ERROR",
+                error: "Incomplete season calendar",
+              },
+            };
+          if (cursor) visited.add(cursor);
+        } while (cursor);
+        return {
+          data: {
+            items,
+            meta: first.meta,
+            page: { total: first.page.total, hasMore: false, nextCursor: null },
+          },
+        };
+      },
       providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
     }),
     getAnalyticsDashboard: builder.query({

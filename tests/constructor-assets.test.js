@@ -54,7 +54,10 @@ test("production builds validate physical constructor assets before Vite copies 
   const scripts = JSON.parse(
     readFileSync(resolve("package.json"), "utf8"),
   ).scripts;
-  expect(scripts.prebuild).toBe("node scripts/check-constructor-assets.js");
+  expect(scripts.prebuild.split(" && ")).toEqual([
+    "npm run tokens:season-races",
+    "node scripts/check-constructor-assets.js",
+  ]);
 });
 
 test("official RB and Red Bull derivatives retain team artwork, not sponsor paths", () => {

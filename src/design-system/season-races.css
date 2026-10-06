@@ -1,0 +1,198 @@
+.season-races {
+  container-type: inline-size;
+  min-width: 0;
+  padding: var(--apex-space-7);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+}
+.season-races-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--apex-space-4);
+}
+.season-races-heading h3 {
+  margin: 0;
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-season-races-heading-size);
+  line-height: var(--apex-type-title-line);
+  text-transform: uppercase;
+}
+.season-races-heading p,
+.season-races-instruction {
+  margin: 0;
+  color: var(--apex-color-muted);
+}
+.season-races-instruction {
+  margin-block: var(--apex-space-3) var(--apex-space-6);
+}
+.season-races-count {
+  display: flex;
+  align-items: baseline;
+  flex-shrink: 0;
+  gap: var(--apex-space-4);
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-season-races-heading-size);
+  line-height: var(--apex-type-title-line);
+}
+.season-races-count strong {
+  color: var(--apex-color-accent-text);
+}
+.season-races-navigation {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--apex-space-3);
+  min-width: 0;
+}
+.season-races-navigation--expanded {
+  grid-template-columns: minmax(0, 1fr);
+}
+.season-races .season-races-arrow {
+  width: var(--apex-size-target);
+  height: var(--apex-season-races-arrow-height);
+  padding: 0;
+  font-size: var(--apex-size-icon-large);
+  background: transparent;
+}
+.season-races-list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(
+    100%,
+    clamp(
+      var(--apex-season-races-card-min-width),
+      var(--apex-season-races-card-fluid-width),
+      var(--apex-season-races-card-width)
+    )
+  );
+  gap: var(--apex-space-5);
+  margin: 0;
+  padding: var(--apex-space-2);
+  list-style: none;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--apex-color-control-border) var(--apex-color-surface);
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--apex-space-2);
+}
+.season-races-list--expanded {
+  grid-auto-flow: row;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--apex-season-races-card-width)), 1fr)
+  );
+  overflow: visible;
+}
+.season-race-card {
+  min-width: 0;
+  min-height: max(
+    var(--apex-season-races-card-min-height),
+    var(--apex-season-races-card-fluid-height)
+  );
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+  scroll-snap-align: start;
+}
+.season-race-card--latest {
+  border-color: var(--apex-color-accent-border);
+}
+.season-race-card > .season-race-card-button {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: var(--apex-space-4);
+  width: 100%;
+  height: 100%;
+  padding: var(--apex-season-races-card-padding);
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: var(--apex-color-text);
+  font-weight: var(--apex-type-body-weight);
+  text-align: left;
+}
+.season-race-card > button:hover,
+.season-race-card > button[aria-current="true"] {
+  background: var(--apex-color-hover);
+}
+.season-race-card-meta {
+  display: grid;
+  gap: var(--apex-space-4);
+  color: var(--apex-color-muted);
+  font-family: var(--apex-font-numeric);
+  font-size: var(--apex-type-caption-size);
+  text-transform: uppercase;
+}
+.season-race-card-status > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--apex-space-4);
+}
+.season-race-card-status:has(.season-race-status-icon--completed) {
+  color: var(--apex-color-text);
+}
+.season-race-status-icon {
+  flex-shrink: 0;
+  width: var(--apex-season-races-status-icon);
+  height: var(--apex-season-races-status-icon);
+}
+.season-race-card--latest .season-race-card-round {
+  color: var(--apex-color-accent-text);
+}
+.season-race-card-name {
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-season-races-name-size);
+  line-height: var(--apex-type-section-line);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.season-race-card-details {
+  display: grid;
+  gap: var(--apex-space-1);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.season-race-card time {
+  font-family: var(--apex-font-numeric);
+}
+.season-race-card-circuit {
+  overflow-wrap: anywhere;
+}
+.season-race-card .season-race-card-action {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--apex-space-3);
+  margin-top: auto;
+  padding-inline: var(--apex-space-4);
+  background: transparent;
+  white-space: nowrap;
+}
+.season-race-card-action svg {
+  flex-shrink: 0;
+}
+.season-race-card--latest .season-race-card-action {
+  color: var(--apex-color-accent-text);
+  background: color-mix(
+    in srgb,
+    var(--apex-color-accent) var(--apex-season-races-latest-tint),
+    var(--apex-color-surface)
+  );
+  border-color: var(--apex-color-accent-border);
+}
+.season-races-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--apex-space-4);
+  margin-top: var(--apex-space-7);
+}
+.season-races-footer > .button {
+  background: transparent;
+}
+.season-races-toggle {
+  margin-left: auto;
+}

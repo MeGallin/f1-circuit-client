@@ -8,6 +8,42 @@
 
 **Audience:** Frontend development team
 
+## Ribbon senior-review contract clarification - 6 October 2026
+
+Approved ribbon appearance is unchanged. Accessible whole-card names include the
+visible status and CTA text; the inner CTA remains noninteractive. Data replacement
+with the same latest event must preserve the user's horizontal position and focus;
+initial/latest-ID changes, actual viewport-width changes and return from expanded
+mode retain intentional re-centring. Observer cleanup remains required.
+
+The shared calendar endpoint is a complete-collection query, not a UI cursor page.
+All pages must share the requested/resolved publication, valid boolean paging
+metadata and a stable total (integer or unavailable-coverage `null`). Duplicate
+event IDs, cursor loops/no progress, inconsistent/unfinished totals and request
+errors must not expose a partial calendar. Cancellation propagates to in-flight
+requests. Calendar therefore has no separate Pager state; its filters, event
+details, progress styling and read-only reload are retained. Unreferenced overview
+marker selectors are removed without modifying the historical mock-up.
+
+Keyed token generation validates positive sizes and ordered clamp/card bounds
+before writing, and stays idempotent without modifying base/font roles. Recorded
+review checks passed 354 tests across 33 files, lint, asset guard and production
+build; [validation](FUNCTIONALITY-VALIDATION.md) and [QA](LOCAL-QA.md) distinguish
+fresh scoped evidence from earlier mobile/visual checkpoints. No deployment is
+authorised by this specification.
+
+## Season races ribbon amendment - 6 October 2026
+
+The user-approved Option 2 horizontal history ribbon replaces **only** the thin
+season-progress markers. All other overview bands, the podium/standings hierarchy
+and the existing `EventInsightDialog` remain unchanged. The original prototype at
+`/design/overview-layouts` still records the earlier marker design; it is not the
+current ribbon reference. Section 4.5 below records the amended production contract.
+The initial functional ribbon was visually rejected. Its corrected composition
+follows the approved image, scaled by actual panel width rather than copying
+large reference-image pixel sizes. A measured comparison does not certify
+pixel-identical generated fonts, texture or raster output.
+
 ## Constructor integration note — 6 October 2026
 
 The approved composition below remains the design reference, not live race facts;
@@ -226,7 +262,61 @@ Open full standings →
 
 Use live standings data from the API/store. Do not hardcode the example names, numbers, points or constructors in the production route.
 
-### 4.5 Season progress
+### 4.5 Season races
+
+Current implementation: `SeasonEventStrip` renders chronological API calendar
+cards in the existing full-width band. A prominent inline red result count and
+subdued `of {calendar total}` are accessibly labelled as published results,
+followed by `Select a race to
+view details and results.` Counts are never inferred from elapsed dates or a
+contiguous prefix of rounds. Explicit results coverage (`complete`/`partial`)
+indicates publication; explicit unavailable coverage does not. Legacy calendar
+records can omit feature flags: their result-backed `completed` marker is accepted
+only in that omitted-coverage case. Backend normalization sets it when race-result
+rows exist, not because a race's scheduled date has passed. This compatibility rule
+preserves the actual Spanish/Azerbaijan results without treating unknown past
+calendar records as published.
+
+The heading and wrapped race names use uppercase Barlow Condensed display type;
+round/status metadata uses uppercase IBM Plex Mono. Published cards show a
+substantial filled Phosphor checkered flag and `Completed`; upcoming cards show
+CalendarBlank, not a clock. Cancelled/postponed/pending labels remain truthful.
+Each shared card shows round, decorative status icon plus text, wrapped source
+name, real source date, supplied circuit name and outlined full-width CTA.
+Latest publication is selected by actual event ID after chronological sorting,
+with red round text, a red card outline and tinted/red-outlined `Latest results` CTA.
+Other published cards say `View results`; future/unpublished/cancelled/postponed
+cards say `View event`. Precisely scheduled past unpublished races say `Results
+pending`. Every card opens the same in-page dialog without navigation or imports.
+One shared native Button owns the whole card for mouse/keyboard activation. The
+inner CTA is a noninteractive span using the shared secondary-button visual
+classes; never nest a second button/link or add a separate card click handler.
+
+Large outlined chevron earlier/later controls scroll one measured viewport, clamp to real
+edges and disable at those edges. Smooth user scrolling respects reduced motion;
+initial positioning and viewport resizing centre the latest published card by ID,
+not result-count index. Native horizontal scrolling and proximity snap remain.
+The theme-aware scrollbar is visible. `Show all rounds` expands this same section
+into a wrapping grid with the same card component; `Return to ribbon` restores
+latest positioning. The outlined footer restores `Earlier races` at left (same
+clamped scroll action/disabled start edge) and `Show all rounds` at right. Below the existing Apex
+tablet breakpoint, arrows move below the ribbon, preserving a full readable card
+at 390px without page overflow; a partial next card can signal more history.
+
+Styles live in `src/design-system/season-races.css`. Named `seasonRaces` JSON
+tokens own bounded container-scaled widths, typography, icon/control sizing,
+padding and latest tint. These and the existing tablet breakpoint generate
+`season-races.tokens.css` via
+`npm run tokens:season-races`; `prebuild` regenerates it before asset validation.
+The generator is keyed/idempotent and does not rewrite base/font tokens.
+
+Shared `getCalendar` now traverses every cursor page before exposing a complete
+season to consumers. It pins the requested/first publication, rejects mismatched
+first or subsequent snapshots, missing/malformed metadata, malformed collections,
+repeated/missing cursors and HTTP failures. It does not expose a partial calendar
+as a complete ribbon. Existing loading/error/empty boundaries remain in place.
+
+#### Original thin-marker design (historical, superseded by the amendment above)
 
 This band spans the full surface below the main race/championship row. It explains the season position and provides event navigation.
 
@@ -292,7 +382,7 @@ Use existing components wherever the behavior or visual pattern already exists:
 | `DriverNumber` | Driver number beside every driver name; no hash; subtle line border; accessible label |
 | `CircuitSilhouette` | Track layout asset, applicability, attribution and safe fallback |
 | `RaceCountdown` | Countdown to race start with unavailable/elapsed states |
-| `SeasonEventStrip` | Interactive season markers, keyboard access and event selection |
+| `SeasonEventStrip` | Shared ribbon/grid race cards, measured scroll controls and event selection |
 | `EventInsightDialog` | In-page selected-round details and top-three result preview |
 | Existing action-link/button primitives | Calendar, race-detail and standings actions |
 
@@ -393,7 +483,7 @@ The overview implementation is complete when:
 2. All facts are sourced from the API/store and remain season-consistent.
 3. Existing reusable components are used for statuses, driver numbers, circuit identity, track visuals, countdown and event markers.
 4. The driver number presentation has no hash and uses the subtle line border.
-5. Completed statuses show the small checkered flag, while the season-progress legend uses red horizontal line indicators.
+5. Published ribbon results show the checkered flag; latest results have the red outline and explicit label specified in the amendment.
 6. The podium hierarchy, number placement and stepped block heights match the approved design.
 7. Desktop, tablet and 360px mobile layouts pass visual and interaction review.
 8. Missing and partial data states remain explicit and do not produce invented content.

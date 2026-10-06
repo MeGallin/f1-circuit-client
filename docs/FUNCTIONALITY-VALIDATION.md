@@ -1,5 +1,124 @@
 # Functionality validation
 
+## Ribbon senior review - 6 October 2026
+
+Review found and fixed these scoped issues without changing approved visuals:
+
+- **P2 — incomplete calendar acceptance:** truthy/fallback page metadata accepted
+  malformed totals, changing totals, duplicate events or no-progress pages. The
+  calendar-only validator now requires boolean `hasMore`, a stable nonnegative
+  integer total (or API unavailable-coverage `null`), unique event IDs, advancing
+  cursors and exact terminal counts. Known totals bound traversal without an
+  arbitrary page limit. A terminal omitted cursor remains compatible; errors
+  expose no accumulated partial data. Global collection parsing is unchanged.
+- **P2 — browsing interrupted by refresh:** a replacement calendar array
+  re-centred unchanged latest results. Same-latest refreshes now preserve scroll
+  and focus; initial/latest-ID changes, width changes and return from expanded
+  mode retain intentional latest positioning and observer cleanup.
+- **P2 — accessible label mismatch:** explicit card labels omitted visible
+  `Completed`/`View results`/`View event` text. Shared status/action values now
+  appear in both accessible names and visible content; one native Button remains.
+- **P3 — token validation gaps:** zero fluid sizes/inverted clamps or card bounds
+  were accepted, and a missing section threw an incidental TypeError. Keyed
+  generation rejects those inputs deliberately before touching output, remains
+  idempotent and does not modify base/font tokens.
+- **P3 — obsolete consumers/styles:** Calendar retained unreachable cursor state
+  and Pager controls after `getCalendar` became all-pages. These and unreferenced
+  overview progress selectors were removed. Calendar's own progress selectors,
+  filters, details and read-only reload remain; mock-up styles are untouched.
+
+Seventeen intended fail-before regressions were reproduced: ten calendar/consumer,
+one scroll/focus, one accessible-name, one dead-style and four token cases. The
+Calendar source assertion's first file-URL setup failure is not counted: it was
+corrected and rerun against the unfixed implementation. Cancellation already
+passed before changes; it aborts a later in-flight request with no accepted
+partial data. Null-total unavailable coverage is a passing compatibility case.
+
+Fresh `npm run check` passed lint, **354 tests across 33 files**, ribbon token
+generation, the unchanged 49-asset physical guard (1,169,191 bytes) and production
+build (5,251 modules). The first attempt stopped at two newly introduced lint
+issues, both corrected before this successful complete rerun. Existing jsdom
+scrollTo and large-chunk warnings remain. The final focused run passed 56 tests
+across seven files. Fourteen scoped source/test/style/config files passed Prettier;
+Calendar's pre-existing whole-file formatting differences were verified against
+HEAD and left untouched outside the cleanup. All 34 relative links across these
+four versioned docs resolve, and both repository diff checks passed.
+[Focused browser proof](LOCAL-QA.md)
+checks actual current records, keyboard dialog/focus, expansion and the complete
+Calendar consumer; same-latest data replacement is deterministic component proof,
+not a simulated live import. No API changes, database writes, source refresh,
+commit/push/deployment or production certification.
+
+## Option 2 ribbon visual correction (before senior review) - 6 October 2026
+
+Five new regressions failed against the initial delivery: shared whole-card
+Button/outlined noninteractive CTA, filled completed flag/calendar icon, compact
+inline count/source-only circuit metadata, restored outlined footer controls,
+and Apex-owned display/mono/latest-tint styles. After correction, the focused
+run passed 26 tests across five files, preserving selection, pending/result
+semantics, scrolling, expansion, resize cleanup and the existing dialog.
+
+Container-scaled, validated Apex tokens produce five readable desktop cards;
+mobile retains a full card plus a next-card peek when two cannot fit. Heading and
+race names use uppercase Barlow Condensed; metadata uses IBM Plex Mono. Completed
+labels have filled Phosphor checkered flags, upcoming labels use CalendarBlank,
+and latest result cards/rounds/outlined CTAs share the existing red brand tokens.
+The full-card native Button remains the sole interactive card element; the
+outlined inner CTA span does not introduce nested controls or extra tab stops.
+Supplied circuits/dates are real records, not copied from the illustration.
+
+Browser checks confirmed real dialog results with Enter activation, Escape/focus
+return, footer scrolling, 23-card mobile expansion/return, no page/CTA overflow
+and both themes. [Measured screenshots and visual limits](LOCAL-QA.md) distinguish
+composition fidelity from unclaimed pixel equivalence. This correction does not
+change query logic, publication counting, other homepage bands or the API.
+
+Fresh `npm run check` passed lint, **335 tests across 33 files**, keyed ribbon
+token generation, the unchanged 49-asset prebuild guard and production build.
+Existing jsdom scrollTo and large-chunk warnings remain. After the JSON-only
+formatting correction, six token/visual tests across two files passed again,
+including generation idempotence and unchanged base typography. Five handwritten
+source/test files passed Prettier; 28 relative links across four docs and both
+repository diff checks passed. No commit, push,
+deployment or source import was performed; production verification is pending.
+
+## Initial season races ribbon functionality (historical visual treatment) - 6 October 2026
+
+The approved Option 2 history ribbon replaces only overview progress markers.
+It uses actual calendar records, result publication coverage and the legacy
+result-backed completion marker when optional coverage is omitted; dates and
+result-count indexes never manufacture publication. The latest published event
+has the red outline/label. Missing, pending, cancelled and postponed results keep
+`View event`; every card uses the existing in-page dialog. A shared card component
+serves the horizontal ribbon and the expanded wrapping grid.
+
+Measured scroll controls expose descriptive accessible names, disabled edges,
+keyboard activation, proximity snap and reduced-motion-aware scrolling. Width
+changes re-centre the latest event by ID; observer cleanup is tested. Apex owns
+the new card-width token and mobile controls pattern. Keyed token generation runs
+in prebuild and leaves existing typography untouched. The obsolete strip stylesheet
+and redundant results wrapper were removed; mock-up styles remain unchanged.
+
+The shared calendar query now traverses all pinned pages so no later rounds are
+silently excluded. It rejects wrong first/subsequent publications, missing/malformed
+snapshot metadata, malformed collection shape, broken/repeated cursors and server
+failures without accepting a partial calendar. Existing loading/error/empty feedback
+does not become a misleading zero-count ribbon.
+
+Fifteen intended regression failures were reproduced before their corrections.
+The final focused run passed 97 tests across six files. Fresh `npm run check`
+passed lint, **330 tests across 32 files**, prebuild ribbon token generation,
+the retained 49-asset physical guard and production build. Formatting/diff checks
+passed. Existing jsdom scrollTo and large-chunk warnings remain.
+Local browser evidence includes 2026 16/23 results, 2000 17/17 results, the long-name
+latest card at 390px, real keyboard scrolling, 23-card expansion, dialog results/
+focus restoration/Escape and Light/Dark parity with no page overflow. System and
+viewport overrides were restored. [QA proof paths](LOCAL-QA.md) and
+[the amended design contract](OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md) record details.
+No API repository changes, database writes, live imports, commits, pushes or
+deployments are part of this work. Production smoke, exhaustive assistive-technology
+testing and Lighthouse remain unverified. Prior checkpoint counts below are historical.
+
 ## Countdown zero-unit correction — 6 October 2026
 
 Active `RaceCountdown` now always renders two-digit H/M/S, including `00` at

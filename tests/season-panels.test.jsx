@@ -1,5 +1,11 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { render, screen, cleanup, within } from "@testing-library/react";
+import {
+  render,
+  screen,
+  cleanup,
+  within,
+  fireEvent,
+} from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { MemoryRouter } from "react-router-dom";
@@ -19,6 +25,8 @@ function renderCurrentAroundRace({
   latestCompletedEvent,
   nextEvent,
   now,
+  calendarStatus = 200,
+  calendarGate = Promise.resolve(),
 }) {
   const meta = { snapshotId: "snapshot-fixture", coverage: "partial" };
   const collection = (items) => ({
@@ -45,10 +53,13 @@ function renderCurrentAroundRace({
           }),
           { headers: { "Content-Type": "application/json" } },
         );
-      if (url.pathname.endsWith("/calendar"))
+      if (url.pathname.endsWith("/calendar")) {
+        await calendarGate;
         return new Response(JSON.stringify(collection(events)), {
+          status: calendarStatus,
           headers: { "Content-Type": "application/json" },
         });
+      }
       if (url.pathname.includes("/events/")) {
         const eventId = decodeURIComponent(url.pathname.split("/events/")[1]);
         const event =
@@ -116,6 +127,87 @@ function renderCurrentAroundRace({
     </Provider>,
   );
 }
+
+test.each([200, 503])(
+  "calendar loading followed by status %s keeps empty/error feedback instead of invented counts",
+  async (calendarStatus) => {
+    let releaseCalendar;
+    const calendarGate = new Promise((resolve) => {
+      releaseCalendar = resolve;
+    });
+    renderCurrentAroundRace({
+      events: [],
+      latestCompletedEvent: {
+        id: "event:2026:published",
+        year: 2026,
+        round: 16,
+        name: "Published race",
+        status: "completed",
+        schedule: { date: "2026-10-04" },
+      },
+      nextEvent: null,
+      now: "2026-10-06T12:00:00Z",
+      calendarStatus,
+      calendarGate,
+    });
+    expect(
+      screen.queryByLabelText("Season races history"),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByRole("status").length).toBeGreaterThan(0);
+    releaseCalendar();
+    expect(
+      await screen.findByText(
+        calendarStatus === 503
+          ? "We could not load this data"
+          : "No records available",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Season races history"),
+    ).not.toBeInTheDocument();
+  },
+);
+
+test("ribbon and expanded cards open and close the existing event dialog without routing", async () => {
+  const event = {
+    id: "event:2026:long-race",
+    year: 2026,
+    round: 16,
+    name: "Bahrain Grand Prix in Malaysia",
+    status: "completed",
+    features: [],
+    schedule: {
+      date: "2026-10-04",
+      startsAt: "2026-10-04T07:00:00Z",
+      timePrecision: "second",
+    },
+    circuit: { displayName: "Sepang International Circuit" },
+  };
+  renderCurrentAroundRace({
+    events: [event],
+    latestCompletedEvent: event,
+    nextEvent: null,
+    now: "2026-10-06T12:00:00Z",
+  });
+  const card = await screen.findByRole("button", {
+    name: /Round 16:.*Latest results/,
+  });
+  card.focus();
+  fireEvent.click(card);
+  expect(
+    await screen.findByRole("dialog", { name: event.name }),
+  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Close event details" }));
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  expect(card).toHaveFocus();
+  fireEvent.click(screen.getByRole("button", { name: "Show all rounds" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: /Round 16:.*Latest results/ }),
+  );
+  expect(
+    await screen.findByRole("dialog", { name: event.name }),
+  ).toBeInTheDocument();
+});
 
 test("latest completed race keeps the published podium in the first overview card", async () => {
   vi.stubGlobal(
@@ -244,13 +336,15 @@ test("latest completed race keeps the published podium in the first overview car
     screen.getByRole("heading", { name: "RACE RESULT" }),
   ).toBeInTheDocument();
   expect(screen.getByText("ROUND 14 OF 23")).toBeInTheDocument();
-  expect(screen.getByText("SEASON PROGRESS")).toBeInTheDocument();
-  expect(screen.getByText("14")).toBeInTheDocument();
   expect(
-    screen.getByText("Tap or click a marker to inspect that round."),
+    screen.getByRole("heading", { name: "Season races" }),
   ).toBeInTheDocument();
-  expect(screen.getByText("Completed")).toBeInTheDocument();
-  expect(screen.getByText("Upcoming")).toBeInTheDocument();
+  expect(
+    screen.getByText("Select a race to view details and results."),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByLabelText("1 of 1 races have published results"),
+  ).toBeInTheDocument();
 });
 
 test("current overview counts down to the next future start and keeps missing results visible", async () => {
@@ -308,9 +402,11 @@ test("current overview counts down to the next future start and keeps missing re
   });
 
   const nextBand = await screen.findByLabelText("NEXT EVENT");
-  expect(await screen.findByText("Singapore Grand Prix")).toBeInTheDocument();
+  expect(
+    within(nextBand).getByText("Singapore Grand Prix"),
+  ).toBeInTheDocument();
   expect(within(nextBand).getByRole("timer")).toBeInTheDocument();
-  expect(screen.getByText("Bahrain Grand Prix")).toBeInTheDocument();
+  expect(screen.getAllByText("Bahrain Grand Prix").length).toBeGreaterThan(0);
   expect(
     await screen.findByText(
       "No race-result rows are published in this archive yet.",
@@ -461,7 +557,11 @@ test("published current result stays in focus without duplicating in previous ev
   });
 
   const previousBand = await screen.findByLabelText("PREVIOUS EVENT");
-  expect(await screen.findByText("Singapore Grand Prix")).toBeInTheDocument();
+  expect(
+    within(await screen.findByLabelText("NEXT EVENT")).getByText(
+      "Singapore Grand Prix",
+    ),
+  ).toBeInTheDocument();
   expect(
     within(previousBand).getByText("Azerbaijan Grand Prix"),
   ).toBeInTheDocument();

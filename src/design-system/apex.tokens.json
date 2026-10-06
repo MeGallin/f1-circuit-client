@@ -319,6 +319,19 @@
   "containerBreakpoints": {
     "constructorIdentityCompact": 520
   },
+  "seasonRaces": {
+    "cardWidth": 288,
+    "cardMinWidth": 168,
+    "cardFluidWidth": "16.7cqw",
+    "cardMinHeight": 224,
+    "cardFluidHeight": "20.3cqw",
+    "headingSize": "clamp(29px, 2.9cqw, 50px)",
+    "nameSize": "clamp(20px, 1.86cqw, 32px)",
+    "cardPadding": "clamp(12px, 1.5cqw, 26px)",
+    "arrowHeight": "clamp(68px, 6.26cqw, 108px)",
+    "statusIcon": "clamp(24px, 2.1cqw, 36px)",
+    "latestTint": "12%"
+  },
   "breakpoints": {
     "mobile": 0,
     "small": 360,

@@ -1,5 +1,108 @@
 # Primary views: local QA
 
+## Ribbon senior-review QA - 6 October 2026
+
+Fresh `npm run check` passed lint, 354 tests across 33 files, token generation,
+the unchanged 49-asset guard and production build. Seventeen intended failures
+were reproduced before fixes; [findings and test limits](FUNCTIONALITY-VALIDATION.md)
+record the exact scope. Same-latest replacement scroll/focus preservation and
+abort-without-partial-data are component/query tests, not claims of a live refresh.
+
+Focused browser verification used a separate hidden QA browser/tab at its default
+1280px CSS viewport (document/scroll widths both 1265px), with System appearance
+left unchanged and no viewport override. Current overview remained 16/23; Enter
+on the updated latest card opened actual results and Escape restored its focus.
+Expansion displayed 23 cards and returning restored latest positioning. Calendar
+rendered all 23 rounds, its Upcoming filter settled to seven events, and read-only
+Refresh calendar retained the full collection. No manual source refresh/import
+was invoked. The QA tab was closed; parent's tab was not controlled. Prior
+mobile/theme/historical visual evidence below was not rerun in this scoped review.
+
+Fresh inspected proofs in `C:/Users/garya/AppData/Local/Temp/f1-season-races-option2/`:
+
+- `senior-review-overview.jpg`: unchanged approved composition after expand/return.
+- `senior-review-calendar.jpg`: retained separate progress, full-season filter counts.
+
+Existing scrollTo/chunk warnings remain. Production, Lighthouse and exhaustive
+assistive-technology verification remain pending; no commit/push/deployment.
+
+## Option 2 visual correction (before senior review) - 6 October 2026
+
+The user rejected the initial visual treatment; its functional checks below
+remain historical evidence. The corrected ribbon was inspected beside the
+approved 1774px image, with its 1724px panel scaled to the measured live 1107px
+section width. The live content width is 1067px: heading 30.943px, race names
+20px (both Barlow Condensed), filled flags 24px, arrows 68px and CTAs 44px.
+Cards measure about 178px wide and 251px high, with five readable rounds 14–18.
+Live panel height is about 454px versus 405px for the width-scaled reference;
+real circuit/date metadata and accessible CTA sizing are retained. This is a
+measured composition comparison, not pixel-equivalence certification.
+
+Mobile requested/measured CSS viewport was 390×844; document client/scroll widths
+both measured 375px. The 309px ribbon viewport shows a full 168px latest card
+plus the next-card peek, with no page overflow or overflowing CTA labels.
+Heading/count remain inline. Enter on the whole card opened the actual Bahrain
+results, Escape restored card focus, `Earlier races` moved horizontal scroll,
+and expanding all 23 cards/returning restored the ribbon/latest positioning.
+Light and Dark were inspected; System appearance and the temporary viewport
+override were restored, and the separate QA tab was closed. Parent tab 1 was
+not controlled. No import/refresh action was triggered.
+
+Fresh local proofs under `C:/Users/garya/AppData/Local/Temp/f1-season-races-option2/`:
+
+- `desktop-ribbon-context.jpg`: corrected ribbon with neighbouring bands.
+- `mobile-ribbon-context.jpg` and `mobile-light-ribbon-context.jpg`: mobile themes.
+- `reference-live-width-comparison.jpg`: approved panel above, live panel below,
+  scaled to equal width; only cropping/resizing/composition of real captures.
+
+Five visual regressions failed before correction; focused checks passed 26 tests
+across five files. Fresh `npm run check` passed lint, 335 tests across 33 files,
+keyed tokens, the 49-asset guard and production build (existing scrollTo/chunk
+warnings only). Full-check results are recorded in [validation](FUNCTIONALITY-VALIDATION.md).
+No production, Lighthouse or exhaustive assistive-technology certification is
+claimed. [The amended contract](OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md) records
+the preserved whole-card Button and source-only content rules.
+
+## Initial season races ribbon QA (historical visual treatment) - 6 October 2026
+
+Option 2 replaces only overview thin markers with chronological race cards and
+the existing selected-event dialog. Fail-before evidence covers absent ribbon
+semantics/controls/pinned traversal (eight regressions), omitted legacy coverage
+(one), wrong/malformed first-page snapshot metadata (three), viewport re-centring
+(one) and precise past pending labels (two). Subsequent checks also cover cursor
+loops, malformed/error pages, empty/loading/error boundaries, dialog focus return,
+same-section expansion, named mobile tokens and generator idempotence.
+
+Final focused checks passed 97 tests across six files. Fresh `npm run check`
+passed lint, 330 tests across 32 files, prebuild ribbon token generation, the
+retained 49-asset physical validation guard and production build. Formatting and
+`git diff --check` passed. Existing jsdom scrollTo/large-chunk warnings remain.
+
+Browser QA used a separate in-app tab after the separate Chrome inspection timed
+out. Current 2026 showed 16/23 published results; desktop showed rounds 14-17,
+including the latest long-name result plus next race. At 390px the full 220px
+latest card remained readable in a 309px ribbon viewport with no page overflow.
+The QA tab measured CSS `innerWidth: 390`, `innerHeight: 844`, document/scroll
+width 375px and device-pixel ratio 1 (the scrollbar accounts for the difference).
+Parent's separate requested-390px check measured CSS width 355px because of its
+browser zoom; that narrower check also had no page overflow. These are distinct
+measurements, not an assertion that every requested viewport equals CSS width.
+Keyboard activation moved the real horizontal scroll position; the 23-card expanded
+mobile grid also had no page overflow. Current and historical dialogs loaded their
+real podiums; close restored card focus and Escape closed the historical dialog.
+Year 2000 showed 17/17 results, latest Malaysian Grand Prix and a disabled later
+button. Light and Dark were checked; System and temporary viewport overrides were
+restored. Parent independently verified desktop scrolling to the disabled final
+edge, all 23 cards and return-to-latest positioning. No live import was triggered.
+
+Saved local proofs: `C:/Users/garya/AppData/Local/Temp/f1-season-races-ribbon/`
+contains `mobile-ribbon.jpg`, `mobile-dialog.jpg`, `mobile-expanded-dark.jpg`,
+`desktop-ribbon-dark.jpg`, `historical-2000-light.jpg` and
+`historical-2000-mobile.jpg`. These are local development evidence, not deployment,
+exhaustive device/assistive-technology or Lighthouse certification.
+See [the amended contract](OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md) and
+[validation](FUNCTIONALITY-VALIDATION.md).
+
 ## Countdown zero-unit correction — 6 October 2026
 
 Nine fail-before component regressions reproduced missing zero H/M/S columns.
