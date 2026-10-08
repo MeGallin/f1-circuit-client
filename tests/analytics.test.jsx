@@ -23,10 +23,6 @@ import {
   formatResultGap,
 } from "../src/features/analytics/components/AnalyticsRecentResults";
 import { buildAnalyticsSessionReadoutModel } from "../src/features/analytics/components/AnalyticsSessionReadout";
-import {
-  formatAnalyticsFreshness,
-  buildAnalyticsOverviewModel,
-} from "../src/features/analytics/components/AnalyticsOverviewStrip";
 import { buildRaceBreakdownModel } from "../src/features/analytics/components/AnalyticsRaceBreakdown";
 import { buildDriverSpotlightModel } from "../src/features/analytics/components/AnalyticsPerformanceSnapshot";
 import { buildAnalyticsWeekendTimelineModel } from "../src/features/analytics/components/AnalyticsWeekendTimeline";
@@ -241,38 +237,27 @@ test("session readout presents optional published session intelligence", () => {
   ]);
 });
 
-test("analytics overview model exposes rates and snapshot freshness", () => {
-  const model = buildAnalyticsOverviewModel({
-    quickStats: {
-      completedEvents: 14,
-      totalEvents: 23,
-      podiumRate: 28.6,
-      dnfRate: 4.8,
-    },
-    seasonIntelligence: {
-      progress: { percentage: 61 },
-      championshipLeader: { driverName: "Example One", points: 169 },
-      constructorLeader: { constructorName: "Example Team", points: 276 },
-    },
-    meta: {
-      freshness: "fresh",
-      lastSuccessfulRetrieval: "2026-09-21T15:00:00Z",
+test("analytics form insights expose selected rates without substituting championship totals", () => {
+  const model = buildAnalyticsFormInsightsModel({
+    leader: { driverId: "one", driverName: "Published Leader", points: 169 },
+    comparison: {
+      drivers: [
+        { id: "one", metrics: { races: 7, podiums: 2, retirementRate: 0.048 } },
+      ],
     },
   });
-
   expect(model.podiumRate.value).toBe("28.6%");
-  expect(model.dnfRate.value).toBe("4.8%");
-  expect(model.leader.value).toBe("Example One");
-  expect(model.constructorLeader.value).toBe("Example Team");
-  expect(formatAnalyticsFreshness(null)).toBe("Not available");
-  expect(formatAnalyticsFreshness("2026-09-21T15:00:00Z")).toBe("21 Sept 2026");
+  expect(model.retirementRate.value).toBe("4.8%");
+  expect(model.leaderName).toBe("Published Leader");
 });
 
 test("race breakdown turns published totals into comparable ring metrics", () => {
   const model = buildRaceBreakdownModel({
+    entries: 180,
     starts: 180,
     classified: 171,
-    dnfs: 9,
+    retirements: 9,
+    classificationUnknown: 0,
     wins: 18,
     podiums: 54,
     fastestLaps: 18,
@@ -286,7 +271,9 @@ test("race breakdown turns published totals into comparable ring metrics", () =>
   ]);
   expect(model[0].value).toBe(18);
   expect(model[0].percentage).toBe(10);
-  expect(model[3].detail).toBe("171 classified · 9 DNF");
+  expect(model[3].detail).toBe(
+    "171 explicitly classified · 9 retired · 0 classification unknown",
+  );
 });
 
 test("driver spotlight exposes the published recent form sequence", () => {
@@ -358,7 +345,7 @@ test("form insights derive rates and constructor gap from published metrics", ()
       drivers: [
         {
           id: "driver:one",
-          metrics: { races: 10, podiums: 6, dnfRate: 0.1 },
+          metrics: { races: 10, podiums: 6, retirementRate: 0.1 },
         },
       ],
     },
@@ -370,7 +357,7 @@ test("form insights derive rates and constructor gap from published metrics", ()
 
   expect(model.form).toEqual([3, 1, 2]);
   expect(model.podiumRate.value).toBe("60%");
-  expect(model.dnfRate.value).toBe("10%");
+  expect(model.retirementRate.value).toBe("10%");
   expect(model.constructorGap.value).toBe("+60 pts");
 });
 
@@ -383,8 +370,8 @@ test("quick stats expose complementary archive-backed measures", () => {
   });
 
   expect(model.map(([, label]) => label)).toEqual([
-    "Race winners",
-    "Drivers on podium",
+    "Session P1 drivers",
+    "Top-three drivers",
     "Published starts",
     "Fastest laps",
   ]);
@@ -401,7 +388,13 @@ test("analytics stats preserve API values and derive missing values from publish
         { metrics: { wins: 1, podiums: 0 } },
       ],
     },
-    raceBreakdown: { starts: 20, podiums: 6, dnfs: 2, fastestLaps: 3 },
+    raceBreakdown: {
+      starts: 20,
+      podiums: 6,
+      retirements: 2,
+      retirementEligibleStarts: 20,
+      fastestLaps: 3,
+    },
   });
 
   expect(model.completedEvents).toBe(14);
@@ -410,7 +403,7 @@ test("analytics stats preserve API values and derive missing values from publish
   expect(model.publishedStarts).toBe(20);
   expect(model.fastestLapCount).toBe(3);
   expect(model.podiumRate).toBe(30);
-  expect(model.dnfRate).toBe(10);
+  expect(model.retirementRate).toBe(10);
 });
 
 test("driver comparison ranking follows the selected metric direction", () => {
@@ -432,35 +425,44 @@ test("driver comparison ranking follows the selected metric direction", () => {
 
 test("championship snapshot ranks published drivers and constructors independently", () => {
   const model = buildChampionshipSnapshotModel({
-    comparison: {
+    championship: {
+      season: 2024,
+      round: 1,
+      snapshotId: "fixture",
+      driverCoverage: "partial",
+      constructorCoverage: "partial",
       drivers: [
         {
-          id: "driver:two",
-          name: "Driver Two",
-          metrics: { points: 180, wins: 3, podiums: 7 },
+          standingSnapshotId: "standing:2024:1",
+          rank: 2,
+          entity: { id: "driver:two", displayName: "Driver Two" },
+          points: "180",
+          wins: 3,
         },
         {
-          id: "driver:one",
-          name: "Driver One",
-          metrics: { points: 220, wins: 5, podiums: 9 },
+          rank: 1,
+          standingSnapshotId: "standing:2024:1",
+          entity: { id: "driver:one", displayName: "Driver One" },
+          points: "220",
+          wins: 5,
+          number: 7,
+        },
+      ],
+      constructors: [
+        {
+          standingSnapshotId: "standing:2024:1",
+          rank: 2,
+          entity: { id: "constructor:one", displayName: "Team One" },
+          points: "310",
+        },
+        {
+          rank: 1,
+          standingSnapshotId: "standing:2024:1",
+          entity: { id: "constructor:two", displayName: "Team Two" },
+          points: "340",
         },
       ],
     },
-    constructors: [
-      {
-        constructorId: "constructor:one",
-        constructorName: "Team One",
-        totalPoints: 310,
-        drivers: [],
-      },
-      {
-        constructorId: "constructor:two",
-        constructorName: "Team Two",
-        totalPoints: 340,
-        drivers: [{ id: "driver:two" }],
-      },
-    ],
-    driverSeries: [{ driverId: "driver:one", number: 7 }],
   });
 
   expect(model.drivers.map((row) => row.name)).toEqual([

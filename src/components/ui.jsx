@@ -1,5 +1,9 @@
-import { useId, useEffect, useState } from "react";
+import { APEX_ICONS, APEX_SIZES } from "../design-system/apex.tokens";
+import { useId, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import "../design-system/audit-layout.tokens.css";
+import "../design-system/table.css";
+import "../design-system/reflow.css";
 import {
   ArrowRightIcon,
   ArrowClockwiseIcon,
@@ -27,7 +31,7 @@ export function ActionLink({ to, children, variant = "secondary", ...props }) {
   return (
     <Link className={`button button--${variant}`} to={to} {...props}>
       {children}
-      <ArrowRightIcon aria-hidden size={18} />
+      <ArrowRightIcon aria-hidden size={APEX_ICONS.action} />
     </Link>
   );
 }
@@ -57,7 +61,13 @@ export function Panel({
       {title && (
         <div className="panel-heading">
           <div className={Icon ? "panel-heading-copy" : undefined}>
-            {Icon && <Icon className="panel-heading-icon" aria-hidden size={20} />}
+            {Icon && (
+              <Icon
+                className="panel-heading-icon"
+                aria-hidden
+                size={APEX_SIZES.icon}
+              />
+            )}
             {eyebrow && <p className="eyebrow panel-eyebrow">{eyebrow}</p>}
             <h2 id={id}>{title}</h2>
           </div>
@@ -68,15 +78,29 @@ export function Panel({
     </section>
   );
 }
-export function PageHeading({ eyebrow, title, description, actions, icon: Icon }) {
+export function PageHeading({
+  eyebrow,
+  title,
+  description,
+  actions,
+  icon: Icon,
+}) {
   return (
     <header className="page-heading">
       <div className={Icon ? "page-heading-copy" : undefined}>
-        {Icon && <Icon className="page-heading-icon" aria-hidden size={26} />}
+        {Icon && (
+          <Icon
+            className="page-heading-icon"
+            aria-hidden
+            size={APEX_ICONS.pageHeading}
+          />
+        )}
         <div>
           {eyebrow && <p className="eyebrow">{eyebrow}</p>}
           <h1 tabIndex={-1}>{title}</h1>
-          {description && <p className="muted page-description">{description}</p>}
+          {description && (
+            <p className="muted page-description">{description}</p>
+          )}
         </div>
       </div>
       {actions && <div className="page-actions">{actions}</div>}
@@ -91,7 +115,7 @@ export function Select({ label, options, id: supplied, ...props }) {
       <label htmlFor={id}>{label}</label>
       <select id={id} {...props}>
         {options.map((o) => (
-          <option key={o.value} value={o.value}>
+          <option key={o.value} value={o.value} disabled={o.disabled}>
             {o.label}
           </option>
         ))}
@@ -293,7 +317,7 @@ export function EmptyState({
 export function ErrorState({ onRetry, status }) {
   return (
     <div className="state" role="alert">
-      <WarningCircleIcon size={28} aria-hidden />
+      <WarningCircleIcon size={APEX_ICONS.status} aria-hidden />
       <h3>
         {status === 404 ? "Record not found" : "We could not load this data"}
       </h3>
@@ -304,26 +328,64 @@ export function ErrorState({ onRetry, status }) {
       </p>
       {onRetry && (
         <Button variant="secondary" onClick={onRetry}>
-          <ArrowClockwiseIcon size={18} aria-hidden />
+          <ArrowClockwiseIcon size={APEX_ICONS.action} aria-hidden />
           Try again
         </Button>
       )}
     </div>
   );
 }
-export function Skeleton({ label = "Loading historical data" }) {
+export const SLOW_LOAD_THRESHOLD_MS = 8000;
+export function Skeleton({ label = "Loading historical data", onRetry }) {
   const [slow, setSlow] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [recoveryError, setRecoveryError] = useState(false);
+  const pending = useRef(false);
+  const mounted = useRef(false);
   useEffect(() => {
-    const timer = setTimeout(() => setSlow(true), 8000);
-    return () => clearTimeout(timer);
+    mounted.current = true;
+    const timer = setTimeout(() => setSlow(true), SLOW_LOAD_THRESHOLD_MS);
+    return () => {
+      mounted.current = false;
+      clearTimeout(timer);
+    };
   }, []);
+  const retry = async () => {
+    if (pending.current) return;
+    pending.current = true;
+    setRecoveryError(false);
+    setChecking(true);
+    try {
+      await onRetry();
+    } catch {
+      if (mounted.current) setRecoveryError(true);
+    } finally {
+      pending.current = false;
+      if (mounted.current) setChecking(false);
+    }
+  };
   return (
     <div className="loading">
       <p role="status">
-        {slow
-          ? "The archive is taking longer than usual. Your selection is preserved while it responds."
-          : label}
+        {checking
+          ? "Checking the existing request. Your selection is preserved; an active request is not duplicated."
+          : recoveryError
+            ? "Unable to check the request. Your selection is preserved. Try again or change your selection."
+            : slow
+              ? "The archive is taking longer than usual. Your selection is preserved while it responds."
+              : label}
       </p>
+      {slow && onRetry && (
+        <>
+          <Button variant="secondary" disabled={checking} onClick={retry}>
+            Retry load
+          </Button>
+          <p>
+            Pending reads are checked, not restarted. If the request fails, use
+            Try again; you can also change a known selection.
+          </p>
+        </>
+      )}
       <div aria-hidden="true" className="skeleton">
         <i />
         <i />
@@ -333,9 +395,15 @@ export function Skeleton({ label = "Loading historical data" }) {
     </div>
   );
 }
-export function DataBoundary({ query, children, empty, onRetry, loadingLabel }) {
+export function DataBoundary({
+  query,
+  children,
+  empty,
+  onRetry,
+  loadingLabel,
+}) {
   if (query.isLoading || (!query.currentData && query.isFetching))
-    return <Skeleton label={loadingLabel} />;
+    return <Skeleton label={loadingLabel} onRetry={onRetry || query.refetch} />;
   if (query.isError && !query.currentData)
     return (
       <ErrorState
@@ -360,26 +428,88 @@ export function DataBoundary({ query, children, empty, onRetry, loadingLabel }) 
     </div>
   );
 }
+export function tableFocusScrollDelta({
+  left,
+  right,
+  identityRight,
+  targetLeft,
+  targetRight,
+  gap = 0,
+}) {
+  const start = Math.max(left, identityRight) + gap;
+  const end = right - gap;
+  if (targetLeft < start) return targetLeft - start;
+  if (targetRight > end) return targetRight - end;
+  return 0;
+}
 export function DataTable({ caption, columns, rows, rowKey = (r) => r.id }) {
   const id = useId();
+  const stickyIdentity = columns.some((column) => column.stickyIdentity);
+  const explicitRowHeader = columns.some((column) => column.rowHeader);
+  const cellClass = (column) =>
+    [
+      column.numeric ? "numeric" : "",
+      column.stickyIdentity ? "table-sticky-identity" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
   if (!rows.length) return <EmptyState />;
   return (
     <div
-      className="table-scroll"
+      className={`table-scroll${stickyIdentity ? " table-scroll--identity" : ""}`}
       role="region"
       aria-labelledby={id}
       tabIndex={0}
+      aria-describedby={stickyIdentity ? `${id}-hint` : undefined}
+      onFocusCapture={(event) => {
+        const region = event.currentTarget;
+        const target = event.target;
+        if (
+          !stickyIdentity ||
+          target === region ||
+          target.closest(".table-sticky-identity")
+        )
+          return;
+        requestAnimationFrame(() => {
+          if (
+            !region.isConnected ||
+            !target.isConnected ||
+            target.ownerDocument.activeElement !== target
+          )
+            return;
+          const identity = region.querySelector(".table-sticky-identity");
+          if (!identity || getComputedStyle(identity).position !== "sticky")
+            return;
+          const bounds = region.getBoundingClientRect();
+          const focused = target.getBoundingClientRect();
+          const style = getComputedStyle(target);
+          const gap =
+            (parseFloat(style.outlineWidth) || 0) +
+            Math.max(0, parseFloat(style.outlineOffset) || 0);
+          const delta = tableFocusScrollDelta({
+            left: bounds.left,
+            right: bounds.right,
+            identityRight: identity.getBoundingClientRect().right,
+            targetLeft: focused.left,
+            targetRight: focused.right,
+            gap,
+          });
+          if (delta) region.scrollBy({ left: delta, behavior: "instant" });
+        });
+      }}
     >
+      {stickyIdentity && (
+        <p id={`${id}-hint`} className="table-scroll-hint">
+          Scroll horizontally; the driver stays visible. Arrow keys scroll this
+          region.
+        </p>
+      )}
       <table>
         <caption id={id}>{caption}</caption>
         <thead>
           <tr>
             {columns.map((c) => (
-              <th
-                key={c.key}
-                scope="col"
-                className={c.numeric ? "numeric" : ""}
-              >
+              <th key={c.key} scope="col" className={cellClass(c)}>
                 {c.label}
               </th>
             ))}
@@ -389,12 +519,13 @@ export function DataTable({ caption, columns, rows, rowKey = (r) => r.id }) {
           {rows.map((row) => (
             <tr key={rowKey(row)}>
               {columns.map((c, i) => {
-                const Cell = i === 0 ? "th" : "td";
+                const isRowHeader = explicitRowHeader ? c.rowHeader : i === 0;
+                const Cell = isRowHeader ? "th" : "td";
                 return (
                   <Cell
                     key={c.key}
-                    scope={i === 0 ? "row" : undefined}
-                    className={c.numeric ? "numeric" : ""}
+                    scope={isRowHeader ? "row" : undefined}
+                    className={cellClass(c)}
                   >
                     {c.render ? c.render(row) : (row[c.key] ?? "N/A")}
                   </Cell>

@@ -39,11 +39,18 @@ if (
   ribbon.cardMinWidth > ribbon.cardWidth ||
   !fluid.every((key) => validFluid(ribbon[key])) ||
   !scaled.every((key) => validClamp(ribbon[key])) ||
+  !/^[1-9]\d*ch$/.test(ribbon.footerActionLabelWidth) ||
   !/^\d+%$/.test(ribbon.latestTint) ||
   parseInt(ribbon.latestTint, 10) > 100
 )
   throw new Error("Invalid season ribbon tokens");
-const declarations = [...lengths, ...fluid, ...scaled, "latestTint"]
+const declarations = [
+  ...lengths,
+  ...fluid,
+  ...scaled,
+  "footerActionLabelWidth",
+  "latestTint",
+]
   .map((key) => {
     const name = key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
     return `  --apex-season-races-${name}: ${ribbon[key]}${lengths.includes(key) ? "px" : ""};`;
@@ -56,12 +63,25 @@ writeFileSync(
 ${declarations}
 }
 @media (max-width: ${mobile - 1}px) {
-  .season-races-navigation { grid-template-columns: 1fr 1fr; }
-  .season-races-list { grid-column: 1 / -1; grid-row: 1; }
-  .season-races .season-races-arrow { grid-row: 2; }
-  .season-races-arrow:last-child { justify-self: end; }
-  .season-races-navigation--expanded { grid-template-columns: minmax(0, 1fr); }
-  .season-races { padding: var(--apex-space-6); }
+  .season-races-navigation {
+    grid-template-columns: 1fr 1fr;
+  }
+  .season-races-list {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .season-races .season-races-arrow {
+    grid-row: 2;
+  }
+  .season-races-arrow:last-child {
+    justify-self: end;
+  }
+  .season-races-navigation--expanded {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .season-races {
+    padding: var(--apex-space-6);
+  }
 }
 `,
 );

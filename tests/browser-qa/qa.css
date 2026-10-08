@@ -1,0 +1,22 @@
+.qa-controls {
+  position: relative;
+  z-index: var(--apex-layer-dropdown);
+  padding: var(--apex-space-6);
+  background: var(--apex-color-surface);
+  color: var(--apex-color-text);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  overflow-wrap: anywhere;
+}
+.qa-controls summary {
+  min-height: var(--apex-size-target);
+}
+.qa-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-5);
+}
+.qa-controls output,
+.qa-controls a {
+  display: block;
+  margin-block: var(--apex-space-5);
+}

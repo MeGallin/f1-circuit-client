@@ -1,0 +1,31 @@
+.schedule-time,
+.schedule-time time,
+.time-display-preference {
+  display: grid;
+  gap: var(--apex-space-2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.schedule-time small {
+  font-size: var(--apex-type-caption-size);
+  color: var(--apex-color-muted);
+}
+.display-preferences {
+  position: relative;
+}
+.display-preferences > summary {
+  min-height: var(--apex-size-target);
+  cursor: pointer;
+}
+.display-preferences-body {
+  position: absolute;
+  inset-inline-end: 0;
+  z-index: var(--apex-layer-dropdown);
+  width: var(--apex-layout-sidebar);
+  max-width: calc(100vw - var(--apex-space-9));
+  padding: var(--apex-space-6);
+  display: grid;
+  gap: var(--apex-space-6);
+  background: var(--apex-color-surface);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+}

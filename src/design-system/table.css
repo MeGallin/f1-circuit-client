@@ -1,0 +1,47 @@
+/* Shared DataTable contracts, independent of page imports. */
+:root {
+  --apex-size-table-identity: min(
+    var(--apex-layout-field-min-width),
+    var(--apex-size-table-identity-viewport-limit)
+  );
+  --apex-size-table-action: min(
+    var(--apex-layout-field-min-width),
+    calc(var(--apex-size-table-identity-viewport-limit) - var(--apex-space-6))
+  );
+}
+.table-scroll-hint {
+  margin: 0;
+  padding: var(--apex-space-5) var(--apex-space-6);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+@media (max-width: 767px) {
+  .table-scroll--identity {
+    scroll-padding-inline-start: calc(
+      var(--apex-size-table-identity) + var(--apex-space-6)
+    );
+  }
+  .table-sticky-identity {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: var(--apex-layer-sticky);
+    min-width: var(--apex-size-table-identity);
+    width: var(--apex-size-table-identity);
+    max-width: var(--apex-size-table-identity);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    background: var(--apex-color-surface);
+    border-inline-end: var(--apex-shape-border) solid var(--apex-color-line);
+  }
+  thead .table-sticky-identity {
+    background: var(--apex-color-elevated);
+  }
+  .table-scroll--identity a {
+    max-width: var(--apex-size-table-action);
+    white-space: normal;
+    overflow-wrap: anywhere;
+    scroll-margin-inline-start: calc(
+      var(--apex-size-table-identity) + var(--apex-space-6)
+    );
+  }
+}

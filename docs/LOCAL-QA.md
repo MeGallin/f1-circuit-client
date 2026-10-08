@@ -1,8 +1,65 @@
 # Primary views: local QA
 
-## Ribbon senior-review QA - 6 October 2026
+## Current senior-review proof — 8 October 2026
 
-Fresh `npm run check` passed lint, 354 tests across 33 files, token generation,
+Parent accepted record/event ownership, current championship and contained320/390
+filters; Home time remains unchanged. [Review/check/archive details](SENIOR-REVIEW-2026-10-08.md)
+are current; earlier matrices below retain their measured scope. Reusable GET-only
+QA remains in tests;5175 is stopped, normal5173/3001 preserved. Raw logs are external.
+
+## Latest Home proof — 8 October 2026
+
+Parent confirms Previous event absent in live DOM, approved23-round history intact
+and next event/countdown retained: actual desktop1309×818 document/client1295/1295;
+mobile390×844376/376, no page overflow. Screenshots in audit implementation-evidence:
+`previous-event-removed-desktop.jpg` and `previous-event-removed-mobile.jpg`.
+Viewport restored; System appearance untouched. [Scoped verification](HOME-PREVIOUS-EVENT-REMOVAL.md).
+
+## Accepted audit handoff — 8 October 2026 (before Home followup)
+
+All twelve UI/UX audit gates are implemented and parent-browser accepted.
+Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,
+49-asset guard and production build; companion API passed160 tests,
+lint/format/contract and Newman114 requests/192 assertions, zero failures.
+Existing jsdom scrollTo and >500kB chunk warnings remain. Full counts are executed
+8 October evidence, not results inferred from documentation changes.
+
+[The authoritative audit matrix](UX-AUDIT-IMPLEMENTATION-VERIFICATION.md)
+records source definitions, retained meaningful red logs, exact browser geometry,
+controlled recovery and200% root-font (not native zoom) proofs. Championship and
+selected totals stay distinct; time preference is shared; evidence is record-aware;
+telemetry bounds remain explicitly unknown. Approved ribbon unchanged.
+Audit code/docs remain uncommitted; no push/deploy/import/live write.
+Earlier dated checkpoints below are historical; production/live smoke,
+source publication/cron/locking and exhaustive accessibility remain separate.
+
+## Repeatable audit QA — 8 October 2026
+
+The current audit uses measured parent CSS geometry, not jsdom layout. For
+repeatable controlled recovery/enlarged text, use the isolated
+[GET-only fixture](../tests/browser-qa/README.md). Collapse its controls and verify
+actual root32 before200% measurements; it is not native zoom. Document width alone
+does not prove unclipped controls. Latest normal Ask/Explore320 controls fit;
+Calendar Upcoming7 intentionally scrolls into view on focus; final Overview winner
+889.84px stays above900. Exact screenshots and all measurements are in the audit
+matrix above. No AI question/manual refresh/import was performed.
+
+## Historical documentation handoff - 6 October 2026
+
+The approved ribbon/review implementation is committed locally as `f7f9ba6`.
+Client and companion API working trees were clean and matched their cached origin
+refs before these documentation edits; [checkpoint](CHECKPOINT.md) records exact
+identifiers and pending remote/deployment verification. No browser, test/build,
+source import or production check was repeated for this prose-only pass. All
+counts, measurements and screenshots below are dated earlier execution evidence,
+not fresh captures. The recorded full review passed 354 tests/33 files and the
+focused run passed 56 tests/seven files; 17 intended regressions failed before fixes.
+The user-approved corrected appearance remains the current reference, without
+claiming pixel equivalence or production certification.
+
+## Ribbon senior-review QA (historical execution evidence) - 6 October 2026
+
+At that review, `npm run check` passed lint, 354 tests across 33 files, token generation,
 the unchanged 49-asset guard and production build. Seventeen intended failures
 were reproduced before fixes; [findings and test limits](FUNCTIONALITY-VALIDATION.md)
 record the exact scope. Same-latest replacement scroll/focus preservation and
@@ -118,7 +175,7 @@ Dark appearance unchanged. It did not capture a live `00` frame: deterministic
 component tests provide zero/rollover evidence, not that screenshot. No production
 verification is claimed. See [validation](FUNCTIONALITY-VALIDATION.md).
 
-## Current review evidence — 6 October 2026
+## Historical race-update review evidence — 6 October 2026
 
 Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Deployment and production/live smoke verification for these commits are **PENDING**. Recorded client `npm run check` passed lint, 141 tests across 21 files and production build; final focused season/refresh regressions passed 36/36. API checks passed 133 tests, lint/format, contract verification and Newman 114 requests / 192 assertions, zero failures. Both diff checks passed. Production build retains the existing large-chunk warning.
 

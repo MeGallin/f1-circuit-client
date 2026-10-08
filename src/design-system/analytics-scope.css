@@ -1,0 +1,15 @@
+.analytics-championship-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: var(--apex-space-7);
+  background: var(--apex-color-surface);
+}
+
+.analytics-scope-body,
+.analytics-panel-scope-note {
+  padding: var(--apex-space-7);
+}
+
+.analytics-panel-scope-note {
+  margin: 0;
+}

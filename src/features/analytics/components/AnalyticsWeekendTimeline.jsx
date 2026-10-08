@@ -1,19 +1,11 @@
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import { CalendarBlankIcon, FlagCheckeredIcon } from "@phosphor-icons/react";
+import { ScheduleTime } from "../../../components/ScheduleTime";
 
 function findPivot(events) {
   const nextIndex = events.findIndex((event) => !event.completed);
   if (nextIndex >= 0) return nextIndex;
   return Math.max(0, events.length - 1);
-}
-
-function formatWeekendDate(value) {
-  if (!value) return "Date not supplied";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Date not supplied";
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-  }).format(date);
 }
 
 export function buildAnalyticsWeekendTimelineModel(events = []) {
@@ -26,26 +18,33 @@ export function buildAnalyticsWeekendTimelineModel(events = []) {
     const isNext = absoluteIndex === pivot && !event.completed;
     return {
       ...event,
-      statusLabel: event.completed ? "Completed" : isNext ? "Next up" : "Upcoming",
-      dateLabel: formatWeekendDate(
-        event.schedule?.startsAt || event.schedule?.date,
-      ),
+      statusLabel: event.completed
+        ? "Completed"
+        : isNext
+          ? "Next up"
+          : "Upcoming",
     };
   });
 }
 
 function TimelineCard({ event }) {
   return (
-    <li className={`analytics-weekend-card ${event.statusLabel === "Next up" ? "analytics-weekend-card--next" : ""}`}>
+    <li
+      className={`analytics-weekend-card ${event.statusLabel === "Next up" ? "analytics-weekend-card--next" : ""}`}
+    >
       <div className="analytics-weekend-card-marker" aria-hidden="true">
-        {event.completed ? <FlagCheckeredIcon size={16} /> : <CalendarBlankIcon size={16} />}
+        {event.completed ? (
+          <FlagCheckeredIcon size={APEX_SIZES.iconSmall} />
+        ) : (
+          <CalendarBlankIcon size={APEX_SIZES.iconSmall} />
+        )}
       </div>
       <div className="analytics-weekend-card-copy">
         <span>{event.statusLabel}</span>
         <strong>Round {event.round}</strong>
         <h3>{event.name}</h3>
         <small>{event.circuit?.displayName || "Circuit not supplied"}</small>
-        <small>{event.dateLabel}</small>
+        <ScheduleTime schedule={event.schedule} />
         {event.winner?.driverName && (
           <small>Winner · {event.winner.driverName}</small>
         )}
@@ -62,7 +61,8 @@ export default function AnalyticsWeekendTimeline({ events }) {
   return (
     <div className="analytics-weekend-timeline">
       <p className="analytics-weekend-timeline-note">
-        Completed rounds sit alongside the next scheduled event so the season flow is visible at a glance.
+        Completed rounds sit alongside the next scheduled event so the season
+        flow is visible at a glance.
       </p>
       <ol aria-label="Season weekend timeline">
         {model.map((event) => (

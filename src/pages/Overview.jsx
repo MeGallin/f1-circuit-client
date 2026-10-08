@@ -23,6 +23,7 @@ import {
   ErrorState,
 } from "../components/ui";
 import "../styles/overview.css";
+import "../design-system/overview-focus.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
 
 function SeasonOverview({ year, seasons }) {

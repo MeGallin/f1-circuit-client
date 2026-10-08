@@ -1,3 +1,4 @@
+import { APEX_ICONS } from "../../design-system/apex.tokens";
 import { useEffect, useState } from "react";
 import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
@@ -28,16 +29,19 @@ import {
   adjacentCalendarEvents,
   focusEvent,
   focusEventKind,
-  isPastScheduledEventAwaitingResults,
   nextScheduledEvent,
   runtimeYear,
 } from "./selectors";
 import { entryName } from "./raceFormat";
 import { RaceCountdown } from "../../components/RaceCountdown";
+import { ScheduleTime } from "../../components/ScheduleTime";
 import { RaceResultStatus } from "./RaceResultStatusPanel";
 import { EventInsightDialog } from "./EventInsightDialog";
 import { SeasonEventStrip } from "./SeasonEventStrip";
-import { ConstructorIdentity, ConstructorIdentities } from "../../components/ConstructorIdentity";
+import {
+  ConstructorIdentity,
+  ConstructorIdentities,
+} from "../../components/ConstructorIdentity";
 
 const SEASON_EVENT_REFRESH_INTERVAL_MS = 30_000;
 
@@ -45,6 +49,7 @@ export function RaceFocus({
   summary,
   snapshotId,
   includeSeasonProgress = true,
+  compact = false,
   showCalendarAction = true,
   selectedEventId: suppliedSelectedEventId,
   onSelectEvent,
@@ -125,6 +130,13 @@ export function RaceFocus({
           <CircuitName
             name={event.circuit?.displayName || "Circuit not supplied"}
           />
+          {compact && (
+            <ActionLink
+              to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
+            >
+              Open race detail
+            </ActionLink>
+          )}
         </div>
         {focusKind === "latest" && (
           <RacePodium
@@ -154,13 +166,15 @@ export function RaceFocus({
         />
       )}
       <div className="race-focus-bottom">
-        <ActionLink
-          to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
-        >
-          Open race detail
-        </ActionLink>
+        {!compact && (
+          <ActionLink
+            to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
+          >
+            Open race detail
+          </ActionLink>
+        )}
         <span>
-          <CalendarBlankIcon size={18} aria-hidden />
+          <CalendarBlankIcon size={APEX_ICONS.action} aria-hidden />
           <time dateTime={event.schedule.date || undefined}>
             {dateLabel(event.schedule.date)}
           </time>
@@ -224,7 +238,10 @@ function RacePodium({ detail, isFetching, isError, year }) {
                   <div className="race-podium-driver-copy">
                     <strong>{entryName(row.entry)}</strong>
                     <span>
-                      <ConstructorIdentity constructor={row.entry?.constructor} year={year} />
+                      <ConstructorIdentity
+                        constructor={row.entry?.constructor}
+                        year={year}
+                      />
                     </span>
                   </div>
                 </div>
@@ -254,97 +271,45 @@ function RacePodium({ detail, isFetching, isError, year }) {
   );
 }
 
-function AdjacentEventBand({
-  event,
-  label,
-  next = false,
-  now,
-  showPendingResults = false,
-}) {
+function NextEventBand({ event, label, now }) {
   if (!event) return null;
   const status = event.status || "unknown";
   const statusLabel = status === "unknown" ? "Status not supplied" : status;
-
-  if (next) {
-    const startsAt = event.schedule?.startsAt;
-    const hasPreciseStart =
-      Number.isFinite(Date.parse(startsAt || "")) &&
-      ["minute", "second"].includes(event.schedule?.timePrecision);
-    const startLabel = hasPreciseStart
-      ? new Intl.DateTimeFormat("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-          timeZone: "UTC",
-          timeZoneName: "short",
-        }).format(new Date(startsAt))
-      : dateLabel(event.schedule?.date);
-
-    return (
-      <section
-        className="overview-adjacent-event overview-adjacent-event--next overview-adjacent-event--countdown-hero"
-        aria-label={label}
-      >
-        <div className="overview-adjacent-event-countdown">
-          <RaceResultStatus event={event} now={now} />
-        </div>
-        <div className="overview-adjacent-event-hero-copy">
-          <div className="overview-adjacent-event-heading">
-            <span>{label}</span>
-          </div>
-          <div className="overview-adjacent-event-identity">
-            <b className="overview-adjacent-event-round">
-              {event.round ?? "N/A"}
-            </b>
-            <div className="overview-adjacent-event-copy">
-              <strong>{event.name}</strong>
-              <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
-            </div>
-          </div>
-        </div>
-        <div className="overview-adjacent-event-hero-meta">
-          <div className="overview-adjacent-event-date">
-            <b>{startLabel}</b>
-            <small>
-              <RaceStatus status={status}>{statusLabel}</RaceStatus>
-            </small>
-          </div>
-          <ActionLink
-            to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
-          >
-            Explore the calendar
-          </ActionLink>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section
-      className="overview-adjacent-event overview-adjacent-event--previous"
+      className="overview-adjacent-event overview-adjacent-event--next overview-adjacent-event--countdown-hero"
       aria-label={label}
     >
-      <div className="overview-adjacent-event-heading">
-        <span>{label}</span>
+      <div className="overview-adjacent-event-countdown">
+        <RaceResultStatus event={event} now={now} />
       </div>
-      <b className="overview-adjacent-event-round">{event.round ?? "N/A"}</b>
-      <div className="overview-adjacent-event-copy">
-        <strong>{event.name}</strong>
-        <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
-      </div>
-      <div className="overview-adjacent-event-date">
-        <b>{dateLabel(event.schedule?.date)}</b>
-        <small>
-          <RaceStatus status={status}>{statusLabel}</RaceStatus>
-        </small>
-      </div>
-      {showPendingResults && (
-        <div className="overview-adjacent-event-results">
-          <RaceResultStatus event={event} now={now} />
+      <div className="overview-adjacent-event-hero-copy">
+        <div className="overview-adjacent-event-heading">
+          <span>{label}</span>
         </div>
-      )}
+        <div className="overview-adjacent-event-identity">
+          <b className="overview-adjacent-event-round">
+            {event.round ?? "N/A"}
+          </b>
+          <div className="overview-adjacent-event-copy">
+            <strong>{event.name}</strong>
+            <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
+          </div>
+        </div>
+      </div>
+      <div className="overview-adjacent-event-hero-meta">
+        <div className="overview-adjacent-event-date">
+          <ScheduleTime schedule={event.schedule} showVenue />
+          <small>
+            <RaceStatus status={status}>{statusLabel}</RaceStatus>
+          </small>
+        </div>
+        <ActionLink
+          to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
+        >
+          Explore the calendar
+        </ActionLink>
+      </div>
     </section>
   );
 }
@@ -367,7 +332,6 @@ export function SeasonAroundRace({
     return () => clearInterval(timer);
   }, [suppliedNow]);
   const now = suppliedNow ?? clockNow;
-  const nowMs = typeof now === "number" ? now : Date.parse(now);
   const calendarQuery = useGetCalendarQuery({
     year: summary.season?.year,
     snapshotId,
@@ -375,9 +339,9 @@ export function SeasonAroundRace({
   const events = calendarQuery.currentData?.items || [];
   const isCurrentSeason = Number(summary.season?.year) === runtimeYear();
   const focus = focusEvent(summary);
-  const adjacent = focus?.id
-    ? adjacentCalendarEvents(events, focus.id)
-    : { previous: null, next: null };
+  const adjacentNext = focus?.id
+    ? adjacentCalendarEvents(events, focus.id).next
+    : null;
   const nextEvent = isCurrentSeason
     ? nextScheduledEvent(
         calendarQuery.currentData
@@ -385,42 +349,17 @@ export function SeasonAroundRace({
           : [summary.nextEvent].filter(Boolean),
         now,
       )
-    : adjacent.next || summary.nextEvent || null;
-  const aroundNextPrevious =
-    events
-      .filter(
-        (event) =>
-          !["cancelled", "canceled", "postponed"].includes(
-            String(event.status).trim().toLowerCase(),
-          ) &&
-          ["minute", "second"].includes(event.schedule?.timePrecision) &&
-          Date.parse(event.schedule?.startsAt) <= nowMs,
-      )
-      .sort(
-        (left, right) =>
-          Date.parse(right.schedule.startsAt) -
-          Date.parse(left.schedule.startsAt),
-      )[0] || null;
-  const previousIsPending =
-    isCurrentSeason &&
-    isPastScheduledEventAwaitingResults(aroundNextPrevious, now);
-  const previousEvent = previousIsPending
-    ? aroundNextPrevious
-    : adjacent.previous || summary.previousEvent || null;
+    : adjacentNext || summary.nextEvent || null;
   const statusNow = suppliedNow == null ? undefined : now;
   const selectEvent = (event) => setSelectedEventId(event.id);
 
   return (
     <section className="season-around-race" aria-label="Season around the race">
-      <AdjacentEventBand
-        event={nextEvent}
-        label="NEXT EVENT"
-        next
-        now={statusNow}
-      />
+      <NextEventBand event={nextEvent} label="NEXT EVENT" now={statusNow} />
       <div className="season-around-race-main">
         <RaceFocus
           className="season-around-race-focus"
+          compact
           includeSeasonProgress={false}
           onCloseEvent={() => setSelectedEventId(null)}
           onSelectEvent={selectEvent}
@@ -448,12 +387,6 @@ export function SeasonAroundRace({
           selectedEventId={selectedEventId}
         />
       </DataBoundary>
-      <AdjacentEventBand
-        event={previousEvent}
-        label="PREVIOUS EVENT"
-        now={statusNow}
-        showPendingResults={previousIsPending}
-      />
       <div className="season-around-race-provenance">
         <SourceNote meta={meta} />
       </div>
@@ -560,10 +493,21 @@ function LeaderList({ entries, kind, year }) {
                   }
                 />
               )}
-              <strong>{kind === "constructors" ? <ConstructorIdentity constructor={row.entity} year={year} /> : row.entity.displayName}</strong>
+              <strong>
+                {kind === "constructors" ? (
+                  <ConstructorIdentity constructor={row.entity} year={year} />
+                ) : (
+                  row.entity.displayName
+                )}
+              </strong>
             </div>
             {row.constructors.length > 0 && (
-              <p><ConstructorIdentities constructors={row.constructors} year={year} /></p>
+              <p>
+                <ConstructorIdentities
+                  constructors={row.constructors}
+                  year={year}
+                />
+              </p>
             )}
           </div>
           <span className="leader-points">

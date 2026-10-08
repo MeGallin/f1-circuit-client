@@ -1,10 +1,63 @@
 # F1 Circuit Client
 
+## Current uncommitted senior review — 8 October 2026
+
+[Review findings, current checks and external evidence inventory](docs/SENIOR-REVIEW-2026-10-08.md)
+supersede earlier audit/Home check totals below. Source-context, metric, time and
+chart-tooltip guards are strengthened; keyed Apex generation preserves approved
+dimensions. The reusable QA fixture stays in tests, outside the production entry.
+Raw execution captures are archived outside both repositories, not shipped.
+
+## Current Home followup — 8 October 2026
+
+The redundant Previous event band is removed on all devices by user approval;
+the approved Season races ribbon/history/details and next-event/countdown remain.
+[Scoped verification and browser proof](docs/HOME-PREVIOUS-EVENT-REMOVAL.md).
+No API change or deployment; existing local edits remain uncommitted.
+
+## Accepted audit handoff — 8 October 2026 (before Home followup)
+
+All twelve UI/UX audit gates are implemented and parent-browser accepted.
+Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,
+49-asset guard and production build; companion API passed160 tests,
+lint/format/contract and Newman114 requests/192 assertions, zero failures.
+Existing jsdom scrollTo and >500kB chunk warnings remain. Full counts are executed
+8 October evidence, not results inferred from documentation changes.
+
+[The authoritative audit matrix](docs/UX-AUDIT-IMPLEMENTATION-VERIFICATION.md)
+records source definitions, retained meaningful red logs, exact browser geometry,
+controlled recovery and200% root-font (not native zoom) proofs. Championship and
+selected totals stay distinct; time preference is shared; evidence is record-aware;
+telemetry bounds remain explicitly unknown. Approved ribbon unchanged.
+Audit code/docs remain uncommitted; no push/deploy/import/live write.
+Earlier dated checkpoints below are historical; production/live smoke,
+source publication/cron/locking and exhaustive accessibility remain separate.
+
 Frontend repository for the F1 Circuit historical and post-race application, using the selected Apex design direction.
 
 The Apex client covers the season overview, calendar, standings, race/session analysis, entity profiles and comparisons, analytics, source coverage and field-level evidence. Explore is the separate archive-search surface; Ask provides database-backed questions with optional server-side interpretation, while factual answers remain grounded in published database records. The standalone Records surface remains deferred. Run `npm ci` then `npm run dev`; review http://127.0.0.1:5173/. Run `npm run check` for lint, tests and production build.
 
-## Race-update review — 6 October 2026
+## Historical handoff checkpoint — 6 October 2026
+
+The user-approved Option 2 Season races ribbon and senior-review fixes are
+committed locally as `f7f9ba6` (`feat(overview): replace season progress markers
+with race history ribbon`). Before this documentation-only pass, client `main`
+was clean and matched cached `origin/main`; companion API `c7dd38d` was also
+clean and matched its cached ref. No fresh remote or live deployment check was
+performed. Production verification remains **PENDING**.
+
+Recorded 6 October review evidence: lint, 354 tests across 33 files, 49-asset
+prebuild guard and production build passed; focused checks passed 56 tests across
+seven files, with 17 intended regressions failing before fixes. These checks and
+browser proofs were not rerun for this prose update. Preserve the approved visual
+reference unless a new scoped change is authorised. The calendar query returns
+all validated snapshot-pinned pages; card labels match visible actions, equivalent
+refreshes preserve scroll/focus, and keyed token generation validates before writing.
+See [current Git/handoff status](docs/CHECKPOINT.md), [recorded validation](docs/FUNCTIONALITY-VALIDATION.md),
+[QA evidence](docs/LOCAL-QA.md) and [approved specification](docs/OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md).
+Shared root memory/guidance are maintained separately outside these Git repositories.
+
+## Historical race-update review — 6 October 2026
 
 Local Git history confirms client `fb7cbd0` and companion API `734a4ed`. Both pushes are user-confirmed; deployment and production/live smoke verification for these commits are **PENDING**. Current-year source refresh uses server-driven cooldown/busy timers, aborts on unmount/season changes and invalidates catalogue, season summary/calendar/standings, event and session caches. Historical refresh reloads archive data only. Precise pending-result selection handles final races and unknown statuses without resurfacing older unknown races after newer completed results.
 
@@ -22,11 +75,11 @@ artwork are included. The initial expanded delivery passed 281 tests; the senior
 follow-up passed lint, 296 tests across 28 files and production build, including
 historical-year, generator and build-asset guard regressions.
 See the current verification in [constructor guidance](docs/CONSTRUCTOR-LOGOS.md).
-Local history now records the logo implementation/review in client `1092bec`
-(`feat: add constructor logos across the historical archive`). The cached client
-`origin/main` is one commit behind; no fresh remote check or user-confirmed logo
-push is recorded. Companion API HEAD `c7dd38d` contains documentation only and
-matches its cached origin ref, not independent remote verification. Logo deployment,
+The logo implementation/review entered local history as client `1092bec`
+(`feat: add constructor logos across the historical archive`). Its earlier
+one-commit-ahead checkpoint is historical; current client `f7f9ba6` and API
+`c7dd38d` match their respective cached origin refs as recorded above. This is
+not fresh remote verification or a new user-confirmed push claim. Logo deployment,
 live smoke and brand-use clearance remain pending. The race-update push confirmation
 above applies only to the earlier named commits.
 

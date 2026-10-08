@@ -4,12 +4,24 @@ import { resolve, join } from "node:path";
 import { expect, test } from "vitest";
 
 const tokens = JSON.parse(
-  readFileSync(resolve(process.cwd(), "src/design-system/apex.tokens.json"), "utf8"),
+  readFileSync(
+    resolve(process.cwd(), "src/design-system/apex.tokens.json"),
+    "utf8",
+  ),
 );
 const baseStyles = readFileSync(
   resolve(process.cwd(), "src/styles/base.css"),
   "utf8",
 );
+
+test("review: audit presentation limits belong to keyed Apex design source", () => {
+  expect(tokens.auditLayout).toMatchObject({
+    analyticsFilterMinWidth: "12rem",
+    overviewTrackCompact: "8rem",
+    tableIdentityViewportLimit: "40vw",
+    overviewDesktopMinWidth: 900,
+  });
+});
 
 test("design tokens cover the shared visual and motion contracts", () => {
   expect(tokens.spacing).toBeDefined();
@@ -36,9 +48,7 @@ test("every Apex token referenced by the client is defined", () => {
   const source = styleFiles
     .map((path) => readFileSync(path, "utf8"))
     .join("\n");
-  const defined = new Set(
-    source.match(/--apex-[a-z0-9-]+(?=\s*:)/g) || [],
-  );
+  const defined = new Set(source.match(/--apex-[a-z0-9-]+(?=\s*:)/g) || []);
   const referenced = new Set(source.match(/--apex-[a-z0-9-]+/g) || []);
   const missing = [...referenced].filter((token) => !defined.has(token));
 

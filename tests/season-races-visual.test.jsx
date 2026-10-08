@@ -114,6 +114,29 @@ test("approved footer restores distinct outlined Earlier races and Show all roun
   ).toBeInTheDocument();
 });
 
+test("footer actions share equal responsive tracks and stretch height with a bounded desktop size", () => {
+  const css = readFileSync("src/design-system/season-races.css", "utf8");
+  expect(css).toMatch(
+    /\.season-races-footer\s*\{[^}]*display: grid;[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);[^}]*align-items: stretch;/s,
+  );
+  expect(css).toMatch(
+    /\.season-races-footer > \.button\s*\{[^}]*min-inline-size: 0;[^}]*inline-size: 100%;[^}]*max-inline-size: calc\([^}]*var\(--apex-space-6\)[^}]*white-space: normal;/s,
+  );
+  expect(css).toMatch(
+    /\.season-races-footer > \.season-races-toggle\s*\{[^}]*grid-column: 2;[^}]*justify-self: end;/s,
+  );
+  render(<SeasonEventStrip events={events} />);
+  const earlier = screen.getByRole("button", { name: "Earlier races" });
+  const toggle = screen.getByRole("button", { name: "Show all rounds" });
+  expect(earlier.parentElement).toBe(toggle.parentElement);
+  expect(earlier).toHaveClass("button", "button--secondary");
+  expect(toggle).toHaveClass("button", "button--secondary");
+  fireEvent.click(toggle);
+  expect(screen.getByRole("button", { name: "Return to ribbon" })).toHaveClass(
+    "season-races-toggle",
+  );
+});
+
 test("approved display/mono hierarchy and latest outlined tint belong to Apex, not feature inline styles", () => {
   const css = readFileSync("src/design-system/season-races.css", "utf8");
   expect(css).toMatch(

@@ -1,37 +1,55 @@
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import { TrophyIcon, UsersThreeIcon } from "@phosphor-icons/react";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
+import "../../../design-system/analytics-scope.css";
+import { analyticsCount } from "../labels";
+import {
+  championshipContextValid,
+  publishedChampionshipRows,
+} from "../championship";
 
 export function buildChampionshipSnapshotModel({
-  comparison,
-  constructors,
-  driverSeries,
+  championship,
+  year = championship?.season,
+  snapshotId = championship?.snapshotId,
   limit = 5,
 } = {}) {
-  const numberByDriver = new Map(
-    (driverSeries || []).map((driver) => [driver.driverId, driver.number]),
-  );
-  const drivers = [...(comparison?.drivers || [])]
-    .filter((driver) => Number.isFinite(Number(driver.metrics?.points)))
-    .sort((a, b) => Number(b.metrics.points) - Number(a.metrics.points))
+  const drivers = publishedChampionshipRows(
+    championship,
+    "drivers",
+    year,
+    snapshotId,
+  )
+    .sort((a, b) => a.rank - b.rank)
     .slice(0, limit)
-    .map((driver, index) => ({
-      rank: index + 1,
-      id: driver.id,
-      name: driver.name,
-      number: numberByDriver.get(driver.id) || null,
-      value: Number(driver.metrics.points),
-      detail: `${driver.metrics.wins ?? 0} wins · ${driver.metrics.podiums ?? 0} podiums`,
+    .map((driver) => ({
+      rank: driver.rank,
+      id: driver.entity.id,
+      name: driver.entity.displayName,
+      number: driver.number || null,
+      value: Number(driver.points),
+      detail:
+        driver.wins == null
+          ? "Wins not supplied"
+          : analyticsCount(driver.wins, "published win"),
     }));
-  const teams = [...(constructors || [])]
-    .filter((constructor) => Number.isFinite(Number(constructor.totalPoints)))
-    .sort((a, b) => Number(b.totalPoints) - Number(a.totalPoints))
+  const teams = publishedChampionshipRows(
+    championship,
+    "constructors",
+    year,
+    snapshotId,
+  )
+    .sort((a, b) => a.rank - b.rank)
     .slice(0, limit)
-    .map((constructor, index) => ({
-      rank: index + 1,
-      id: constructor.constructorId,
-      name: constructor.constructorName,
-      value: Number(constructor.totalPoints),
-      detail: `${constructor.drivers?.length || 0} published drivers`,
+    .map((constructor) => ({
+      rank: constructor.rank,
+      id: constructor.entity.id,
+      name: constructor.entity.displayName,
+      value: Number(constructor.points),
+      detail:
+        constructor.wins == null
+          ? "Wins not supplied"
+          : analyticsCount(constructor.wins, "published win"),
     }));
   return { drivers, teams };
 }
@@ -46,12 +64,24 @@ function SnapshotRows({ rows, kind, showNumber = false, year }) {
         <li key={row.id} className="analytics-championship-row">
           <span className="analytics-championship-rank">{row.rank}</span>
           {showNumber && row.number && (
-            <span className="analytics-championship-number" aria-label={`Driver number ${row.number}`}>
+            <span
+              className="analytics-championship-number"
+              aria-label={`Driver number ${row.number}`}
+            >
               {row.number}
             </span>
           )}
           <span className="analytics-championship-copy">
-            <strong>{kind === "Constructor" ? <ConstructorIdentity constructor={{ id: row.id, displayName: row.name }} year={year} /> : row.name || "Not supplied"}</strong>
+            <strong>
+              {kind === "Constructor" ? (
+                <ConstructorIdentity
+                  constructor={{ id: row.id, displayName: row.name }}
+                  year={year}
+                />
+              ) : (
+                row.name || "Not supplied"
+              )}
+            </strong>
             <small>{row.detail}</small>
           </span>
           <span className="analytics-championship-value">
@@ -66,22 +96,30 @@ function SnapshotRows({ rows, kind, showNumber = false, year }) {
 
 export default function AnalyticsChampionshipSnapshot({
   year,
-  comparison,
-  constructors,
-  driverSeries,
+  championship,
+  snapshotId,
 }) {
   const model = buildChampionshipSnapshotModel({
-    comparison,
-    constructors,
-    driverSeries,
+    championship,
+    year,
+    snapshotId: snapshotId || null,
   });
-  if (!model.drivers.length && !model.teams.length) return null;
+  const valid = championshipContextValid(championship, year, snapshotId);
 
   return (
     <div className="analytics-championship-snapshot">
-      <section className="analytics-championship-group" aria-labelledby="analytics-driver-standings">
+      <p className="muted analytics-championship-note">
+        {valid
+          ? `Published championship standings after round ${championship.round}`
+          : "Published championship standings unavailable"}
+        . Season {championship?.season || year}; unaffected by analysis filters.
+      </p>
+      <section
+        className="analytics-championship-group"
+        aria-labelledby="analytics-driver-standings"
+      >
         <div className="analytics-championship-heading">
-          <TrophyIcon size={20} aria-hidden />
+          <TrophyIcon size={APEX_SIZES.icon} aria-hidden />
           <h3 id="analytics-driver-standings">Driver standings</h3>
         </div>
         {model.drivers.length ? (
@@ -91,18 +129,25 @@ export default function AnalyticsChampionshipSnapshot({
             showNumber={model.drivers.some((row) => row.number)}
           />
         ) : (
-          <p className="muted">No driver points are published for this selection.</p>
+          <p className="muted">
+            No driver points are published for this selection.
+          </p>
         )}
       </section>
-      <section className="analytics-championship-group" aria-labelledby="analytics-constructor-standings">
+      <section
+        className="analytics-championship-group"
+        aria-labelledby="analytics-constructor-standings"
+      >
         <div className="analytics-championship-heading">
-          <UsersThreeIcon size={20} aria-hidden />
+          <UsersThreeIcon size={APEX_SIZES.icon} aria-hidden />
           <h3 id="analytics-constructor-standings">Constructor standings</h3>
         </div>
         {model.teams.length ? (
           <SnapshotRows rows={model.teams} kind="Constructor" year={year} />
         ) : (
-          <p className="muted">No constructor points are published for this selection.</p>
+          <p className="muted">
+            No constructor points are published for this selection.
+          </p>
         )}
       </section>
     </div>

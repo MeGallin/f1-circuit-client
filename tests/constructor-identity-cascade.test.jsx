@@ -126,8 +126,8 @@ test.each([
     </div>,
   ],
   [
-    "analytics overview",
-    <div className="analytics-overview-metric">
+    "analytics summary",
+    <div className="analytics-scope-summary">
       <div>
         <strong>{identity}</strong>
       </div>

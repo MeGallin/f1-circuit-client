@@ -1,0 +1,36 @@
+.standing-publication-details {
+  padding: var(--apex-space-6);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+}
+.standing-publication-details summary {
+  min-height: var(--apex-size-target);
+  cursor: pointer;
+}
+.standing-refresh {
+  gap: var(--apex-space-3);
+}
+@media (max-width: 767px) {
+  .standing-page .page-heading {
+    padding-bottom: var(--apex-space-6);
+  }
+  .standing-toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    gap: var(--apex-space-5);
+    align-items: end;
+  }
+  .standing-toolbar .field {
+    min-width: 0;
+  }
+  .standing-refresh span {
+    display: none;
+  }
+  .standing-refresh {
+    min-width: var(--apex-size-target);
+    padding-inline: var(--apex-space-4);
+  }
+  .standing-note {
+    margin: 0;
+    padding-block: var(--apex-space-5);
+  }
+}

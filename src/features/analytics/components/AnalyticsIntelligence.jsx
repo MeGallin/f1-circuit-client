@@ -1,3 +1,4 @@
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import {
   CalendarBlankIcon,
   FlagCheckeredIcon,
@@ -5,17 +6,15 @@ import {
   UsersThreeIcon,
 } from "@phosphor-icons/react";
 import { Panel } from "../../../components/ui";
+import { ScheduleTime } from "../../../components/ScheduleTime";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
-import {
-  buildSeasonIntelligenceModel,
-  formatAnalyticsDate,
-} from "../seasonIntelligence";
+import { buildSeasonIntelligenceModel } from "../seasonIntelligence";
 
 function IntelligenceMetric({ icon: Icon, label, value, detail, children }) {
   return (
     <article className="analytics-intelligence-metric">
       <div className="analytics-intelligence-metric-icon" aria-hidden="true">
-        <Icon size={20} weight="regular" />
+        <Icon size={APEX_SIZES.icon} weight="regular" />
       </div>
       <div className="analytics-intelligence-metric-copy">
         <span>{label}</span>
@@ -29,15 +28,23 @@ function IntelligenceMetric({ icon: Icon, label, value, detail, children }) {
 
 function RaceEntry({ entry, year }) {
   return (
-    <li className={`analytics-podium-entry analytics-podium-entry--p${entry.position}`}>
+    <li
+      className={`analytics-podium-entry analytics-podium-entry--p${entry.position}`}
+    >
       <span className="analytics-podium-position">{entry.position}</span>
       <div>
         <strong>{entry.driverName || "Driver not supplied"}</strong>
-        <span><ConstructorIdentity constructor={{ id: entry.constructorId, displayName: entry.constructorName }} year={year} /></span>
+        <span>
+          <ConstructorIdentity
+            constructor={{
+              id: entry.constructorId,
+              displayName: entry.constructorName,
+            }}
+            year={year}
+          />
+        </span>
       </div>
-      {entry.points != null && (
-        <small>{entry.points} pts</small>
-      )}
+      {entry.points != null && <small>{entry.points} pts</small>}
     </li>
   );
 }
@@ -48,7 +55,9 @@ function LatestRace({ race, podium }) {
       <section className="analytics-race-context analytics-race-context--empty">
         <p className="eyebrow">LATEST COMPLETED RACE</p>
         <h3>No completed race published</h3>
-        <p className="muted">This selection does not contain a completed race summary.</p>
+        <p className="muted">
+          This selection does not contain a completed race summary.
+        </p>
       </section>
     );
   }
@@ -59,20 +68,29 @@ function LatestRace({ race, podium }) {
           <p className="eyebrow">LATEST COMPLETED RACE</p>
           <h3>{race.name}</h3>
           <p className="analytics-race-context-meta">
-            Round {race.round} · {race.circuit?.displayName || "Circuit not supplied"}
+            Round {race.round} ·{" "}
+            {race.circuit?.displayName || "Circuit not supplied"}
           </p>
         </div>
-        <FlagCheckeredIcon size={24} aria-hidden />
+        <FlagCheckeredIcon size={APEX_SIZES.iconLarge} aria-hidden />
       </div>
       <ol className="analytics-podium" aria-label={`${race.name} podium`}>
-        {podium.length ? podium.map((entry) => <RaceEntry entry={entry} year={race.year} key={entry.position} />) : (
-          <li className="analytics-race-context-empty-copy">Podium results not supplied.</li>
+        {podium.length ? (
+          podium.map((entry) => (
+            <RaceEntry entry={entry} year={race.year} key={entry.position} />
+          ))
+        ) : (
+          <li className="analytics-race-context-empty-copy">
+            Podium results not supplied.
+          </li>
         )}
       </ol>
       {race.fastestLap?.driverName && (
         <p className="analytics-race-context-footnote">
           Fastest lap · {race.fastestLap.driverName}
-          {race.fastestLap.lapNumber ? ` · Lap ${race.fastestLap.lapNumber}` : ""}
+          {race.fastestLap.lapNumber
+            ? ` · Lap ${race.fastestLap.lapNumber}`
+            : ""}
         </p>
       )}
     </section>
@@ -85,22 +103,13 @@ function NextRace({ race }) {
       <section className="analytics-race-context analytics-race-context--empty">
         <p className="eyebrow">NEXT EVENT</p>
         <h3>No scheduled event published</h3>
-        <p className="muted">The selected season has no later scheduled event in the archive.</p>
+        <p className="muted">
+          The selected season has no later scheduled event in the archive.
+        </p>
       </section>
     );
   }
-  const startsAt = race.schedule?.startsAt || race.schedule?.date;
   const sessionSchedule = race.sessionSchedule || [];
-  const sessionTime = (value) => {
-    if (!value) return "—";
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "UTC",
-    }).format(new Date(value));
-  };
   return (
     <section className="analytics-race-context analytics-race-context--next">
       <div className="analytics-race-context-heading">
@@ -108,33 +117,26 @@ function NextRace({ race }) {
           <p className="eyebrow">NEXT EVENT</p>
           <h3>{race.name}</h3>
           <p className="analytics-race-context-meta">
-            Round {race.round} · {race.circuit?.displayName || "Circuit not supplied"}
+            Round {race.round} ·{" "}
+            {race.circuit?.displayName || "Circuit not supplied"}
           </p>
         </div>
-        <CalendarBlankIcon size={24} aria-hidden />
+        <CalendarBlankIcon size={APEX_SIZES.iconLarge} aria-hidden />
       </div>
       <div className="analytics-next-event-detail">
-        <span>Race start</span>
-        <strong>{formatAnalyticsDate(startsAt) || "Date not supplied"}</strong>
-        {race.schedule?.startsAt && (
-          <small>
-            {new Intl.DateTimeFormat("en-GB", {
-              hour: "2-digit",
-              minute: "2-digit",
-              timeZone: "UTC",
-              timeZoneName: "short",
-            }).format(new Date(race.schedule.startsAt))}
-          </small>
-        )}
+        <span>Published race schedule</span>
+        <ScheduleTime schedule={race.schedule} showVenue />
       </div>
       {sessionSchedule.length > 1 && (
         <div className="analytics-weekend-schedule">
-          <span>Weekend schedule · UTC</span>
+          <span>Weekend schedule · selected time display</span>
           <ul>
             {sessionSchedule.map((session) => (
-              <li key={`${session.kind}-${session.schedule?.startsAt || session.schedule?.date}`}>
+              <li
+                key={`${session.kind}-${session.schedule?.startsAt || session.schedule?.date}`}
+              >
                 <strong>{session.label || session.kind}</strong>
-                <small>{sessionTime(session.schedule?.startsAt || session.schedule?.date)}</small>
+                <ScheduleTime schedule={session.schedule} />
               </li>
             ))}
           </ul>
@@ -150,24 +152,50 @@ export default function AnalyticsIntelligence({ intelligence, year }) {
   const constructorLeader = model.constructorLeader;
   return (
     <Panel title="Season intelligence" eyebrow="SEASON CONTEXT">
-      <div className="analytics-intelligence-metrics" role="list" aria-label="Season intelligence metrics">
+      <div
+        className="analytics-intelligence-metrics"
+        role="list"
+        aria-label="Season intelligence metrics"
+      >
         <IntelligenceMetric
           icon={FlagCheckeredIcon}
           label="Season progress"
           value={model.progressLabel}
-          detail={model.progressPercentage ? `${model.progressPercentage} complete` : null}
+          detail={
+            model.progressPercentage
+              ? `${model.progressPercentage} complete`
+              : null
+          }
         />
         <IntelligenceMetric
           icon={TrophyIcon}
           label="Championship leader"
           value={leader?.driverName}
-          detail={leader?.points != null ? `${leader.points} pts · ${leader.wins ?? 0} wins` : null}
+          detail={
+            leader?.points != null
+              ? `${leader.points} pts · ${leader.wins ?? 0} wins`
+              : null
+          }
         />
         <IntelligenceMetric
           icon={UsersThreeIcon}
           label="Constructor leader"
-          value={constructorLeader ? <ConstructorIdentity constructor={{ id: constructorLeader.constructorId, displayName: constructorLeader.constructorName }} year={year} /> : null}
-          detail={constructorLeader?.points != null ? `${constructorLeader.points} pts` : null}
+          value={
+            constructorLeader ? (
+              <ConstructorIdentity
+                constructor={{
+                  id: constructorLeader.constructorId,
+                  displayName: constructorLeader.constructorName,
+                }}
+                year={year}
+              />
+            ) : null
+          }
+          detail={
+            constructorLeader?.points != null
+              ? `${constructorLeader.points} pts`
+              : null
+          }
         />
         <IntelligenceMetric
           icon={TrophyIcon}

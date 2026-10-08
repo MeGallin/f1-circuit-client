@@ -319,6 +319,19 @@
   "containerBreakpoints": {
     "constructorIdentityCompact": 520
   },
+  "auditLayout": {
+    "analyticsFilterMinWidth": "12rem",
+    "overviewTrackCompact": "8rem",
+    "tableIdentityViewportLimit": "40vw",
+    "overviewDesktopMinWidth": 900
+  },
+  "icons": {
+    "action": 18,
+    "pageHeading": 26,
+    "status": 28,
+    "navigation": 21,
+    "brand": 30
+  },
   "seasonRaces": {
     "cardWidth": 288,
     "cardMinWidth": 168,
@@ -330,6 +343,7 @@
     "cardPadding": "clamp(12px, 1.5cqw, 26px)",
     "arrowHeight": "clamp(68px, 6.26cqw, 108px)",
     "statusIcon": "clamp(24px, 2.1cqw, 36px)",
+    "footerActionLabelWidth": "16ch",
     "latestTint": "12%"
   },
   "breakpoints": {

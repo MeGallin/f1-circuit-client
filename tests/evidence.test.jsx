@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -77,10 +77,14 @@ test("evidence detail preserves field coverage and safe source references", asyn
     </Provider>,
   );
 
-  expect(await screen.findByText("/items/0/points")).toBeInTheDocument();
-  expect(screen.getByText("source-only · partial")).toBeInTheDocument();
-  expect(screen.getByText("25")).toBeInTheDocument();
-  expect(screen.getByText("Open source reference")).toHaveAttribute(
+  expect(await screen.findByText("Points")).toBeInTheDocument();
+  const humanFields = within(
+    screen.getByRole("region", { name: "Selected record fields" }),
+  );
+  expect(humanFields.getByText("/items/0/points")).toBeInTheDocument();
+  expect(humanFields.getByText("source-only · partial")).toBeInTheDocument();
+  expect(humanFields.getByText("25")).toBeInTheDocument();
+  expect(humanFields.getByText("Open source reference")).toHaveAttribute(
     "href",
     "https://example.com/source",
   );

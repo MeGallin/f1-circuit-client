@@ -184,15 +184,27 @@
   border-color: var(--apex-color-accent-border);
 }
 .season-races-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
   gap: var(--apex-space-4);
   margin-top: var(--apex-space-7);
 }
 .season-races-footer > .button {
+  min-inline-size: 0;
+  inline-size: 100%;
+  /* Bound desktop actions by the longest label, shared icon, gap and padding. */
+  max-inline-size: calc(
+    var(--apex-season-races-footer-action-label-width) +
+      var(--apex-size-icon-small) + var(--apex-space-4) + 2 *
+      var(--apex-space-6)
+  );
+  white-space: normal;
+  overflow-wrap: anywhere;
+  justify-self: start;
   background: transparent;
 }
-.season-races-toggle {
-  margin-left: auto;
+.season-races-footer > .season-races-toggle {
+  grid-column: 2;
+  justify-self: end;
 }

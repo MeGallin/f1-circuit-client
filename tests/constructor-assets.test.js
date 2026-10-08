@@ -56,6 +56,7 @@ test("production builds validate physical constructor assets before Vite copies 
   ).scripts;
   expect(scripts.prebuild.split(" && ")).toEqual([
     "npm run tokens:season-races",
+    "node scripts/generate-audit-layout-tokens.js",
     "node scripts/check-constructor-assets.js",
   ]);
 });

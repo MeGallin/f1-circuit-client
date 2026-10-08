@@ -1,7 +1,7 @@
 .constructor-identity,
 .race-podium-driver-copy .constructor-identity,
 .entity-identity .constructor-identity,
-.analytics-overview-metric .constructor-identity {
+.analytics-scope-summary .constructor-identity {
   display: inline-flex;
   align-items: center;
   gap: var(--apex-space-2);

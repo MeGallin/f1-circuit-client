@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { APEX_ICONS } from "../design-system/apex.tokens";
+import { useEffect, useState, useRef } from "react";
+import { TimeDisplayPreference } from "./ScheduleTime";
 import { useSelector, useDispatch } from "react-redux";
 import { setTheme } from "../app/store";
 import { NavLink, Link, useLocation } from "react-router-dom";
@@ -47,7 +49,27 @@ export function routeTitle(pathname) {
   return "F1 Circuit";
 }
 
-export function Navigation({ mobile = false }) {
+export function Navigation({ mobile = false, onHeight }) {
+  const nav = useRef(null);
+  useEffect(() => {
+    if (!mobile || !onHeight || !nav.current) return;
+    let mounted = true;
+    const measure = () => {
+      if (mounted && nav.current)
+        onHeight(nav.current.getBoundingClientRect().height);
+    };
+    measure();
+    const observer =
+      typeof ResizeObserver === "function" ? new ResizeObserver(measure) : null;
+    observer?.observe(nav.current);
+    window.addEventListener("resize", measure);
+    document.fonts?.ready.then(measure);
+    return () => {
+      mounted = false;
+      observer?.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [mobile, onHeight]);
   const [moreOpen, setMoreOpen] = useState(false);
   const { search, pathname } = useLocation();
   let eventId = new URLSearchParams(search).get("event");
@@ -83,13 +105,13 @@ export function Navigation({ mobile = false }) {
   }, [moreOpen]);
   const link = ({ to, label, icon: Icon }, onClick) => (
     <NavLink end={to === "/"} key={to} to={target(to)} onClick={onClick}>
-      <Icon aria-hidden size={21} weight="regular" />
+      <Icon aria-hidden size={APEX_ICONS.navigation} weight="regular" />
       <span>{label}</span>
     </NavLink>
   );
   if (mobile)
     return (
-      <nav aria-label="Mobile navigation" className="mobile-nav">
+      <nav ref={nav} aria-label="Mobile navigation" className="mobile-nav">
         {primaryNavigation.map((item) => link(item, () => setMoreOpen(false)))}
         <div className="nav-more">
           <button
@@ -101,7 +123,11 @@ export function Navigation({ mobile = false }) {
             aria-controls="mobile-more-menu"
             onClick={() => setMoreOpen((open) => !open)}
           >
-            <DotsThreeIcon aria-hidden size={21} weight="regular" />
+            <DotsThreeIcon
+              aria-hidden
+              size={APEX_ICONS.navigation}
+              weight="regular"
+            />
             <span>More</span>
           </button>
           {moreOpen && (
@@ -154,6 +180,7 @@ function useTheme() {
   }, [theme]);
 }
 export default function AppShell({ children }) {
+  const [navigationHeight, setNavigationHeight] = useState(0);
   useTheme();
   const location = useLocation();
   const homeParams = new URLSearchParams(location.search);
@@ -166,13 +193,22 @@ export default function AppShell({ children }) {
     document.title = `${routeTitle(location.pathname)} | F1 Circuit`;
   }, [location.pathname]);
   return (
-    <div className="app-shell apex-layout">
+    <div
+      className="app-shell apex-layout"
+      style={{
+        "--apex-size-mobile-navigation-height": `${navigationHeight}px`,
+      }}
+    >
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <aside className="rail">
         <Link to={home} className="brand" aria-label="F1 Circuit home">
-          <FlagCheckeredIcon weight="fill" size={30} aria-hidden />
+          <FlagCheckeredIcon
+            weight="fill"
+            size={APEX_ICONS.brand}
+            aria-hidden
+          />
           <span>
             F1<span className="brand-secondary">CIRCUIT</span>
           </span>
@@ -181,9 +217,10 @@ export default function AppShell({ children }) {
         <Navigation />
         <div className="rail-bottom">
           <ThemeSelect />
+          <TimeDisplayPreference />
           {import.meta.env.DEV && (
             <Link to="/design" className="design-link">
-              <PaletteIcon size={18} aria-hidden /> Design system
+              <PaletteIcon size={APEX_ICONS.action} aria-hidden /> Design system
             </Link>
           )}
           <p>History. Context. Detail.</p>
@@ -197,7 +234,13 @@ export default function AppShell({ children }) {
           <span className="topbar-context">FORMULA 1 / HISTORICAL DATA</span>
           <span className="topbar-note">The race, in detail.</span>
           <div className="mobile-theme">
-            <ThemeSelect />
+            <details className="display-preferences">
+              <summary>Display</summary>
+              <div className="display-preferences-body">
+                <ThemeSelect />
+                <TimeDisplayPreference />
+              </div>
+            </details>
           </div>
         </header>
         <main id="main" className="page" tabIndex={-1}>
@@ -209,7 +252,7 @@ export default function AppShell({ children }) {
           <p>Not affiliated with Formula 1 or its rights holders.</p>
         </footer>
       </div>
-      <Navigation mobile />
+      <Navigation mobile onHeight={setNavigationHeight} />
     </div>
   );
 }

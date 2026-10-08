@@ -10,13 +10,27 @@
   --apex-season-races-card-padding: clamp(12px, 1.5cqw, 26px);
   --apex-season-races-arrow-height: clamp(68px, 6.26cqw, 108px);
   --apex-season-races-status-icon: clamp(24px, 2.1cqw, 36px);
+  --apex-season-races-footer-action-label-width: 16ch;
   --apex-season-races-latest-tint: 12%;
 }
 @media (max-width: 767px) {
-  .season-races-navigation { grid-template-columns: 1fr 1fr; }
-  .season-races-list { grid-column: 1 / -1; grid-row: 1; }
-  .season-races .season-races-arrow { grid-row: 2; }
-  .season-races-arrow:last-child { justify-self: end; }
-  .season-races-navigation--expanded { grid-template-columns: minmax(0, 1fr); }
-  .season-races { padding: var(--apex-space-6); }
+  .season-races-navigation {
+    grid-template-columns: 1fr 1fr;
+  }
+  .season-races-list {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .season-races .season-races-arrow {
+    grid-row: 2;
+  }
+  .season-races-arrow:last-child {
+    justify-self: end;
+  }
+  .season-races-navigation--expanded {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .season-races {
+    padding: var(--apex-space-6);
+  }
 }

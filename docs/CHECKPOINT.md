@@ -1,6 +1,83 @@
 # Client checkpoints
 
-## Current ribbon senior-review checkpoint - 6 October 2026
+## Current uncommitted senior review — 8 October 2026
+
+See [prioritized fixes, current full checks and hash-verified external archive](SENIOR-REVIEW-2026-10-08.md).
+This is the current verification boundary for all audit/Home edits; the executions
+below remain dated history. Browser smoke accepted valid/wrong-event Evidence,
+2026 championship320/556, contained320/390 Analytics controls and unchanged Home
+time. No Git/deployment/live operations; prior unrelated edits preserved.
+
+## Current ribbon footer followup — 8 October 2026
+
+Earlier races / Show all rounds now use equal responsive tracks and stretch height,
+with a named, validated Season races label-width token bounding desktop actions.
+Return to ribbon stays at right; labels, shared Buttons, arrows and history unchanged.
+Two meaningful targeted reds (layout and invalid-token rejection), then37 tests/
+5files green; lint passed. [Red layout](C:/Users/garya/OneDrive/Documents/ChatGPT/F1/audit-2026-10-08/execution-evidence/home-ribbon-footer-2026-10-08-red.txt),
+[red token](C:/Users/garya/OneDrive/Documents/ChatGPT/F1/audit-2026-10-08/execution-evidence/home-ribbon-footer-token-2026-10-08-red.txt),
+[focused green](C:/Users/garya/OneDrive/Documents/ChatGPT/F1/audit-2026-10-08/execution-evidence/home-ribbon-footer-2026-10-08-green.txt).
+Parent browser:320 widths120.284/120.298,390 widths151.278/151.293 (both heights54.205);
+1440 widths180.795 each/heights43.991. No overflow306/376/1426; Enter expand/return
+passed. Evidence:season-races-equal-actions-mobile.jpg in audit implementation-evidence.
+No full suite/build rerun for this scoped CSS followup; prior results below are dated.
+Existing dirty work preserved; no API/live changes or commit/push/deploy.
+
+## Current Home followup — 8 October 2026
+
+User approved complete removal of Home's redundant Previous event band on all
+devices; approved ribbon/history/dialog and next event remain. Parent verifies
+absence in DOM at desktop1309×818 and mobile390×844, intact23-round history and
+no overflow1295/1295 and376/376. [Scoped evidence](HOME-PREVIOUS-EVENT-REMOVAL.md)
+records new TDD/checks, separate from the earlier full audit counts below.
+No API change, commit/push/deploy/import/live mutation.
+
+## Accepted audit handoff — 8 October 2026 (before Home followup)
+
+All twelve UI/UX audit gates are implemented and parent-browser accepted.
+Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,
+49-asset guard and production build; companion API passed160 tests,
+lint/format/contract and Newman114 requests/192 assertions, zero failures.
+Existing jsdom scrollTo and >500kB chunk warnings remain. Full counts are executed
+8 October evidence, not results inferred from documentation changes.
+
+[The authoritative audit matrix](UX-AUDIT-IMPLEMENTATION-VERIFICATION.md)
+records source definitions, retained meaningful red logs, exact browser geometry,
+controlled recovery and200% root-font (not native zoom) proofs. Championship and
+selected totals stay distinct; time preference is shared; evidence is record-aware;
+telemetry bounds remain explicitly unknown. Approved ribbon unchanged.
+Audit code/docs remain uncommitted; no push/deploy/import/live write.
+Earlier dated checkpoints below are historical; production/live smoke,
+source publication/cron/locking and exhaustive accessibility remain separate.
+
+## Historical committed handoff checkpoint - 6 October 2026
+
+Read-only local Git inspection before this documentation-only update found both
+working trees clean, with `main` matching the respective cached `origin/main`:
+
+- Client: `f7f9ba6871a8448861876cd93822f4ac258737de` —
+  `feat(overview): replace season progress markers with race history ribbon`.
+- API: `c7dd38d659cbd62d033c96c8a3862602f9b16300` —
+  `feat: add constructor logos across the historical archive`.
+
+The ribbon implementation/review is committed, not currently uncommitted code.
+Only versioned client prose is changed by this pass. Cached tracking alignment
+is not an independent remote/push check or deployment/live-smoke verification;
+those checks remain pending. Earlier user-confirmed pushes apply to their named
+race-update commits only. No API edits, tests/build/browser executions, imports,
+commits, pushes or deployments were performed for this documentation pass.
+
+The latest recorded implementation verification is the 6 October review below:
+354 tests/33 files, 56 focused tests/seven files and 17 intended fail-before
+regressions, plus lint, token/asset guards and build. These are historical execution
+results, not fresh runs for prose. Keep the user-approved corrected Option 2
+appearance and [snapshot/identity/scroll/token contract](OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md)
+unless a new scoped change is authorised. [Validation](FUNCTIONALITY-VALIDATION.md)
+and [QA](LOCAL-QA.md) retain evidence and limitations. Parent-owned root `memory.md`,
+`AGENTS.md` and personal Cody guidance are outside the repositories; no versioned
+`AGENTS.md` or `agent.md` was found in client/API during this pass.
+
+## Ribbon senior-review execution checkpoint (historical evidence) - 6 October 2026
 
 The approved ribbon visuals remain unchanged. Senior review corrected calendar
 page-contract validation (no partial/duplicate collection), same-latest refresh
@@ -64,8 +141,9 @@ results/focus/Escape. System appearance and temporary viewport overrides were
 restored. [Validation](FUNCTIONALITY-VALIDATION.md), [QA/proof paths](LOCAL-QA.md)
 and [the amended contract](OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md) record details.
 
-Local client HEAD is `4e7f96f` (countdown fix), matching the cached origin/main ref
-at this read-only inspection. The ribbon work is uncommitted. This is not fresh
+At that earlier implementation inspection, client HEAD was `4e7f96f` (countdown
+fix), matching the cached origin/main ref; the ribbon work was then uncommitted.
+The current committed checkpoint above supersedes that Git status. This was not fresh
 remote/push verification; no commit, push or deployment was performed. The API
 repository remains unchanged and clean; no import/database write was triggered.
 Production verification remains pending. Root shared memory is maintained by the

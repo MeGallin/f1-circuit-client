@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import "../styles/race-countdown.css";
+import { ScheduleTime } from "./ScheduleTime";
+import { toUtcIso } from "../features/season/timeParsing";
+export { ScheduleTime, TimeDisplayPreference } from "./ScheduleTime";
+export { formatScheduleTime } from "../features/season/timeDisplay";
 
 const PRECISE_TIME = new Set(["minute", "second"]);
 const CLOCK_UNITS = ["hour", "minute", "second"];
@@ -46,7 +50,7 @@ function displayUnitName(unit) {
 }
 
 export function getCountdownParts(startsAt, now = Date.now()) {
-  const targetMs = Date.parse(startsAt || "");
+  const targetMs = Date.parse(toUtcIso(startsAt, { requireZone: true }));
   const nowMs = typeof now === "number" ? now : Date.parse(now);
   if (
     !Number.isFinite(targetMs) ||
@@ -83,18 +87,6 @@ export function getCountdownParts(startsAt, now = Date.now()) {
     .map(([value, unit]) => ({ value, unit, label: unitLabel(value, unit) }));
 }
 
-function targetTimeLabel(startsAt) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-    timeZoneName: "short",
-  }).format(new Date(startsAt));
-}
-
 export function RaceCountdown({
   startsAt,
   timePrecision,
@@ -114,7 +106,7 @@ export function RaceCountdown({
   }, [now]);
 
   const currentTime = now ?? localTime;
-  const targetMs = Date.parse(startsAt || "");
+  const targetMs = Date.parse(toUtcIso(startsAt, { requireZone: true }));
   const parts = useMemo(
     () => getCountdownParts(startsAt, currentTime),
     [startsAt, currentTime],
@@ -153,9 +145,10 @@ export function RaceCountdown({
         <div className="race-countdown-meta">
           <p className="race-countdown-heading">{heading}</p>
           {showTargetTime && (
-            <time dateTime={new Date(targetMs).toISOString()}>
-              Starts {targetTimeLabel(startsAt)}
-            </time>
+            <ScheduleTime
+              schedule={{ startsAt, timePrecision }}
+              prefix="Starts "
+            />
           )}
         </div>
       ) : (
@@ -170,9 +163,7 @@ export function RaceCountdown({
         ))}
       </div>
       {variant !== "wide" && (
-        <time dateTime={new Date(targetMs).toISOString()}>
-          Starts {targetTimeLabel(startsAt)}
-        </time>
+        <ScheduleTime schedule={{ startsAt, timePrecision }} prefix="Starts " />
       )}
     </div>
   );

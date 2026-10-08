@@ -17,6 +17,7 @@ test.each([
   "inverted-clamp",
   "inverted-width",
   "missing-section",
+  "invalid-footer-width",
 ])("generator rejects %s before modifying its output", (failure) => {
   const fixture = mkdtempSync(join(tmpdir(), "f1-ribbon-tokens-"));
   if (
@@ -40,6 +41,8 @@ test.each([
       tokens.seasonRaces.headingSize = "clamp(50px, 2.9cqw, 20px)";
     if (failure === "inverted-width") tokens.seasonRaces.cardMinWidth = 1000;
     if (failure === "missing-section") delete tokens.seasonRaces;
+    if (failure === "invalid-footer-width")
+      tokens.seasonRaces.footerActionLabelWidth = "0ch";
     writeFileSync(source, JSON.stringify(tokens));
     writeFileSync(output, "unchanged");
     const result = spawnSync(process.execPath, [script], { encoding: "utf8" });
@@ -70,6 +73,9 @@ test("season ribbon generation is keyed, idempotent, and leaves typography uncha
     `--apex-season-races-card-width: ${tokens.seasonRaces.cardWidth}px`,
   );
   expect(before).toContain(`max-width: ${tokens.breakpoints.tablet - 1}px`);
+  expect(before).toContain(
+    `--apex-season-races-footer-action-label-width: ${tokens.seasonRaces.footerActionLabelWidth}`,
+  );
   expect(before).toContain("grid-row: 2");
   expect(
     readFileSync(new URL("src/design-system/apex.tokens.css", root), "utf8"),

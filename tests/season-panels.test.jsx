@@ -128,6 +128,56 @@ function renderCurrentAroundRace({
   );
 }
 
+test("Home removes the redundant previous band while retaining complete history, details and next event", async () => {
+  const events = [1, 2, 3].map((round) => ({
+    id: `event:2026:independent-${round}`,
+    year: 2026,
+    round,
+    name: `Independent round ${round}`,
+    status: round < 3 ? "completed" : "scheduled",
+    schedule: {
+      date: `2026-10-0${round}`,
+      startsAt: `2026-10-0${round}T12:00:00Z`,
+      timePrecision: "second",
+    },
+    circuit: {
+      id: `circuit:${round}`,
+      displayName: `Independent circuit ${round}`,
+    },
+  }));
+  renderCurrentAroundRace({
+    events,
+    latestCompletedEvent: events[1],
+    nextEvent: events[2],
+    now: Date.parse("2026-10-02T18:00:00Z"),
+  });
+  const history = await screen.findByLabelText("Season races history");
+  expect(screen.queryByLabelText("PREVIOUS EVENT")).not.toBeInTheDocument();
+  expect(within(history).getByText("Independent round 1")).toBeInTheDocument();
+  fireEvent.click(
+    within(history).getByRole("button", { name: "Show all rounds" }),
+  );
+  expect(within(history).getAllByRole("listitem")).toHaveLength(3);
+  fireEvent.click(
+    within(history).getByRole("button", {
+      name: /Round 1.*Independent round 1/,
+    }),
+  );
+  expect(await screen.findByRole("dialog")).toHaveTextContent(
+    "Independent round 1",
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Close event details" }));
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  fireEvent.click(
+    within(history).getByRole("button", { name: "Return to ribbon" }),
+  );
+  expect(
+    within(screen.getByLabelText("NEXT EVENT")).getByText(
+      "Independent round 3",
+    ),
+  ).toBeInTheDocument();
+});
+
 test.each([200, 503])(
   "calendar loading followed by status %s keeps empty/error feedback instead of invented counts",
   async (calendarStatus) => {
@@ -408,8 +458,9 @@ test("current overview counts down to the next future start and keeps missing re
   expect(within(nextBand).getByRole("timer")).toBeInTheDocument();
   expect(screen.getAllByText("Bahrain Grand Prix").length).toBeGreaterThan(0);
   expect(
-    await screen.findByText(
-      "No race-result rows are published in this archive yet.",
+    within(await screen.findByLabelText("Season races history")).getByRole(
+      "button",
+      { name: /Round 16:.*Bahrain Grand Prix.*Results pending/ },
     ),
   ).toBeInTheDocument();
 });
@@ -451,17 +502,20 @@ test.each(["scheduled", "unknown"])(
           : Date.parse(`${year}-10-06T12:00:00Z`),
     });
     expect(
-      await screen.findByText(
-        "No race-result rows are published in this archive yet.",
+      within(await screen.findByLabelText("Season races history")).getByRole(
+        "button",
+        { name: /Round 23:.*Final race.*Results pending/ },
       ),
     ).toBeInTheDocument();
     expect(
-      within(screen.getByLabelText("PREVIOUS EVENT")).getByText("Final race"),
+      within(await screen.findByLabelText("Season races history")).getByText(
+        "Final race",
+      ),
     ).toBeInTheDocument();
   },
 );
 
-test("older unknown race does not show pending results after a newer completed race", async () => {
+test("older unknown race remains reachable in history after a newer completed race without a previous band", async () => {
   const year = new Date().getUTCFullYear();
   const old = {
     id: "event:old",
@@ -494,16 +548,15 @@ test("older unknown race does not show pending results after a newer completed r
     nextEvent: future,
     now: Date.parse(`${year}-10-06T12:00:00Z`),
   });
-  const previousBand = await screen.findByLabelText("PREVIOUS EVENT");
-  expect(within(previousBand).getByText("Older race")).toBeInTheDocument();
   expect(
-    within(previousBand).queryByText(
-      "No race-result rows are published in this archive yet.",
+    within(await screen.findByLabelText("Season races history")).getByText(
+      "Older race",
     ),
-  ).not.toBeInTheDocument();
+  ).toBeInTheDocument();
+  expect(screen.queryByLabelText("PREVIOUS EVENT")).not.toBeInTheDocument();
 });
 
-test("published current result stays in focus without duplicating in previous event", async () => {
+test("published current result stays in focus while previous races remain in history", async () => {
   const previous = {
     id: "event:2026:azerbaijan-grand-prix",
     year: 2026,
@@ -556,18 +609,17 @@ test("published current result stays in focus without duplicating in previous ev
     now: Date.parse("2026-10-05T19:46:00Z"),
   });
 
-  const previousBand = await screen.findByLabelText("PREVIOUS EVENT");
+  const history = await screen.findByLabelText("Season races history");
   expect(
     within(await screen.findByLabelText("NEXT EVENT")).getByText(
       "Singapore Grand Prix",
     ),
   ).toBeInTheDocument();
   expect(
-    within(previousBand).getByText("Azerbaijan Grand Prix"),
+    within(history).getByText("Azerbaijan Grand Prix"),
   ).toBeInTheDocument();
-  expect(
-    within(previousBand).queryByText("Sepang Grand Prix"),
-  ).not.toBeInTheDocument();
+  expect(within(history).getByText("Sepang Grand Prix")).toBeInTheDocument();
+  expect(screen.queryByLabelText("PREVIOUS EVENT")).not.toBeInTheDocument();
   expect(
     screen.queryByText(
       "No race-result rows are published in this archive yet.",

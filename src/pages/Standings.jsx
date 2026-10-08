@@ -2,7 +2,7 @@ import { EntityLink } from "../features/entities/shared";
 import { ConstructorIdentities } from "../components/ConstructorIdentity";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { useDispatch } from "react-redux";
-import { RankingIcon } from "@phosphor-icons/react";
+import { RankingIcon, ArrowClockwiseIcon } from "@phosphor-icons/react";
 import {
   archiveApi,
   useGetSeasonsQuery,
@@ -26,6 +26,7 @@ import {
   ErrorState,
 } from "../components/ui";
 import "../styles/standings.css";
+import "../design-system/standings-context.css";
 import SeasonUnavailable from "../features/season/SeasonUnavailable";
 import { dateLabel, standingCutoff } from "../features/season/selectors";
 
@@ -61,7 +62,10 @@ export function StandingRows({ rows, kind, year }) {
             </strong>
             {kind === "drivers" && (
               <p>
-                <ConstructorIdentities constructors={row.constructors} year={year} />
+                <ConstructorIdentities
+                  constructors={row.constructors}
+                  year={year}
+                />
               </p>
             )}
           </div>
@@ -84,7 +88,7 @@ export function StandingRows({ rows, kind, year }) {
     </ol>
   );
 }
-function Championship({ year, kind, params, setParams }) {
+function Championship({ year, kind, params, setParams, seasonOptions }) {
   const dispatch = useDispatch();
   const round = params.get("round");
   const calendar = useGetCalendarQuery({ year });
@@ -109,7 +113,8 @@ function Championship({ year, kind, params, setParams }) {
         .filter(
           (value, index) =>
             value != null &&
-            (!hasEventStatuses || calendarEvents[index]?.status === "completed"),
+            (!hasEventStatuses ||
+              calendarEvents[index]?.status === "completed"),
         )
         .filter((value) => value != null),
     ),
@@ -130,7 +135,17 @@ function Championship({ year, kind, params, setParams }) {
   };
   return (
     <>
-      <div className="standing-toolbar">
+      <div
+        className="standing-toolbar"
+        role="group"
+        aria-label="Standings context"
+      >
+        <Select
+          label="Season"
+          value={String(year)}
+          options={seasonOptions}
+          onChange={(event) => setParams({ season: event.target.value, kind })}
+        />
         <Select
           label="Standings after"
           value={round || ""}
@@ -148,10 +163,13 @@ function Championship({ year, kind, params, setParams }) {
         />
         <Button
           variant="quiet"
+          className="standing-refresh"
+          aria-label="Refresh standings"
           disabled={query.isFetching || !validRound(round)}
           onClick={restart}
         >
-          Refresh standings
+          <ArrowClockwiseIcon size="1em" aria-hidden />
+          <span>Refresh standings</span>
         </Button>
       </div>
       {calendar.isError && (
@@ -177,12 +195,10 @@ function Championship({ year, kind, params, setParams }) {
               : round
                 ? `Standings after round ${round}`
                 : "Latest published standings in this archive"}{" "}
-            · {year}. Missing round data is never replaced by the latest
-            standings. Points and ranks are shown exactly as supplied.
+            · {year}.
           </p>
         );
       })()}
-      <SourceNote meta={data?.meta} />
       {!validRound(round) ? (
         <EmptyState
           title="Invalid round selection"
@@ -197,6 +213,15 @@ function Championship({ year, kind, params, setParams }) {
           {data && <StandingRows rows={data.items} kind={kind} year={year} />}
         </DataBoundary>
       )}
+      <details className="standing-publication-details">
+        <summary>Publication and ranking details</summary>
+        <p>
+          Driver and constructor rankings, with the source behind every point.
+          Missing round data is never replaced by the latest standings. Points
+          and ranks are shown exactly as supplied.
+        </p>
+        <SourceNote meta={data?.meta} />
+      </details>
       {data && (
         <nav className="standing-pagination" aria-label="Standings pages">
           <Button
@@ -251,31 +276,11 @@ export default function Standings() {
     setParams(next);
   };
   return (
-    <>
+    <div className="standing-page">
       <PageHeading
         eyebrow="THE CHAMPIONSHIP PICTURE"
         title="Season standings"
-        description="Driver and constructor rankings, with the source behind every point."
         icon={RankingIcon}
-        actions={
-          options.length > 0 && (
-            <Select
-              label="Season"
-              value={year ? String(year) : ""}
-              options={
-                year
-                  ? options
-                  : [{ value: "", label: "Choose a season" }, ...options]
-              }
-              onChange={(event) =>
-                setParams({
-                  season: event.target.value,
-                  kind: validKind ? kind : "drivers",
-                })
-              }
-            />
-          )
-        }
       />
       {simulated ? (
         <Panel title="Development state review">
@@ -328,6 +333,7 @@ export default function Standings() {
                       kind={kind}
                       params={params}
                       setParams={setParams}
+                      seasonOptions={options}
                     />
                   ) : (
                     <EmptyState
@@ -340,6 +346,6 @@ export default function Standings() {
             ))}
         </DataBoundary>
       )}
-    </>
+    </div>
   );
 }

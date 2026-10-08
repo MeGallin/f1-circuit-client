@@ -164,26 +164,42 @@ describe("constructor identity", () => {
     const { container, rerender } = render(
       <AnalyticsChampionshipSnapshot
         year={2026}
-        constructors={[
-          {
-            constructorId: mercedes.id,
-            constructorName: mercedes.displayName,
-            totalPoints: 10,
-          },
-        ]}
+        snapshotId="identity-snapshot"
+        championship={{
+          season: 2026,
+          snapshotId: "identity-snapshot",
+          round: 1,
+          constructorCoverage: "complete",
+          constructors: [
+            {
+              rank: 1,
+              entity: mercedes,
+              points: "10",
+              standingSnapshotId: "standing:2026:1",
+            },
+          ],
+        }}
       />,
     );
     expect(container.querySelector("img")).not.toBeNull();
     rerender(
       <AnalyticsChampionshipSnapshot
         year={2000}
-        constructors={[
-          {
-            constructorId: mercedes.id,
-            constructorName: mercedes.displayName,
-            totalPoints: 10,
-          },
-        ]}
+        snapshotId="historical-identity-snapshot"
+        championship={{
+          season: 2000,
+          snapshotId: "historical-identity-snapshot",
+          round: 1,
+          constructorCoverage: "complete",
+          constructors: [
+            {
+              rank: 1,
+              entity: mercedes,
+              points: "10",
+              standingSnapshotId: "standing:2000:1",
+            },
+          ],
+        }}
       />,
     );
     expect(container.querySelector("img")).toBeNull();

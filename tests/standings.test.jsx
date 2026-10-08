@@ -72,6 +72,30 @@ test.each(["", "&round=12"])(
       </Provider>,
     );
     await screen.findByText("First page driver");
+    const toolbar = screen.getByRole("group", { name: "Standings context" });
+    expect(toolbar).toContainElement(
+      screen.getByRole("combobox", { name: "Season" }),
+    );
+    expect(toolbar).toContainElement(
+      screen.getByRole("button", { name: "Refresh standings" }),
+    );
+    expect(
+      screen
+        .getByRole("button", { name: "Refresh standings" })
+        .querySelector("svg"),
+    ).toHaveAttribute("width", "1em");
+    const explanation = screen
+      .getByText("Publication and ranking details")
+      .closest("details");
+    expect(explanation).not.toHaveAttribute("open");
+    expect(explanation).toHaveTextContent(
+      "Missing round data is never replaced",
+    );
+    const rows = screen.getByRole("list", { name: "Driver standings" });
+    expect(
+      rows.compareDocumentPosition(explanation) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByText("Points").nextElementSibling).toHaveTextContent(
       "Not supplied",
     );

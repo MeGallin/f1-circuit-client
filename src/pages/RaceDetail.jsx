@@ -1,6 +1,6 @@
 import { EntityLink } from "../features/entities/shared";
 import { useParams, useSearchParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import { useDispatch } from "react-redux";
 import { FlagCheckeredIcon } from "@phosphor-icons/react";
 import {
@@ -30,6 +30,8 @@ import {
   AvailabilityBadge,
 } from "../components/ui";
 import { dateLabel } from "../features/season/selectors";
+import { toUtcIso } from "../features/season/timeParsing";
+export { toUtcIso } from "../features/season/timeParsing";
 import {
   duration,
   entryName,
@@ -44,6 +46,7 @@ import {
   layoutApplicabilityLabel,
 } from "../components/visuals";
 import "../styles/race.css";
+import "../design-system/race-mobile.css";
 
 const views = [
   { value: "results", label: "Results" },
@@ -301,34 +304,18 @@ export function AdvancedRecords({ rows, dataset, names }) {
   );
 }
 
-export function toUtcIso(value) {
-  const input = String(value || "").trim();
-  if (!input) return null;
-  const withZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(input)
-    ? input
-    : `${input}:00Z`;
-  const timestamp = Date.parse(withZone);
-  return Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : null;
-}
-
-function dateTimeInputValue(value) {
-  const timestamp = value ? new Date(value) : null;
-  if (!timestamp || Number.isNaN(timestamp.valueOf())) return "";
-  return (
-    [
-      timestamp.getUTCFullYear(),
-      String(timestamp.getUTCMonth() + 1).padStart(2, "0"),
-      String(timestamp.getUTCDate()).padStart(2, "0"),
-    ].join("-") +
-    `T${String(timestamp.getUTCHours()).padStart(2, "0")}:${String(timestamp.getUTCMinutes()).padStart(2, "0")}`
-  );
+export function dateTimeInputValue(value) {
+  const timestamp = toUtcIso(value);
+  if (!timestamp) return "";
+  const input = timestamp.slice(0, -1);
+  return input.endsWith(".000") ? input.slice(0, -4) : input;
 }
 
 export function seriesWindowError(driverId, from, to) {
   if (!driverId) return "Choose a driver before requesting a series.";
   if (!from || !to) return "Enter both UTC start and end times.";
-  const start = Date.parse(from);
-  const end = Date.parse(to);
+  const start = Date.parse(toUtcIso(from));
+  const end = Date.parse(toUtcIso(to));
   if (!Number.isFinite(start) || !Number.isFinite(end))
     return "Use valid UTC date and time values.";
   if (end <= start) return "The end time must be after the start time.";
@@ -337,19 +324,21 @@ export function seriesWindowError(driverId, from, to) {
   return "";
 }
 
-function SeriesWindowControls({
+export function SeriesWindowControls({
   dataset,
   params,
   setParams,
   drivers,
   identities,
+  availability = "unknown",
 }) {
+  const guidanceId = useId();
   const driver = params.get("driver") || "";
   const from = params.get("from") || "";
   const to = params.get("to") || "";
   const resolution = params.get("resolution") || "1s";
   const [error, setError] = useState("");
-  const currentError = seriesWindowError(driver, toUtcIso(from), toUtcIso(to));
+  const currentError = seriesWindowError(driver, from, to);
   const options = drivers.length
     ? [
         { value: "", label: "Choose a driver" },
@@ -360,19 +349,22 @@ function SeriesWindowControls({
     <form
       key={`${dataset}:${driver}:${from}:${to}:${resolution}`}
       className="series-controls"
+      noValidate
       onSubmit={(event) => {
         event.preventDefault();
         const values = new FormData(event.currentTarget);
         const nextDriver = String(values.get("driver") || "");
-        const nextFrom = toUtcIso(values.get("from"));
-        const nextTo = toUtcIso(values.get("to"));
-        const nextError = seriesWindowError(nextDriver, nextFrom, nextTo);
+        const nextError = seriesWindowError(
+          nextDriver,
+          values.get("from"),
+          values.get("to"),
+        );
         setError(nextError);
         if (nextError) return;
         const next = new URLSearchParams(params);
         next.set("driver", nextDriver);
-        next.set("from", nextFrom);
-        next.set("to", nextTo);
+        next.set("from", toUtcIso(values.get("from")));
+        next.set("to", toUtcIso(values.get("to")));
         next.set("resolution", String(values.get("resolution") || "1s"));
         next.delete("cursor");
         setParams(next);
@@ -381,6 +373,25 @@ function SeriesWindowControls({
       <div className="series-controls-heading">
         <strong>Bounded series window</strong>
         <span>UTC · maximum 120 seconds · no interpolation</span>
+      </div>
+      <div id={guidanceId} className="series-controls-note">
+        <p>
+          Published observation range is not supplied. A scheduled session start
+          is not an observation bound; this window cannot be checked against an
+          unavailable range.
+        </p>
+        <p>
+          {availability === "unknown"
+            ? "Observation availability has not been supplied."
+            : `Published ${dataset} coverage: ${availability}.`}{" "}
+          Coverage does not guarantee observations within your chosen window.
+        </p>
+        <p>
+          Enter UTC as YYYY-MM-DDTHH:mm:ss. Format example only (not a suggested
+          window): <code>2000-01-01T12:00:17</code> to{" "}
+          <code>2000-01-01T12:00:37</code>. URL timestamps may include Z or an
+          explicit offset. No defaults or interpolated samples are supplied.
+        </p>
       </div>
       <div className="series-controls-fields">
         <Select
@@ -393,6 +404,8 @@ function SeriesWindowControls({
           label="From (UTC)"
           name="from"
           type="datetime-local"
+          step={dateTimeInputValue(from).includes(".") ? "0.001" : "1"}
+          aria-describedby={guidanceId}
           defaultValue={dateTimeInputValue(from)}
           required
         />
@@ -400,6 +413,8 @@ function SeriesWindowControls({
           label="To (UTC)"
           name="to"
           type="datetime-local"
+          step={dateTimeInputValue(to).includes(".") ? "0.001" : "1"}
+          aria-describedby={guidanceId}
           defaultValue={dateTimeInputValue(to)}
           required
         />
@@ -490,7 +505,7 @@ export function RaceRecords({
           {row.evidenceId && (
             <p className="race-evidence">
               <TextLink
-                to={evidencePath(row.evidenceId, snapshotId, evidenceContext)}
+                to={resultEvidencePath(row, snapshotId, evidenceContext)}
               >
                 View field evidence
               </TextLink>
@@ -592,19 +607,36 @@ function evidencePath(evidenceId, snapshotId, evidenceContext) {
   if (!evidenceId) return null;
   const query = new URLSearchParams();
   if (snapshotId) query.set("snapshot", snapshotId);
-  if (evidenceContext?.from) query.set("from", evidenceContext.from);
+  if (evidenceContext?.from) {
+    const back = new URL(evidenceContext.from, "http://local-context");
+    if (snapshotId) back.searchParams.set("snapshot", snapshotId);
+    query.set("from", back.pathname + back.search);
+  }
   if (evidenceContext?.season) query.set("season", evidenceContext.season);
   if (evidenceContext?.event) query.set("event", evidenceContext.event);
   if (evidenceContext?.session) query.set("session", evidenceContext.session);
   return `/evidence/${encodeURIComponent(evidenceId)}${query.size ? `?${query}` : ""}`;
 }
 
-function resultEvidence(row, snapshotId, evidenceContext) {
-  const path = evidencePath(row.evidenceId, snapshotId, evidenceContext);
+function resultEvidence(
+  row,
+  snapshotId,
+  evidenceContext,
+  field,
+  label = "View evidence",
+) {
+  const path = resultEvidencePath(row, snapshotId, evidenceContext, field);
   if (!path) return "Evidence not supplied";
-  return (
-    <TextLink to={path}>View evidence</TextLink>
-  );
+  return <TextLink to={path}>{label}</TextLink>;
+}
+
+function resultEvidencePath(row, snapshotId, context, field) {
+  const path = evidencePath(row.evidenceId, snapshotId, context);
+  if (!path) return null;
+  const url = new URL(path, "http://local-context");
+  url.searchParams.set("recordId", row.id);
+  if (field) url.searchParams.set("field", field);
+  return url.pathname + url.search;
 }
 
 export function RaceResultTable({
@@ -623,9 +655,24 @@ export function RaceResultTable({
           key: "position",
           label: "Pos.",
           numeric: true,
-          render: (row) => row.position ?? "NC",
+          render: (row) =>
+            row.evidenceId
+              ? resultEvidence(
+                  row,
+                  snapshotId,
+                  evidenceContext,
+                  "position",
+                  row.position ?? "NC",
+                )
+              : (row.position ?? "NC"),
         },
-        { key: "driver", label: "Driver", render: (row) => resultDriver(row, names) },
+        {
+          key: "driver",
+          label: "Driver",
+          rowHeader: true,
+          stickyIdentity: true,
+          render: (row) => resultDriver(row, names),
+        },
         {
           key: "constructor",
           label: "Constructor",
@@ -652,7 +699,16 @@ export function RaceResultTable({
           key: "points",
           label: "Points",
           numeric: true,
-          render: (row) => row.points ?? missing,
+          render: (row) =>
+            row.evidenceId
+              ? resultEvidence(
+                  row,
+                  snapshotId,
+                  evidenceContext,
+                  "points",
+                  row.points ?? missing,
+                )
+              : (row.points ?? missing),
         },
         {
           key: "fastestLap",
@@ -665,7 +721,8 @@ export function RaceResultTable({
         {
           key: "evidence",
           label: "Evidence",
-            render: (row) => resultEvidence(row, snapshotId, evidenceContext),
+          render: (row) =>
+            resultEvidence(row, snapshotId, evidenceContext, "points"),
         },
       ]}
     />
@@ -706,52 +763,82 @@ export function SessionNavigation({ value, onChange, features = [] }) {
     buttons[nextIndex].focus();
   };
   return (
-    <nav
-      ref={navigation}
-      className="session-nav"
-      aria-label="Session datasets"
-    >
-      {sessionGroups.map((group) => (
-        <div key={group.label} className="session-nav-group">
-          <h3>{group.label}</h3>
-          <div
-            className="session-nav-items"
-            role="tablist"
-            aria-label={`${group.label} datasets`}
-          >
-            {group.items.map((item) => (
-              <button
-                key={item.value}
-                type="button"
-                role="tab"
-                aria-selected={value === item.value}
-                aria-controls="session-data-panel"
-                data-value={item.value}
-                disabled={availability[item.value]?.coverage === "unavailable"}
-                title={
-                  availability[item.value]?.coverage === "unavailable"
-                    ? "This dataset is not supplied for the selected event."
-                    : undefined
-                }
-                className={value === item.value ? "is-active" : undefined}
-                onClick={() => onChange(item.value)}
-                onKeyDown={move}
-              >
-                {item.label}
-                {availability[item.value] &&
-                  availability[item.value].coverage !== "complete" && (
-                    <AvailabilityBadge
-                      status={availability[item.value].coverage}
-                    >
-                      {availability[item.value].coverage}
-                    </AvailabilityBadge>
-                  )}
-              </button>
-            ))}
+    <>
+      <div className="session-mobile-chooser">
+        <Select
+          label="Dataset"
+          value={value}
+          aria-controls="session-data-panel"
+          options={[
+            ...(!views.some((item) => item.value === value)
+              ? [{ value: "", label: "Choose a dataset" }]
+              : []),
+            ...views.map((item) => ({
+              value: item.value,
+              label: `${item.label}${availability[item.value]?.coverage === "unavailable" ? " — not supplied" : availability[item.value]?.coverage && availability[item.value].coverage !== "complete" ? ` — ${availability[item.value].coverage}` : ""}`,
+              disabled: availability[item.value]?.coverage === "unavailable",
+            })),
+          ]}
+          onChange={(event) => onChange(event.target.value)}
+        />
+        <details>
+          <summary>Availability</summary>
+          <p>
+            Unavailable datasets are marked “not supplied” and cannot be
+            selected. An existing direct link remains visible without
+            substituting another dataset.
+          </p>
+        </details>
+      </div>
+      <nav
+        ref={navigation}
+        className="session-nav"
+        aria-label="Session datasets"
+      >
+        {sessionGroups.map((group) => (
+          <div key={group.label} className="session-nav-group">
+            <h3>{group.label}</h3>
+            <div
+              className="session-nav-items"
+              role="tablist"
+              aria-label={`${group.label} datasets`}
+            >
+              {group.items.map((item) => (
+                <button
+                  key={item.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={value === item.value}
+                  aria-controls="session-data-panel"
+                  data-value={item.value}
+                  disabled={
+                    availability[item.value]?.coverage === "unavailable"
+                  }
+                  title={
+                    availability[item.value]?.coverage === "unavailable"
+                      ? "This dataset is not supplied for the selected event."
+                      : undefined
+                  }
+                  className={value === item.value ? "is-active" : undefined}
+                  onClick={() => onChange(item.value)}
+                  onKeyDown={move}
+                >
+                  {item.label}
+                  {availability[item.value] &&
+                    availability[item.value].coverage !== "complete" && (
+                      <AvailabilityBadge
+                        status={availability[item.value].coverage}
+                      >
+                        {availability[item.value].coverage}
+                      </AvailabilityBadge>
+                    )}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </nav>
+        ))}
+      </nav>
+    </>
   );
 }
 
@@ -764,13 +851,16 @@ function SessionData({
   params,
   setParams,
   onSnapshotReset,
+  availability,
 }) {
   const cursor = params.get("cursor") || undefined;
   const isSeries = SERIES_DATASETS.has(dataset);
   const driverId = params.get("driver") || "";
   const from = toUtcIso(params.get("from"));
   const to = toUtcIso(params.get("to"));
-  const seriesError = isSeries ? seriesWindowError(driverId, from, to) : "";
+  const seriesError = isSeries
+    ? seriesWindowError(driverId, params.get("from"), params.get("to"))
+    : "";
   const seriesReady = !isSeries || !seriesError;
   const query = useGetSessionDataQuery(
     {
@@ -811,8 +901,13 @@ function SessionData({
     ]),
   );
   const data = query.currentData;
+  const returnParams = new URLSearchParams(params);
+  returnParams.set("season", String(year));
+  returnParams.set("session", session.id);
+  returnParams.set("view", dataset);
+  if (snapshotId) returnParams.set("snapshot", snapshotId);
   const evidenceContext = {
-    from: `/events/${encodeURIComponent(eventId)}?season=${year}&session=${encodeURIComponent(session.id)}&view=${dataset}`,
+    from: `/events/${encodeURIComponent(eventId)}?${returnParams}`,
     season: String(year),
     event: eventId,
     session: session.id,
@@ -843,9 +938,9 @@ function SessionData({
           setParams={setParams}
           drivers={drivers}
           identities={identities}
+          availability={data?.series?.coverage || availability}
         />
       )}
-      <SourceNote meta={data?.meta} />
       {isSeries && !seriesReady ? (
         <EmptyState
           title="Choose a bounded window"
@@ -905,6 +1000,7 @@ function SessionData({
           </Button>
         </nav>
       )}
+      <SourceNote meta={data?.meta} />
     </>
   );
 }
@@ -1049,13 +1145,6 @@ function Detail({ data, params, setParams, refresh }) {
         title={event.name}
         description={`${event.circuit?.displayName || "Circuit not supplied"} · ${dateLabel(event.schedule.date)}`}
         icon={FlagCheckeredIcon}
-        actions={
-          <ActionLink
-            to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
-          >
-            Back to calendar
-          </ActionLink>
-        }
       />
       <div className="race-summary">
         <Metric
@@ -1072,6 +1161,14 @@ function Detail({ data, params, setParams, refresh }) {
           label="Winner"
           value={detail.winner ? entryName(detail.winner) : missing}
         />
+      </div>
+      <details className="race-event-details">
+        <summary>Event details and provenance</summary>
+        <ActionLink
+          to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
+        >
+          Back to calendar
+        </ActionLink>
         <Metric
           label="Fastest lap supplied"
           value={duration(detail.fastestLap?.durationMs)}
@@ -1081,8 +1178,8 @@ function Detail({ data, params, setParams, refresh }) {
               : "No fastest lap supplied"
           }
         />
-      </div>
-      <SourceNote meta={meta} />
+        <SourceNote meta={meta} />
+      </details>
       <Panel
         title="Session archive"
         action={
@@ -1093,56 +1190,65 @@ function Detail({ data, params, setParams, refresh }) {
       >
         {sessions.length ? (
           <>
-            <div className="race-session-picker">
-              <Select
-                label="Session"
-                value={session?.id || ""}
-                options={[
-                  ...(!session
-                    ? [{ value: "", label: "Choose a session" }]
-                    : []),
-                  ...sessions.map((item) => ({
-                    value: item.id,
-                    label: item.label,
-                  })),
-                ]}
-                onChange={(e) =>
-                  update({ session: e.target.value, view: requestedView })
-                }
-              />
-            </div>
-            <>
+            <div
+              className="race-dataset-controls"
+              role="group"
+              aria-label="Session and dataset"
+            >
+              <div className="race-session-picker">
+                <Select
+                  label="Session"
+                  value={session?.id || ""}
+                  options={[
+                    ...(!session
+                      ? [{ value: "", label: "Choose a session" }]
+                      : []),
+                    ...sessions.map((item) => ({
+                      value: item.id,
+                      label: item.label,
+                    })),
+                  ]}
+                  onChange={(e) =>
+                    update({ session: e.target.value, view: requestedView })
+                  }
+                />
+              </div>
               <SessionNavigation
                 value={validView ? requestedView : ""}
                 onChange={changeView}
                 features={event.features}
               />
-              <div id="session-data-panel" role="tabpanel" tabIndex={0}>
-                {!validView ? (
-                  <EmptyState
-                    title="Unknown dataset selection"
-                    description="Choose one of the available dataset tabs."
-                  />
-                ) : !session ? (
-                  <EmptyState
-                    title="This session is not available"
-                    description="Choose a session supplied for this event. No other session has been substituted."
-                  />
-                ) : (
-                  <SessionData
-                    key={`${session.id}:${requestedView}`}
-                    session={session}
-                    eventId={event.id}
-                    year={event.year}
-                    dataset={requestedView}
-                    snapshotId={meta.snapshotId}
-                    params={params}
-                    setParams={setParams}
-                    onSnapshotReset={refresh}
-                  />
-                )}
-              </div>
-            </>
+            </div>
+            <div id="session-data-panel" role="tabpanel" tabIndex={0}>
+              {!validView ? (
+                <EmptyState
+                  title="Unknown dataset selection"
+                  description="Choose one of the available dataset tabs."
+                />
+              ) : !session ? (
+                <EmptyState
+                  title="This session is not available"
+                  description="Choose a session supplied for this event. No other session has been substituted."
+                />
+              ) : (
+                <SessionData
+                  key={`${session.id}:${requestedView}`}
+                  session={session}
+                  availability={
+                    event.features?.find(
+                      (feature) => feature.key === requestedView,
+                    )?.coverage
+                  }
+                  eventId={event.id}
+                  year={event.year}
+                  dataset={requestedView}
+                  snapshotId={meta.snapshotId}
+                  params={params}
+                  setParams={setParams}
+                  onSnapshotReset={refresh}
+                />
+              )}
+            </div>
           </>
         ) : (
           <EmptyState

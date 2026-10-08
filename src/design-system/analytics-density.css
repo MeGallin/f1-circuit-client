@@ -1,0 +1,101 @@
+.analytics-filters {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--apex-size-analytics-filter-min-width)), 1fr)
+  );
+  gap: var(--apex-space-6);
+  padding: var(--apex-space-6);
+}
+.analytics-filters > .field {
+  min-width: 0;
+  max-width: 100%;
+}
+.analytics-filters select {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+.analytics-content {
+  display: grid;
+  gap: var(--apex-space-6);
+  min-width: 0;
+}
+.analytics-scope-summary {
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+  display: grid;
+  gap: var(--apex-space-3);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.analytics-scope-summary-heading,
+.analytics-scope-summary-links,
+.analytics-scope-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apex-space-5);
+}
+.analytics-scope-summary-links {
+  justify-content: flex-start;
+}
+.analytics-scope-summary-heading h2 {
+  font-family: var(--apex-font-body);
+  font-size: var(--apex-type-section-size);
+}
+.analytics-scope-summary-values {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--apex-space-5);
+}
+.analytics-scope-summary-values > p {
+  min-width: 0;
+}
+.analytics-scope-summary-values small,
+.analytics-scope-summary-values strong {
+  display: block;
+}
+.analytics-scope-summary-values small,
+.analytics-scope-summary-caption,
+.analytics-scope-summary-actions {
+  font-size: var(--apex-type-caption-size);
+}
+.analytics-scope-summary-values small,
+.analytics-scope-summary-caption {
+  color: var(--apex-color-muted);
+}
+.analytics-scope-summary-actions > details {
+  min-width: 0;
+  flex: 1;
+}
+.analytics-primary-chart {
+  grid-column: 1 / -1;
+}
+.analytics-context-disclosure {
+  min-width: 0;
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: var(--apex-color-surface);
+}
+.analytics-context-disclosure > summary {
+  padding: var(--apex-space-6);
+  min-height: var(--apex-size-target);
+  font-weight: var(--apex-type-control-weight);
+}
+.analytics-context-body {
+  display: grid;
+  gap: var(--apex-space-6);
+  padding: var(--apex-space-6);
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .analytics-scope-summary-values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .analytics-scope-summary-values > p:last-child {
+    grid-column: 1 / -1;
+  }
+}

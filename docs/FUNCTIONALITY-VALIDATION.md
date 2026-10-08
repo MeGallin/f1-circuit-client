@@ -1,6 +1,53 @@
 # Functionality validation
 
-## Ribbon senior review - 6 October 2026
+## Current senior review — 8 October 2026
+
+The [senior-review record](SENIOR-REVIEW-2026-10-08.md) contains current full-check
+results, fail-first context/time/metric/tooltip regressions and artifact inventory.
+It supersedes earlier totals below without claiming deployment, exhaustive source
+accuracy or accessibility certification. Parent browser smoke is accepted.
+
+## Home Previous event removal — 8 October 2026
+
+User-approved live-only removal deletes the render branch, Home-only pending/
+previous selection and dedicated previous styles; no CSS hiding or ribbon redesign.
+Next event, Calendar adjacency and historical mockups retained. Regression proves
+band absence, all-history expansion, old-round details/close/return and next event;
+former band assertions now check pending races in the unchanged ribbon.
+[Exact red/green and accepted desktop/mobile proof](HOME-PREVIOUS-EVENT-REMOVAL.md).
+Earlier full436-test result below predates this scoped followup.
+
+## Accepted audit handoff — 8 October 2026 (before Home followup)
+
+All twelve UI/UX audit gates are implemented and parent-browser accepted.
+Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,
+49-asset guard and production build; companion API passed160 tests,
+lint/format/contract and Newman114 requests/192 assertions, zero failures.
+Existing jsdom scrollTo and >500kB chunk warnings remain. Full counts are executed
+8 October evidence, not results inferred from documentation changes.
+
+[The authoritative audit matrix](UX-AUDIT-IMPLEMENTATION-VERIFICATION.md)
+records source definitions, retained meaningful red logs, exact browser geometry,
+controlled recovery and200% root-font (not native zoom) proofs. Championship and
+selected totals stay distinct; time preference is shared; evidence is record-aware;
+telemetry bounds remain explicitly unknown. Approved ribbon unchanged.
+Audit code/docs remain uncommitted; no push/deploy/import/live write.
+Earlier dated checkpoints below are historical; production/live smoke,
+source publication/cron/locking and exhaustive accessibility remain separate.
+
+## Historical documentation handoff - 6 October 2026
+
+Local client `f7f9ba6` contains the approved ribbon and review fixes; client/API
+were clean and matched cached origin refs before this prose-only update. See
+[exact Git checkpoint](CHECKPOINT.md). Remote state, deployed versions and live
+smoke were not independently verified. The 354-test/33-file full check, 56-test/
+seven-file focused check and 17 intended fail-before regressions below were
+executed during the earlier 6 October implementation review, not rerun now.
+No application, test, build, browser or import operation is part of this pass.
+Approved visuals and the documented all-pages snapshot/label/scroll/token
+contracts remain unchanged.
+
+## Ribbon senior review (historical execution evidence) - 6 October 2026
 
 Review found and fixed these scoped issues without changing approved visuals:
 
@@ -34,7 +81,7 @@ corrected and rerun against the unfixed implementation. Cancellation already
 passed before changes; it aborts a later in-flight request with no accepted
 partial data. Null-total unavailable coverage is a passing compatibility case.
 
-Fresh `npm run check` passed lint, **354 tests across 33 files**, ribbon token
+At that review, `npm run check` passed lint, **354 tests across 33 files**, ribbon token
 generation, the unchanged 49-asset physical guard (1,169,191 bytes) and production
 build (5,251 modules). The first attempt stopped at two newly introduced lint
 issues, both corrected before this successful complete rerun. Existing jsdom

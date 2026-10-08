@@ -1,5 +1,24 @@
 import EChart from "./EChart";
-import { APEX_CHART, APEX_SIZES } from "../../../design-system/apex.tokens";
+import {
+  APEX_CHART,
+  APEX_SIZES,
+  apexPalette,
+} from "../../../design-system/apex.tokens";
+import { analyticsCount } from "../labels";
+import { EmptyState } from "../../../components/ui";
+
+const tooltipText = (value) =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character],
+  );
 
 function readColor(token, fallback) {
   if (typeof document === "undefined") return fallback;
@@ -11,14 +30,22 @@ function readColor(token, fallback) {
 }
 
 export function getChartTheme() {
+  const palette = apexPalette(
+    typeof document === "undefined"
+      ? undefined
+      : document.documentElement.dataset.theme,
+    typeof document === "undefined"
+      ? undefined
+      : document.documentElement.dataset.brand,
+  );
   const colors = {
-    line: readColor("line", "#333d47"),
-    muted: readColor("muted", "#a6afb8"),
-    text: readColor("text", "#f0f2f3"),
-    surface: readColor("surface", "#15191e"),
-    accent: readColor("accent", "#f0524d"),
-    warning: readColor("warning", "#e7bd6d"),
-    info: readColor("info", "#87b8de"),
+    line: readColor("line", palette.line),
+    muted: readColor("muted", palette.muted),
+    text: readColor("text", palette.text),
+    surface: readColor("surface", palette.surface),
+    accent: readColor("accent", palette.accent),
+    warning: readColor("warning", palette.warning),
+    info: readColor("info", palette.info),
   };
   return {
     colors,
@@ -37,16 +64,25 @@ export function getChartTheme() {
 }
 
 export function compactDriverName(name) {
-  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  const parts = String(name || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
   if (parts.length < 2) return parts[0] || "Unknown driver";
   return `${parts[0][0]}. ${parts.at(-1)}`;
 }
 
 export function lastKnownSeriesValue(points) {
-  return [...(points || [])]
-    .reverse()
-    .find((value) => value !== null && value !== undefined && Number.isFinite(Number(value))) ??
-    null;
+  return (
+    [...(points || [])]
+      .reverse()
+      .find(
+        (value) =>
+          value !== null &&
+          value !== undefined &&
+          Number.isFinite(Number(value)),
+      ) ?? null
+  );
 }
 
 export function compactCircuitName(name) {
@@ -58,19 +94,21 @@ export function compactCircuitName(name) {
 }
 
 export function sortConstructorContributionRows(rows) {
-  return [...(rows || [])].sort(
-    (a, b) => Number(b.totalPoints || 0) - Number(a.totalPoints || 0),
-  );
+  return [...(rows || [])]
+    .filter((row) => row.totalPoints != null)
+    .sort((a, b) => Number(b.totalPoints || 0) - Number(a.totalPoints || 0));
 }
 
 export function PointsProgressionChart({ data }) {
   const theme = getChartTheme();
   const events = data?.events || [];
-  const allSeries = [...(data?.series || [])].sort(
-    (a, b) =>
-      (lastKnownSeriesValue(b.points) || 0) -
-      (lastKnownSeriesValue(a.points) || 0),
-  );
+  const allSeries = [...(data?.series || [])]
+    .filter((item) => lastKnownSeriesValue(item.points) != null)
+    .sort(
+      (a, b) =>
+        (lastKnownSeriesValue(b.points) || 0) -
+        (lastKnownSeriesValue(a.points) || 0),
+    );
   const visibleCount = Math.min(5, allSeries.length);
   const visibleSeries = allSeries.slice(0, visibleCount);
   const series = visibleSeries.map((item) => ({
@@ -87,19 +125,23 @@ export function PointsProgressionChart({ data }) {
       item.driverName,
     ]),
   );
-  const labelInterval = events.length > 12 ? Math.ceil(events.length / 8) - 1 : 0;
+  const labelInterval =
+    events.length > 12 ? Math.ceil(events.length / 8) - 1 : 0;
   if (!events.length || !series.length) {
     return (
       <div className="state">
         <h3>No points progression available</h3>
-        <p>The selected publication does not contain cumulative points for this slice.</p>
+        <p>
+          The selected publication does not contain cumulative points for this
+          slice.
+        </p>
       </div>
     );
   }
   return (
     <EChart
       label="Points progression by event"
-      description={`${visibleSeries.length} leading drivers shown across ${events.length} events by cumulative points. Full driver names are available in the chart tooltip.`}
+      description={`${analyticsCount(visibleSeries.length, "driver")} shown across ${analyticsCount(events.length, "event")} by cumulative selected-result points. These are not championship standings. Full driver names are available in the chart tooltip.`}
       option={{
         animation: false,
         grid: { ...theme.grid, bottom: APEX_CHART.pointsLegendBottom },
@@ -115,9 +157,9 @@ export function PointsProgressionChart({ data }) {
               .filter((item) => item.value != null)
               .map(
                 (item) =>
-                  `${item.marker} ${fullNameByLabel.get(item.seriesName) || item.seriesName}: ${item.value} pts`,
+                  `${item.marker} ${tooltipText(fullNameByLabel.get(item.seriesName) || item.seriesName)}: ${tooltipText(item.value)} pts`,
               );
-            return [heading, ...rows].join("<br />");
+            return [tooltipText(heading), ...rows].join("<br />");
           },
         },
         legend: {
@@ -186,6 +228,13 @@ export function QualifyingVsFinishChart({ rows }) {
 export function ConstructorContributionChart({ rows }) {
   const theme = getChartTheme();
   const sortedRows = sortConstructorContributionRows(rows);
+  if (!sortedRows.length)
+    return (
+      <EmptyState
+        title="No constructor points available"
+        description="The selected publication does not supply constructor point observations for this slice."
+      />
+    );
   const height = Math.max(
     APEX_SIZES.chartMinHeight,
     Math.min(
@@ -198,14 +247,15 @@ export function ConstructorContributionChart({ rows }) {
     <EChart
       label="Constructor points contribution"
       height={height}
-      description={`${sortedRows.length} constructors ranked by their published race-points contribution.`}
+      description={`${analyticsCount(sortedRows.length, "constructor")} ranked by their published selected-result points contribution.`}
       option={{
         animation: false,
         grid: { ...APEX_CHART.constructorGrid, containLabel: true },
         tooltip: {
           ...theme.tooltip,
           trigger: "item",
-          formatter: (params) => `${params.name}<br />Points: ${params.value}`,
+          formatter: (params) =>
+            `${tooltipText(params.name)}<br />Points: ${tooltipText(params.value)}`,
         },
         xAxis: {
           type: "value",
@@ -288,7 +338,7 @@ export function CircuitPerformanceChart({ data }) {
           trigger: "item",
           formatter: (params) => {
             const [driverIndex, circuitIndex, value] = params.value;
-            return `${circuits[circuitIndex]?.name || "Circuit"}<br />${visibleDrivers[driverIndex]?.name || "Driver"}: finish ${value}`;
+            return `${tooltipText(circuits[circuitIndex]?.name || "Circuit")}<br />${tooltipText(visibleDrivers[driverIndex]?.name || "Driver")}: finish ${tooltipText(value)}`;
           },
         },
         xAxis: {
@@ -324,7 +374,11 @@ export function CircuitPerformanceChart({ data }) {
           text: ["Later finish", "Winner"],
           textStyle: { color: theme.colors.muted },
           inRange: {
-            color: [theme.colors.accent, theme.colors.warning, theme.colors.info],
+            color: [
+              theme.colors.accent,
+              theme.colors.warning,
+              theme.colors.info,
+            ],
           },
         },
         series: [{ type: "heatmap", data: values }],
@@ -369,8 +423,12 @@ export function DriverComparisonChart({
   showAll = false,
 }) {
   const theme = getChartTheme();
-  const config =
-    comparisonMetricConfig[metric] || comparisonMetricConfig.points;
+  const config = {
+    ...(comparisonMetricConfig[metric] || comparisonMetricConfig.points),
+    ...(metric === "races" && rows?.some((row) => row.qualifyingEntries != null)
+      ? { label: "Qualifying entries" }
+      : {}),
+  };
   const rankedRows = rankComparisonRows(rows, metric);
   const visibleRows = showAll ? rankedRows : rankedRows.slice(0, 8);
   if (!visibleRows.length) {
@@ -395,7 +453,7 @@ export function DriverComparisonChart({
     <EChart
       label={`Driver comparison ranked by ${config.label.toLowerCase()}`}
       height={height}
-      description={`${visibleRows.length} drivers ranked by ${config.label.toLowerCase()}. Exact figures are available in the expandable table below the chart.`}
+      description={`${analyticsCount(visibleRows.length, "driver")} ranked by ${config.label.toLowerCase()}. Exact figures are available in the expandable table below the chart.`}
       option={{
         animation: false,
         grid: { ...APEX_CHART.comparisonGrid, containLabel: true },
@@ -404,7 +462,7 @@ export function DriverComparisonChart({
           trigger: "item",
           formatter: (params) => {
             const row = visibleRows[params.dataIndex];
-            return `${row.name}<br />${config.label}: ${formatValue(row.chartValue)}`;
+            return `${tooltipText(row.name)}<br />${tooltipText(config.label)}: ${formatValue(row.chartValue)}`;
           },
         },
         xAxis: {

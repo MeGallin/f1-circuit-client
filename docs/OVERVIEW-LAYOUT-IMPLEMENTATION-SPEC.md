@@ -1,12 +1,49 @@
 # Approved overview layout implementation specification
 
-**Status:** Approved for development
+**Status:** Corrected Option 2 ribbon user-approved and implemented; production verification pending
 
-**Design reference:** `/design/overview-layouts`
+**Design reference:** Corrected Option 2 image for the ribbon; `/design/overview-layouts` for the other established bands (its marker strip is historical)
 
 **Approved layout:** `Put the season around the race`
 
 **Audience:** Frontend development team
+
+## Live Home supersession — 8 October 2026
+
+The user explicitly approved removing the entire redundant PREVIOUS EVENT block
+on every device. It is not CSS-hidden. Current Home order is freshness, next event,
+latest race/championship, approved Season races history, provenance. History,
+all-round expansion and event details supersede the separate previous band.
+Next-event/countdown, shared Calendar adjacency/date helpers and dated
+`/design/overview-layouts` mockups remain unchanged. This scoped authorization
+supersedes only the earlier previous-band requirement and its grid row below;
+the historical agreement is retained. See [removal verification](HOME-PREVIOUS-EVENT-REMOVAL.md).
+
+## Audit clarification — 8 October 2026
+
+The approved Season races ribbon remains unchanged. Authorized UX-06 scopes
+latest-race content flow, title/track sizing and compact action placement;
+UX-07 adds shared viewer-local/UTC metadata without changing the countdown instant.
+Final1440×900 scroll0 title670.70/action782.56/winner889.84 remain in the viewport.
+See [accepted audit matrix](UX-AUDIT-IMPLEMENTATION-VERIFICATION.md) for final
+checks, source boundaries and parent proof, separate from production release.
+
+## Historical implementation handoff - 6 October 2026
+
+The corrected user-approved ribbon and senior-review fixes are committed locally
+as client `f7f9ba6`. [Checkpoint](CHECKPOINT.md) records exact client/API HEAD and
+cached tracking alignment, not independent remote/deployment verification. The
+354-test/33-file full check, 56-test/seven-file focused check and 17 fail-before
+regressions are recorded earlier 6 October evidence; this documentation-only
+update does not execute tests, builds or browser checks.
+
+The approved ribbon reference is the corrected Option 2 image:
+`C:/Users/garya/.codex/generated_images/01a0afde-8b0a-70c0-8004-86c356b9031d/exec-b382f9f4-85dc-42d4-a119-437a270fbf75.png`.
+This is a local visual reference, not a required runtime asset. Preserve section
+4.5 and the review contract below; do not alter the approved appearance or other
+bands without a new scoped authorisation. Historical thin-marker examples below
+are not the current ribbon target. Recorded [validation](FUNCTIONALITY-VALIDATION.md)
+and [QA](LOCAL-QA.md) remain evidence, not a new deployment certification.
 
 ## Ribbon senior-review contract clarification - 6 October 2026
 
@@ -94,15 +131,15 @@ The page has two layers:
 - **Overview introduction:** `OVERVIEW LAYOUT STUDY`, the title `Put the season around the race`, and the short explanatory paragraph used by the route-level page heading.
 - **Overview surface:** one bordered Apex surface containing the following bands in this exact order:
 
-| Order | Band | Desktop placement | Mobile placement |
-|---:|---|---|---|
-| 1 | Freshness line | Full width | Full width |
-| 2 | Next event | Full width | Full width |
-| 3 | Latest completed race | Left column | Full width |
-| 4 | Championship snapshot | Right column | Full width, after race |
-| 5 | Season progress | Full width | Full width |
-| 6 | Previous event | Full width | Full width |
-| 7 | Provenance line | Full width | Full width |
+| Order | Band                  | Desktop placement | Mobile placement       |
+| ----: | --------------------- | ----------------- | ---------------------- |
+|     1 | Freshness line        | Full width        | Full width             |
+|     2 | Next event            | Full width        | Full width             |
+|     3 | Latest completed race | Left column       | Full width             |
+|     4 | Championship snapshot | Right column      | Full width, after race |
+|     5 | Season progress       | Full width        | Full width             |
+|     6 | Previous event        | Full width        | Full width             |
+|     7 | Provenance line       | Full width        | Full width             |
 
 The surface uses a two-column grid at 900px and above:
 
@@ -216,11 +253,11 @@ Use the reusable `DriverNumber` component. The number must be displayed without 
 
 Approved podium proportions:
 
-| Place | Block minimum height | Position number treatment |
-|---:|---:|---|
-| 1 | `7rem` | Largest; responsive display size |
-| 2 | `4rem` | Approximately two-thirds of first |
-| 3 | `3.25rem` | Approximately one-third of first |
+| Place | Block minimum height | Position number treatment         |
+| ----: | -------------------: | --------------------------------- |
+|     1 |               `7rem` | Largest; responsive display size  |
+|     2 |               `4rem` | Approximately two-thirds of first |
+|     3 |            `3.25rem` | Approximately one-third of first  |
 
 The podium must retain its stepped silhouette at desktop widths. On narrow screens it must remain legible without horizontal overflow; do not reduce driver names below the existing caption role or allow the position number to leave its block.
 
@@ -299,7 +336,13 @@ not result-count index. Native horizontal scrolling and proximity snap remain.
 The theme-aware scrollbar is visible. `Show all rounds` expands this same section
 into a wrapping grid with the same card component; `Return to ribbon` restores
 latest positioning. The outlined footer restores `Earlier races` at left (same
-clamped scroll action/disabled start edge) and `Show all rounds` at right. Below the existing Apex
+clamped scroll action/disabled start edge) and `Show all rounds` at right.
+
+An authorised 8 October footer amendment gives these actions equal responsive
+widths and stretch heights, bounded on desktop by the named Season races
+footer-action label-width token plus shared icon/gap/padding tokens. Labels and
+behaviour remain unchanged; `Return to ribbon` retains the right-hand track.
+Below the existing Apex
 tablet breakpoint, arrows move below the ribbon, preserving a full readable card
 at 390px without page overflow; a partial next card can signal more history.
 
@@ -347,7 +390,7 @@ Use the existing `SeasonEventStrip` for the production interactive implementatio
 
 The guidance text must remain visible, concise and aligned with the legend on larger screens. At widths below 600px it becomes a full-width line below the two legend items.
 
-### 4.6 Previous event
+### 4.6 Previous event (historical; removed from live Home on 8 October)
 
 Use the same visual grammar as the next-event band so the page feels intentional:
 
@@ -375,16 +418,16 @@ This is supporting trust information, not a primary page panel. It must never di
 
 Use existing components wherever the behavior or visual pattern already exists:
 
-| Component | Required use |
-|---|---|
-| `RaceStatus` | Completed/scheduled status labels; adds the small checkered flag only for completed status |
-| `CircuitName` | Circuit label plus circuit value hierarchy |
-| `DriverNumber` | Driver number beside every driver name; no hash; subtle line border; accessible label |
-| `CircuitSilhouette` | Track layout asset, applicability, attribution and safe fallback |
-| `RaceCountdown` | Countdown to race start with unavailable/elapsed states |
-| `SeasonEventStrip` | Shared ribbon/grid race cards, measured scroll controls and event selection |
-| `EventInsightDialog` | In-page selected-round details and top-three result preview |
-| Existing action-link/button primitives | Calendar, race-detail and standings actions |
+| Component                              | Required use                                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `RaceStatus`                           | Completed/scheduled status labels; adds the small checkered flag only for completed status |
+| `CircuitName`                          | Circuit label plus circuit value hierarchy                                                 |
+| `DriverNumber`                         | Driver number beside every driver name; no hash; subtle line border; accessible label      |
+| `CircuitSilhouette`                    | Track layout asset, applicability, attribution and safe fallback                           |
+| `RaceCountdown`                        | Countdown to race start with unavailable/elapsed states                                    |
+| `SeasonEventStrip`                     | Shared ribbon/grid race cards, measured scroll controls and event selection                |
+| `EventInsightDialog`                   | In-page selected-round details and top-three result preview                                |
+| Existing action-link/button primitives | Calendar, race-detail and standings actions                                                |
 
 Add a new shared component only when the same behavior is needed in at least two places. Prefer props and variants over duplicate markup. Do not create a second driver-number, status, circuit, countdown or event-marker implementation for this page.
 
@@ -488,4 +531,4 @@ The overview implementation is complete when:
 7. Desktop, tablet and 360px mobile layouts pass visual and interaction review.
 8. Missing and partial data states remain explicit and do not produce invented content.
 9. `npm run check` passes, including lint, tests and production build.
-10. A browser review confirms parity with `/design/overview-layouts` before deployment is considered.
+10. A browser review confirms the approved Option 2 ribbon in section 4.5 and the unchanged established bands before deployment is considered; the old prototype marker strip is not the ribbon target.

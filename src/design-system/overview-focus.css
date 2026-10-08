@@ -1,0 +1,46 @@
+/* Audit UX-06: scope to the overview spotlight, never the approved history ribbon. */
+@media (min-width: 900px) {
+  .season-around-race .overview-adjacent-event--countdown-hero {
+    padding-block: var(--apex-space-5);
+  }
+  .season-around-race .overview-adjacent-event-hero-meta {
+    gap: var(--apex-space-3);
+  }
+  .season-around-race .race-focus {
+    align-self: start;
+    justify-content: flex-start;
+    gap: var(--apex-space-6);
+  }
+  .season-around-race .race-focus-content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.45fr);
+    align-items: start;
+    gap: var(--apex-space-6);
+  }
+  .season-around-race .race-focus-copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .season-around-race .race-focus h2 {
+    font-size: var(--apex-type-title-size);
+    line-height: var(--apex-type-title-line);
+    max-width: none;
+    overflow-wrap: anywhere;
+  }
+  .season-around-race .race-focus-content > .circuit-silhouette {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100%;
+    align-self: start;
+  }
+  .season-around-race .race-focus-content > .circuit-silhouette img {
+    height: var(--apex-size-overview-track-compact);
+    object-fit: contain;
+  }
+  .season-around-race .race-focus-copy > .button {
+    margin-top: var(--apex-space-6);
+  }
+  .season-around-race .race-focus-results {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}

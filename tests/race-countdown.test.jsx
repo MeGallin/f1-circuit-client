@@ -1,4 +1,5 @@
-import { afterEach, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, expect, test, vi } from "vitest";
+import { setTimeDisplayPreference } from "../src/features/season/timeDisplay";
 import { cleanup, render, screen } from "@testing-library/react";
 import {
   getCountdownParts,
@@ -8,7 +9,10 @@ import {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  setTimeDisplayPreference("local");
+  localStorage.removeItem("apex-time-display");
 });
+beforeEach(() => setTimeDisplayPreference("utc"));
 
 const raceStart = "2026-09-26T11:00:00Z";
 const oneWeekBefore = Date.parse("2026-09-19T11:00:00Z");

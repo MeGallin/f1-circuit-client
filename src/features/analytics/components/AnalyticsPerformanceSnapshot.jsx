@@ -1,3 +1,4 @@
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import { ChartLineUpIcon, GaugeIcon, TrophyIcon } from "@phosphor-icons/react";
 import AnalyticsRaceBreakdown from "./AnalyticsRaceBreakdown";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
@@ -8,7 +9,9 @@ export function buildDriverSpotlightModel(leader) {
     constructor: leader?.constructor?.displayName || "Constructor not supplied",
     position: leader?.position ?? null,
     number: leader?.number ?? null,
-    form: (leader?.recentForm || []).filter((position) => position != null).slice(-5),
+    form: (leader?.recentForm || [])
+      .filter((position) => position != null)
+      .slice(-5),
     positionsGained: leader?.positionsGained ?? null,
   };
 }
@@ -23,7 +26,11 @@ function SnapshotValue({ label, value, detail }) {
   );
 }
 
-export default function AnalyticsPerformanceSnapshot({ intelligence, year }) {
+export default function AnalyticsPerformanceSnapshot({
+  intelligence,
+  year,
+  sessionType,
+}) {
   const leader = intelligence?.championshipLeader;
   const breakdown = intelligence?.raceBreakdown || {};
   if (!leader && !Object.keys(breakdown).length) return null;
@@ -32,24 +39,37 @@ export default function AnalyticsPerformanceSnapshot({ intelligence, year }) {
   return (
     <div className="analytics-performance-snapshot">
       <section className="analytics-snapshot-card">
+        <p className="muted">
+          Season championship leader; points and wins from published standings.
+          Other form metrics use published season race results, unaffected by
+          analysis filters.
+        </p>
         <div className="analytics-snapshot-heading">
           <div>
             <p className="eyebrow">DRIVER SPOTLIGHT</p>
             <div className="analytics-spotlight-identity">
               {spotlight.number && (
-                <span className="driver-number" aria-label={`Driver number ${spotlight.number}`}>
+                <span
+                  className="driver-number"
+                  aria-label={`Driver number ${spotlight.number}`}
+                >
                   {spotlight.number}
                 </span>
               )}
               <h3>{leader?.driverName || "Leader not supplied"}</h3>
             </div>
             <p className="muted">
-              <ConstructorIdentity constructor={leader?.constructor} year={year} />
+              <ConstructorIdentity
+                constructor={leader?.constructor}
+                year={year}
+              />
             </p>
           </div>
           <div className="analytics-spotlight-rank">
-            {spotlight.position != null && <strong>P{spotlight.position}</strong>}
-            <ChartLineUpIcon size={24} aria-hidden />
+            {spotlight.position != null && (
+              <strong>P{spotlight.position}</strong>
+            )}
+            <ChartLineUpIcon size={APEX_SIZES.iconLarge} aria-hidden />
           </div>
         </div>
         <div className="analytics-snapshot-value-grid">
@@ -91,15 +111,19 @@ export default function AnalyticsPerformanceSnapshot({ intelligence, year }) {
             <p className="eyebrow">RACE BREAKDOWN</p>
             <h3>Published outcomes</h3>
             <p className="muted">
-              Calculated from {breakdown.entries ?? "—"} published entries.
+              Selected result scope: {breakdown.entries ?? "—"} published
+              entries; retirement and classification are independent.
             </p>
           </div>
-          <TrophyIcon size={24} aria-hidden />
+          <TrophyIcon size={APEX_SIZES.iconLarge} aria-hidden />
         </div>
-        <AnalyticsRaceBreakdown breakdown={breakdown} />
+        <AnalyticsRaceBreakdown
+          breakdown={breakdown}
+          sessionType={sessionType}
+        />
       </section>
       <p className="analytics-snapshot-note">
-        <GaugeIcon size={16} aria-hidden />
+        <GaugeIcon size={APEX_SIZES.iconSmall} aria-hidden />
         Metrics stay empty when the published archive does not supply the
         underlying result.
       </p>

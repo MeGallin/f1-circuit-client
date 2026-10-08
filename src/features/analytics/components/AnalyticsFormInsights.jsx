@@ -1,3 +1,4 @@
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import {
   BuildingsIcon,
   ChartLineUpIcon,
@@ -20,8 +21,11 @@ export function buildAnalyticsFormInsightsModel({
     ? (leaderMetrics.podiums / leaderMetrics.races) * 100
     : null;
   const constructorGap =
-    constructors.length > 1
-      ? Number(constructors[0].totalPoints || 0) - Number(constructors[1].totalPoints || 0)
+    constructors.length > 1 &&
+    constructors[0].totalPoints != null &&
+    constructors[1].totalPoints != null
+      ? Number(constructors[0].totalPoints || 0) -
+        Number(constructors[1].totalPoints || 0)
       : null;
   return {
     leaderName: leader?.driverName || "Leader not supplied",
@@ -30,14 +34,19 @@ export function buildAnalyticsFormInsightsModel({
       .slice(-5),
     podiumRate: {
       value: podiumRate == null ? "—" : `${Math.round(podiumRate * 10) / 10}%`,
-      detail: leaderMetrics?.races ? `${leaderMetrics.podiums} podiums / ${leaderMetrics.races} starts` : "Published starts not supplied",
+      detail: leaderMetrics?.races
+        ? `${leaderMetrics.podiums} podiums / ${leaderMetrics.races} starts`
+        : "Published starts not supplied",
     },
-    dnfRate: {
-      value: percentage(leaderMetrics?.dnfRate),
-      detail: "Of published driver entries",
+    retirementRate: {
+      value: percentage(leaderMetrics?.retirementRate),
+      detail: "Of known finished/retired starts in selected results",
     },
     constructorGap: {
-      value: constructorGap == null ? "—" : `${constructorGap >= 0 ? "+" : ""}${constructorGap} pts`,
+      value:
+        constructorGap == null
+          ? "—"
+          : `${constructorGap >= 0 ? "+" : ""}${constructorGap} pts`,
       detail:
         constructors.length > 1
           ? `${constructors[0].constructorName} over ${constructors[1].constructorName}`
@@ -49,7 +58,7 @@ export function buildAnalyticsFormInsightsModel({
 function InsightMetric({ icon: Icon, label, value, detail }) {
   return (
     <article className="analytics-form-insight-metric">
-      <Icon size={20} aria-hidden />
+      <Icon size={APEX_SIZES.icon} aria-hidden />
       <div>
         <span>{label}</span>
         <strong>{value}</strong>
@@ -59,7 +68,11 @@ function InsightMetric({ icon: Icon, label, value, detail }) {
   );
 }
 
-export default function AnalyticsFormInsights({ leader, comparison, constructors }) {
+export default function AnalyticsFormInsights({
+  leader,
+  comparison,
+  constructors,
+}) {
   const model = buildAnalyticsFormInsightsModel({
     leader,
     comparison,
@@ -74,16 +87,21 @@ export default function AnalyticsFormInsights({ leader, comparison, constructors
             <h3>{model.leaderName}</h3>
             <p className="muted">Latest published race finishes</p>
           </div>
-          <ChartLineUpIcon size={24} aria-hidden />
+          <ChartLineUpIcon size={APEX_SIZES.iconLarge} aria-hidden />
         </div>
         {model.form.length ? (
-          <ol className="analytics-form-sequence" aria-label={`${model.leaderName} recent form`}>
+          <ol
+            className="analytics-form-sequence"
+            aria-label={`${model.leaderName} recent form`}
+          >
             {model.form.map((position, index) => (
               <li key={`${position}-${index}`}>{position}</li>
             ))}
           </ol>
         ) : (
-          <p className="muted">Recent form is not supplied for this selection.</p>
+          <p className="muted">
+            Recent form is not supplied for this selection.
+          </p>
         )}
       </section>
       <div className="analytics-form-metrics">
@@ -95,9 +113,9 @@ export default function AnalyticsFormInsights({ leader, comparison, constructors
         />
         <InsightMetric
           icon={WarningCircleIcon}
-          label="DNF rate"
-          value={model.dnfRate.value || "—"}
-          detail={model.dnfRate.detail}
+          label="Retirement rate"
+          value={model.retirementRate.value || "—"}
+          detail={model.retirementRate.detail}
         />
         <InsightMetric
           icon={BuildingsIcon}

@@ -91,7 +91,9 @@ test("race classification is readable as a complete results table", () => {
       names={{ "entry-fixture": "Test driver" }}
     />,
   );
-  expect(screen.getByRole("table", { name: "Race classification" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("table", { name: "Race classification" }),
+  ).toBeInTheDocument();
   expect(screen.getByText("NC")).toBeInTheDocument();
   expect(screen.getByText("Did not finish")).toBeInTheDocument();
   expect(screen.getByText("Pit lane")).toBeInTheDocument();
@@ -227,6 +229,7 @@ test("lap pagination uses supported cursor/snapshot parameters and its URL survi
           items: [
             {
               id: next ? "lap2" : "lap1",
+              evidenceId: "lap-evidence",
               entryId: "entry-fixture",
               lapNumber: next ? 2 : 1,
               durationMs: next ? 88002 : 88001,
@@ -280,10 +283,49 @@ test("lap pagination uses supported cursor/snapshot parameters and its URL survi
   }
   const stop = mount("/events/event%3Afixture?season=2024&view=laps");
   await screen.findByText("1:28.001");
+  const sessionPanel = document.getElementById("session-data-panel");
+  expect(
+    screen.getByRole("group", { name: "Session and dataset" }),
+  ).toContainElement(screen.getByRole("combobox", { name: "Dataset" }));
+  expect(
+    document.querySelector(".page-heading .page-actions"),
+  ).not.toBeInTheDocument();
+  const value = screen.getByText("1:28.001");
+  const provenance = sessionPanel.querySelector(".source-note");
+  expect(
+    value.compareDocumentPosition(provenance) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
+  await userEvent.selectOptions(
+    screen.getByRole("combobox", { name: "Dataset" }),
+    "weather",
+  );
+  await waitFor(() => expect(sharedUrl).toContain("view=weather"));
+  expect(sharedUrl).toContain("session=session%3Afixture");
+  expect(sharedUrl).not.toContain("cursor=");
+  await userEvent.selectOptions(
+    screen.getByRole("combobox", { name: "Dataset" }),
+    "laps",
+  );
+  await screen.findByText("1:28.001");
   await userEvent.click(screen.getByRole("button", { name: "Next page" }));
   await screen.findByText("1:28.002");
   expect(sharedUrl).toContain("cursor=cursor-fixture");
   expect(sharedUrl).toContain("snapshot=snapshot-fixture");
+  const evidenceUrl = new URL(
+    screen
+      .getByRole("link", { name: "View field evidence" })
+      .getAttribute("href"),
+    "http://fixture",
+  );
+  const returnUrl = new URL(
+    evidenceUrl.searchParams.get("from"),
+    "http://fixture",
+  );
+  expect(returnUrl.searchParams.get("cursor")).toBe("cursor-fixture");
+  expect(returnUrl.searchParams.get("snapshot")).toBe("snapshot-fixture");
+  expect(evidenceUrl.searchParams.get("recordId")).toBe("lap2");
+  expect(evidenceUrl.searchParams.has("field")).toBe(false);
   expect(
     requests
       .filter((url) => url.pathname.endsWith("/laps"))

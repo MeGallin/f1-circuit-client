@@ -23,6 +23,11 @@ credentials/
 *.pfx
 
 # Logs and temporary files
+# Raw local task evidence belongs in the external audit execution-evidence archive.
+/docs/audit-2026-10-08-*.txt
+/docs/home-previous-event-2026-10-08-*.txt
+/docs/home-ribbon-footer-2026-10-08-*.txt
+/docs/home-ribbon-footer-token-2026-10-08-*.txt
 logs/
 *.log
 *.tmp

@@ -1,9 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import { ArrowsLeftRightIcon } from "@phosphor-icons/react";
-import {
-  useGetComparisonQuery,
-  useGetSeasonsQuery,
-} from "../api/archiveApi";
+import { useGetComparisonQuery, useGetSeasonsQuery } from "../api/archiveApi";
 import {
   PageHeading,
   Panel,
@@ -29,7 +26,8 @@ const metricDefinitions = {
   podiums: "Published top-three race finishes in the selected season range.",
   poles: "Published pole positions in the selected season range.",
   "fastest-laps": "Published fastest race laps in the selected season range.",
-  points: "Published championship points in the selected season range.",
+  points:
+    "Points summed from published results in the selected session and range; not championship standings.",
 };
 const metrics = Object.keys(metricDefinitions);
 export function ComparisonResult({ data }) {
@@ -94,7 +92,8 @@ export default function Compare() {
     Number(from) <= Number(to);
   const validationMessages = [];
   if (!validKind) validationMessages.push("Choose a supported record type.");
-  if (!validMetric) validationMessages.push("Choose a supported metric for that record type.");
+  if (!validMetric)
+    validationMessages.push("Choose a supported metric for that record type.");
   if (!leftId || !rightId)
     validationMessages.push("Choose both records by name.");
   else if (leftId === rightId)
@@ -102,7 +101,9 @@ export default function Compare() {
   if (!knownYear(from) || !knownYear(to))
     validationMessages.push("Choose two imported seasons.");
   else if (Number(from) > Number(to))
-    validationMessages.push("The start season must be no later than the end season.");
+    validationMessages.push(
+      "The start season must be no later than the end season.",
+    );
   const query = useGetComparisonQuery(
     {
       kind,
@@ -179,7 +180,8 @@ export default function Compare() {
             onChange={(e) => update({ metric: e.target.value })}
           />
           <p className="muted entity-help">
-            {metricDefinitions[metric] || "Choose a metric to see its definition."}
+            {metricDefinitions[metric] ||
+              "Choose a metric to see its definition."}
           </p>
         </div>
         <DataBoundary query={seasons}>

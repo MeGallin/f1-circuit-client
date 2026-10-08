@@ -1,0 +1,48 @@
+/* Mobile race setup only; shared DataTable styling lives in table.css. */
+.session-mobile-chooser {
+  display: none;
+}
+.race-event-details {
+  padding: var(--apex-space-6);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+}
+.race-event-details > summary {
+  min-height: var(--apex-size-target);
+  cursor: pointer;
+}
+@media (max-width: 767px) {
+  .race-dataset-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .race-dataset-controls .field {
+    min-width: 0;
+  }
+  .session-mobile-chooser summary {
+    min-height: var(--apex-size-target);
+    cursor: pointer;
+  }
+  .race-event-details {
+    padding-block: var(--apex-space-3);
+  }
+  .session-nav {
+    display: none;
+  }
+  .session-mobile-chooser {
+    display: grid;
+    gap: var(--apex-space-3);
+    padding: var(--apex-space-6);
+  }
+  .session-mobile-chooser p {
+    margin: 0;
+    color: var(--apex-color-muted);
+    font-size: var(--apex-type-caption-size);
+  }
+  .race-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--apex-space-5);
+    padding: var(--apex-space-6);
+  }
+}

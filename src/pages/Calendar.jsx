@@ -1,4 +1,5 @@
 import { CalendarBlankIcon } from "@phosphor-icons/react";
+import { ScheduleTime } from "../components/ScheduleTime";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { ConstructorIdentity } from "../components/ConstructorIdentity";
 import {
@@ -45,19 +46,6 @@ function statusLabel(status) {
   if (status === "completed") return "Completed";
   if (["scheduled", "upcoming"].includes(status)) return "Upcoming";
   return "Status not supplied";
-}
-
-function eventTime(event) {
-  if (
-    !event.schedule.startsAt ||
-    !["minute", "second"].includes(event.schedule.timePrecision)
-  )
-    return null;
-  return new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(new Date(event.schedule.startsAt));
 }
 
 export function filterCalendarEvents(events, filter = "all") {
@@ -125,10 +113,10 @@ export function CalendarEvents({
             </p>
           </div>
           <div className="calendar-date">
-            <time dateTime={event.schedule.date || undefined}>
-              {dateLabel(event.schedule.date)}
-            </time>
-            {eventTime(event) && <span>{eventTime(event)} UTC</span>}
+            <ScheduleTime
+              schedule={event.schedule}
+              showVenue={event.id === selectedId}
+            />
           </div>
           <StatusBadge status={event.status}>
             {statusLabel(event.status)}
@@ -148,7 +136,7 @@ export function CalendarEvents({
               <CircuitSilhouette
                 layout={event.id === selectedId ? selectedLayout : null}
                 circuitName={event.circuit?.displayName}
-                  country={selectedCountry || event.circuit?.country}
+                country={selectedCountry || event.circuit?.country}
                 size="compact"
                 fallback="message"
               />
@@ -159,17 +147,17 @@ export function CalendarEvents({
                       event.circuit?.country ||
                       "Location not supplied by the calendar source."}
                   </p>
-                  <p>
-                    {event.schedule.circuitTimeZone
-                      ? `Circuit time zone: ${event.schedule.circuitTimeZone}`
-                      : "Circuit time zone not supplied."}
-                  </p>
                 </div>
                 <p className="calendar-detail-kicker">
-                  {event.status === "completed" ? "Race result" : "Round preview"}
+                  {event.status === "completed"
+                    ? "Race result"
+                    : "Round preview"}
                 </p>
                 {eventDetail?.podium?.length ? (
-                  <ol className="calendar-podium" aria-label="Top three finishers">
+                  <ol
+                    className="calendar-podium"
+                    aria-label="Top three finishers"
+                  >
                     {eventDetail.podium
                       .filter((row) => row.position >= 1 && row.position <= 3)
                       .sort((a, b) => a.position - b.position)
@@ -178,7 +166,10 @@ export function CalendarEvents({
                           <strong>{row.position}</strong>
                           <span>{entryName(row.entry)}</span>
                           <small>
-                            <ConstructorIdentity constructor={row.entry?.constructor} year={event.year} />
+                            <ConstructorIdentity
+                              constructor={row.entry?.constructor}
+                              year={event.year}
+                            />
                           </small>
                         </li>
                       ))}
@@ -250,7 +241,9 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
   const nextRace = (data?.items || [])
     .filter((event) => ["scheduled", "upcoming"].includes(event.status))
     .sort((a, b) =>
-      String(a.schedule.date || "").localeCompare(String(b.schedule.date || "")),
+      String(a.schedule.date || "").localeCompare(
+        String(b.schedule.date || ""),
+      ),
     )[0];
   const completedEvents = (data?.items || []).filter(
     (event) => event.status === "completed",
@@ -278,7 +271,10 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
           </Button>
         </div>
       </div>
-      <section className="calendar-season-context" aria-label={`${year} season context`}>
+      <section
+        className="calendar-season-context"
+        aria-label={`${year} season context`}
+      >
         <div className="calendar-season-progress">
           <div className="calendar-season-progress-heading">
             <div>
@@ -351,7 +347,10 @@ function SeasonCalendar({ year, selectedId, onSelect, filter }) {
         >
           {data && (
             <>
-              <div className="calendar-filter" aria-label="Filter calendar rounds">
+              <div
+                className="calendar-filter"
+                aria-label="Filter calendar rounds"
+              >
                 <span className="calendar-filter-label">Show</span>
                 <div
                   className="calendar-filter-options"

@@ -1,0 +1,54 @@
+/* Shared shrink/wrap contracts preserve enlarged text rather than clipping it. */
+:root {
+  --apex-size-mobile-navigation-height: 0px;
+}
+.page-heading-copy > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.page-heading > div,
+.panel-heading > div {
+  min-width: 0;
+  max-width: 100%;
+}
+.panel-heading-copy,
+.panel-heading-copy > h2,
+.panel-heading h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .apex-layout .footer {
+    padding-bottom: max(
+      var(--apex-layout-mobile-footer-space),
+      calc(var(--apex-size-mobile-navigation-height) + var(--apex-space-6))
+    );
+  }
+  .apex-layout .tabs {
+    flex-wrap: wrap;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .apex-layout .tabs button {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .mobile-nav > a > span,
+  .nav-more-toggle > span {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: var(--apex-type-caption-line);
+  }
+  .mobile-nav > a,
+  .nav-more-toggle {
+    min-width: 0;
+    align-content: start;
+  }
+  .apex-layout .topbar {
+    flex-wrap: wrap;
+  }
+}
