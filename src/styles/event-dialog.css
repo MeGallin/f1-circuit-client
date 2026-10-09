@@ -1,8 +1,8 @@
 .event-dialog {
   width: min(calc(100% - 2rem), var(--apex-size-dialog-max));
-  max-height: min(90dvh, 48rem);
+  max-height: min(90dvh, var(--apex-size-ui-dialog-max-height));
   padding: 0;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
   color: var(--apex-color-text);
@@ -15,7 +15,7 @@
 }
 .event-dialog-shell {
   display: grid;
-  max-height: min(90dvh, 48rem);
+  max-height: min(90dvh, var(--apex-size-ui-dialog-max-height));
   overflow: auto;
 }
 .event-dialog-header {
@@ -24,7 +24,7 @@
   gap: var(--apex-space-6);
   align-items: start;
   padding: var(--apex-space-8);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .event-dialog-header h2 {
   margin-top: var(--apex-space-4);
@@ -75,7 +75,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .event-dialog-podium li {
   display: grid;
@@ -84,7 +84,7 @@
   gap: var(--apex-space-5);
   min-height: var(--apex-size-target);
   padding: var(--apex-space-5) 0;
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .event-dialog-podium-position,
 .event-dialog-podium-points {
@@ -97,12 +97,7 @@
   gap: var(--apex-space-1);
   min-width: 0;
 }
-.event-dialog-podium strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.event-dialog-podium li > div span {
+.event-dialog-podium li > div > span {
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
 }

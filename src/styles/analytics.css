@@ -21,14 +21,6 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
 }
-.analytics-page .panel > .panel-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: flex-start;
-}
-.analytics-page .panel > .panel-heading > .button {
-  justify-self: start;
-}
 .analytics-dashboard-grid--three {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -55,7 +47,7 @@
 .analytics-stat {
   display: grid;
   gap: var(--apex-space-2);
-  min-height: 7rem;
+  min-height: var(--apex-size-ui-analytics-stat-min-height);
   padding: var(--apex-space-6);
   background: var(--apex-color-surface);
 }
@@ -88,18 +80,18 @@
   display: flex;
   gap: var(--apex-space-5);
   min-width: 0;
-  min-height: 7.5rem;
+  min-height: var(--apex-size-ui-analytics-metric-min-height);
   padding: var(--apex-space-6);
   background: var(--apex-color-surface);
 }
 .analytics-intelligence-metric-icon {
   display: grid;
-  flex: 0 0 2.5rem;
+  flex: 0 0 var(--apex-size-icon-frame);
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--apex-size-icon-frame);
+  height: var(--apex-size-icon-frame);
   color: var(--apex-color-accent-text);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: 50%;
   background: var(--apex-color-elevated);
 }
@@ -125,7 +117,10 @@
 }
 .analytics-race-context-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(
+      var(--apex-size-ui-analytics-context-column-width),
+      0.65fr
+    );
   gap: var(--apex-shape-border);
   background: var(--apex-color-line);
 }
@@ -149,9 +144,6 @@
 }
 .analytics-race-context h3 {
   margin: var(--apex-space-2) 0 0;
-  font-family: var(--apex-font-display);
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-  line-height: 1.05;
 }
 .analytics-race-context-meta,
 .analytics-race-context-footnote {
@@ -168,12 +160,14 @@
 }
 .analytics-podium-entry {
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  grid-template-columns:
+    var(--apex-size-ui-analytics-marker-size) minmax(0, 1fr)
+    auto;
   align-items: center;
   gap: var(--apex-space-4);
-  min-height: 3rem;
+  min-height: var(--apex-size-ui-analytics-result-min-height);
   padding: var(--apex-space-3) var(--apex-space-4);
-  border-left: 3px solid var(--apex-color-line);
+  border-left: var(--apex-shape-active-indicator) solid var(--apex-color-line);
   background: var(--apex-color-elevated);
 }
 .analytics-podium-entry--p1 {
@@ -183,7 +177,7 @@
   color: var(--apex-color-accent-text);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-section-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   text-align: center;
 }
 .analytics-podium-entry > div {
@@ -210,7 +204,7 @@
   gap: var(--apex-space-2);
   margin-top: var(--apex-space-10);
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .analytics-next-event-detail span,
 .analytics-next-event-detail small {
@@ -227,7 +221,7 @@
   gap: var(--apex-space-3);
   margin-top: var(--apex-space-7);
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .analytics-weekend-schedule > span {
   color: var(--apex-color-muted);
@@ -245,7 +239,7 @@
   justify-content: space-between;
   gap: var(--apex-space-4);
   padding-bottom: var(--apex-space-2);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   font-size: var(--apex-type-caption-size);
 }
 .analytics-weekend-schedule li:last-child {
@@ -275,23 +269,27 @@
 }
 .analytics-weekend-card {
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
+  grid-template-columns: var(--apex-size-ui-analytics-marker-size) minmax(
+      0,
+      1fr
+    );
   gap: var(--apex-space-3);
-  min-width: 11rem;
-  min-height: 10.5rem;
+  min-width: var(--apex-size-ui-analytics-weekend-min-width);
+  min-height: var(--apex-size-ui-analytics-weekend-min-height);
   padding: var(--apex-space-4);
   background: var(--apex-color-surface);
 }
 .analytics-weekend-card--next {
-  box-shadow: inset 0 3px 0 var(--apex-color-accent);
+  box-shadow: inset 0 var(--apex-shape-active-indicator) 0
+    var(--apex-color-accent);
   background: var(--apex-color-elevated);
 }
 .analytics-weekend-card-marker {
   display: grid;
-  width: 2rem;
-  height: 2rem;
+  width: var(--apex-size-ui-analytics-marker-size);
+  height: var(--apex-size-ui-analytics-marker-size);
   place-items: center;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: 50%;
   color: var(--apex-color-accent-text);
 }
@@ -309,9 +307,9 @@
 }
 .analytics-weekend-card-copy > span {
   color: var(--apex-color-accent-text);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--apex-size-ui-metadata-tracking);
 }
 .analytics-weekend-card-copy strong {
   margin-top: var(--apex-space-2);
@@ -333,7 +331,7 @@
   display: grid;
   min-width: 0;
   place-items: center;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   background: var(--apex-color-elevated);
 }
 .analytics-circuit-visual .circuit-silhouette {
@@ -352,7 +350,7 @@
   font-size: var(--apex-type-caption-size);
 }
 .analytics-circuit-country .country-flag {
-  font-size: 1rem;
+  font-size: var(--apex-type-prose-size);
 }
 .analytics-circuit-facts {
   display: grid;
@@ -367,14 +365,14 @@
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--apex-size-ui-metadata-tracking);
 }
 .analytics-circuit-fact dd {
   margin: var(--apex-space-2) 0 0;
   color: var(--apex-color-text);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-section-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .analytics-circuit-fact small {
   display: block;
@@ -403,7 +401,7 @@
 .analytics-form-insight-metric {
   min-width: 0;
   padding: var(--apex-space-6);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   background: var(--apex-color-elevated);
 }
 .analytics-form-heading {
@@ -412,12 +410,10 @@
   justify-content: space-between;
   gap: var(--apex-space-4);
   padding-bottom: var(--apex-space-4);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .analytics-form-heading h3 {
   margin: var(--apex-space-2) 0 0;
-  font-family: var(--apex-font-display);
-  font-size: var(--apex-type-subheading-size);
 }
 .analytics-form-heading .muted {
   margin: var(--apex-space-2) 0 0;
@@ -436,16 +432,16 @@
 }
 .analytics-form-sequence li {
   display: grid;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--apex-size-icon-frame);
+  height: var(--apex-size-icon-frame);
   place-items: center;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
   color: var(--apex-color-text);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-body-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .analytics-form-metrics {
   display: grid;
@@ -474,7 +470,7 @@
   line-height: 1;
 }
 .analytics-race-context--empty {
-  min-height: 15rem;
+  min-height: var(--apex-size-ui-analytics-empty-min-height);
 }
 .analytics-race-context-empty-copy {
   color: var(--apex-color-muted);
@@ -509,9 +505,6 @@
 }
 .analytics-snapshot-heading h3 {
   margin: 0;
-  font-family: var(--apex-font-display);
-  font-size: var(--apex-type-subheading-size);
-  line-height: 1.05;
 }
 .analytics-spotlight-rank {
   display: grid;
@@ -556,7 +549,7 @@
   gap: var(--apex-space-4);
   margin-top: var(--apex-space-7);
   padding-top: var(--apex-space-4);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .analytics-spotlight-form > div {
   display: grid;
@@ -576,15 +569,15 @@
 }
 .analytics-spotlight-form li {
   display: grid;
-  width: 2rem;
-  height: 2rem;
+  width: var(--apex-size-ui-analytics-marker-size);
+  height: var(--apex-size-ui-analytics-marker-size);
   place-items: center;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
   color: var(--apex-color-text);
   font-family: var(--apex-font-numeric);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .analytics-spotlight-form > small {
   text-align: right;
@@ -692,8 +685,6 @@
 }
 .analytics-championship-heading h3 {
   color: var(--apex-color-text);
-  font-family: var(--apex-font-body);
-  font-size: var(--apex-type-subheading-size);
 }
 .analytics-championship-rows {
   display: grid;
@@ -704,36 +695,28 @@
 }
 .analytics-championship-row {
   display: grid;
-  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  grid-template-columns: var(--apex-size-icon-large) minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--apex-space-3);
-  min-height: 3.25rem;
+  min-height: var(--apex-size-control-tall);
   padding: var(--apex-space-3) var(--apex-space-4);
-  border-left: 2px solid var(--apex-color-line);
+  border-left: var(--apex-size-ui-selection-border-width) solid
+    var(--apex-color-line);
   background: var(--apex-color-elevated);
 }
-.analytics-championship-rows--numbered .analytics-championship-row {
-  grid-template-columns: 1.5rem 2.75rem minmax(0, 1fr) auto;
-}
 .analytics-championship-rows--constructor .analytics-championship-row {
-  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  grid-template-columns: var(--apex-size-icon-large) minmax(0, 1fr) auto;
 }
 .analytics-championship-row:first-child {
   border-left-color: var(--apex-color-accent);
 }
 .analytics-championship-rank,
-.analytics-championship-number,
 .analytics-championship-value {
   font-family: var(--apex-font-numeric);
   font-variant-numeric: tabular-nums;
 }
 .analytics-championship-rank {
   color: var(--apex-color-muted);
-  text-align: center;
-}
-.analytics-championship-number {
-  color: var(--apex-color-link);
-  font-size: var(--apex-type-caption-size);
   text-align: center;
 }
 .analytics-championship-copy {
@@ -774,7 +757,7 @@
 .analytics-readout-card {
   min-width: 0;
   padding: var(--apex-space-6);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-elevated);
 }
@@ -785,14 +768,11 @@
   justify-content: space-between;
   gap: var(--apex-space-4);
   padding-bottom: var(--apex-space-4);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 
 .analytics-readout-heading h3 {
   margin: var(--apex-space-2) 0 0;
-  font-family: var(--apex-font-display);
-  font-size: var(--apex-type-subheading-size);
-  line-height: 1.05;
 }
 
 .analytics-readout-heading .muted {
@@ -819,7 +799,7 @@
   color: var(--apex-color-muted);
   font-size: var(--apex-type-caption-size);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--apex-type-kicker-tracking);
 }
 
 .analytics-readout-value dd {
@@ -827,7 +807,7 @@
   overflow-wrap: anywhere;
   color: var(--apex-color-text);
   font-size: var(--apex-type-body-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 
 .analytics-readout-value small {
@@ -850,7 +830,7 @@
   align-content: start;
   gap: var(--apex-space-2);
   min-width: 0;
-  min-height: 5.25rem;
+  min-height: var(--apex-size-ui-analytics-evidence-min-height);
   padding: var(--apex-space-4);
   background: var(--apex-color-surface);
 }
@@ -871,7 +851,7 @@
 
 .analytics-session-details {
   margin-top: var(--apex-space-5);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 
 .analytics-session-details summary {
@@ -879,7 +859,7 @@
   color: var(--apex-color-link);
   cursor: pointer;
   font-size: var(--apex-type-caption-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 
 .analytics-session-detail-grid {
@@ -984,7 +964,9 @@
 }
 .analytics-recent-result {
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  grid-template-columns:
+    var(--apex-size-ui-analytics-marker-size) minmax(0, 1fr)
+    auto;
   align-items: center;
   gap: var(--apex-space-4);
   padding: var(--apex-space-4) var(--apex-space-5);
@@ -994,7 +976,7 @@
   color: var(--apex-color-accent-text);
   font-family: var(--apex-font-mono);
   font-size: var(--apex-type-caption-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .analytics-recent-result-driver strong,
 .analytics-recent-result-driver small,
@@ -1017,10 +999,10 @@
   justify-content: space-between;
   gap: var(--apex-space-6);
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .analytics-comparison-toolbar .field {
-  width: min(18rem, 100%);
+  width: min(var(--apex-size-ui-analytics-context-column-width), 100%);
 }
 .analytics-comparison-actions {
   display: grid;
@@ -1028,7 +1010,7 @@
   gap: var(--apex-space-2);
 }
 .analytics-comparison-actions .button {
-  min-height: 40px;
+  min-height: var(--apex-size-ui-analytics-comparison-control-min-height);
   padding-block: var(--apex-space-3);
 }
 .analytics-comparison-note {
@@ -1036,15 +1018,15 @@
   font-size: var(--apex-type-caption-size);
 }
 .analytics-comparison-details {
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .analytics-comparison-details summary {
   padding: var(--apex-space-5) var(--apex-space-6);
   color: var(--apex-color-link);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .analytics-comparison-details[open] summary {
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 @media (max-width: 900px) {
   .analytics-intelligence-metrics {
@@ -1099,7 +1081,7 @@
     grid-template-columns: 1fr;
   }
   .analytics-intelligence-metric {
-    min-height: 5.75rem;
+    min-height: var(--apex-size-ui-analytics-mobile-metric-min-height);
   }
   .analytics-race-context {
     padding: var(--apex-space-6);
@@ -1148,14 +1130,14 @@
     padding-inline: var(--apex-space-6);
   }
   .analytics-stat {
-    min-height: 6rem;
+    min-height: var(--apex-size-ui-analytics-mobile-stat-min-height);
     padding: var(--apex-space-5);
   }
   .analytics-stat strong {
     font-size: var(--apex-type-section-size);
   }
   .analytics-recent-result {
-    grid-template-columns: 1.5rem minmax(0, 1fr);
+    grid-template-columns: var(--apex-size-icon-large) minmax(0, 1fr);
   }
   .analytics-recent-result-outcome {
     grid-column: 2;

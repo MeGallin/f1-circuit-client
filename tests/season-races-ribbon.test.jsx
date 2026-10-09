@@ -119,7 +119,7 @@ test("ribbon sorts actual rounds, counts published coverage, and never invents m
       .map((item) => item.dataset.eventId),
   ).toEqual(["earlier", "cancelled", "missing", "latest", "future"]);
   expect(
-    screen.getByLabelText("2 of 5 races have published results"),
+    screen.getByText("2 of 5 races have published results"),
   ).toBeInTheDocument();
   expect(
     screen.getByText("Select a race to view details and results."),
@@ -184,7 +184,7 @@ test("no published results means no latest label or fabricated completed results
     />,
   );
   expect(
-    screen.getByLabelText("0 of 1 races have published results"),
+    screen.getByText("0 of 1 races have published results"),
   ).toBeInTheDocument();
   expect(screen.queryByText("Latest results")).not.toBeInTheDocument();
   expect(screen.queryByText("View results")).not.toBeInTheDocument();
@@ -223,7 +223,7 @@ test("legacy normalized calendar retains published result markers when optional 
   ];
   render(<SeasonEventStrip events={records} />);
   expect(
-    screen.getByLabelText("3 of 4 races have published results"),
+    screen.getByText("3 of 4 races have published results"),
   ).toBeInTheDocument();
   expect(screen.getAllByText("View results")).toHaveLength(2);
   expect(

@@ -58,6 +58,7 @@ export function StandingRows({ rows, kind, year }) {
                 entity={row.entity}
                 kind={kind === "drivers" ? "driver" : "constructor"}
                 season={year}
+                number={row.number}
               />
             </strong>
             {kind === "drivers" && (
@@ -99,7 +100,10 @@ function Championship({ year, kind, params, setParams, seasonOptions }) {
       round: round || undefined,
       cursor: params.get("cursor") || undefined,
       snapshotId: params.get("snapshot") || undefined,
-      standingSnapshotId: params.get("standingSnapshot") || undefined,
+      standingSnapshotId:
+        params.get("standingSnapshotId") ||
+        params.get("standingSnapshot") ||
+        undefined,
     },
     { skip: !validRound(round) },
   );
@@ -130,6 +134,7 @@ function Championship({ year, kind, params, setParams, seasonOptions }) {
     next.delete("cursor");
     next.delete("snapshot");
     next.delete("standingSnapshot");
+    next.delete("standingSnapshotId");
     setParams(next);
     dispatch(archiveApi.util.invalidateTags([{ type: "Season", id: year }]));
   };

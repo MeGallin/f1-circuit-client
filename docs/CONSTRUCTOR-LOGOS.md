@@ -1,5 +1,15 @@
 # Constructor identity assets — 6 October 2026
 
+## Home layout supersession — 8 October 2026
+
+[Approved Option3](HOME-OPTION-THREE.md) replaces Home's tabs with simultaneous
+compact Drivers/Constructors previews. The now-unused tab container selectors and
+`constructorIdentityCompact` token were removed; generated shared logo tile theme
+roles, physical assets and record-year identity semantics remain. Earlier6 October
+container/tab descriptions below are dated implementation evidence, not current
+instructions. The new country flags have their separate MIT provenance/register
+in the Option3 record; constructor artwork/rights are unchanged.
+
 `ConstructorLogo` / `ConstructorIdentity` retain API-supplied names and use exact
 canonical IDs, never name matching or successor-team aliases. Assets are bundled
 locally under `public/images/constructors`; there is no runtime hotlinking. Unknown

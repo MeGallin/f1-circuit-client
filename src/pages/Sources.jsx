@@ -4,6 +4,7 @@ import { useGetSourcesQuery } from "../api/archiveApi";
 import {
   PageHeading,
   Panel,
+  PanelBody,
   Button,
   DataBoundary,
   SourceNote,
@@ -50,7 +51,7 @@ export default function Sources() {
       >
         {data?.items.map((provider) => (
           <Panel key={provider.id} title={provider.name}>
-            <div className="demo-stack">
+            <PanelBody>
               <StatusBadge>{provider.health}</StatusBadge>
               <p>
                 {provider.enabled ? "Provider enabled" : "Provider disabled"}
@@ -64,51 +65,53 @@ export default function Sources() {
                 entries. Consult each event or standings view for the relevant
                 coverage.
               </p>
-            </div>
+            </PanelBody>
           </Panel>
         ))}
       </DataBoundary>
       <SourceNote meta={data?.meta} />
       <Panel title="Constructor marks & rights">
-        <p>
-          Constructor marks identify teams; no sponsorship or endorsement is
-          implied. Copyright labels do not clear trademark or commercial-use
-          rights.
-        </p>
-        <p>
-          Some team badges are copyrighted official artwork or non-free
-          Wikipedia images. Wikipedia's article-specific rationale does not
-          license reuse here; deployment rights remain the operator's
-          responsibility.
-        </p>
-        <p>
-          Williams Racing Monogram by{" "}
-          <a href="https://commons.wikimedia.org/wiki/User:DJClements">
-            DJClements
-          </a>
-          , via{" "}
-          <a href="https://commons.wikimedia.org/wiki/File:Williams_Racing_Monogram.png">
-            Wikimedia Commons
-          </a>
-          , licensed{" "}
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/">
-            CC BY-SA 4.0
-          </a>
-          . Original file unchanged; scaled for display.
-        </p>
-        <p>
-          Prost Grand Prix logo, file-page author/source{" "}
-          <a href="https://www.freepng.es/png-nrmtnh/">freepng.es</a>, via{" "}
-          <a href="https://commons.wikimedia.org/wiki/File:Prost_Grand_Prix_Formula_One_Logo.png">
-            Wikimedia Commons
-          </a>
-          , recorded{" "}
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/">
-            CC BY-SA 4.0
-          </a>
-          . Original raster unchanged; scaled for display. Underlying brand
-          rights are not cleared by this attribution.
-        </p>
+        <PanelBody>
+          <p>
+            Constructor marks identify teams; no sponsorship or endorsement is
+            implied. Copyright labels do not clear trademark or commercial-use
+            rights.
+          </p>
+          <p>
+            Some team badges are copyrighted official artwork or non-free
+            Wikipedia images. Wikipedia's article-specific rationale does not
+            license reuse here; deployment rights remain the operator's
+            responsibility.
+          </p>
+          <p>
+            Williams Racing Monogram by{" "}
+            <a href="https://commons.wikimedia.org/wiki/User:DJClements">
+              DJClements
+            </a>
+            , via{" "}
+            <a href="https://commons.wikimedia.org/wiki/File:Williams_Racing_Monogram.png">
+              Wikimedia Commons
+            </a>
+            , licensed{" "}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+              CC BY-SA 4.0
+            </a>
+            . Original file unchanged; scaled for display.
+          </p>
+          <p>
+            Prost Grand Prix logo, file-page author/source{" "}
+            <a href="https://www.freepng.es/png-nrmtnh/">freepng.es</a>, via{" "}
+            <a href="https://commons.wikimedia.org/wiki/File:Prost_Grand_Prix_Formula_One_Logo.png">
+              Wikimedia Commons
+            </a>
+            , recorded{" "}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/">
+              CC BY-SA 4.0
+            </a>
+            . Original raster unchanged; scaled for display. Underlying brand
+            rights are not cleared by this attribution.
+          </p>
+        </PanelBody>
       </Panel>
       {data && (data.page.hasMore || params.has("cursor")) && (
         <nav className="pagination" aria-label="Source pages">

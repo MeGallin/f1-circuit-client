@@ -1,4 +1,5 @@
-import { ActionLink, Button, DriverNumber } from "../../../components/ui";
+import { ActionLink, Button } from "../../../components/ui";
+import { DriverIdentity } from "../../../components/DriverIdentity";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
 import { analyticsCount } from "../labels";
 import {
@@ -51,8 +52,7 @@ export default function AnalyticsScopeSummary({
           <strong>
             {driver ? (
               <>
-                <DriverNumber number={driver.number} />
-                {driver.entity?.displayName || "Name not supplied"} ·{" "}
+                <DriverIdentity inline stackOnMobile presentation="record" number={driver.number} name={driver.entity?.displayName || "Name not supplied"} /> ·{" "}
                 {driver.points} championship pts
               </>
             ) : (

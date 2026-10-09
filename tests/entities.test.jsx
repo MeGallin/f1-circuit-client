@@ -19,6 +19,34 @@ const meta = {
   sources: [],
   warnings: [],
 };
+test("comparison provenance has a shared inset without wrapping the classification table in a second padded body", () => {
+  const { container } = render(
+    <MemoryRouter>
+      <ComparisonResult
+        data={{
+          meta,
+          comparison: {
+            left: { displayName: "Left" },
+            right: { displayName: "Right" },
+            fromYear: 2000,
+            toYear: 2001,
+            rows: [
+              {
+                metricKey: "wins",
+                left: { value: 0, unit: "wins", coverage: "complete" },
+                right: { value: null, unit: "wins", coverage: "unavailable" },
+              },
+            ],
+          },
+        }}
+      />
+    </MemoryRouter>,
+  );
+  expect(container.querySelector(".source-note")).toHaveClass(
+    "source-note--inset",
+  );
+  expect(container.querySelector("table").closest(".panel-body")).toBeNull();
+});
 const collection = (items, more = false) => ({
   data: {
     items,
@@ -173,19 +201,24 @@ test("explore searches structured entities, filters kinds and preserves URL stat
     if (!url.pathname.endsWith("/search"))
       throw new Error(`Unexpected request: ${url}`);
     const kind = url.searchParams.get("kind");
-    return collection(kind ? items.filter((item) => item.kind === kind) : items);
+    return collection(
+      kind ? items.filter((item) => item.kind === kind) : items,
+    );
   });
   mount("/explore?season=2024");
-  expect(screen.getByRole("heading", { name: "Explore the archive" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { name: "Explore the archive" }),
+  ).toBeInTheDocument();
   expect(screen.getAllByRole("tab")).toHaveLength(6);
   await userEvent.type(screen.getByLabelText(/Find a driver/), "Hamilton");
-  await userEvent.click(screen.getByRole("button", { name: "Search the archive" }));
+  await userEvent.click(
+    screen.getByRole("button", { name: "Search the archive" }),
+  );
   expect(await screen.findByText("Lewis Hamilton")).toBeInTheDocument();
   expect(screen.queryByText("Answer from the archive")).not.toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "View evidence for Lewis Hamilton" })).toHaveAttribute(
-    "href",
-    "/evidence/evidence%3Adriver",
-  );
+  expect(
+    screen.getByRole("link", { name: "View evidence for Lewis Hamilton" }),
+  ).toHaveAttribute("href", "/evidence/evidence%3Adriver");
   expect(screen.getByRole("link", { name: "Lewis Hamilton" })).toHaveAttribute(
     "href",
     "/drivers/driver%3Ahamilton",
@@ -208,37 +241,50 @@ test("explore keeps cursor pagination on the returned snapshot and has a recover
       throw new Error(`Unexpected request: ${url}`);
     if (url.searchParams.get("q") === "zzzz") return collection([]);
     return {
-      ...collection([
-        {
-          id: "driver:one",
-          kind: "driver",
-          entity: {
+      ...collection(
+        [
+          {
             id: "driver:one",
-            displayName: "Example Driver",
-            clientPath: "/drivers/driver%3Aone",
+            kind: "driver",
+            entity: {
+              id: "driver:one",
+              displayName: "Example Driver",
+              clientPath: "/drivers/driver%3Aone",
+            },
+            evidenceId: "evidence:one",
+            context: null,
           },
-          evidenceId: "evidence:one",
-          context: null,
-        },
-      ], true),
+        ],
+        true,
+      ),
       meta: { ...meta, snapshotId: "snapshot:search" },
     };
   });
   mount("/explore");
   await userEvent.type(screen.getByLabelText(/Find a driver/), "Example");
-  await userEvent.click(screen.getByRole("button", { name: "Search the archive" }));
+  await userEvent.click(
+    screen.getByRole("button", { name: "Search the archive" }),
+  );
   await screen.findByText("Example Driver");
   await userEvent.click(screen.getByRole("button", { name: "Next page" }));
   await waitFor(() =>
     expect(calls.at(-1).searchParams.get("cursor")).toBe("next"),
   );
   expect(calls.at(-1).searchParams.get("snapshotId")).toBe("snapshot:search");
-  expect(screen.getByTestId("location")).toHaveTextContent("snapshot=snapshot%3Asearch");
+  expect(screen.getByTestId("location")).toHaveTextContent(
+    "snapshot=snapshot%3Asearch",
+  );
   await userEvent.click(screen.getByRole("button", { name: "Clear search" }));
   await userEvent.type(screen.getByLabelText(/Find a driver/), "zzzz");
-  await userEvent.click(screen.getByRole("button", { name: "Search the archive" }));
-  expect(await screen.findByText("No published matches for “zzzz”")).toBeInTheDocument();
-  expect(screen.getAllByRole("button", { name: "Clear search" })).toHaveLength(2);
+  await userEvent.click(
+    screen.getByRole("button", { name: "Search the archive" }),
+  );
+  expect(
+    await screen.findByText("No published matches for “zzzz”"),
+  ).toBeInTheDocument();
+  expect(screen.getAllByRole("button", { name: "Clear search" })).toHaveLength(
+    2,
+  );
   expect(calls.some((url) => url.pathname.endsWith("/questions"))).toBe(false);
 });
 test("explore provides task-led browse paths before a search is entered", () => {
@@ -246,9 +292,7 @@ test("explore provides task-led browse paths before a search is entered", () => 
   expect(
     screen.getByPlaceholderText("e.g. Hamilton, Silverstone or 2008"),
   ).toBeInTheDocument();
-  expect(
-    screen.getByText(/Find a published archive item/),
-  ).toBeInTheDocument();
+  expect(screen.getByText(/Find a published archive item/)).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Find a race" })).toHaveAttribute(
     "href",
     `/calendar?season=${new Date().getUTCFullYear()}`,
@@ -292,6 +336,25 @@ test("profile history keeps decimal points and resets pagination when the season
     expect(calls.some((u) => u.searchParams.get("year") === "2023")).toBe(true),
   );
   expect(screen.getByTestId("location")).not.toHaveTextContent("cursor");
+});
+
+test("profile metadata, comparison action and history controls are inset by shared panel bodies", async () => {
+  mock((url) =>
+    url.pathname.endsWith("/seasons")
+      ? seasons
+      : url.pathname.endsWith("/results")
+        ? collection([result])
+        : { data: { profile }, meta },
+  );
+  mount("/drivers/driver%3Aone?season=2024");
+  const compare = await screen.findByRole("link", { name: "Compare drivers" });
+  expect(compare.closest(".panel-body")).not.toBeNull();
+  expect(
+    screen.getByText(/Career metrics are not supplied/).closest(".panel-body"),
+  ).not.toBeNull();
+  expect(
+    screen.getByLabelText("History season").closest(".panel-body"),
+  ).not.toBeNull();
 });
 test.each([
   ["constructor", "constructors"],

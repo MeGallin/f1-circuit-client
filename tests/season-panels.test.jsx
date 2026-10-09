@@ -393,7 +393,7 @@ test("latest completed race keeps the published podium in the first overview car
     screen.getByText("Select a race to view details and results."),
   ).toBeInTheDocument();
   expect(
-    screen.getByLabelText("1 of 1 races have published results"),
+    screen.getByText("1 of 1 races have published results"),
   ).toBeInTheDocument();
 });
 

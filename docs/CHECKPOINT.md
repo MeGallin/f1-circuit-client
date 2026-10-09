@@ -1,14 +1,108 @@
 # Client checkpoints
 
-## Current uncommitted senior review — 8 October 2026
+## Latest cross-repository review — 9 October 2026
+
+[Current review and exact verification boundary](SENIOR-REVIEW-2026-10-09.md)
+records malformed-data, publication/coverage and record-owned-link fixes. Approved
+Home geometry is unchanged; prior checkpoints below retain their execution dates.
+
+## Home podium flag size checkpoint — 9 October 2026
+
+[Flag sizing amendment](HOME-CHAMPIONSHIP-GRAPHICS.md) reuses shared upcoming-race
+40×30 flags and transfers the extra marker height from Home-only numerals using
+existing tokens. Parent desktop/390 heights differ by0.0142px rounding;320 fits.
+12px gap/natural platforms/lift and other RacePodium consumers are preserved.
+Final86 focused tests/5files, lint/build/assets passed; generator byte-idempotent,
+30 flag SVGs included in dist. No full/API rerun or Git/deploy/live writes.
+
+## Current constructor points-gap chart — 9 October 2026
+
+[Current chart amendment](HOME-CHAMPIONSHIP-GRAPHICS.md) replaces only Home's
+constructor mosaic with the shared84px Chase and round-owned constructor standings
+gaps. Parent verified2026R1/R16 and2000R17 exact figures, desktop baseline661.903381px,
+20px insets/12px podium gap and390/320 containment. Current104 tests/10files,
+lint/build/assets passed; API203 tests/OpenAPI/Newman117 requests197 assertions
+passed. Full client suite not rerun; earlier totals below remain dated.
+No commit, push, deployment, source import or live write.
+
+## Latest Home championship graphics — 8 October 2026
+
+[Current scoped contract and parent proof](HOME-CHAMPIONSHIP-GRAPHICS.md) supersedes
+paired390 with full-width stacked chart cards below900px. Top-three rows, pinned
+links, shared identities, podium/history/countdown remain. API full180 tests and
+Newman117/197 passed; client final627 tests/60files passed at two workers, lint/
+tokens/assets/build passed. Prior default-parallel Ask timeout is retained;
+isolated8/8 and complete bounded run passed unchanged, no Ask fix claimed.
+Earlier totals below are historical. No new deployment/Git/live writes.
+
+## Current site-wide consistency code freeze — 8 October 2026
+
+[Binding inventory and verification](UI-CONSISTENCY.md) owns the latest shared
+identity/body/header/control/token contract. Final client589 tests/55files,
+lint/build/assets passed after review follow-ups;33 focused/4files plus106/11.
+Earlier569/53 and68/9 are dated pre-follow-up checks. Final parent browser matrix
+is recorded there; sampled gallery accessibility is not a whole-site claim.
+Parent live Ask mobile390 answered19 wins in2023, with year/coverage details and
+working source/evidence disclosures. Prior two transient failures were not
+reproduced; their cause remains unknown, not fixed. See the sample limits there.
+Home remains approved below; earlier totals are dated evidence. Backend unchanged;
+no new deployment verification or Git/live writes.
+
+## Current approved Home Option3 — 8 October 2026
+
+Latest control amendment: top-three championships each retain only View standings,
+with the same season/round/publication/standing snapshot and correct kind. All
+championship expansion branches/requests/unused styling are removed; race results
+still expand/collapse lazily with publication guards. Parent1440/390 links selected
+2026 Round16 full standings; race expansion22rows;320/390 no overflow. Final88
+focused/7files, lint and build/token/asset guards passed; existing chunk warning.
+See [current scoped proof](HOME-REFERENCE-FIDELITY.md). Older expansion evidence
+below is historical; no full-suite/API rerun or new deployment verification.
+
+Later narrow amendment: mobile podium stacks shared red badge/full-width name/team;
+desktop badge precedes name, team beneath. Parent320/390/1440 accepted readable
+names, exact championship badge match and preserved block baseline/winner lift.
+Shared intrinsic subgrid aligns side badges through name wrapping; final320/390/1440
+positioning browser gate accepted, winner16px mobile/32px desktop higher.
+Latest scoped43 tests/3files and lint passed; preceding525 full tests below remain
+historical evidence, not a rerun for this amendment. See the current scoped record.
+Final client build/token generators/asset guards passed; existing chunk warning
+remains. No new deployment verification.
+Latest shared-identity correction supersedes the43-test identity checkpoint:
+podium/Drivers Championship use one component/class/first-baseline spacing rule.
+Parent1440 all six gap4px/name16px/22.4px/badge offset5.2841px match;320/390 readable
+without overflow.46 focused/3files and lint passed; historical proof remains linked.
+
+Combined left completed-race header/podium and equal-height Drivers/Constructors
+previews replace the combined race/tabbed-standings layout. Pinned race-results
+expansion is adjacent to the race on mobile and full-width beneath previews on
+desktop. Real circuit-country SVG flags include Home history and next-event header;
+countdown, history arrows/actions/details stay intact. [Current scoped evidence](HOME-REFERENCE-FIDELITY.md)
+owns the a5098 reference, measured panel proportions/podium baseline/mobile
+readability and final525 tests/48 files,127 focused/6 files,lint,tokens/assets/build.
+Earlier500/47 and123/7 executions belong to
+the superseded full-width-header composition, not this assignment's totals.
+No API code, commit/push/deploy/import/live changes; dirty prose preserved.
+
+## Historical completed senior review — 8 October 2026 (before Option3)
 
 See [prioritized fixes, current full checks and hash-verified external archive](SENIOR-REVIEW-2026-10-08.md).
-This is the current verification boundary for all audit/Home edits; the executions
+This was the verification boundary before Option3; the executions
 below remain dated history. Browser smoke accepted valid/wrong-event Evidence,
 2026 championship320/556, contained320/390 Analytics controls and unchanged Home
 time. No Git/deployment/live operations; prior unrelated edits preserved.
 
-## Current ribbon footer followup — 8 October 2026
+Recorded final checks: client460/44 plus12 focused/2files after whitespace-only
+generator cleanup; API163 and Newman114 requests/192 assertions. External62-file/
+265,860-byte inventory is SHA-256 verified; tests/QA remain in repo. This alignment
+is prose-only, with no rerun or new release verification. Root AGENTS.md/memory.md
+are outside both repositories and need separate preservation.
+
+Final read-only inspection found local client HEAD9b5c3a9 and API HEAD10fa996,
+with implementation committed locally and these Markdown edits dirty. No commit
+was made by this alignment; no fresh remote/push or deployment verification ran.
+
+## Historical ribbon footer followup — 8 October 2026 (before senior review)
 
 Earlier races / Show all rounds now use equal responsive tracks and stretch height,
 with a named, validated Season races label-width token bounding desktop actions.
@@ -23,7 +117,7 @@ passed. Evidence:season-races-equal-actions-mobile.jpg in audit implementation-e
 No full suite/build rerun for this scoped CSS followup; prior results below are dated.
 Existing dirty work preserved; no API/live changes or commit/push/deploy.
 
-## Current Home followup — 8 October 2026
+## Historical Home followup — 8 October 2026 (before senior review)
 
 User approved complete removal of Home's redundant Previous event band on all
 devices; approved ribbon/history/dialog and next event remain. Parent verifies
@@ -32,7 +126,7 @@ no overflow1295/1295 and376/376. [Scoped evidence](HOME-PREVIOUS-EVENT-REMOVAL.m
 records new TDD/checks, separate from the earlier full audit counts below.
 No API change, commit/push/deploy/import/live mutation.
 
-## Accepted audit handoff — 8 October 2026 (before Home followup)
+## Historical accepted audit handoff — 8 October 2026 (before Home followup)
 
 All twelve UI/UX audit gates are implemented and parent-browser accepted.
 Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,

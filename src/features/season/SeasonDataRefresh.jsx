@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowClockwiseIcon } from "@phosphor-icons/react";
+import { APEX_ICONS } from "../../design-system/apex.tokens";
 import { Button, StatusBadge } from "../../components/ui";
 import { useRefreshDataMutation } from "../../api/archiveApi";
 import { runtimeYear } from "./selectors";
@@ -170,7 +171,7 @@ function SeasonDataRefreshState({
           </span>
         ) : (
           <Button variant="quiet" onClick={refresh} disabled={busy}>
-            <ArrowClockwiseIcon aria-hidden size={18} />
+            <ArrowClockwiseIcon aria-hidden size={APEX_ICONS.action} />
             {busy
               ? isCurrentSeason
                 ? "Checking source…"

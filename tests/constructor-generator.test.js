@@ -17,7 +17,7 @@ afterEach(() =>
       rmSync(directory, { recursive: true, force: true }),
     ),
 );
-function fixture(breakpoint = 520) {
+function fixture(logoTile = "#123456") {
   const root = mkdtempSync(join(tmpdir(), "f1-logo-generator-"));
   directories.push(root);
   mkdirSync(join(root, "scripts"));
@@ -30,9 +30,8 @@ function fixture(breakpoint = 520) {
   writeFileSync(
     join(root, "src/design-system/apex.tokens.json"),
     JSON.stringify({
-      containerBreakpoints: { constructorIdentityCompact: breakpoint },
       themes: {
-        dark: { logoTile: "#123456", logoTileDark: "#234567" },
+        dark: { logoTile, logoTileDark: "#234567" },
         light: { logoTile: "#345678", logoTileDark: "#456789" },
       },
     }),
@@ -75,7 +74,7 @@ test("constructor generation emits both theme roles from JSON without patching s
   ).toBe(output);
 });
 test("invalid token input changes neither generated output nor unrelated token CSS", () => {
-  const { root, original, run } = fixture(-1);
+  const { root, original, run } = fixture("invalid");
   expect(run().status).not.toBe(0);
   expect(
     readFileSync(join(root, "src/design-system/apex.tokens.css"), "utf8"),

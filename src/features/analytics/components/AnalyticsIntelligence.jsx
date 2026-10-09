@@ -8,6 +8,7 @@ import {
 import { Panel } from "../../../components/ui";
 import { ScheduleTime } from "../../../components/ScheduleTime";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
+import { DriverIdentity } from "../../../components/DriverIdentity";
 import { buildSeasonIntelligenceModel } from "../seasonIntelligence";
 
 function IntelligenceMetric({ icon: Icon, label, value, detail, children }) {
@@ -33,7 +34,7 @@ function RaceEntry({ entry, year }) {
     >
       <span className="analytics-podium-position">{entry.position}</span>
       <div>
-        <strong>{entry.driverName || "Driver not supplied"}</strong>
+        <DriverIdentity stackOnMobile presentation="record" name={entry.driverName || "Driver not supplied"} number={entry.number} />
         <span>
           <ConstructorIdentity
             constructor={{
@@ -170,7 +171,7 @@ export default function AnalyticsIntelligence({ intelligence, year }) {
         <IntelligenceMetric
           icon={TrophyIcon}
           label="Championship leader"
-          value={leader?.driverName}
+          value={leader && <DriverIdentity inline stackOnMobile presentation="record" name={leader.driverName || "Driver not supplied"} number={leader.number} />}
           detail={
             leader?.points != null
               ? `${leader.points} pts · ${leader.wins ?? 0} wins`
@@ -200,7 +201,7 @@ export default function AnalyticsIntelligence({ intelligence, year }) {
         <IntelligenceMetric
           icon={TrophyIcon}
           label="Latest winner"
-          value={model.latestWinner?.driverName}
+          value={model.latestWinner && <DriverIdentity inline stackOnMobile presentation="record" name={model.latestWinner.driverName || "Driver not supplied"} number={model.latestWinner.number} />}
           detail={model.latestRace?.name || "No result published"}
         />
       </div>

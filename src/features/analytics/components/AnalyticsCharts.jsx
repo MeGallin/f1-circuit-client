@@ -56,6 +56,7 @@ export function getChartTheme() {
     grid: { ...APEX_CHART.grid, containLabel: true },
     tooltip: {
       trigger: "axis",
+      confine: true,
       backgroundColor: colors.surface,
       borderColor: colors.line,
       textStyle: { color: colors.text },
@@ -198,6 +199,9 @@ export function QualifyingVsFinishChart({ rows }) {
         tooltip: { ...theme.tooltip, trigger: "item" },
         xAxis: {
           name: "Qualifying",
+            nameLocation: "middle",
+            nameGap: APEX_CHART.axisNameGap,
+            nameTextStyle: { color: theme.colors.muted },
           type: "value",
           inverse: true,
           minInterval: 1,
@@ -205,6 +209,9 @@ export function QualifyingVsFinishChart({ rows }) {
         },
         yAxis: {
           name: "Finish",
+            nameLocation: "middle",
+            nameGap: APEX_CHART.axisNameGap,
+            nameTextStyle: { color: theme.colors.muted },
           type: "value",
           inverse: true,
           minInterval: 1,

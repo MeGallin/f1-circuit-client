@@ -1,5 +1,10 @@
 # Isolated browser QA
 
+Reusable test infrastructure, retained after the completed8 October review and
+excluded from production. [Current checks/archive/browser boundaries](../../docs/SENIOR-REVIEW-2026-10-08.md)
+record460/44 client plus12 focused/2files,163 API/Newman114/192; this documentation
+update reruns none of them and does not restart the stopped5175 server.
+
 Start from the client repository:
 
 `npx vite --config tests/browser-qa/vite.config.js`

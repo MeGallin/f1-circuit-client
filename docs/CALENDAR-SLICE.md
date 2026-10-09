@@ -1,8 +1,19 @@
 # Calendar route
 
+## Current collection/time contract — 8 October 2026
+
+Calendar loads the complete publication-pinned collection internally, rejects
+partial/duplicate/mismatched paging and has no obsolete page controls. Equivalent
+reloads preserve scroll/focus; selection/details remain native accessible actions.
+Overview/Calendar/Analytics share explicit viewer-local/UTC preference; Local shows
+UTC secondarily, date-only records do not invent a start or shift calendar dates,
+and venue time zone is not guessed. [Current review](SENIOR-REVIEW-2026-10-08.md)
+owns recorded full checks and browser gates. This prose-only update runs no tests;
+old paging/release claims below describe historical slices, not current deployment.
+
 ## Refresh-cache integration — 6 October 2026
 
-Current-year overview source refresh invalidates the selected-season calendar cache together with catalogue, summary/standings, event and session data. Overview calendars remain pinned to their summary publication; standalone calendar pagination/selection retains the behavior described below. Historical overview refresh remains an archive reload. See [current season behavior](SEASON-SLICE.md) and [validation evidence](FUNCTIONALITY-VALIDATION.md).
+Current-year overview source refresh invalidates the selected-season calendar cache together with catalogue, summary/standings, event and session data. Overview calendars remain pinned to their summary publication; the current complete-collection/selection contract above supersedes the first-slice paging below. Historical overview refresh remains an archive reload. See [current season behavior](SEASON-SLICE.md) and [validation evidence](FUNCTIONALITY-VALIDATION.md).
 
 Local history confirms client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Recorded checks passed 141 client tests with lint/build and 133 API tests, contract/lint/format checks, Newman 114 requests / 192 assertions. Deployment/live smoke is **PENDING**; Actions secrets/dispatch and real PostgreSQL multi-process locking remain unverified. The first-slice scope/deployment statements below are historical.
 

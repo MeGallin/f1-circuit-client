@@ -1,5 +1,6 @@
 .constructor-identity,
-.race-podium-driver-copy .constructor-identity,
+.constructor-identity.constructor-identity--compact,
+.constructor-identity.constructor-identity--championship,
 .entity-identity .constructor-identity,
 .analytics-scope-summary .constructor-identity {
   display: inline-flex;
@@ -17,6 +18,39 @@
   overflow-wrap: anywhere;
   color: inherit;
   font-size: inherit;
+}
+.constructor-identity--championship,
+.constructor-identity--compact {
+  --constructor-logo-size: var(--apex-size-icon-small);
+}
+.constructor-identity.constructor-identity--championship,
+.constructor-identity.constructor-identity--compact {
+  font-family: var(--apex-font-body);
+  font-size: var(--apex-type-body-size);
+  font-weight: var(--apex-type-body-weight);
+  line-height: var(--apex-type-control-line);
+  gap: var(--apex-space-4);
+  color: var(--apex-color-muted);
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow: visible;
+}
+.constructor-identity--championship > .constructor-identity-name,
+.constructor-identity--compact > .constructor-identity-name {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+.constructor-identity.constructor-identity--heading {
+  font-family: var(--apex-font-body);
+  font-size: var(--apex-type-section-size);
+  line-height: var(--apex-type-control-line);
+  gap: var(--apex-space-4);
+}
+@media (min-width: 900px) {
+  .constructor-identity--championship,
+  .constructor-identity--compact {
+    --constructor-logo-size: var(--apex-size-icon);
+  }
 }
 .constructor-logo,
 .constructor-identity > .constructor-logo {
@@ -39,15 +73,6 @@
 .constructor-logo--dark,
 .constructor-identity > .constructor-logo--dark {
   background: var(--apex-color-logo-tile-dark);
-}
-.race-podium-driver-copy .constructor-identity {
-  --constructor-logo-size: var(--apex-size-icon-small);
-  gap: var(--apex-space-1);
-}
-
-/* The containing panel, not viewport width, determines room for team names. */
-.season-around-race-standings {
-  container-type: inline-size;
 }
 .leader-list--constructors li > div strong {
   white-space: normal;

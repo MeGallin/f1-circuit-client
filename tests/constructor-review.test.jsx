@@ -26,12 +26,15 @@ const row = {
     session: { id: "session:2010", label: "Race", schedule: {} },
   },
 };
-test("undated constructor links do not borrow the ambient browsing season for the badge", () => {
+test("undated constructor links use the configured identity default, not an ambient dated-period mark", () => {
   const { container } = render(
     <MemoryRouter initialEntries={["/compare?season=2010"]}>
       <EntityLink kind="constructor" entity={team} />
     </MemoryRouter>,
   );
+  // This manifest filename is the explicit undated identity default, not a
+  // claim that this undated record belongs to 2026. Dated fixtures below must
+  // instead select their own period, even under a 2026 browsing URL.
   expect(container.querySelector("img")).toHaveAttribute(
     "src",
     "/images/constructors/red-bull-2026.svg",

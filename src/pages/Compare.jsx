@@ -4,6 +4,7 @@ import { useGetComparisonQuery, useGetSeasonsQuery } from "../api/archiveApi";
 import {
   PageHeading,
   Panel,
+  PanelBody,
   Select,
   Button,
   DataBoundary,
@@ -34,7 +35,7 @@ export function ComparisonResult({ data }) {
   const result = data?.comparison;
   return (
     <>
-      <SourceNote meta={data?.meta} />
+      <SourceNote meta={data?.meta} inset />
       {!result || !result.rows.length ? (
         <EmptyState
           title="Comparison metrics unavailable"
@@ -143,124 +144,126 @@ export default function Compare() {
         }
       />
       <Panel title="Choose a comparison">
-        <div className="entity-filters">
-          <Select
-            label="Compare type"
-            value={validKind ? kind : ""}
-            options={[
-              { value: "", label: "Choose type" },
-              ...kinds.map((value) => ({
-                value,
-                label: value[0].toUpperCase() + value.slice(1),
-              })),
-            ]}
-            onChange={(e) =>
-              update({
-                kind: e.target.value,
-                leftId: null,
-                rightId: null,
-                leftName: null,
-                rightName: null,
-                metric: "wins",
-              })
-            }
-          />
-          <Select
-            label="Metric"
-            value={validMetric ? metric : ""}
-            options={[
-              { value: "", label: "Choose metric" },
-              ...metrics
-                .filter((m) => kind !== "circuit" || m !== "points")
-                .map((value) => ({
+        <PanelBody>
+          <div className="entity-filters">
+            <Select
+              label="Compare type"
+              value={validKind ? kind : ""}
+              options={[
+                { value: "", label: "Choose type" },
+                ...kinds.map((value) => ({
                   value,
-                  label: value.replaceAll("-", " "),
+                  label: value[0].toUpperCase() + value.slice(1),
                 })),
-            ]}
-            onChange={(e) => update({ metric: e.target.value })}
-          />
-          <p className="muted entity-help">
-            {metricDefinitions[metric] ||
-              "Choose a metric to see its definition."}
-          </p>
-        </div>
-        <DataBoundary query={seasons}>
-          {seasons.currentData && (
+              ]}
+              onChange={(e) =>
+                update({
+                  kind: e.target.value,
+                  leftId: null,
+                  rightId: null,
+                  leftName: null,
+                  rightName: null,
+                  metric: "wins",
+                })
+              }
+            />
+            <Select
+              label="Metric"
+              value={validMetric ? metric : ""}
+              options={[
+                { value: "", label: "Choose metric" },
+                ...metrics
+                  .filter((m) => kind !== "circuit" || m !== "points")
+                  .map((value) => ({
+                    value,
+                    label: value.replaceAll("-", " "),
+                  })),
+              ]}
+              onChange={(e) => update({ metric: e.target.value })}
+            />
+            <p className="muted entity-help">
+              {metricDefinitions[metric] ||
+                "Choose a metric to see its definition."}
+            </p>
+          </div>
+          <DataBoundary query={seasons}>
+            {seasons.currentData && (
+              <div className="entity-filters">
+                <Select
+                  label="From season"
+                  value={from}
+                  options={yearOptions}
+                  onChange={(e) => update({ fromYear: e.target.value })}
+                />
+                <Select
+                  label="To season"
+                  value={to}
+                  options={yearOptions}
+                  onChange={(e) => update({ toYear: e.target.value })}
+                />
+              </div>
+            )}
+          </DataBoundary>
+          {validKind && (
             <div className="entity-filters">
-              <Select
-                label="From season"
-                value={from}
-                options={yearOptions}
-                onChange={(e) => update({ fromYear: e.target.value })}
-              />
-              <Select
-                label="To season"
-                value={to}
-                options={yearOptions}
-                onChange={(e) => update({ toYear: e.target.value })}
-              />
+              {["Left", "Right"].map((side) => {
+                const key = side.toLowerCase();
+                return kind === "season" ? (
+                  <Select
+                    key={side}
+                    label={`${side} season`}
+                    value={params.get(`${key}Id`) || ""}
+                    options={[
+                      { value: "", label: "Choose season" },
+                      ...(seasons.currentData?.items || []).map((s) => ({
+                        value: s.id,
+                        label: String(s.year),
+                      })),
+                    ]}
+                    onChange={(e) => update({ [`${key}Id`]: e.target.value })}
+                  />
+                ) : (
+                  <EntityPicker
+                    key={`${side}:${kind}`}
+                    label={`${side} ${kind}`}
+                    kind={kind}
+                    value={params.get(`${key}Id`) || ""}
+                    displayName={params.get(`${key}Name`) || ""}
+                    onChange={(id, entity) =>
+                      update({
+                        [`${key}Id`]: id || null,
+                        [`${key}Name`]: entity?.entity?.displayName || null,
+                      })
+                    }
+                  />
+                );
+              })}
             </div>
           )}
-        </DataBoundary>
-        {validKind && (
-          <div className="entity-filters">
-            {["Left", "Right"].map((side) => {
-              const key = side.toLowerCase();
-              return kind === "season" ? (
-                <Select
-                  key={side}
-                  label={`${side} season`}
-                  value={params.get(`${key}Id`) || ""}
-                  options={[
-                    { value: "", label: "Choose season" },
-                    ...(seasons.currentData?.items || []).map((s) => ({
-                      value: s.id,
-                      label: String(s.year),
-                    })),
-                  ]}
-                  onChange={(e) => update({ [`${key}Id`]: e.target.value })}
-                />
-              ) : (
-                <EntityPicker
-                  key={`${side}:${kind}`}
-                  label={`${side} ${kind}`}
-                  kind={kind}
-                  value={params.get(`${key}Id`) || ""}
-                  displayName={params.get(`${key}Name`) || ""}
-                  onChange={(id, entity) =>
-                    update({
-                      [`${key}Id`]: id || null,
-                      [`${key}Name`]: entity?.entity?.displayName || null,
-                    })
-                  }
-                />
-              );
-            })}
-          </div>
-        )}
-        {!valid && (
-          <ul className="entity-validation" role="status" aria-live="polite">
-            {validationMessages.map((message) => (
-              <li key={message}>{message}</li>
-            ))}
-          </ul>
-        )}
-        <Button
-          disabled={!valid || query.isFetching}
-          onClick={() =>
-            setParams(
-              changeFilters(params, {
-                kind,
-                metric,
-                fromYear: from,
-                toYear: to,
-                run: "1",
-              }),
-            )
-          }
-        >
-          Compare records
-        </Button>
+          {!valid && (
+            <ul className="entity-validation" role="status" aria-live="polite">
+              {validationMessages.map((message) => (
+                <li key={message}>{message}</li>
+              ))}
+            </ul>
+          )}
+          <Button
+            disabled={!valid || query.isFetching}
+            onClick={() =>
+              setParams(
+                changeFilters(params, {
+                  kind,
+                  metric,
+                  fromYear: from,
+                  toYear: to,
+                  run: "1",
+                }),
+              )
+            }
+          >
+            Compare records
+          </Button>
+        </PanelBody>
       </Panel>
       {valid && params.get("run") === "1" && (
         <Panel title="Published comparison">

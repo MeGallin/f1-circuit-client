@@ -23,7 +23,7 @@ test("overview layout study presents ten next-event comparison directions", () =
         element.textContent.replace(/\s+/g, " ").trim() === "14 of 23 events",
     ),
   ).toHaveLength(10);
-  expect(screen.getAllByLabelText("Driver number 12")).toHaveLength(20);
+  expect(screen.getAllByText("Driver number 12")).toHaveLength(20);
   expect(
     container.querySelector(".mockup-event-legend i.is-complete"),
   ).toBeInTheDocument();

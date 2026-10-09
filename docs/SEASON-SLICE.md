@@ -1,5 +1,32 @@
 # Season overview checkpoint
 
+## Current Home Option3/time/recovery contract — 8 October 2026
+
+[Approved reference fidelity](HOME-REFERENCE-FIDELITY.md) supersedes the earlier combined
+race/tabbed championship layout and its first-viewport geometry requirement.
+Current Home uses a combined left race header/podium, simultaneous top-three
+championships and single-active pinned expansion. Source-country SVG flags
+include header/history/next event; missing profile identity/publication cannot
+supply a country. Countdown, time preference, recovery and ribbon controls remain.
+No API source-write change or new deployment is verified.
+
+## Historical Home/time/recovery contract — 8 October 2026 (before Option3)
+
+Home has no separate Previous event block on any device; the approved complete
+history/details ribbon supersedes it. Equal footer actions keep existing labels,
+arrows and expansion/Return behavior. Next event/countdown remains. Latest-race
+title, action and winner fit the accepted1440×900 first viewport, without changing
+the ribbon composition. Overview/Calendar/Analytics share viewer-local primary
+time with explicit zone and UTC secondary; UTC preference/reset persists where
+available. Strict zoned timestamps drive the unchanged countdown instant; date-only
+records never imply midnight, and unknown/invalid venue zones remain unavailable.
+Eight-second slow feedback/retry uses the existing request without duplicating it;
+error recovery retains known season choice and never displays stale argument data.
+[Current review](SENIOR-REVIEW-2026-10-08.md) owns recorded checks; this prose update
+runs no tests or live refresh/import. Older release/Actions pending claims below
+are historical and do not override the7 October API TLS evidence or current local
+review's unverified deployment boundary.
+
 ## Stable active countdown clock — 6 October 2026
 
 The shared race/watch countdown keeps hours, minutes and seconds visible and
@@ -11,7 +38,7 @@ spoken duration and elapsed/pending states are unchanged. This is presentation
 only, not a scheduling/polling or server cooldown change. See
 [countdown regression evidence](FUNCTIONALITY-VALIDATION.md).
 
-## Current season-refresh behavior — 6 October 2026
+## Historical season-refresh review — 6 October 2026
 
 Current-UTC-year overview refresh calls `POST /refresh-data` with only the selected current season. The API selects the latest precise scheduled past race and can check it outside the automatic window. Historical refresh reloads the archive query without importing source data. The control distinguishes source outcomes/errors, shows a server `retryAfterMs` countdown for updated/unchanged/pending/cooldown/busy responses, and displays either the button or timer. Changing season/unmount aborts requests and clears timers; late responses cannot reload a newly selected historical season.
 

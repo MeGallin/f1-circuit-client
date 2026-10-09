@@ -17,7 +17,7 @@
 }
 .race-focus {
   padding: var(--apex-space-8);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
   background: var(--apex-color-surface);
   border-radius: var(--apex-shape-radius);
@@ -60,7 +60,7 @@
   display: grid;
   gap: var(--apex-space-5);
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .race-focus-results-heading {
   display: flex;
@@ -235,7 +235,7 @@
   justify-content: space-between;
   gap: var(--apex-space-6);
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .race-focus-bottom > span {
   display: flex;
@@ -248,7 +248,7 @@
   display: grid;
   gap: var(--apex-space-5);
   padding-top: var(--apex-space-7);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .race-focus-availability-heading {
   display: flex;
@@ -319,7 +319,7 @@
   grid-template-columns: 28px minmax(0, 1fr);
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   border-left: var(--apex-shape-active-indicator) solid transparent;
 }
 .calendar-row:last-child {
@@ -373,7 +373,7 @@
   align-items: center;
   min-width: 0;
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .leader-list li > div {
   min-width: 0;
@@ -394,7 +394,7 @@
   font-family: var(--apex-font-numeric);
 }
 .leader-points strong {
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
   font-size: var(--apex-type-points-size);
 }
 .leader-points > span {
@@ -403,7 +403,7 @@
 }
 .panel-footnote {
   padding: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
   font-size: var(--apex-type-caption-size);
   color: var(--apex-color-muted);
 }
@@ -422,7 +422,7 @@
     row-gap: var(--apex-space-3);
   }
   .leader-list li {
-    border-top: 1px solid var(--apex-color-line);
+    border-top: var(--apex-shape-border) solid var(--apex-color-line);
     border-bottom: 0;
   }
   .leader-list li:nth-child(even) {
@@ -468,22 +468,16 @@
 .season-around-race {
   display: grid;
   overflow: hidden;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-canvas);
-}
-
-.season-around-race-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(22rem, 1fr);
-  align-items: stretch;
 }
 
 .season-around-race .race-focus {
   min-width: 0;
   padding: var(--apex-space-7);
   border: 0;
-  border-right: 1px solid var(--apex-color-line);
+  border-right: var(--apex-shape-border) solid var(--apex-color-line);
   border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
   border-radius: 0;
   background: transparent;
@@ -493,7 +487,7 @@
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
 }
 
 .season-around-race .race-focus-content {
@@ -504,7 +498,6 @@
   min-width: 0;
 }
 
-.race-podium-driver-line,
 .leader-driver-line {
   display: flex;
   width: 100%;
@@ -513,36 +506,11 @@
   gap: var(--apex-space-2);
 }
 
-.race-podium-driver-copy {
-  display: grid;
-  min-width: 0;
-  gap: var(--apex-space-1);
-}
-
-.race-podium-driver-line strong,
 .leader-driver-line strong {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.season-around-race-standings {
-  min-width: 0;
-}
-
-.season-around-race .season-around-race-panel {
-  height: 100%;
-  border: 0;
-  border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
-  border-radius: 0;
-  background: transparent;
-}
-
-.season-around-race .season-around-race-panel .panel-heading {
-  align-items: end;
-  padding: var(--apex-space-7);
-  border-bottom: 0;
 }
 
 .season-around-race .panel-heading > div {
@@ -552,22 +520,6 @@
 
 .season-around-race .panel-eyebrow {
   margin: 0;
-}
-
-.season-around-race .season-around-race-panel .tabs {
-  padding-inline: var(--apex-space-7);
-}
-
-.season-around-race .season-around-race-panel .leader-list {
-  padding-inline: var(--apex-space-7);
-}
-
-.season-around-race .season-around-race-panel .panel-footnote {
-  margin-top: var(--apex-space-5);
-}
-
-.season-around-race .season-around-race-panel > .button {
-  margin: 0 var(--apex-space-7) var(--apex-space-7);
 }
 
 .overview-adjacent-event {
@@ -584,7 +536,7 @@
 }
 
 .overview-adjacent-event--next {
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   background: color-mix(in srgb, var(--apex-color-surface) 56%, transparent);
 }
 
@@ -601,7 +553,7 @@
   grid-area: countdown;
   min-width: 0;
   padding-right: var(--apex-space-7);
-  border-right: 1px solid var(--apex-color-line);
+  border-right: var(--apex-shape-border) solid var(--apex-color-line);
 }
 
 .overview-adjacent-event-countdown .race-countdown {
@@ -747,7 +699,7 @@
   color: var(--apex-color-muted);
   font-family: var(--apex-font-display);
   font-size: var(--apex-type-metric-size);
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
   line-height: 0.9;
 }
 
@@ -803,7 +755,7 @@
 
 .overview-adjacent-event-date b {
   color: var(--apex-color-text);
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
 }
 
 .overview-adjacent-event-date small {
@@ -820,7 +772,7 @@
 }
 
 .season-around-race-provenance {
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 
 .season-around-race-provenance .source-note {
@@ -830,17 +782,9 @@
 }
 
 @media (max-width: 899px) {
-  .season-around-race-main {
-    grid-template-columns: 1fr;
-  }
-
   .season-around-race .race-focus {
     border-right: 0;
     border-left: 0;
-  }
-
-  .season-around-race .season-around-race-panel {
-    border-top: 1px solid var(--apex-color-line);
   }
 
   .overview-adjacent-event {
@@ -866,7 +810,7 @@
     padding-right: 0;
     padding-bottom: var(--apex-space-5);
     border-right: 0;
-    border-bottom: 1px solid var(--apex-color-line);
+    border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   }
 
   .overview-adjacent-event--countdown-hero .overview-adjacent-event-hero-meta {

@@ -35,9 +35,15 @@ export function ConstructorLogo({ constructor, year, decorative = false }) {
   );
 }
 
-export function ConstructorIdentity({ constructor, year }) {
+export function ConstructorIdentity({
+  constructor,
+  year,
+  presentation = "compact",
+}) {
   return (
-    <span className="constructor-identity">
+    <span
+      className={`constructor-identity${["championship", "compact", "heading"].includes(presentation) ? ` constructor-identity--${presentation}` : ""}`}
+    >
       <ConstructorLogo constructor={constructor} year={year} decorative />
       <span className="constructor-identity-name">
         {constructor?.displayName || "Constructor not supplied"}
@@ -46,12 +52,20 @@ export function ConstructorIdentity({ constructor, year }) {
   );
 }
 
-export function ConstructorIdentities({ constructors = [], year }) {
+export function ConstructorIdentities({
+  constructors = [],
+  year,
+  presentation,
+}) {
   return Array.isArray(constructors) && constructors.length
     ? constructors.map((constructor, index) => (
         <span key={`${constructor.id}:${index}`}>
           {index > 0 && " / "}
-          <ConstructorIdentity constructor={constructor} year={year} />
+          <ConstructorIdentity
+            constructor={constructor}
+            year={year}
+            presentation={presentation}
+          />
         </span>
       ))
     : "Constructor not supplied";

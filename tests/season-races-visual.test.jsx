@@ -88,8 +88,13 @@ test("published cards show a substantial filled flag and Completed, future cards
 
 test("published count is a compact inline count and circuit metadata is source-only", () => {
   render(<SeasonEventStrip events={events} />);
-  const count = screen.getByLabelText("2 of 3 races have published results");
-  expect(count).toHaveTextContent(/^2of 3$/);
+  const count = screen
+    .getByText("2 of 3 races have published results")
+    .closest(".season-races-count");
+  expect(count.querySelector("strong")).toHaveTextContent(/^2$/);
+  expect(count.querySelector('span[aria-hidden="true"]')).toHaveTextContent(
+    /^of 3$/,
+  );
   expect(count.querySelector("br")).toBeNull();
   expect(
     within(card("latest")).getByText("Sepang International Circuit"),

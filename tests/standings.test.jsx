@@ -11,7 +11,11 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-test.each(["", "&round=12"])(
+test.each([
+  "",
+  "&round=12",
+  "&round=12&standingSnapshotId=standing%3A2024%3A12",
+])(
   "standings pagination preserves initial selection filters %s",
   async (selection) => {
     const requests = [];
@@ -117,7 +121,17 @@ test.each(["", "&round=12"])(
       );
     expect(filters(second)).toEqual(filters(first));
     expect(second.searchParams.get("snapshotId")).toBe("stable");
-    expect(second.searchParams.has("standingSnapshotId")).toBe(false);
+    expect(second.searchParams.has("standingSnapshotId")).toBe(
+      selection.includes("standingSnapshotId"),
+    );
+    if (selection.includes("standingSnapshotId")) {
+      expect(first.searchParams.get("standingSnapshotId")).toBe(
+        "standing:2024:12",
+      );
+      expect(second.searchParams.get("standingSnapshotId")).toBe(
+        "standing:2024:12",
+      );
+    }
     view.unmount();
     store.dispatch(archiveApi.util.resetApiState());
   },

@@ -1,11 +1,43 @@
 # Functionality validation
 
+Latest Home-only graphics use a bounded publication-pinned read endpoint, exact
+historical driver/constructor standings leaders and supplementary driver race entry points. Current contract,
+fail-first checks and narrow parent browser samples are in
+[Home championship graphics](HOME-CHAMPIONSHIP-GRAPHICS.md). No full historical or
+whole-application visual certification is implied; earlier checks below remain dated.
+
+## Current site-wide handoff — 8 October 2026
+
+[Binding contract, route matrix and verification](UI-CONSISTENCY.md) records the
+final589 tests/55files,33 focused/4files plus106/11 and lint/build/token/asset gates.
+Earlier569/53 and68/9 predate final review follow-ups. Parent
+browser samples include live Ask19 wins in2023 with details/evidence on390; prior
+transient failures have unknown cause and were not reproduced, not fixed. Earlier
+counts and Home proofs below remain dated evidence; API was not rerun.
+
+## Current Home Option3 — 8 October 2026
+
+[Scoped implementation and execution evidence](HOME-REFERENCE-FIDELITY.md) supersedes
+earlier Home layout/totals: simultaneous top-three championships, lazy complete
+pinned expansion, explicit missing context/rank/points and actual country images.
+The current a5098 combined-left architecture supersedes the full-width header;
+final525 tests/48 files,127 focused/6files,lint/assets/tokens/build and sampled
+1440/1024/390/320/2000 proof are in that record. Earlier500/47 and123/7
+plus1440/390/320/2000 proof remain historical. No API implementation change or API test rerun; no new release/live
+provider publication is verified. Earlier dated checks remain historical.
+
 ## Current senior review — 8 October 2026
 
 The [senior-review record](SENIOR-REVIEW-2026-10-08.md) contains current full-check
 results, fail-first context/time/metric/tooltip regressions and artifact inventory.
 It supersedes earlier totals below without claiming deployment, exhaustive source
 accuracy or accessibility certification. Parent browser smoke is accepted.
+
+Recorded coding checks: client460 tests/44 files, then12 focused/2files after
+whitespace-only generator cleanup; API163, Newman114 requests/192 assertions.
+This documentation-only checkpoint executes no tests/builds and verifies no new
+commit/push/deployment. Equal ribbon actions/Return behavior and removed Previous
+event are accepted Home amendments, not changes to history or next-event behavior.
 
 ## Home Previous event removal — 8 October 2026
 
@@ -17,7 +49,7 @@ former band assertions now check pending races in the unchanged ribbon.
 [Exact red/green and accepted desktop/mobile proof](HOME-PREVIOUS-EVENT-REMOVAL.md).
 Earlier full436-test result below predates this scoped followup.
 
-## Accepted audit handoff — 8 October 2026 (before Home followup)
+## Historical accepted audit handoff — 8 October 2026 (before Home followup)
 
 All twelve UI/UX audit gates are implemented and parent-browser accepted.
 Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,

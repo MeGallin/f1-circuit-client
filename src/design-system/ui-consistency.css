@@ -1,0 +1,82 @@
+/* Comparable header/navigation patterns; toolbars and Home podium are separate. */
+/* Decorative duplicate numerals retain the badge colour, not route span styling. */
+.driver-number > [aria-hidden="true"] {
+  color: inherit;
+}
+.page-heading,
+.panel-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  align-items: start;
+}
+.panel-heading-titles {
+  display: grid;
+  min-width: 0;
+  gap: var(--apex-space-2);
+}
+.panel-heading-titles > * {
+  margin: 0;
+}
+.page-actions,
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: var(--apex-space-4);
+  min-width: 0;
+  max-width: 100%;
+}
+.panel-body {
+  display: grid;
+  min-width: 0;
+  padding: var(--apex-space-6);
+  gap: var(--apex-space-6);
+}
+.panel-body > * {
+  min-width: 0;
+  max-width: 100%;
+  margin-block: 0;
+}
+.panel-body > .button,
+.panel-body > .status {
+  justify-self: start;
+}
+.panel-body .entity-help {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.audit-result {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.source-note--inset {
+  padding-inline: var(--apex-space-6);
+}
+.analytics-page h3 {
+  font-family: var(--apex-font-body);
+  font-size: var(--apex-type-prose-size);
+  font-weight: var(--apex-type-section-weight);
+  line-height: var(--apex-type-control-line);
+}
+.analytics-chart-grid > .panel:last-child:nth-child(even) {
+  grid-column: 1 / -1;
+}
+@media (max-width: 767px) {
+  .calendar-filter .calendar-filter-options {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, var(--apex-layout-field-min-width)), 1fr)
+    );
+  }
+  .calendar-filter-options .calendar-filter-option {
+    min-height: var(--apex-size-target);
+    justify-content: center;
+  }
+  .calendar-filter-options .calendar-filter-option:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}

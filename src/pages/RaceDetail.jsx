@@ -485,7 +485,15 @@ export function RaceRecords({
                 ? row.entry.drivers.map((driver, index) => (
                     <span key={driver.id}>
                       {index > 0 ? " / " : ""}
-                      <EntityLink entity={driver} kind="driver" />
+                      <EntityLink
+                        entity={driver}
+                        kind="driver"
+                        number={row.entry.number}
+                        season={
+                          row.eventContext?.event?.year ??
+                          evidenceContext?.season
+                        }
+                      />
                     </span>
                   ))
                 : names[row.entryId] || "Driver name not supplied"}
@@ -583,10 +591,16 @@ export function RaceRecords({
   );
 }
 
-function resultDriver(row, names) {
+function resultDriver(row, names, season) {
   if (row.entry?.drivers?.length)
     return row.entry.drivers.map((driver) => (
-      <EntityLink key={driver.id} entity={driver} kind="driver" />
+      <EntityLink
+        key={driver.id}
+        entity={driver}
+        kind="driver"
+        number={row.entry.number}
+        season={row.eventContext?.event?.year ?? season}
+      />
     ));
   return names[row.entryId] || "Driver name not supplied";
 }
@@ -671,7 +685,7 @@ export function RaceResultTable({
           label: "Driver",
           rowHeader: true,
           stickyIdentity: true,
-          render: (row) => resultDriver(row, names),
+          render: (row) => resultDriver(row, names, evidenceContext?.season),
         },
         {
           key: "constructor",

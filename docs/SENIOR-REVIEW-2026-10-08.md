@@ -1,6 +1,6 @@
-# Uncommitted API/client senior review — 8 October 2026
+# Completed API/client senior review — 8 October 2026
 
-Current review covers the complete uncommitted audit and Home followups, not just
+The coding review covered the complete then-uncommitted audit and Home followups, not just
 the last footer amendment. Accepted configuration: gpt-6.1-sol / medium; runtime
 and billing were not independently verified. Existing unrelated dirty prose was
 preserved. This checkpoint supersedes earlier check totals, not historical browser
@@ -106,3 +106,85 @@ include preserved earlier edits, not sole authorship attribution.
 No commit, push, deployment, source import, live write or environment/model change.
 User-managed release/live smoke, PostgreSQL concurrency, provider publication,
 rights clearance and exhaustive accessibility remain separate verification.
+
+## Documentation-only alignment checkpoint — 8 October 2026
+
+After coding review, inventory covered root AGENTS.md/memory.md and all39 app-owned
+Markdown files in API/client (no nested AGENTS.md). Current README/checkpoint/QA/
+functionality/spec, design and route contracts, API endpoint/metric/deployment guides
+and this review are aligned; unrelated question/storage/archive/artwork evidence
+and root outputs remain unchanged. Root guidance now labels f7f9ba6/354 tests as
+historical and links the8 October guardrails. Root AGENTS.md and memory.md require
+separate preservation outside both Git repositories; personal configuration and
+read-only synced sources are untouched.
+
+The primary analytics endpoint guide now describes published championship versus
+selected totals, per-kind coverage, explicit retirement/unknown/classification
+semantics and `dnfRate: null`, rather than leaving obsolete operational DNF wording.
+Current checks remain the completed460/44 client,12 focused/2files after whitespace
+generation cleanup,163 API and Newman114/192 executions above. No application tests,
+builds or browser checks rerun for prose. Documentation validation covers existing
+local links, the external archive inventory/SHA-256, formatting and both Git diffs.
+No new commit, push or deployment is verified or performed by this alignment.
+
+Final read-only Git inspection found local API HEAD10fa996 and client HEAD9b5c3a9.
+Implementation now resides in those local commits; only this task's Markdown edits
+remain dirty. This task created neither commit and performed no fresh remote/push
+or deployment check. Earlier uncommitted statements describe the coding-review
+execution boundary, not current Git state.
+
+Completed documentation checks: **23 changed Markdown records**, **143 relative
+links / 51 absolute local archive links**, zero missing; Prettier and both Git diff
+checks passed. Archive recheck:62 files/265,860 bytes, zero SHA-256 mismatches,
+originals absent; both docs folders contain zero raw `.txt` files. All382 inventoried
+non-Markdown repository files retain their pre-task hashes, with none added/removed.
+Application tests/build/browser checks were not rerun. Remaining release/live,
+provider/concurrency/rights/accessibility verification above is unchanged.
+
+Exact Markdown paths changed by this alignment (earlier dirty edits preserved):
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/AGENTS.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/memory.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/api/README.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/api/docs/ANALYTICS.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/api/docs/ANALYTICS-METRICS.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/api/docs/DEPLOYMENT.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/api/docs/FUNCTIONALITY-VALIDATION.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/README.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/CHECKPOINT.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/FUNCTIONALITY-VALIDATION.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/LOCAL-QA.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/OVERVIEW-LAYOUT-IMPLEMENTATION-SPEC.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/UX-AUDIT-IMPLEMENTATION-VERIFICATION.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/HOME-PREVIOUS-EVENT-REMOVAL.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/DESIGN.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/TRUST-SURFACES.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/RACE-DETAIL-SLICE.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/STANDINGS-SLICE.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/SEASON-SELECTION.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/SEASON-SLICE.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/CALENDAR-SLICE.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/tests/browser-qa/README.md`
+
+- `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/client/docs/SENIOR-REVIEW-2026-10-08.md`

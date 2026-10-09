@@ -1,6 +1,18 @@
 # Season selection correction
 
-## Current selection/refresh review — 6 October 2026
+## Current selection contract — 8 October 2026
+
+Analytics entity options come from eligible published season/session entries;
+pending new-season filters cannot reuse old-season entity choices. Known season/
+session controls remain usable; invalid selections are explained with explicit reset.
+No matching records are unavailable, not fake zero or populated chart series.
+Championship season/publication/round context remains independent of result filters.
+Slow/error recovery retains chosen known seasons without showing stale argument data.
+[Current review](SENIOR-REVIEW-2026-10-08.md) owns final checks and browser boundaries;
+earlier6 October selection/refresh and release observations below remain historical.
+This documentation pass reruns no tests and verifies no new commit/push/deployment.
+
+## Historical selection/refresh review — 6 October 2026
 
 Current-year refresh performs a bounded source check; historical refresh only reloads archive data. Season changes remount the refresh state, abort its pending request and clear its server-driven timer. A late current-year response cannot add feedback or reload a newly selected historical season. Refresh invalidates the catalogue and selected-season summary alongside calendar/standings, event and session caches. The overview uses only the selected summary publication for dependent calendar/detail queries.
 

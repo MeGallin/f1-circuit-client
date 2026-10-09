@@ -15,12 +15,15 @@
   }
   .standing-toolbar {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--apex-space-5);
     align-items: end;
   }
   .standing-toolbar .field {
     min-width: 0;
+  }
+  .standing-toolbar .field:first-child {
+    grid-column: 1 / -1;
   }
   .standing-refresh span {
     display: none;

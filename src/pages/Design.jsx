@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { PaletteIcon } from "@phosphor-icons/react";
+import { DriverIdentity } from "../components/DriverIdentity";
+import { ConstructorIdentity } from "../components/ConstructorIdentity";
 import {
   Button,
   Panel,
@@ -38,6 +40,24 @@ export default function Design() {
         >
           {tab === "controls" ? (
             <div className="demo-stack">
+              <p className="muted">
+                Identity component fixtures — not archive records
+              </p>
+              <div className="inline">
+                <DriverIdentity
+                  presentation="record"
+                  stackOnMobile
+                  name="Example driver"
+                  number={42}
+                />
+                <ConstructorIdentity
+                  constructor={{
+                    id: "constructor:mercedes",
+                    displayName: "Mercedes",
+                  }}
+                  year={2026}
+                />
+              </div>
               <div className="inline">
                 <Button>Primary action</Button>
                 <Button variant="secondary">Secondary</Button>

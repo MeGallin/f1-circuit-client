@@ -1,6 +1,7 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import { FlagCheckeredIcon, UserCircleIcon } from "@phosphor-icons/react";
 import { ConstructorIdentity } from "../components/ConstructorIdentity";
+import { DriverIdentity } from "../components/DriverIdentity";
 import {
   useGetProfileQuery,
   useGetHistoryQuery,
@@ -11,6 +12,7 @@ import {
 import {
   PageHeading,
   Panel,
+  PanelBody,
   Button,
   ActionLink,
   Select,
@@ -79,7 +81,9 @@ export function HistoryRows({ kind, rows }) {
               </span>
             </div>
           ) : (
-            <p className="muted">Race context not supplied by this history response.</p>
+            <p className="muted">
+              Race context not supplied by this history response.
+            </p>
           )}
           <RaceRecords
             rows={[row]}
@@ -263,7 +267,25 @@ export default function Profile({ kind }) {
                 showFallback
               />
               <div>
-                <strong>{kind === "constructor" ? <ConstructorIdentity constructor={p.entity} year={year} /> : p.entity.displayName}</strong>
+                <strong>
+                  {kind === "constructor" ? (
+                    <ConstructorIdentity
+                      constructor={p.entity}
+                      year={year}
+                      presentation="heading"
+                    />
+                  ) : kind === "driver" ? (
+                    <DriverIdentity
+                      inline
+                      stackOnMobile
+                      presentation="heading"
+                      name={p.entity.displayName}
+                      number={p.number ?? p.entity.number}
+                    />
+                  ) : (
+                    p.entity.displayName
+                  )}
+                </strong>
                 <span>
                   {kind === "driver"
                     ? p.nationality
@@ -271,55 +293,57 @@ export default function Profile({ kind }) {
                 </span>
               </div>
             </div>
-            <dl className="entity-facts">
-              {(kind === "driver"
-                ? [
-                    ["Nationality", p.nationality],
-                    ["Date of birth", p.birthDate],
-                  ]
-                : kind === "constructor"
+            <PanelBody>
+              <dl className="entity-facts">
+                {(kind === "driver"
                   ? [
                       ["Nationality", p.nationality],
-                      ["Country", p.country],
+                      ["Date of birth", p.birthDate],
                     ]
-                  : [
-                      ["Country", p.country],
-                      ["Latitude", p.latitude],
-                      ["Longitude", p.longitude],
-                    ]
-              ).map(([key, value]) => (
-                <div key={key}>
-                  <dt>{key}</dt>
-                  <dd>{value ?? "Not supplied"}</dd>
-                </div>
-              ))}
-            </dl>
-            {p.aliases.length > 0 && (
-              <p>Also known as: {p.aliases.join(", ")}</p>
-            )}
-            {p.metrics.length ? (
-              <div className="entity-facts">
-                {p.metrics.map((m) => (
-                  <Metric
-                    key={m.id}
-                    label={m.key}
-                    value={m.value ?? "Not supplied"}
-                    detail={`${m.unit} · ${m.scope} · ${m.coverage} coverage`}
-                  />
+                  : kind === "constructor"
+                    ? [
+                        ["Nationality", p.nationality],
+                        ["Country", p.country],
+                      ]
+                    : [
+                        ["Country", p.country],
+                        ["Latitude", p.latitude],
+                        ["Longitude", p.longitude],
+                      ]
+                ).map(([key, value]) => (
+                  <div key={key}>
+                    <dt>{key}</dt>
+                    <dd>{value ?? "Not supplied"}</dd>
+                  </div>
                 ))}
-              </div>
-            ) : (
-              <p className="muted">
-                Career metrics are not supplied. No totals have been inferred
-                from partial records.
-              </p>
-            )}
-            <ActionLink
-              to={`/compare?${new URLSearchParams({ kind, leftId: id, leftName: p.entity.displayName, ...(year ? { season: year, fromYear: year, toYear: year } : {}) })}`}
-            >
-              Compare {kind === "constructor" ? "constructors" : `${kind}s`}
-            </ActionLink>
-            <SourceNote meta={data.meta} />
+              </dl>
+              {p.aliases.length > 0 && (
+                <p>Also known as: {p.aliases.join(", ")}</p>
+              )}
+              {p.metrics.length ? (
+                <div className="entity-facts">
+                  {p.metrics.map((m) => (
+                    <Metric
+                      key={m.id}
+                      label={m.key}
+                      value={m.value ?? "Not supplied"}
+                      detail={`${m.unit} · ${m.scope} · ${m.coverage} coverage`}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="muted">
+                  Career metrics are not supplied. No totals have been inferred
+                  from partial records.
+                </p>
+              )}
+              <ActionLink
+                to={`/compare?${new URLSearchParams({ kind, leftId: id, leftName: p.entity.displayName, ...(year ? { season: year, fromYear: year, toYear: year } : {}) })}`}
+              >
+                Compare {kind === "constructor" ? "constructors" : `${kind}s`}
+              </ActionLink>
+              <SourceNote meta={data.meta} />
+            </PanelBody>
           </Panel>
         ) : (
           profile.isSuccess && <EmptyState title="Profile unavailable" />
@@ -327,72 +351,74 @@ export default function Profile({ kind }) {
       </DataBoundary>
       {p && (
         <Panel title="Historical archive">
-          <DataBoundary query={seasons}>
-            {seasons.currentData && (
-              <Select
-                label="History season"
-                value={year}
-                options={[
-                  { value: "", label: "All imported seasons" },
-                  ...seasons.currentData.items
-                    .filter((s) => isScopedSeason(s.year))
-                    .map((s) => ({
-                      value: String(s.year),
-                      label: seasonOptionLabel(s),
-                    })),
-                  ...(!validYear
-                    ? [{ value: year, label: "Invalid season" }]
-                    : []),
-                ]}
-                onChange={(e) =>
-                  setParams(changeFilters(params, { season: e.target.value }))
+          <PanelBody>
+            <DataBoundary query={seasons}>
+              {seasons.currentData && (
+                <Select
+                  label="History season"
+                  value={year}
+                  options={[
+                    { value: "", label: "All imported seasons" },
+                    ...seasons.currentData.items
+                      .filter((s) => isScopedSeason(s.year))
+                      .map((s) => ({
+                        value: String(s.year),
+                        label: seasonOptionLabel(s),
+                      })),
+                    ...(!validYear
+                      ? [{ value: year, label: "Invalid season" }]
+                      : []),
+                  ]}
+                  onChange={(e) =>
+                    setParams(changeFilters(params, { season: e.target.value }))
+                  }
+                />
+              )}
+            </DataBoundary>
+            {!validYear || !validView ? (
+              <EmptyState
+                title="Invalid archive selection"
+                description="Choose a listed season and a supported history view."
+                action={
+                  <Button
+                    onClick={() =>
+                      setParams(
+                        changeFilters(params, { season: null, view: null }),
+                      )
+                    }
+                  >
+                    Reset selection
+                  </Button>
                 }
               />
+            ) : (
+              <Tabs
+                label="Profile history"
+                items={views}
+                value={view}
+                onChange={(value) =>
+                  setParams(changeFilters(params, { view: value }))
+                }
+              >
+                <p className="muted">
+                  {view === "history" && kind !== "circuit"
+                    ? "Each result is a published entry classification. Race and session context is shown when supplied; gaps remain explicit."
+                    : "Only published records are shown. Gaps in coverage are not filled or estimated."}
+                </p>
+                <History
+                  refreshProfile={refresh}
+                  kind={kind}
+                  id={id}
+                  view={view}
+                  year={year ? Number(year) : undefined}
+                  snapshotId={snapshotId || data.meta.snapshotId}
+                  params={params}
+                  setParams={setParams}
+                  country={kind === "circuit" ? p.country : undefined}
+                />
+              </Tabs>
             )}
-          </DataBoundary>
-          {!validYear || !validView ? (
-            <EmptyState
-              title="Invalid archive selection"
-              description="Choose a listed season and a supported history view."
-              action={
-                <Button
-                  onClick={() =>
-                    setParams(
-                      changeFilters(params, { season: null, view: null }),
-                    )
-                  }
-                >
-                  Reset selection
-                </Button>
-              }
-            />
-          ) : (
-            <Tabs
-              label="Profile history"
-              items={views}
-              value={view}
-              onChange={(value) =>
-                setParams(changeFilters(params, { view: value }))
-              }
-            >
-              <p className="muted">
-                {view === "history" && kind !== "circuit"
-                  ? "Each result is a published entry classification. Race and session context is shown when supplied; gaps remain explicit."
-                  : "Only published records are shown. Gaps in coverage are not filled or estimated."}
-              </p>
-              <History
-                refreshProfile={refresh}
-                kind={kind}
-                id={id}
-                view={view}
-                year={year ? Number(year) : undefined}
-                snapshotId={snapshotId || data.meta.snapshotId}
-                params={params}
-                setParams={setParams}
-                country={kind === "circuit" ? p.country : undefined}
-              />
-            </Tabs>
-          )}
+          </PanelBody>
         </Panel>
       )}
     </div>

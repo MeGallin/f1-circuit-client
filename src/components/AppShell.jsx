@@ -72,7 +72,8 @@ export function Navigation({ mobile = false, onHeight }) {
   }, [mobile, onHeight]);
   const [moreOpen, setMoreOpen] = useState(false);
   const { search, pathname } = useLocation();
-  let eventId = new URLSearchParams(search).get("event");
+  const sourceParams = new URLSearchParams(search);
+  let eventId = sourceParams.get("event");
   if (pathname.startsWith("/events/")) {
     try {
       eventId = decodeURIComponent(pathname.slice(8));
@@ -81,8 +82,8 @@ export function Navigation({ mobile = false, onHeight }) {
     }
   }
   const navigationParams = new URLSearchParams();
-  for (const key of ["season", "kind", "round"]) {
-    const value = new URLSearchParams(search).get(key);
+  for (const key of ["season", "snapshot"]) {
+    const value = sourceParams.get(key);
     if (value != null) navigationParams.set(key, value);
   }
   if (eventId) navigationParams.set("event", eventId);
@@ -90,7 +91,20 @@ export function Navigation({ mobile = false, onHeight }) {
     navigationParams.set("season", String(runtimeYear()));
   const target = (to) => {
     if (to === "/explore") return to;
-    return `${to}${navigationParams.size ? `?${navigationParams}` : ""}`;
+    const destination = new URLSearchParams(navigationParams);
+    if (to === "/standings" && pathname === "/standings") {
+      const kind = sourceParams.get("kind");
+      if (["drivers", "constructors"].includes(kind))
+        destination.set("kind", kind);
+      const round = sourceParams.get("round");
+      if (/^[1-9]\d*$/.test(round || "") && Number.isSafeInteger(Number(round)))
+        destination.set("round", round);
+      for (const key of ["standingSnapshotId", "standingSnapshot"]) {
+        const value = sourceParams.get(key);
+        if (value) destination.set(key, value);
+      }
+    }
+    return `${to}${destination.size ? `?${destination}` : ""}`;
   };
   const isSecondaryActive = secondaryNavigation.some(({ to }) =>
     to === "/" ? pathname === "/" : pathname.startsWith(to),

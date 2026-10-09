@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   CircuitSilhouette,
   CountryFlag,
@@ -8,17 +8,27 @@ import {
   layoutApplicability,
   selectLayout,
 } from "../src/components/visuals";
+afterEach(cleanup);
 
 describe("country visuals", () => {
-  it("normalises supported country names to a native flag", () => {
+  it("known countries use the bundled image consistently outside Home", () => {
+    render(<CountryFlag country="UK" />);
+    expect(screen.getByRole("img", { name: "UK flag" }).tagName).toBe("IMG");
+    expect(screen.getByRole("img", { name: "UK flag" })).toHaveAttribute(
+      "src",
+      "/images/flags/gb.svg",
+    );
+  });
+  it("normalises supported country names to a bundled flag", () => {
     expect(countryCode("British")).toBe("GB");
     expect(countryCode("UK")).toBe("GB");
     expect(countryFlagEmoji("British")).toBe("🇬🇧");
 
     render(<CountryFlag country="British" label="Driver nationality" />);
 
-    expect(screen.getByRole("img", { name: "British flag" })).toHaveTextContent(
-      "GB",
+    expect(screen.getByRole("img", { name: "British flag" })).toHaveAttribute(
+      "src",
+      "/images/flags/gb.svg",
     );
   });
 
@@ -32,6 +42,25 @@ describe("country visuals", () => {
 });
 
 describe("circuit visuals", () => {
+  it("Home compact historical label retains the full applicability explanation in source details", () => {
+    const { container } = render(
+      <CircuitSilhouette
+        compactLabel
+        circuitName="Independent circuit"
+        layout={{
+          assetUrl: "https://example.com/layout.svg",
+          applicability: "historical-fallback",
+          attribution: "Independent source",
+        }}
+      />,
+    );
+    expect(
+      container.querySelector(".circuit-silhouette-applicability"),
+    ).toHaveTextContent(/^Historical layout$/);
+    expect(
+      container.querySelector(".circuit-silhouette-source"),
+    ).toHaveTextContent("the exact event-year layout was not supplied");
+  });
   it("does not invent a layout when the API supplies no asset", () => {
     const { container } = render(<CircuitSilhouette layout={{}} />);
     expect(container).toBeEmptyDOMElement();

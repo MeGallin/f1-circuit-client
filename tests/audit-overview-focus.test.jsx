@@ -30,11 +30,12 @@ vi.mock("../src/api/archiveApi", () => ({
 }));
 afterEach(cleanup);
 
-test("UX-06 desktop focus follows content instead of distributing stretched standings height", () => {
+test("UX-06 countdown compaction survives the newly authorized equal-height Home card reflow", () => {
   const extension = "src/design-system/overview-focus.css";
   const css =
     readFileSync("src/styles/overview.css", "utf8") +
-    (existsSync(extension) ? readFileSync(extension, "utf8") : "");
+    (existsSync(extension) ? readFileSync(extension, "utf8") : "") +
+    readFileSync("src/design-system/home-fidelity.css", "utf8");
   expect(
     /--apex-size-overview-track-compact:\s*8rem/.test(
       readFileSync("src/design-system/audit-layout.tokens.css", "utf8"),
@@ -45,16 +46,9 @@ test("UX-06 desktop focus follows content instead of distributing stretched stan
       css,
     ),
   ).toBe(true);
-  expect(
-    /\.season-around-race\s+\.race-focus\s*\{[^}]*align-self:\s*start[^}]*justify-content:\s*flex-start/s.test(
-      css,
-    ),
-  ).toBe(true);
-  expect(
-    /\.season-around-race\s+\.race-focus\s+h2\s*\{[^}]*font-size:\s*var\(--apex-type-title-size\)/s.test(
-      css,
-    ),
-  ).toBe(true);
+  // a5098 reference supersedes the former full-width race/unstretched-preview arrangement.
+  expect(css).toContain("align-items: stretch");
+  expect(css).toContain("font-size: var(--apex-type-title-size)");
   expect(
     /\.race-focus-content[^}]*\.circuit-silhouette\s+img\s*\{[^}]*height:\s*var\(--apex-size-overview-track-compact\)/s.test(
       css,

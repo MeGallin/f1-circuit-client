@@ -1,277 +1,32 @@
-import { APEX_ICONS } from "../../design-system/apex.tokens";
 import { useEffect, useState } from "react";
-import { CalendarBlankIcon } from "@phosphor-icons/react";
 import {
   Panel,
-  CircuitName,
-  DriverNumber,
   RaceStatus,
-  Tabs,
   EmptyState,
   SourceNote,
   DataBoundary,
   ActionLink,
 } from "../../components/ui";
-import {
-  useGetCalendarQuery,
-  useGetEventQuery,
-  useGetLayoutsQuery,
-  useGetProfileQuery,
-  useGetStandingsQuery,
-} from "../../api/archiveApi";
-import {
-  CircuitSilhouette,
-  CountryFlag,
-  selectLayout,
-} from "../../components/visuals";
+import { useGetCalendarQuery } from "../../api/archiveApi";
+import { CountryFlag } from "../../components/visuals";
 import {
   dateLabel,
   adjacentCalendarEvents,
   focusEvent,
-  focusEventKind,
   nextScheduledEvent,
   runtimeYear,
 } from "./selectors";
-import { entryName } from "./raceFormat";
 import { RaceCountdown } from "../../components/RaceCountdown";
 import { ScheduleTime } from "../../components/ScheduleTime";
 import { RaceResultStatus } from "./RaceResultStatusPanel";
 import { EventInsightDialog } from "./EventInsightDialog";
-import { SeasonEventStrip } from "./SeasonEventStrip";
-import {
-  ConstructorIdentity,
-  ConstructorIdentities,
-} from "../../components/ConstructorIdentity";
+import { SeasonEventStrip, CircuitCountryFlag } from "./SeasonEventStrip";
+import { CompletedRaceOverview } from "./CompletedRaceOverview";
+export { RaceFocus } from "./RaceSummary";
 
 const SEASON_EVENT_REFRESH_INTERVAL_MS = 30_000;
 
-export function RaceFocus({
-  summary,
-  snapshotId,
-  includeSeasonProgress = true,
-  compact = false,
-  showCalendarAction = true,
-  selectedEventId: suppliedSelectedEventId,
-  onSelectEvent,
-  onCloseEvent,
-  className = "",
-}) {
-  const event = focusEvent(summary);
-  const focusKind = focusEventKind(summary);
-  const [internalSelectedEventId, setInternalSelectedEventId] = useState(null);
-  const isControlled = suppliedSelectedEventId !== undefined;
-  const selectedEventId = isControlled
-    ? suppliedSelectedEventId
-    : internalSelectedEventId;
-  const circuitId = event?.circuit?.id;
-  const circuitProfile = useGetProfileQuery(
-    { kind: "circuit", id: circuitId, snapshotId },
-    { skip: !circuitId },
-  );
-  const circuitLayouts = useGetLayoutsQuery(
-    { id: circuitId, snapshotId },
-    { skip: !circuitId },
-  );
-  const eventDetail = useGetEventQuery(
-    { eventId: event?.id, snapshotId },
-    { skip: !event?.id || focusKind !== "latest" },
-  );
-  const calendarQuery = useGetCalendarQuery({
-    year: summary.season?.year,
-    snapshotId,
-  });
-  const calendarEvents = calendarQuery.currentData?.items || [];
-  const selectedEvent = calendarEvents.find(
-    (item) => item.id === selectedEventId,
-  );
-  const layout = selectLayout(circuitLayouts.currentData?.items, event?.year);
-  const country = circuitProfile.currentData?.profile?.country;
-  if (!event)
-    return (
-      <Panel title="Race spotlight">
-        <EmptyState
-          title="No race spotlight available"
-          description="No next or completed event is supplied for this season."
-        />
-      </Panel>
-    );
-  return (
-    <section
-      className={`race-focus ${className}`.trim()}
-      aria-labelledby="race-focus-title"
-    >
-      <div className="race-focus-top">
-        <p className="eyebrow">
-          {focusKind === "next"
-            ? "NEXT SCHEDULED EVENT"
-            : "LATEST COMPLETED RACE"}
-        </p>
-        <b>
-          <RaceStatus
-            status={
-              focusKind === "next"
-                ? "upcoming"
-                : event.resultStatus || event.status
-            }
-          >
-            {focusKind === "next"
-              ? "upcoming"
-              : event.resultStatus || event.status}
-          </RaceStatus>
-        </b>
-      </div>
-      <div className="race-focus-content">
-        <div className="race-focus-copy">
-          <p className="race-round">
-            ROUND {event.round ?? "N/A"} OF{" "}
-            {summary.season?.eventCount ?? "N/A"}
-          </p>
-          <h2 id="race-focus-title">{event.name}</h2>
-          <CircuitName
-            name={event.circuit?.displayName || "Circuit not supplied"}
-          />
-          {compact && (
-            <ActionLink
-              to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
-            >
-              Open race detail
-            </ActionLink>
-          )}
-        </div>
-        {focusKind === "latest" && (
-          <RacePodium
-            detail={eventDetail.currentData?.detail}
-            isFetching={eventDetail.isFetching}
-            isError={eventDetail.isError}
-            year={event.year}
-          />
-        )}
-        <CircuitSilhouette
-          layout={layout}
-          circuitName={event.circuit?.displayName}
-          country={country}
-          size="hero"
-          fallback="message"
-        />
-      </div>
-      {includeSeasonProgress && (
-        <SeasonEventStrip
-          key={summary.season?.year}
-          events={calendarEvents}
-          selectedEventId={selectedEventId}
-          onSelect={(selected) => {
-            if (!isControlled) setInternalSelectedEventId(selected.id);
-            onSelectEvent?.(selected);
-          }}
-        />
-      )}
-      <div className="race-focus-bottom">
-        {!compact && (
-          <ActionLink
-            to={`/events/${encodeURIComponent(event.id)}?season=${event.year}`}
-          >
-            Open race detail
-          </ActionLink>
-        )}
-        <span>
-          <CalendarBlankIcon size={APEX_ICONS.action} aria-hidden />
-          <time dateTime={event.schedule.date || undefined}>
-            {dateLabel(event.schedule.date)}
-          </time>
-        </span>
-        {showCalendarAction && (
-          <ActionLink
-            variant="primary"
-            to={`/calendar?season=${event.year}&event=${encodeURIComponent(event.id)}`}
-          >
-            Explore the calendar
-          </ActionLink>
-        )}
-      </div>
-      {selectedEvent && (
-        <EventInsightDialog
-          event={selectedEvent}
-          snapshotId={snapshotId}
-          onClose={() => {
-            if (!isControlled) setInternalSelectedEventId(null);
-            onCloseEvent?.();
-          }}
-        />
-      )}
-    </section>
-  );
-}
-
-function RacePodium({ detail, isFetching, isError, year }) {
-  const podium = (detail?.podium || [])
-    .filter((row) => row?.position >= 1 && row.position <= 3)
-    .sort((a, b) => a.position - b.position);
-
-  return (
-    <section className="race-focus-results" aria-labelledby="race-result-title">
-      <div className="race-focus-results-heading">
-        <h3 className="eyebrow" id="race-result-title">
-          RACE RESULT
-        </h3>
-        <span className="race-focus-results-note">
-          {isFetching && !detail ? "Loading" : "Top three"}
-        </span>
-      </div>
-      {podium.length ? (
-        <ol className="race-podium">
-          {podium.map((row) => (
-            <li
-              key={row.id}
-              className={`race-podium-row race-podium-row--${
-                row.position === 1
-                  ? "winner"
-                  : row.position === 2
-                    ? "second"
-                    : "third"
-              }`}
-            >
-              <div className="race-podium-driver">
-                <div className="race-podium-driver-line">
-                  <DriverNumber
-                    number={row.entry?.number || row.entry?.driverNumber}
-                  />
-                  <div className="race-podium-driver-copy">
-                    <strong>{entryName(row.entry)}</strong>
-                    <span>
-                      <ConstructorIdentity
-                        constructor={row.entry?.constructor}
-                        year={year}
-                      />
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="race-podium-block">
-                <span
-                  className="race-podium-position"
-                  aria-label={`Position ${row.position}`}
-                >
-                  {row.position}
-                </span>
-                <span className="race-podium-points">
-                  {row.points == null ? "—" : `${row.points} PTS`}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="race-focus-results-empty">
-          {isError
-            ? "Top-three results are not supplied for this race."
-            : "Top-three results will appear here when published."}
-        </p>
-      )}
-    </section>
-  );
-}
-
-function NextEventBand({ event, label, now }) {
+function NextEventBand({ event, label, now, snapshotId }) {
   if (!event) return null;
   const status = event.status || "unknown";
   const statusLabel = status === "unknown" ? "Status not supplied" : status;
@@ -292,6 +47,7 @@ function NextEventBand({ event, label, now }) {
             {event.round ?? "N/A"}
           </b>
           <div className="overview-adjacent-event-copy">
+            <CircuitCountryFlag event={event} snapshotId={snapshotId} />
             <strong>{event.name}</strong>
             <p>{event.circuit?.displayName || "Circuit not supplied"}</p>
           </div>
@@ -355,21 +111,18 @@ export function SeasonAroundRace({
 
   return (
     <section className="season-around-race" aria-label="Season around the race">
-      <NextEventBand event={nextEvent} label="NEXT EVENT" now={statusNow} />
-      <div className="season-around-race-main">
-        <RaceFocus
-          className="season-around-race-focus"
-          compact
-          includeSeasonProgress={false}
-          onCloseEvent={() => setSelectedEventId(null)}
-          onSelectEvent={selectEvent}
-          selectedEventId={selectedEventId}
-          showCalendarAction={false}
-          snapshotId={snapshotId}
-          summary={summary}
-        />
-        <StandingsPreview embedded summary={summary} />
-      </div>
+      <NextEventBand
+        event={nextEvent}
+        label="NEXT EVENT"
+        now={statusNow}
+        snapshotId={snapshotId}
+      />
+      <CompletedRaceOverview
+        key={`${summary.season?.year}:${summary.latestCompletedEvent?.id}:${snapshotId}:${summary.standingSnapshotId}`}
+        summary={summary}
+        snapshotId={snapshotId}
+        onSnapshotReset={onSnapshotReset}
+      />
       <DataBoundary
         query={calendarQuery}
         empty={calendarQuery.isSuccess && !events.length}
@@ -381,6 +134,8 @@ export function SeasonAroundRace({
       >
         <SeasonEventStrip
           key={summary.season?.year}
+          showCountryFlags
+          snapshotId={snapshotId}
           events={events}
           now={now}
           onSelect={selectEvent}
@@ -388,6 +143,14 @@ export function SeasonAroundRace({
         />
       </DataBoundary>
       <div className="season-around-race-provenance">
+        {selectedEventId &&
+          events.find((item) => item.id === selectedEventId) && (
+            <EventInsightDialog
+              event={events.find((item) => item.id === selectedEventId)}
+              snapshotId={snapshotId}
+              onClose={() => setSelectedEventId(null)}
+            />
+          )}
         <SourceNote meta={meta} />
       </div>
     </section>
@@ -474,99 +237,5 @@ export function CalendarPreview({
       </ActionLink>
       <SourceNote meta={query.currentData?.meta} />
     </div>
-  );
-}
-function LeaderList({ entries, kind, year }) {
-  return (
-    <ol className={`leader-list leader-list--${kind}`}>
-      {entries.map((row) => (
-        <li key={row.id}>
-          <span className="leader-rank">
-            {String(row.rank ?? "?").padStart(2, "0")}
-          </span>
-          <div>
-            <div className="leader-driver-line">
-              {kind === "drivers" && (
-                <DriverNumber
-                  number={
-                    row.number || row.entity?.number || row.entity?.driverNumber
-                  }
-                />
-              )}
-              <strong>
-                {kind === "constructors" ? (
-                  <ConstructorIdentity constructor={row.entity} year={year} />
-                ) : (
-                  row.entity.displayName
-                )}
-              </strong>
-            </div>
-            {row.constructors.length > 0 && (
-              <p>
-                <ConstructorIdentities
-                  constructors={row.constructors}
-                  year={year}
-                />
-              </p>
-            )}
-          </div>
-          <span className="leader-points">
-            <strong>{row.points}</strong>
-            <span>PTS</span>
-          </span>
-        </li>
-      ))}
-    </ol>
-  );
-}
-export function StandingsPreview({ summary, embedded = false }) {
-  const [kind, setKind] = useState("drivers");
-  const standingsQuery = useGetStandingsQuery({
-    year: summary.season.year,
-    kind,
-    standingSnapshotId: summary.standingSnapshotId,
-  });
-  const fallbackRows =
-    kind === "drivers" ? summary.leadingDrivers : summary.leadingConstructors;
-  const rows = standingsQuery.currentData?.items?.slice(0, 10) || fallbackRows;
-  return (
-    <section
-      id="season-standings"
-      className={`anchor-section${embedded ? " season-around-race-standings" : ""}`}
-    >
-      <Panel
-        className={embedded ? "season-around-race-panel" : ""}
-        eyebrow="CHAMPIONSHIP"
-        title="Championship snapshot"
-      >
-        <Tabs
-          label="Championship standings"
-          items={[
-            { value: "drivers", label: "Drivers" },
-            { value: "constructors", label: "Constructors" },
-          ]}
-          value={kind}
-          onChange={setKind}
-        >
-          {rows.length ? (
-            <LeaderList entries={rows} kind={kind} year={summary.season.year} />
-          ) : (
-            <EmptyState title="Standings not yet available" />
-          )}
-        </Tabs>
-        <p className="panel-footnote">
-          Leading entries from the latest published standings
-          {summary.latestCompletedEvent?.name
-            ? ` after ${summary.latestCompletedEvent.name}`
-            : ""}
-          . Points are shown exactly as supplied.
-        </p>
-        <ActionLink
-          to={`/standings?season=${summary.season.year}&kind=${kind}`}
-        >
-          Open full standings
-        </ActionLink>
-      </Panel>
-    </section>
   );
 }

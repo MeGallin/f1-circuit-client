@@ -1,5 +1,19 @@
 # Race detail
 
+## Current audit contract — 8 October 2026
+
+Mobile uses a compact native dataset/session chooser with explained unavailable
+choices and URL preservation; provenance/details remain reachable below results.
+Detailed semantic tables keep driver row identity on horizontal scroll, with shared
+sticky/action wrapping/focus guards and a viewport-relative identity cap at200%
+root-font test styling. Normal first-row measurements are878.91px at390 and970.33px
+at320 (<1000); focus/enlarged evidence is separate from jsdom tests.
+Telemetry shows unknown published bounds and concrete UTC input guidance before
+fields; strict parsing preserves seconds/offsets and rejects malformed/reversed or
+over120-second windows without invented defaults. Record-aware evidence links keep
+session/view/season/publication/cursor. [Current review](SENIOR-REVIEW-2026-10-08.md)
+supersedes older totals; this prose-only pass runs no tests or release operations.
+
 ## Current constructor identity — 6 October 2026
 
 Race classification and shared profile-history records use constructor badges

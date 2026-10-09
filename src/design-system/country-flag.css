@@ -1,0 +1,15 @@
+/* Shared image mode uses an existing Apex size, never native image width. */
+.country-flag.country-flag--image {
+  display: inline-block;
+  width: var(--apex-size-icon-frame);
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.country-flag.country-flag--image.country-flag--compact {
+  width: var(--apex-size-icon);
+}

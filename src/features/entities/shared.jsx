@@ -1,7 +1,23 @@
-import { useSearchParams, useInRouterContext } from "react-router-dom";
+import { useInRouterContext } from "react-router-dom";
 import { entityKinds } from "../../api/archiveApi";
 import { Button, TextLink } from "../../components/ui";
 import { ConstructorIdentity } from "../../components/ConstructorIdentity";
+import { DriverIdentity } from "../../components/DriverIdentity";
+function EntityIdentity({ entity, kind, season, number }) {
+  if (kind === "constructor")
+    return <ConstructorIdentity constructor={entity} year={season} />;
+  if (kind === "driver")
+    return (
+      <DriverIdentity
+        inline
+        stackOnMobile
+        presentation="record"
+        name={entity.displayName}
+        number={number ?? entity.number ?? entity.driverNumber}
+      />
+    );
+  return entity.displayName;
+}
 export function entityPath(kind, id, season) {
   if (!Object.hasOwn(entityKinds, kind)) return null;
   const query = new URLSearchParams();
@@ -11,24 +27,22 @@ export function entityPath(kind, id, season) {
 export function EntityLink(props) {
   const routed = useInRouterContext();
   if (!props.entity) return "Not supplied";
-  if (!routed || !props.entity.id)
-    return props.kind === "constructor" ? (
-      <ConstructorIdentity constructor={props.entity} year={props.season} />
-    ) : (
-      props.entity.displayName
-    );
+  if (!routed || !props.entity.id) return <EntityIdentity {...props} />;
   return <RoutedEntityLink {...props} />;
 }
-function RoutedEntityLink({ entity, kind, season }) {
-  const [params] = useSearchParams();
+function RoutedEntityLink({ entity, kind, season, number }) {
   if (!entity) return "Not supplied";
   return (
-    <TextLink to={entityPath(kind, entity.id, season || params.get("season"))}>
-      {kind === "constructor" ? (
-        <ConstructorIdentity constructor={entity} year={season} />
-      ) : (
-        entity.displayName
-      )}
+    <TextLink
+      aria-label={entity.displayName}
+      to={entityPath(kind, entity.id, season)}
+    >
+      <EntityIdentity
+        entity={entity}
+        kind={kind}
+        season={season}
+        number={number}
+      />
     </TextLink>
   );
 }

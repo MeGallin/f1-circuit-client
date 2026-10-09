@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { afterEach, beforeEach, expect, test } from "vitest";
 import { cleanup, render } from "@testing-library/react";
 import { ConstructorIdentity } from "../src/components/ConstructorIdentity";
+import { DriverIdentity } from "../src/components/DriverIdentity";
 
 const styles = [
   "design-system/constructor-identity.css",
@@ -32,7 +33,7 @@ const identity = (
     year={2026}
   />
 );
-test("shared podium identity rule outranks the legacy descendant span display rule", () => {
+test("shared compact identity rule owns display, gap and typography despite late route styles", () => {
   // jsdom does not reproduce Chromium's specificity resolution for this conflict.
   // Require the scoped rule as well as exercising all surface DOM/CSS fixtures.
   const rule = [...stylesheet.sheet.cssRules].find((rule) =>
@@ -40,27 +41,30 @@ test("shared podium identity rule outranks the legacy descendant span display ru
       ?.split(",")
       .some(
         (selector) =>
-          selector.trim() === ".race-podium-driver-copy .constructor-identity",
+          selector.trim() ===
+          ".constructor-identity.constructor-identity--compact",
       ),
   );
   expect(rule?.style.display).toBe("inline-flex");
   const compactRule = [...stylesheet.sheet.cssRules].find(
     (rule) =>
-      rule.selectorText === ".race-podium-driver-copy .constructor-identity",
+      rule.selectorText?.includes(
+        ".constructor-identity.constructor-identity--compact",
+      ) && rule.style.fontFamily,
   );
-  expect(compactRule?.style.getPropertyValue("--constructor-logo-size")).toBe(
-    "var(--apex-size-icon-small)",
-  );
-  expect(compactRule?.style.gap).toBe("var(--apex-space-1)");
+  expect(compactRule?.style.fontSize).toBe("var(--apex-type-body-size)");
+  expect(compactRule?.style.gap).toBe("var(--apex-space-4)");
 });
 test.each([
   [
     "overview podium",
     <div className="race-podium-driver">
-      <div className="race-podium-driver-copy">
-        <strong>Driver</strong>
-        <span>{identity}</span>
-      </div>
+      <DriverIdentity
+        presentation="record"
+        stackOnMobile
+        name="Driver"
+        team={identity}
+      />
     </div>,
   ],
   [

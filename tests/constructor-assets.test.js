@@ -57,7 +57,9 @@ test("production builds validate physical constructor assets before Vite copies 
   expect(scripts.prebuild.split(" && ")).toEqual([
     "npm run tokens:season-races",
     "node scripts/generate-audit-layout-tokens.js",
+    "node scripts/generate-home-fidelity.js",
     "node scripts/check-constructor-assets.js",
+    "node scripts/check-country-flags.js",
   ]);
 });
 
@@ -127,7 +129,7 @@ test.each([
 ])("rejects active/external SVG input %s", (source) => {
   expect(() => validateConstructorSvg(source)).toThrow();
 });
-test("constructor container CSS is generated from its named Apex token", () => {
+test("constructor theme CSS retains shared logo roles without removed Home tab selectors", () => {
   const tokens = JSON.parse(
     readFileSync(resolve("src/design-system/apex.tokens.json"), "utf8"),
   );
@@ -136,12 +138,7 @@ test("constructor container CSS is generated from its named Apex token", () => {
     "utf8",
   );
   expect(css).toContain(
-    `@container (max-width: ${tokens.containerBreakpoints.constructorIdentityCompact}px)`,
+    `--apex-color-logo-tile: ${tokens.themes.dark.logoTile}`,
   );
-  // Driver rows now include team badges too; neither tab may become a cramped
-  // two-column grid inside the narrow championship panel.
-  expect(css).toContain(".season-around-race-standings .leader-list {");
-  expect(css).toContain(
-    ".season-around-race-standings .leader-list li:nth-child(even)",
-  );
+  expect(css).not.toContain("season-around-race-standings");
 });

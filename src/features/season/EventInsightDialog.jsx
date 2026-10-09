@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from "react";
 import { XIcon } from "@phosphor-icons/react";
+import { APEX_SIZES } from "../../design-system/apex.tokens";
 import { useGetEventQuery } from "../../api/archiveApi";
 import {
   ActionLink,
@@ -15,6 +16,7 @@ import { dateLabel } from "./selectors";
 import { entryName } from "./raceFormat";
 import "../../styles/event-dialog.css";
 import { ConstructorIdentity } from "../../components/ConstructorIdentity";
+import { DriverIdentity } from "../../components/DriverIdentity";
 
 function scheduleLabel(event) {
   const date = dateLabel(event.schedule?.date);
@@ -46,7 +48,12 @@ function EventPodiumPreview({ podium, year }) {
               {String(row.position).padStart(2, "0")}
             </span>
             <div>
-              <strong>{entryName(row.entry)}</strong>
+              <DriverIdentity
+                presentation="record"
+                stackOnMobile
+                name={entryName(row.entry)}
+                number={row.entry?.number}
+              />
               <span><ConstructorIdentity constructor={row.entry?.constructor} year={year} /></span>
             </div>
             <span className="event-dialog-podium-points">
@@ -141,7 +148,7 @@ export function EventInsightDialog({ event, snapshotId, onClose }) {
             onClick={onClose}
             variant="quiet"
           >
-            <XIcon aria-hidden size={20} />
+            <XIcon aria-hidden size={APEX_SIZES.icon} />
           </Button>
         </header>
         <div className="event-dialog-status">

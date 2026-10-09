@@ -1,12 +1,99 @@
 # Approved overview layout implementation specification
 
-**Status:** Corrected Option 2 ribbon user-approved and implemented; production verification pending
+**Status:** Corrected Option3 race/championship section and Option2 history ribbon approved locally; production verification pending
 
 **Design reference:** Corrected Option 2 image for the ribbon; `/design/overview-layouts` for the other established bands (its marker strip is historical)
 
 **Approved layout:** `Put the season around the race`
 
 **Audience:** Frontend development team
+
+## Latest Home chart amendment — 9 October 2026
+
+[Home championship graphics](HOME-CHAMPIONSHIP-GRAPHICS.md) adds only top-three
+driver/constructor points-gap visuals beneath preserved rows; the constructor
+race-contribution mosaic is superseded. Home nationality flags now match shared
+upcoming-race40×30 flags, with token-balanced smaller numerals preserving platforms.
+Full-width championship
+cards stack below900px, superseding paired390 below. Desktop47:27:26, identities,
+single pinned links, podium/history/countdown remain.
+
+## Earlier approved Option3 — 8 October 2026
+
+The user's inspected corrected Option3 supersedes only the completed-race/
+championship composition below. The authoritative a5098 image replaces the earlier
+c876 full-width-header design. The left combined race card carries completed
+status/checkered icon, round, large existing-font title, circuit label/name, date,
+small track/source and next-line left Open race detail above its podium. Desktop
+uses equal content-determined cards at47:27:26 race/Drivers/Constructors proportions;
+both championships are visible, no tabs. Podium entries share one intrinsic grid
+row; each has its own identity above its block. The later user-approved amendment
+stacks badge/full-width word-wrapped name/team on mobile; desktop keeps badge
+before name with team beneath the name. Shared intrinsic subgrid tracks align
+side badges even when names wrap, without fixed identity heights. Winner identity
+lift uses the existing16px mobile/32px desktop spacing tokens. All blocks
+share a bottom, winner raised; no transforms. Desktop preview rows share20px padding
+and a keyed104px minimum (content may grow), with actions following natural rows.
+Mobile390 uses two compact readable
+championships after the combined race card; narrow320 stacks. No forced panel height.
+Home podium manufacturer logos/names use the same compact championship variant;
+the former logo-hide rule is superseded. Podium/championship share
+the same red outlined20px badge and10px typography at all widths. Both Home driver
+consumers use `DriverIdentity`/`driver-identity-line`, with one shared first-baseline
+rule and4px spacing; desktop names16px/22.4px. Both mobile podium and Drivers
+Championship use the same badge/name/team stack and12px/16.8px names; mobile
+teams retain full slot width; desktop teams sit beneath names.
+Home podium and both championship manufacturer identities use the shared `championship`
+presentation: IBM Plex Sans12px/400/16.8px,8px logo/name gap and existing12px mobile/16px
+desktop logo tokens. No inherited strong/text-size divergence; other pages retain
+their default constructor presentation.
+At the shared desktop breakpoint, constructor identity lines reserve the same
+20px badge plus4px gap as inline driver identities; use existing tokens/CSS padding,
+not a fake badge. Mobile has no reservation because driver identities stack.
+Home leader-list separators use one shared tokenized adjacent-row top-border rule
+for both top-three previews, including the final entry. Preserve the established
+desktop first/header line, no mobile first/header line and no trailing bottom border.
+Desktop circuit18/date-round14 and existing title46 roles preserve mobile metadata. Full applicability stays
+inside Layout source behind the compact Home caption. Source-owned canvas/surface
+gradient applies only to Home cards; no global palette/identity changes.
+
+Only Show full results expands inline, with Show less to close. Exactly one toggle
+occupies the right of Home's RACE RESULT header instead of Top three; no lower
+toggle remains. Generic RacePodium retains its label unless an optional header
+action is supplied. Desktop results
+span below all three previews; mobile results follow the race card without phantom
+grid rows. Championships remain top-three previews with one View standings link
+each, full available content width at all breakpoints on its own line, selecting
+drivers/constructors and preserving
+season/round/publication/standing snapshot parameters. No championship expansion
+state or full-collection requests remain. Race collections load only on expansion,
+pin publication/session context, reject partial/duplicate/inconsistent pages and
+preserve loading/error/unavailable versus actual zero. No race/session means no
+usable full-results control. Unknown rank is a labelled dash.
+
+Home flags are local licensed SVG images from actual circuit country records or
+matching pinned circuit profiles, never race-name guesses. Missing/unknown/error
+cases are honest text/no flag. Shared Apex image sizing uses icon-frame; all new
+token references resolve. History ribbon/arrow/footer actions and countdown are
+unchanged except the authorized country images in history/headers. Old tab-specific
+styles/container token are removed; shared logo themes and dated mockups remain.
+See [current implementation, reference, TDD and measured proof](HOME-REFERENCE-FIDELITY.md).
+Earlier title/action/winner geometry belongs to the superseded composition, not
+an unverified first-viewport promise for this approved new architecture.
+
+## Historical implementation boundary — 8 October 2026 (before Option3)
+
+All twelve local audit gates and Home amendments are accepted; no new production
+deployment is verified. [Current senior review](SENIOR-REVIEW-2026-10-08.md) owns
+the460/44 client,12 focused/2files and163 API/Newman114/192 recorded checks.
+This documentation alignment runs no application checks. Below,6 October agreements
+remain historical where superseded by the live Home/audit amendments. Shared Apex
+owns presentation, finite keyed/idempotent token generation and icon/palette roles.
+
+Earlier races / Show all rounds use equal responsive width/height, bounded desktop
+tracks and the named `footerActionLabelWidth` token. Labels, arrows, complete history,
+native cards/dialogs and Return to ribbon remain unchanged. Parent320/390/1440
+measurements and keyboard expansion/return are in [checkpoint](CHECKPOINT.md).
 
 ## Live Home supersession — 8 October 2026
 
@@ -21,7 +108,8 @@ the historical agreement is retained. See [removal verification](HOME-PREVIOUS-E
 
 ## Audit clarification — 8 October 2026
 
-The approved Season races ribbon remains unchanged. Authorized UX-06 scopes
+The approved Season races composition remains, with only the equal-action sizing
+amendment above. Authorized UX-06 scopes
 latest-race content flow, title/track sizing and compact action placement;
 UX-07 adds shared viewer-local/UTC metadata without changing the countdown instant.
 Final1440×900 scroll0 title670.70/action782.56/winner889.84 remain in the viewport.
@@ -481,7 +569,10 @@ Use the generated Apex tokens from `src/design-system/apex.tokens.css` and the s
 - Active indicator: `--apex-shape-active-indicator` (3px).
 - Radius: `--apex-shape-radius` (3px).
 
-The driver-number border is intentionally the lighter `--apex-color-line`, not the stronger control border. The podium blocks retain their subtle border and use the accent only for the winner's top indicator.
+The later Home podium/championship amendment uses the shared red
+`--apex-color-accent-border` and `--apex-color-accent-text` number badge. Other
+driver-number consumers retain their existing neutral border. Podium blocks
+retain their subtle border and accent winner indicator.
 
 ### Spacing
 

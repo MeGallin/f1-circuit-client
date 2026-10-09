@@ -1,13 +1,103 @@
 # Primary views: local QA
 
-## Current senior-review proof — 8 October 2026
+Latest9 October [senior-review checkpoint](SENIOR-REVIEW-2026-10-09.md): frozen
+669 client tests/62files, lint/build/assets and210 API tests/contracts/Newman117/197
+passed. Parent Home desktop1368 cards661.903381px/40×30 flags/22 source-result rows
+and390 containment/gaps remain narrow proof, not whole-site certification.
+Earlier scoped totals below retain their original execution dates.
+
+Current9 October [constructor gap amendment](HOME-CHAMPIONSHIP-GRAPHICS.md) replaces
+the mosaic. Parent checked2026R1/R16 inspectors against independently read standings,
+2000R17 mobile Light, final1368 card heights661.903381px, final390 dashed path/key
+patterns and no overflow (376px);320 width306px also fit. Prior matrix evidence
+below is historical. Current contract and execution details are in the linked record.
+Current client focused104/10 and lint/build passed, asset guards49constructor/30flags;
+API final203 tests, lint/format/contracts and Newman117/197 passed. Full client suite
+not rerun. Vite large-chunk warning remains; no new deployment is verified.
+
+Latest Home-only [graphics contract and measured parent samples](HOME-CHAMPIONSHIP-GRAPHICS.md)
+cover current/historical standings gaps, partial coverage,
+native exact inspectors and stacked320/390 charts. Earlier paired390 proof below
+is superseded; prior site-wide counts are historical, not chart certification.
+
+## Site-wide frozen gate — 8 October 2026
+
+See [inventory, browser samples and limits](UI-CONSISTENCY.md): final full589/55,
+focused33/4 plus106/11 and lint/build/assets passed; API not rerun. Earlier569/53
+and68/9 predate the final token/ARIA/cascade follow-up. Parent reported route
+patterns desktop/390 with profile/standing proofs in external
+`implementation-evidence/site-wide/`; the final post-freeze matrix is recorded in
+the binding document, including Home interactions, chart confinement, route-owned
+navigation, Sources themes/320, gallery table and Evidence disclosures. Gallery
+scan result is sampled only. Final Home DevAudit: violations[],passes28,incomplete
+only color-contrast66 nodes; no generic-ARIA incompletes remain after semantic fix.
+Manual contrast assessment remains. Calendar320 grid has all three widths248.5795,
+height43.99/client-scroll306; final Home390 width-scroll376 and composition unchanged.
+Parent live Ask retry answered19 wins in2023; details Count19/From-To2023 and
+selected-season-only coverage, Archive Details/Source Evidence open, mobile390
+document/scroll376. External ask-answer-mobile.jpg records this actual UI sample.
+Desktop answer/details/source toggles and Clear empty composer0/500 also passed.
+Earlier two failures were not reproduced
+and cause remains unknown; no code fix is claimed. One authorized direct diagnostic
+also returned200 but did not capture answer status. Sources recovered healthy.
+Earlier Home evidence remains approved.
+
+## Current Home Option3 browser proof — 8 October 2026
+
+Current control gate: parent1440/390 found exactly two View standings links, no
+championship Show more controls. Drivers/Constructors links selected2026 Round16
+correctly, including23 drivers. Show full results opened22rows; Show less closed.
+320/390 no page overflow or identity/logo regression. External screenshots
+`home-two-standings-links-{desktop,mobile390}.jpg`; Home/viewport restored.
+Final88 focused/7files, lint/build/token/asset guards passed; existing chunk warning.
+Only race results now expand; earlier championship-expansion proof below is dated
+history, not the current control contract. No full-suite/API rerun.
+
+Latest narrow identity amendment: parent accepted320/390 badge-above-full-name/team
+stacks with no broken words/overflow; desktop1440 badge-before-name/team-under-name
+remains. Podium/championship badge matches20px width,10px font,15.795px height and
+red outline/text. Shared block bottoms/winner lift remain. Focused43/3 and lint
+passed; see [amendment evidence](HOME-REFERENCE-FIDELITY.md).
+Final positioning gate: side badge y matches at390:362.3295,320:310.4545 and1440:520.213;
+winner16px/32px higher, block bottoms equal within0.00002px and no page overflow.
+The linked record lists the three final alignment screenshots; viewport reset.
+Final client build including token/asset guards passed; existing chunk warning
+remains. Full525 suite below is historical, not rerun for this narrow amendment.
+Latest shared-component gate supersedes the earlier identity measurements:
+all six desktop identities use `DriverIdentity`, gap4px, name16px/22.4px and the
+same5.2841px first-baseline badge offset. Side badges both y528.2244, winner32px
+higher, block bottoms within0.00005px.320/390 readable/no overflow,390 Mercedes
+caption intact. External `home-shared-driver-identity-{desktop,mobile390,mobile320}.jpg`
+proof is listed in the scoped record.46 focused/3files passed; viewport reset.
+
+The preceding reference-fidelity baseline records equal656.733px
+desktop cards,47:27:26 proportions, shared podium bottom and32px winner lift.
+All six desktop preview rows103.991px/padding20px0 and both actions align. Type
+gate confirms circuit18/date-round14. Parent390 race575.085px/previews434.702px,
+rows78.935px retain full names and single-line team metadata; its former32016px badge
+is superseded by the shared20px badge above. Baseline recorded
+no overflow306/306 (390376/376).1024 passes1010/1010 with readable wrapping.
+Native exclusive expansions and historical2000 mobile proof retain source ownership.
+Normal Home2026/no expansion/System/viewer-local is restored. Final neutral raster
+comparison is complete, with53px normalized height difference and no pixel-identity claim.
+No claim of all-season coverage, pixel identity or full WCAG. QA5175 stays stopped;
+normal5173/3001 preserved. No live imports/manual refresh/deployment.
+
+## Historical senior-review proof — 8 October 2026 (before Option3)
 
 Parent accepted record/event ownership, current championship and contained320/390
 filters; Home time remains unchanged. [Review/check/archive details](SENIOR-REVIEW-2026-10-08.md)
-are current; earlier matrices below retain their measured scope. Reusable GET-only
+describe that earlier review; matrices below retain their measured scope. Reusable GET-only
 QA remains in tests;5175 is stopped, normal5173/3001 preserved. Raw logs are external.
 
-## Latest Home proof — 8 October 2026
+Completed coding checks were460 client/44 files plus12 focused/2files,163 API and
+Newman114 requests/192 assertions. No tests, builds or browser checks rerun for
+this prose alignment. Normal browser gates cover all twelve findings and both Home
+amendments; enlarged proof is200% root-font test styling, not full WCAG certification.
+The62-file/265,860-byte archive has verified SHA-256 hashes; local smoke does not
+verify a new deployment, provider publication or live PostgreSQL concurrency.
+
+## Home removal proof — 8 October 2026 (before senior review)
 
 Parent confirms Previous event absent in live DOM, approved23-round history intact
 and next event/countdown retained: actual desktop1309×818 document/client1295/1295;
@@ -15,7 +105,7 @@ mobile390×844376/376, no page overflow. Screenshots in audit implementation-evi
 `previous-event-removed-desktop.jpg` and `previous-event-removed-mobile.jpg`.
 Viewport restored; System appearance untouched. [Scoped verification](HOME-PREVIOUS-EVENT-REMOVAL.md).
 
-## Accepted audit handoff — 8 October 2026 (before Home followup)
+## Historical accepted audit handoff — 8 October 2026 (before Home followup)
 
 All twelve UI/UX audit gates are implemented and parent-browser accepted.
 Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,

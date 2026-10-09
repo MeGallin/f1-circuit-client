@@ -1,8 +1,16 @@
 import { useState } from "react";
+import { countryFlagAssets } from "./countryFlags";
+import "../design-system/country-flag.css";
 
-// Country flags use the platform's Unicode regional indicators. This keeps the
-// client dependency-free and avoids shipping an unlicensed image collection.
+// Known countries use the same bundled images; unknown countries stay explicit.
 const COUNTRY_CODES = {
+  australia: "AU",
+  belgium: "BE",
+  azerbaijan: "AZ",
+  bahrain: "BH",
+  qatar: "QA",
+  uae: "AE",
+  southkorea: "KR",
   argentina: "AR",
   australian: "AU",
   austria: "AT",
@@ -155,15 +163,30 @@ export function selectLayout(layouts, year) {
     : null;
 }
 
+export function countryForCircuit(event, profileData, snapshotId) {
+  const circuit = event?.circuit;
+  if (circuit?.country) return circuit.country;
+  return circuit?.id &&
+    profileData?.profile?.id === circuit.id &&
+    ["complete", "partial"].includes(profileData?.meta?.coverage) &&
+    (!snapshotId || profileData?.meta?.snapshotId === snapshotId)
+    ? profileData.profile.country
+    : null;
+}
+
 export function CountryFlag({
   country,
   label = "Country",
   className = "",
   showFallback = false,
+  image = true,
+  size = "default",
 }) {
+  const [failed, setFailed] = useState(null);
   const name = String(country || "").trim();
   const code = countryCode(country);
-  const classes = `country-flag ${className}`.trim();
+  const classes =
+    `country-flag${size === "compact" ? " country-flag--compact" : ""} ${className}`.trim();
   if (!name && !showFallback) return null;
   if (!name)
     return (
@@ -183,6 +206,19 @@ export function CountryFlag({
         {name}
       </span>
     );
+  if (image) {
+    const src = countryFlagAssets[code];
+    return src && failed !== src ? (
+      <img
+        className={`${classes} country-flag--image`}
+        src={src}
+        alt={`${name} flag`}
+        onError={() => setFailed(src)}
+      />
+    ) : (
+      <span className={`${classes} country-flag--fallback`}>{name}</span>
+    );
+  }
   return (
     <span
       className={classes}
@@ -217,6 +253,7 @@ export function CircuitSilhouette({
   fallback = "hidden",
   showFallback = false,
   fallbackLabel,
+  compactLabel = false,
   className = "",
 }) {
   const [failed, setFailed] = useState(false);
@@ -250,10 +287,19 @@ export function CircuitSilhouette({
       />
       {layoutStatus && (
         <p className="circuit-silhouette-applicability">
-          {layoutApplicabilityLabel(layoutStatus)}
+          {compactLabel
+            ? layoutStatus === "verified"
+              ? "Verified layout"
+              : layoutStatus === "historical-fallback"
+                ? "Historical layout"
+                : "Applicability unknown"
+            : layoutApplicabilityLabel(layoutStatus)}
         </p>
       )}
-      {(sourceAttribution || sourceLicence || evidenceId) && (
+      {(sourceAttribution ||
+        sourceLicence ||
+        evidenceId ||
+        (compactLabel && layoutStatus)) && (
         <>
           <figcaption className="sr-only">
             Source: {sourceAttribution || "Layout source supplied"}
@@ -261,6 +307,9 @@ export function CircuitSilhouette({
           </figcaption>
           <details className="circuit-silhouette-source">
             <summary>Layout source</summary>
+            {compactLabel && layoutStatus && (
+              <p>{layoutApplicabilityLabel(layoutStatus)}</p>
+            )}
             <p>
               {sourceAttribution || "Layout source supplied"}
               {sourceLicence ? ` · ${sourceLicence}` : ""}

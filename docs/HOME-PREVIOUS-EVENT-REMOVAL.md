@@ -4,6 +4,11 @@ User explicitly approved removing Home's redundant PREVIOUS EVENT block on all
 devices because the approved Season races history supersedes it. Accepted Cody
 configuration gpt-6.1-sol/medium is not independent runtime/billing verification.
 
+This is the dated removal execution record, retained after the subsequent equal-
+action amendment and [complete senior review](SENIOR-REVIEW-2026-10-08.md).
+Current full totals are460/44 client plus12 focused/2files and163 API/Newman114/192;
+the scoped checks below are not fresh reruns for this documentation alignment.
+
 ## Scope and preservation
 
 Deleted the live render branch, previous/pending selection and unused import

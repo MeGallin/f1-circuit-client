@@ -19,7 +19,17 @@ Audit references: `C:/Users/garya/OneDrive/Documents/ChatGPT/F1/audit-2026-10-08
 | UX-11   | Accepted      | One compact summary with left-line Overview, primary points heading786.08px versus4079.74px baseline; closed/unmounted native context restores all6 sections                           |
 | UX-12   | Accepted      | Semantic driver identity sticky140px normal;320/200% sticky128px, wrapped96px focused evidence entirely clear; queued stale-focus callbacks ignored                                    |
 
-## Consolidated checks — 8 October 2026
+## Current verification boundary
+
+The [completed senior review](SENIOR-REVIEW-2026-10-08.md) supersedes audit-only
+totals with460 client tests/44 files plus12 focused tests/2files after whitespace
+generation cleanup,163 API and Newman114/192. All twelve gates below stay accepted;
+Home removal/equal-action amendments are separate scoped approvals. Raw logs are
+external with a62-file/265,860-byte SHA-256 inventory; reusable tests/QA stay in repo.
+This documentation-only alignment reruns no application/browser checks and verifies
+no new commit, push or deployment.
+
+## Historical consolidated audit checks — 8 October 2026 (before senior review)
 
 - API `npm run check`: lint, Prettier, **160 tests**, OpenAPI structure/pinned checksum and Newman **114 requests /192 assertions /zero failures**. [Captured API result](C:/Users/garya/OneDrive/Documents/ChatGPT/F1/audit-2026-10-08/execution-evidence/audit-2026-10-08-full-api-green.txt). API tests use deterministic fixtures/pg-mem, and Newman starts its own loopback fixture server; no live provider/import/database mutation.
 - Client final `npm run check` after filter/focus followups: lint, **436 tests/43 files**, keyed/idempotent ribbon-token generation, physical **49 assets/1,169,191 bytes** guard and production build,5262 modules. [Final client capture](C:/Users/garya/OneDrive/Documents/ChatGPT/F1/audit-2026-10-08/execution-evidence/audit-2026-10-08-full-client-green.txt). Earlier435/42 is historical. Existing jsdom scrollTo and >500kB chunk warnings remain; final build12.63s, main554.60kB/Analytics660.62kB minified.

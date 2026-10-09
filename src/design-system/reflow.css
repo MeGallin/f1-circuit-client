@@ -47,6 +47,7 @@
   .nav-more-toggle {
     min-width: 0;
     align-content: start;
+    padding-inline: var(--apex-space-1);
   }
   .apex-layout .topbar {
     flex-wrap: wrap;

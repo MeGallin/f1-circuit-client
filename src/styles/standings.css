@@ -36,7 +36,7 @@
   font-size: var(--apex-type-caption-size);
 }
 .standing-rank strong {
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
   overflow-wrap: anywhere;
 }
 .standing-name {

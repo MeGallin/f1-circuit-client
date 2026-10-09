@@ -3,4 +3,28 @@
   --apex-size-analytics-filter-min-width: 12rem;
   --apex-size-overview-track-compact: 8rem;
   --apex-size-table-identity-viewport-limit: 40vw;
+  --apex-size-ui-mobile-theme-max-width: 125px;
+  --apex-size-ui-dialog-max-height: 48rem;
+  --apex-size-ui-menu-max-height: 18rem;
+  --apex-size-ui-menu-min-width: 12rem;
+  --apex-size-ui-driver-badge-min-width: 2.1rem;
+  --apex-size-ui-circuit-image-max-height: 12rem;
+  --apex-size-ui-question-action-min-width: 10rem;
+  --apex-size-ui-question-label-min-width: 8rem;
+  --apex-size-ui-analytics-stat-min-height: 7rem;
+  --apex-size-ui-analytics-metric-min-height: 7.5rem;
+  --apex-size-ui-analytics-marker-size: 2rem;
+  --apex-size-ui-analytics-result-min-height: 3rem;
+  --apex-size-ui-analytics-empty-min-height: 15rem;
+  --apex-size-ui-analytics-evidence-min-height: 5.25rem;
+  --apex-size-ui-analytics-context-column-width: 18rem;
+  --apex-size-ui-analytics-weekend-min-width: 11rem;
+  --apex-size-ui-analytics-weekend-min-height: 10.5rem;
+  --apex-size-ui-analytics-mobile-metric-min-height: 5.75rem;
+  --apex-size-ui-analytics-mobile-stat-min-height: 6rem;
+  --apex-size-ui-analytics-comparison-control-min-height: 40px;
+  --apex-size-ui-selection-border-width: 2px;
+  --apex-size-ui-metadata-tracking: 0.06em;
+  --apex-size-ui-page-eyebrow-tracking: 0.12em;
+  --apex-size-ui-status-icon-gap: 0.35em;
 }

@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiBase } from "./config";
+import { publishedCollection } from "./publishedCollection";
 
 export const publicApiBase = apiBase(import.meta.env.VITE_API_BASE_URL);
 // Development proxy is client-only. Production requests go directly to the public API.
@@ -149,6 +150,37 @@ export const archiveApi = createApi({
   refetchOnFocus: false,
   tagTypes: ["Seasons", "Season", "SeasonSummary", "Event", "Session"],
   endpoints: (builder) => ({
+    getHomeChampionshipGraphics: builder.query({
+      query: ({ year, standingSnapshotId, snapshotId }) => ({
+        url: `/seasons/${year}/championship-graphics`,
+        params: { standingSnapshotId, snapshotId },
+      }),
+      transformResponse: (response) => {
+        const data = objectResponse(response, "championshipGraphics");
+        return { graphics: data.championshipGraphics, meta: data.meta };
+      },
+      providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
+    }),
+    getOverviewCollection: builder.query({
+      queryFn: ({ kind, sessionId, snapshotId }, _api, _extra, baseQuery) => {
+        if (kind !== "results")
+          return {
+            error: {
+              status: "CUSTOM_ERROR",
+              error: "Unsupported Home collection",
+            },
+          };
+        return publishedCollection(
+          baseQuery,
+          `/sessions/${encodeURIComponent(sessionId)}/results`,
+          { snapshotId },
+          _api.signal,
+        );
+      },
+      providesTags: (_r, _e, { sessionId }) => [
+        { type: "Session", id: `${sessionId}:results` },
+      ],
+    }),
     getPublicationConfig: builder.query({
       queryFn: publicationConfigQuery,
     }),
@@ -550,6 +582,8 @@ export function eventResponse(response) {
   return { detail: response.data.eventDetail, meta: response.meta };
 }
 export const {
+  useGetHomeChampionshipGraphicsQuery,
+  useGetOverviewCollectionQuery,
   useGetPublicationConfigQuery,
   useSearchEntitiesQuery,
   useGetProfileQuery,

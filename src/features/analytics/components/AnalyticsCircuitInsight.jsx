@@ -1,4 +1,5 @@
 import { MapTrifoldIcon, TrophyIcon } from "@phosphor-icons/react";
+import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import { CircuitSilhouette, CountryFlag } from "../../../components/visuals";
 
 export function buildAnalyticsCircuitInsightModel({
@@ -68,7 +69,7 @@ export default function AnalyticsCircuitInsight({
               <span>{model.country || "Country not supplied"}</span>
             </div>
           </div>
-          <MapTrifoldIcon size={24} aria-hidden />
+          <MapTrifoldIcon size={APEX_SIZES.iconLarge} aria-hidden />
         </div>
         <dl className="analytics-circuit-facts">
           <CircuitFact
@@ -88,7 +89,7 @@ export default function AnalyticsCircuitInsight({
           />
         </dl>
         <p className="analytics-circuit-note">
-          <TrophyIcon size={16} aria-hidden />
+          <TrophyIcon size={APEX_SIZES.iconSmall} aria-hidden />
           Facts are limited to the selected archive publication.
         </p>
       </div>

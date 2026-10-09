@@ -1,0 +1,109 @@
+/* Shared primitives; exact figures use normal foreground. */
+.home-championship-graphic {
+  min-width: 0;
+  margin-block: var(--apex-space-4);
+  margin-block-start: var(--apex-space-7);
+}
+.home-championship-graphic h4 {
+  margin: 0 0 var(--apex-space-2);
+  font: var(--apex-type-section-weight) var(--apex-type-body-size) /
+    var(--apex-type-control-line) var(--apex-font-body);
+}
+.compact-chart-note,
+.compact-chart-round-ends,
+.compact-chart-legend,
+.compact-chart-details {
+  font: var(--apex-type-body-weight) var(--apex-type-caption-size) /
+    var(--apex-type-control-line) var(--apex-font-body);
+}
+.compact-chart-note {
+  color: var(--apex-color-muted);
+  margin-block: var(--apex-space-2);
+}
+.compact-series-plot {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.compact-series {
+  color: var(--compact-series-color);
+}
+.compact-series--1 {
+  --compact-series-color: var(--apex-color-data-series-1);
+}
+.compact-series--2 {
+  --compact-series-color: var(--apex-color-data-series-2);
+  --compact-series-dash: var(--apex-space-4) var(--apex-space-2);
+  --compact-series-key-style: dashed;
+}
+.compact-series--3 {
+  --compact-series-color: var(--apex-color-data-series-3);
+  --compact-series-dash: var(--apex-space-2) var(--apex-space-2);
+  --compact-series-key-style: dotted;
+}
+.compact-series path {
+  fill: none;
+  stroke: currentColor;
+  stroke-dasharray: var(--compact-series-dash, none);
+  stroke-width: var(--apex-shape-border);
+  vector-effect: non-scaling-stroke;
+}
+.compact-series circle {
+  fill: currentColor;
+}
+.compact-series circle[data-coverage="partial"] {
+  fill: var(--apex-color-surface);
+  stroke: currentColor;
+  stroke-width: var(--apex-shape-border);
+  vector-effect: non-scaling-stroke;
+}
+.compact-series-baseline {
+  stroke: var(--apex-color-muted);
+  stroke-width: var(--apex-shape-border);
+  vector-effect: non-scaling-stroke;
+}
+.compact-chart-round-ends {
+  display: flex;
+  justify-content: space-between;
+  color: var(--apex-color-muted);
+}
+.compact-chart-legend {
+  list-style: none;
+  padding: 0;
+  margin-block: var(--apex-space-2);
+  display: grid;
+  gap: var(--apex-space-2);
+}
+.compact-chart-legend li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--apex-space-4);
+  overflow-wrap: anywhere;
+}
+.compact-chart-gap {
+  font-family: var(--apex-font-numeric);
+  white-space: nowrap;
+}
+.compact-chart-key {
+  width: var(--apex-space-7);
+  height: var(--apex-space-4);
+  border-top: var(--apex-shape-border) solid var(--compact-series-color);
+  border-top-style: var(--compact-series-key-style, solid);
+}
+.home-championship-graphic .field {
+  min-width: 0;
+  max-width: 100%;
+}
+.compact-chart-details {
+  margin-block-start: var(--apex-space-2);
+}
+.compact-chart-details summary {
+  cursor: pointer;
+  min-height: var(--apex-size-control);
+  display: list-item;
+}
+.compact-chart-details p {
+  overflow-wrap: anywhere;
+  margin-block: var(--apex-space-4);
+}

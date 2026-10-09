@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "../design-system/audit-layout.tokens.css";
 import "../design-system/table.css";
 import "../design-system/reflow.css";
+import "../design-system/ui-consistency.css";
 import {
   ArrowRightIcon,
   ArrowClockwiseIcon,
@@ -68,14 +69,23 @@ export function Panel({
                 size={APEX_SIZES.icon}
               />
             )}
-            {eyebrow && <p className="eyebrow panel-eyebrow">{eyebrow}</p>}
-            <h2 id={id}>{title}</h2>
+            <div className="panel-heading-titles">
+              {eyebrow && <p className="eyebrow panel-eyebrow">{eyebrow}</p>}
+              <h2 id={id}>{title}</h2>
+            </div>
           </div>
-          {action}
+          {action && <div className="panel-actions">{action}</div>}
         </div>
       )}
       {children}
     </section>
+  );
+}
+export function PanelBody({ children, className = "", ...props }) {
+  return (
+    <div className={`panel-body ${className}`} {...props}>
+      {children}
+    </div>
   );
 }
 export function PageHeading({
@@ -235,11 +245,9 @@ export function CircuitName({ name, className = "" }) {
 export function DriverNumber({ number, className = "" }) {
   if (number === null || number === undefined || number === "") return null;
   return (
-    <span
-      aria-label={`Driver number ${number}`}
-      className={`driver-number ${className}`.trim()}
-    >
-      {number}
+    <span className={`driver-number ${className}`.trim()}>
+      <span className="sr-only">{`Driver number ${number}`}</span>
+      <span aria-hidden="true">{number}</span>
     </span>
   );
 }
@@ -567,7 +575,7 @@ export function Pagination({
     </nav>
   );
 }
-export function SourceNote({ meta }) {
+export function SourceNote({ meta, inset = false }) {
   if (!meta) return null;
   const coverageLabels = {
     complete: "Complete coverage",
@@ -585,7 +593,10 @@ export function SourceNote({ meta }) {
   const verification =
     verificationLabels[meta.verification] || "Verification not supplied";
   return (
-    <aside className="source-note" aria-label="Data provenance">
+    <aside
+      className={`source-note${inset ? " source-note--inset" : ""}`}
+      aria-label="Data provenance"
+    >
       <div className="source-summary">
         <StatusBadge>{verification}</StatusBadge>
         <span>{coverage}</span>

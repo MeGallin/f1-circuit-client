@@ -1,6 +1,7 @@
 import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import { TrophyIcon, UsersThreeIcon } from "@phosphor-icons/react";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
+import { DriverIdentity } from "../../../components/DriverIdentity";
 import "../../../design-system/analytics-scope.css";
 import { analyticsCount } from "../labels";
 import {
@@ -26,7 +27,7 @@ export function buildChampionshipSnapshotModel({
       rank: driver.rank,
       id: driver.entity.id,
       name: driver.entity.displayName,
-      number: driver.number || null,
+      number: driver.number ?? null,
       value: Number(driver.points),
       detail:
         driver.wins == null
@@ -54,23 +55,15 @@ export function buildChampionshipSnapshotModel({
   return { drivers, teams };
 }
 
-function SnapshotRows({ rows, kind, showNumber = false, year }) {
+function SnapshotRows({ rows, kind, year }) {
   return (
     <ol
-      className={`analytics-championship-rows analytics-championship-rows--${kind.toLowerCase()}${showNumber ? " analytics-championship-rows--numbered" : ""}`}
+      className={`analytics-championship-rows analytics-championship-rows--${kind.toLowerCase()}`}
       aria-label={`${kind} standings`}
     >
       {rows.map((row) => (
         <li key={row.id} className="analytics-championship-row">
           <span className="analytics-championship-rank">{row.rank}</span>
-          {showNumber && row.number && (
-            <span
-              className="analytics-championship-number"
-              aria-label={`Driver number ${row.number}`}
-            >
-              {row.number}
-            </span>
-          )}
           <span className="analytics-championship-copy">
             <strong>
               {kind === "Constructor" ? (
@@ -79,7 +72,13 @@ function SnapshotRows({ rows, kind, showNumber = false, year }) {
                   year={year}
                 />
               ) : (
-                row.name || "Not supplied"
+                <DriverIdentity
+                  inline
+                  stackOnMobile
+                  presentation="record"
+                  name={row.name || "Not supplied"}
+                  number={row.number}
+                />
               )}
             </strong>
             <small>{row.detail}</small>
@@ -123,11 +122,7 @@ export default function AnalyticsChampionshipSnapshot({
           <h3 id="analytics-driver-standings">Driver standings</h3>
         </div>
         {model.drivers.length ? (
-          <SnapshotRows
-            rows={model.drivers}
-            kind="Driver"
-            showNumber={model.drivers.some((row) => row.number)}
-          />
+          <SnapshotRows rows={model.drivers} kind="Driver" year={year} />
         ) : (
           <p className="muted">
             No driver points are published for this selection.

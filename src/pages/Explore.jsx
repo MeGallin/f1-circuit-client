@@ -9,6 +9,7 @@ import {
   Input,
   PageHeading,
   Panel,
+  PanelBody,
   Skeleton,
   SourceNote,
   StatusBadge,
@@ -19,6 +20,7 @@ import { changeFilters, CollectionPages } from "../features/entities/shared";
 import { runtimeYear } from "../features/season/selectors";
 import "../styles/entities.css";
 import { ConstructorIdentity } from "../components/ConstructorIdentity";
+import { DriverIdentity } from "../components/DriverIdentity";
 
 const kindItems = [
   { value: "", label: "All" },
@@ -30,12 +32,30 @@ const kindItems = [
 ];
 
 const kindLabels = Object.fromEntries(
-  kindItems.filter((item) => item.value).map((item) => [item.value, item.label]),
+  kindItems
+    .filter((item) => item.value)
+    .map((item) => [item.value, item.label]),
 );
 
 function SearchResultItem({ item }) {
   const name = item.entity?.displayName || item.id;
-  const identity = item.kind === "constructor" ? <ConstructorIdentity constructor={{ ...item.entity, displayName: name }} year={item.year} /> : name;
+  const identity =
+    item.kind === "constructor" ? (
+      <ConstructorIdentity
+        constructor={{ ...item.entity, displayName: name }}
+        year={item.year}
+      />
+    ) : item.kind === "driver" ? (
+      <DriverIdentity
+        inline
+        stackOnMobile
+        presentation="record"
+        name={name}
+        number={item.entity?.number ?? item.number}
+      />
+    ) : (
+      name
+    );
   const evidencePath = item.evidenceId
     ? `/evidence/${encodeURIComponent(item.evidenceId)}`
     : null;
@@ -51,7 +71,9 @@ function SearchResultItem({ item }) {
           )}
         </div>
         {item.entity?.clientPath ? (
-          <TextLink to={item.entity.clientPath}>{identity}</TextLink>
+          <TextLink to={item.entity.clientPath} aria-label={name}>
+            {identity}
+          </TextLink>
         ) : (
           <strong>{identity}</strong>
         )}
@@ -91,10 +113,7 @@ function SearchResults({ queryText, data, query, onClear }) {
 
   const items = data.items || [];
   return (
-    <div
-      className="explore-results"
-      aria-busy={query.isFetching || undefined}
-    >
+    <div className="explore-results" aria-busy={query.isFetching || undefined}>
       <div className="explore-results-heading">
         <div>
           <p className="eyebrow">SEARCH RESULTS</p>
@@ -158,7 +177,9 @@ export default function Explore() {
 
   const submit = (event) => {
     event.preventDefault();
-    const nextText = String(new FormData(event.currentTarget).get("query") || "").trim();
+    const nextText = String(
+      new FormData(event.currentTarget).get("query") || "",
+    ).trim();
     if (nextText.length < 2 || nextText.length > 100) return;
     setParams(changeFilters(params, { q: nextText }));
   };
@@ -265,25 +286,29 @@ export default function Explore() {
       </Panel>
       {showBrowse && (
         <Panel title="Browse by route">
-          <nav className="explore-browse" aria-label="Browse archive routes">
-            <ActionLink to={`/calendar?season=${encodeURIComponent(browseSeason)}`}>
-              Find a race
-            </ActionLink>
-            <ActionLink
-              to={`/standings?season=${encodeURIComponent(browseSeason)}&kind=drivers`}
-            >
-              Browse drivers
-            </ActionLink>
-            <ActionLink
-              to={`/standings?season=${encodeURIComponent(browseSeason)}&kind=constructors`}
-            >
-              Browse constructors
-            </ActionLink>
-          </nav>
-          <p className="muted explore-browse-note">
-            Search is best when you know a name or place; these routes are a
-            direct way into the season archive.
-          </p>
+          <PanelBody>
+            <nav className="explore-browse" aria-label="Browse archive routes">
+              <ActionLink
+                to={`/calendar?season=${encodeURIComponent(browseSeason)}`}
+              >
+                Find a race
+              </ActionLink>
+              <ActionLink
+                to={`/standings?season=${encodeURIComponent(browseSeason)}&kind=drivers`}
+              >
+                Browse drivers
+              </ActionLink>
+              <ActionLink
+                to={`/standings?season=${encodeURIComponent(browseSeason)}&kind=constructors`}
+              >
+                Browse constructors
+              </ActionLink>
+            </nav>
+            <p className="muted explore-browse-note">
+              Search is best when you know a name or place; these routes are a
+              direct way into the season archive.
+            </p>
+          </PanelBody>
         </Panel>
       )}
     </>

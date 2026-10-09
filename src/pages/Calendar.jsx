@@ -2,6 +2,7 @@ import { CalendarBlankIcon } from "@phosphor-icons/react";
 import { ScheduleTime } from "../components/ScheduleTime";
 import useSeasonSearch from "../features/season/useSeasonSearch";
 import { ConstructorIdentity } from "../components/ConstructorIdentity";
+import { DriverIdentity } from "../components/DriverIdentity";
 import {
   useGetCalendarQuery,
   useGetEventQuery,
@@ -164,7 +165,13 @@ export function CalendarEvents({
                       .map((row) => (
                         <li key={row.id}>
                           <strong>{row.position}</strong>
-                          <span>{entryName(row.entry)}</span>
+                          <DriverIdentity
+                            inline
+                            stackOnMobile
+                            presentation="record"
+                            name={entryName(row.entry)}
+                            number={row.entry?.number}
+                          />
                           <small>
                             <ConstructorIdentity
                               constructor={row.entry?.constructor}

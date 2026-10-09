@@ -1,0 +1,336 @@
+/* Authoritative a5098 Home reference: combined left race card, two championships. */
+:root {
+  /* Keyed minimum: generator-owned declaration, not a fixed row height. */
+  --apex-size-home-championship-preview-row-min: 80px;
+}
+.home-completed-race {
+  min-width: 0;
+}
+.home-summary-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.home-race-result,
+.home-championship,
+.home-expanded {
+  min-width: 0;
+  padding: var(--apex-space-5);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: linear-gradient(
+    to bottom right,
+    var(--apex-color-canvas),
+    var(--apex-color-surface)
+  );
+}
+.home-expanded {
+  grid-column: 1 / -1;
+}
+.home-championship h3 {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+.home-panel-link {
+  margin-top: var(--apex-space-3);
+}
+.home-championship .home-panel-link {
+  margin-top: auto;
+}
+.home-race-result .race-focus-results-heading {
+  align-items: center;
+  gap: var(--apex-space-3);
+}
+.home-race-result .race-focus-results-heading > .button {
+  flex-shrink: 0;
+  padding-inline: var(--apex-space-4);
+  font-size: var(--apex-type-caption-size);
+  white-space: nowrap;
+}
+.home-championship .leader-list {
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+/* Keep the established desktop header edge; adjacent rows own their separator,
+   including the last entry. Clear legacy bottom edges to avoid double lines. */
+.home-completed-race .leader-list > li {
+  border-bottom: 0;
+}
+.home-completed-race .leader-list > li + li {
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+}
+/* Close only Home's graphic previews at the existing final-row boundary. */
+.home-championship .home-championship-records .leader-list > li:last-child {
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
+}
+.home-championship .leader-list li {
+  margin: 0;
+  min-width: 0;
+  gap: var(--apex-space-3);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.home-championship .leader-list li:nth-child(even) {
+  transform: none;
+}
+.home-championship .leader-driver-line strong {
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+.home-completed-header .race-focus-copy h2 {
+  line-height: var(--apex-type-title-line);
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+.home-completed-date {
+  display: flex;
+  align-items: center;
+  gap: var(--apex-space-3);
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+  margin-block: var(--apex-space-4);
+}
+.home-completed-header .race-focus-content > .circuit-silhouette img {
+  height: var(--apex-size-overview-track-compact);
+  object-fit: contain;
+}
+.home-race-result .race-podium-block {
+  min-width: 0;
+}
+.home-race-result .race-podium-nationalities {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--apex-space-2);
+  margin-top: var(--apex-space-3);
+  block-size: calc(var(--apex-size-icon-frame) * 3 / 4);
+  font-size: var(--apex-type-caption-size);
+  line-height: var(--apex-type-body-line);
+  color: var(--apex-color-muted);
+}
+.home-completed-race .home-summary-panels {
+  align-items: stretch;
+  gap: var(--apex-space-4);
+  padding: var(--apex-space-4);
+}
+.home-summary-panels .home-race-result .home-completed-header {
+  padding: 0;
+  border: 0;
+  gap: var(--apex-space-5);
+}
+.home-completed-header .race-focus-content {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--apex-space-4);
+}
+.home-summary-panels .home-completed-header .race-focus-copy h2 {
+  font-size: var(--apex-type-title-narrow-size);
+  font-weight: var(--apex-type-section-weight);
+}
+.home-completed-header .race-round {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--apex-space-3);
+}
+.home-completed-header .race-round .country-flag {
+  width: var(--apex-size-icon-large);
+}
+.home-summary-panels .home-completed-header .circuit-silhouette {
+  width: 100%;
+}
+.home-race-result > .race-focus-results {
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+  margin-top: var(--apex-space-5);
+  padding-top: var(--apex-space-5);
+}
+.home-race-result .race-podium--aligned {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto auto;
+  align-items: end;
+  column-gap: var(--apex-space-4);
+  row-gap: 0;
+}
+.home-race-result .race-podium--aligned .race-podium-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  grid-row: 1 / span 2;
+  row-gap: var(--apex-space-5);
+  align-content: end;
+  align-self: stretch;
+  margin: 0;
+  min-height: 0;
+  height: auto;
+  border: 0;
+}
+.home-race-result .race-podium--aligned .race-podium-row--second {
+  grid-column: 1;
+}
+.home-race-result .race-podium--aligned .race-podium-row--winner {
+  grid-column: 2;
+}
+.home-race-result .race-podium--aligned .race-podium-row--third {
+  grid-column: 3;
+}
+.home-race-result .race-podium--aligned .race-podium-driver {
+  grid-row: 1;
+  align-self: stretch;
+  display: grid;
+  padding: 0;
+  background: transparent;
+}
+.home-race-result .race-podium--aligned .race-podium-block {
+  grid-row: 2;
+  align-self: end;
+  min-height: 0;
+  height: auto;
+  flex: initial;
+  padding: var(--apex-space-4);
+}
+.home-race-result .race-podium--aligned .race-podium-position {
+  --home-podium-position-size: var(--apex-type-title-mobile-size);
+  font-size: var(--home-podium-position-size);
+}
+/* Transfer the flag's extra height from the numeral; keep intrinsic platforms. */
+.home-race-result
+  .race-podium--aligned.race-podium--nationalities
+  .race-podium-position {
+  font-size: calc(
+    var(--home-podium-position-size) + var(--apex-type-caption-size) *
+      var(--apex-type-body-line) - var(--apex-size-icon-frame) * 3 / 4
+  );
+}
+.home-race-result
+  .race-podium--aligned
+  .race-podium-row--winner
+  .race-podium-block {
+  padding-block: var(--apex-space-6);
+  border-top-color: var(--apex-color-accent);
+}
+.home-championship .leader-list li {
+  padding-block: var(--apex-space-4);
+  padding-inline: 0;
+  gap: var(--apex-space-2);
+}
+.home-championship .leader-list li > div > p {
+  margin-block: var(--apex-space-2);
+  font-size: var(--apex-type-caption-size);
+}
+.home-championship .home-panel-link > .button {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding-inline: var(--apex-space-2);
+  font-size: var(--apex-type-caption-size);
+  gap: var(--apex-space-2);
+}
+.home-championship .home-panel-link > .button svg {
+  width: var(--apex-type-caption-size);
+  height: var(--apex-type-caption-size);
+}
+.home-championship {
+  display: flex;
+  flex-direction: column;
+}
+.home-championship-records {
+  display: grid;
+  flex: initial;
+}
+.home-championship-records > div {
+  display: grid;
+}
+.home-championship .leader-list {
+  grid-auto-rows: minmax(min-content, 1fr);
+}
+.home-completed-header .race-status-icon {
+  width: var(--apex-size-icon);
+  height: var(--apex-size-icon);
+}
+.home-championship .leader-driver-line strong {
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-type-caption-size);
+  line-height: var(--apex-type-control-line);
+  font-weight: var(--apex-type-section-weight);
+}
+/* Generated media aliases below are keyed in the Home fidelity generator. */
+/* Home desktop breakpoint */
+@media (min-width: 900px) {
+  /* Anchor the intrinsic group, never grow the podium or its platforms. */
+  .home-summary-panels .home-race-result {
+    display: flex;
+    flex-direction: column;
+  }
+  .home-race-result > .race-focus-results {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .home-race-result .race-podium--aligned {
+    margin-top: auto;
+  }
+  .home-championship--constructors .leader-driver-line {
+    padding-inline-start: calc(var(--apex-size-icon) + var(--apex-space-2));
+  }
+  .home-completed-header .circuit-name strong {
+    font-size: var(--apex-type-section-size);
+    line-height: var(--apex-type-control-line);
+  }
+  .home-completed-header .race-round,
+  .home-completed-header .home-completed-date {
+    font-size: var(--apex-type-body-size);
+  }
+  .home-championship .home-panel-link > .button {
+    padding-inline: var(--apex-space-5);
+    font-size: var(--apex-type-body-size);
+  }
+  .home-completed-race .home-summary-panels {
+    grid-template-columns: minmax(0, 47fr) minmax(0, 27fr) minmax(0, 26fr);
+  }
+  .home-summary-panels .home-race-result {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .home-summary-panels .home-championship--drivers {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .home-summary-panels .home-championship--constructors {
+    grid-row: 1;
+    grid-column: 3;
+  }
+  .home-summary-panels .home-expanded {
+    grid-row: 2;
+  }
+  .home-summary-panels .home-completed-header .race-focus-copy h2 {
+    font-size: var(--apex-type-title-size);
+  }
+  .home-summary-panels .home-championship .leader-list li {
+    padding-block: var(--apex-space-5);
+    padding-inline: 0;
+    min-block-size: var(--apex-size-home-championship-preview-row-min);
+  }
+  .home-championship .leader-list {
+    grid-auto-rows: auto;
+  }
+  .home-championship .home-championship-graphic {
+    margin-block-start: var(--apex-space-7);
+  }
+  .home-championship .leader-driver-line strong {
+    font-family: var(--apex-font-body);
+    font-size: var(--apex-type-prose-size);
+  }
+  .home-race-result .race-podium--aligned .race-podium-position {
+    --home-podium-position-size: var(--apex-type-race-display-size);
+  }
+  .home-race-result .race-podium--aligned .race-podium-block {
+    padding-block: var(--apex-space-2);
+  }
+  .home-race-result
+    .race-podium--aligned
+    .race-podium-row--winner
+    .race-podium-block {
+    padding-block: var(--apex-space-7);
+  }
+}

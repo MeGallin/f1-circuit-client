@@ -47,11 +47,7 @@ export default function DevAudit() {
       >
         Audit this page
       </Button>
-      <output
-        className="audit-result"
-        aria-live="polite"
-        style={{ display: "block", overflowWrap: "anywhere" }}
-      >
+      <output className="audit-result" aria-live="polite">
         {result}
       </output>
     </section>

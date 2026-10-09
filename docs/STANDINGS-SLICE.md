@@ -1,5 +1,16 @@
 # Standings route
 
+## Current audit contract — 8 October 2026
+
+Compact mobile context keeps the leader above the fixed navigation; selected round
+and championship kind remain explicit and keyboard reachable. Published rank and
+decimal points are retained. Analytics links pin the championship season, publication
+and round, never substitute a filtered result total. Shared enlarged-text reflow
+and measured navigation reserve prevent obscured final content; these are accepted
+browser scenarios, not full WCAG certification. [Current review](SENIOR-REVIEW-2026-10-08.md)
+records460/44 client plus12 focused/2files and163 API/Newman114/192 checks;
+no tests or deployments are performed for this documentation update.
+
 ## Current constructor integration — 6 October 2026
 
 Constructor rows and driver affiliations use the shared `ConstructorIdentity` /

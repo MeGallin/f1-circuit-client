@@ -8,11 +8,3 @@
   --apex-color-logo-tile: #fafbfc;
   --apex-color-logo-tile-dark: #15191e;
 }
-@container (max-width: 520px) {
-  .season-around-race-standings .leader-list {
-    display: block;
-  }
-  .season-around-race-standings .leader-list li:nth-child(even) {
-    transform: none;
-  }
-}

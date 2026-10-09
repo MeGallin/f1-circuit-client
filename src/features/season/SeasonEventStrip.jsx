@@ -11,6 +11,8 @@ import { Button, RaceStatus } from "../../components/ui";
 import { dateLabel, isPastScheduledEventAwaitingResults } from "./selectors";
 import "../../design-system/season-races.css";
 import "../../design-system/season-races.tokens.css";
+import { CountryFlag, countryForCircuit } from "../../components/visuals";
+import { useGetProfileQuery } from "../../api/archiveApi";
 
 function hasPublishedResults(event) {
   const coverage = event.features?.find(
@@ -22,7 +24,28 @@ function hasPublishedResults(event) {
   return coverage === "complete" || coverage === "partial";
 }
 
-function SeasonRaceCard({ event, published, latest, selected, onSelect, now }) {
+export function CircuitCountryFlag({ event, snapshotId }) {
+  const profile = useGetProfileQuery(
+    { kind: "circuit", id: event.circuit?.id, snapshotId },
+    { skip: !event.circuit?.id || Boolean(event.circuit?.country) },
+  );
+  return (
+    <CountryFlag
+      image
+      country={countryForCircuit(event, profile.currentData, snapshotId)}
+    />
+  );
+}
+function SeasonRaceCard({
+  event,
+  published,
+  latest,
+  selected,
+  onSelect,
+  now,
+  showCountryFlags,
+  snapshotId,
+}) {
   const status = String(event.status || "unknown").toLowerCase();
   const cancelled = status === "cancelled" || status === "canceled";
   const label = published
@@ -63,6 +86,9 @@ function SeasonRaceCard({ event, published, latest, selected, onSelect, now }) {
         onClick={() => onSelect?.(event)}
       >
         <span className="season-race-card-meta">
+          {showCountryFlags && (
+            <CircuitCountryFlag event={event} snapshotId={snapshotId} />
+          )}
           <span className="season-race-card-round">
             Round {event.round ?? "N/A"}
           </span>
@@ -104,6 +130,8 @@ export function SeasonEventStrip({
   selectedEventId,
   onSelect,
   now,
+  showCountryFlags = false,
+  snapshotId,
 }) {
   const [initialNow] = useState(() => Date.now());
   const [expanded, setExpanded] = useState(false);
@@ -193,12 +221,10 @@ export function SeasonEventStrip({
     <section className="season-races" aria-label="Season races history">
       <div className="season-races-heading">
         <h3>Season races</h3>
-        <p
-          className="season-races-count"
-          aria-label={`${published.length} of ${ordered.length} races have published results`}
-        >
-          <strong>{published.length}</strong>
-          <span>of {ordered.length}</span>
+        <p className="season-races-count">
+          <span className="sr-only">{`${published.length} of ${ordered.length} races have published results`}</span>
+          <strong aria-hidden="true">{published.length}</strong>
+          <span aria-hidden="true">of {ordered.length}</span>
         </p>
       </div>
       <p className="season-races-instruction">
@@ -232,6 +258,8 @@ export function SeasonEventStrip({
             >
               {ordered.map((event) => (
                 <SeasonRaceCard
+                  showCountryFlags={showCountryFlags}
+                  snapshotId={snapshotId}
                   key={event.id}
                   event={event}
                   published={hasPublishedResults(event)}

@@ -3,7 +3,7 @@
   gap: var(--apex-space-7);
   padding: var(--apex-space-7);
   background: var(--apex-color-surface);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-top: var(--apex-shape-active-indicator) solid var(--apex-color-accent);
   border-radius: var(--apex-shape-radius);
 }
@@ -18,7 +18,7 @@
 .race-coverage {
   padding: var(--apex-space-6);
   margin-block: var(--apex-space-6);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   color: var(--apex-color-muted);
 }
@@ -35,7 +35,7 @@
   display: grid;
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .session-nav-group {
   display: grid;
@@ -59,7 +59,7 @@
   gap: var(--apex-space-2);
   min-height: var(--apex-size-target);
   padding: var(--apex-space-3) var(--apex-space-4);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
   color: var(--apex-color-muted);
@@ -87,7 +87,7 @@
   display: grid;
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-elevated);
 }
@@ -115,7 +115,7 @@
 }
 .race-records > li {
   padding: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .race-record-heading {
   display: flex;

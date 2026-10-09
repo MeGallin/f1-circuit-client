@@ -13,7 +13,7 @@
   display: grid;
   gap: var(--apex-space-3);
   padding-block: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .entity-facts {
   display: grid;
@@ -32,7 +32,7 @@
   align-items: center;
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   background: var(--apex-color-elevated);
 }
 .entity-identity > div {
@@ -83,7 +83,7 @@
 }
 .entity-picker {
   min-width: 0;
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   padding: var(--apex-space-5);
 }
 .entity-picker legend {
@@ -110,7 +110,7 @@
   gap: var(--apex-space-4);
 }
 .explore-page-actions .field {
-  min-width: 12rem;
+  min-width: var(--apex-size-ui-menu-min-width);
 }
 .explore-search-note {
   margin: 0;
@@ -123,7 +123,7 @@
   gap: var(--apex-space-5);
   margin-top: var(--apex-space-5);
   padding: 0 var(--apex-space-6) var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .explore-search-actions {
   display: flex;
@@ -136,7 +136,7 @@
   display: grid;
   gap: var(--apex-space-4);
   padding: var(--apex-space-7) var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .explore-idle-state h3,
 .explore-empty-state h3 {
@@ -160,7 +160,7 @@
   gap: var(--apex-space-5);
   margin: var(--apex-space-6) var(--apex-space-6) 0;
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .explore-related-heading {
   display: flex;
@@ -185,7 +185,7 @@
   color: var(--apex-color-muted);
 }
 .explore-related-list {
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .explore-related-list > li {
   padding-block: var(--apex-space-5);
@@ -213,7 +213,7 @@
   background: transparent;
   color: var(--apex-color-link);
   font: inherit;
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   text-decoration: underline;
   text-underline-offset: 0.2em;
   cursor: pointer;
@@ -240,13 +240,14 @@
   font-size: var(--apex-type-section-size);
 }
 .explore-results-heading .button {
-  min-height: 36px;
+  min-height: var(--apex-size-control-compact);
   padding-inline: 0;
 }
 .explore-coverage-note {
   margin: 0 var(--apex-space-6) var(--apex-space-3);
   padding: var(--apex-space-4);
-  border-left: var(--apex-shape-active-indicator) solid var(--apex-color-warning);
+  border-left: var(--apex-shape-active-indicator) solid
+    var(--apex-color-warning);
   color: var(--apex-color-muted);
 }
 .explore-result-list {
@@ -266,7 +267,7 @@
 .explore-result-copy > strong {
   color: var(--apex-color-text);
   font-size: var(--apex-type-body-large-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   overflow-wrap: anywhere;
 }
 .explore-result-copy .text-link {
@@ -285,7 +286,7 @@
 .explore-result-kind {
   color: var(--apex-color-accent-text);
   font-family: var(--apex-font-numeric);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--apex-size-ui-metadata-tracking);
   text-transform: uppercase;
 }
 .explore-result-context::before {

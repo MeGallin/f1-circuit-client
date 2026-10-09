@@ -15,12 +15,12 @@ test("calendar filters distinguish completed and upcoming events", () => {
     "scheduled",
     "unknown",
   ]);
-  expect(filterCalendarEvents(events, "completed").map((event) => event.id)).toEqual([
-    "completed",
-  ]);
-  expect(filterCalendarEvents(events, "upcoming").map((event) => event.id)).toEqual([
-    "scheduled",
-  ]);
+  expect(
+    filterCalendarEvents(events, "completed").map((event) => event.id),
+  ).toEqual(["completed"]);
+  expect(
+    filterCalendarEvents(events, "upcoming").map((event) => event.id),
+  ).toEqual(["scheduled"]);
 });
 test("missing calendar fields stay explicit and date-only precision never invents a start time", async () => {
   const select = vi.fn();
@@ -59,4 +59,47 @@ test("missing calendar fields stay explicit and date-only precision never invent
   expect(screen.getByRole("button")).toHaveAttribute("aria-expanded", "true");
   expect(screen.getByText("results: partial")).toBeInTheDocument();
   expect(screen.getByText(/Location not supplied/)).toBeInTheDocument();
+});
+
+test("expanded completed calendar podium uses canonical identities from supplied entry records", () => {
+  const event = {
+    id: "historical",
+    name: "Historical fixture",
+    year: 2000,
+    round: 7,
+    status: "completed",
+    schedule: { date: "2000-05-01", timePrecision: "date" },
+    features: [],
+  };
+  const { container } = render(
+    <CalendarEvents
+      events={[event]}
+      selectedId={event.id}
+      onSelect={() => {}}
+      eventDetail={{
+        podium: [
+          {
+            id: "fixture",
+            position: 1,
+            entry: {
+              number: 18,
+              drivers: [{ displayName: "Independent winner" }],
+              constructor: {
+                id: "constructor:ferrari",
+                displayName: "Ferrari",
+              },
+            },
+          },
+        ],
+      }}
+    />,
+    { wrapper: MemoryRouter },
+  );
+  expect(
+    container.querySelector(".calendar-podium .driver-identity--record"),
+  ).not.toBeNull();
+  expect(screen.getByText("Driver number 18")).toBeInTheDocument();
+  expect(
+    container.querySelector(".calendar-podium .constructor-identity--compact"),
+  ).not.toBeNull();
 });

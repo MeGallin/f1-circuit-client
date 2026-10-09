@@ -2,7 +2,7 @@
   display: grid;
   gap: var(--apex-space-6);
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .questions-form__text {
   gap: var(--apex-space-3);
@@ -11,7 +11,7 @@
   width: 100%;
   resize: vertical;
   min-height: var(--apex-size-textarea-min);
-  border: 1px solid var(--apex-color-control-border);
+  border: var(--apex-shape-border) solid var(--apex-color-control-border);
   border-radius: var(--apex-shape-radius);
   background: var(--apex-color-surface);
   color: var(--apex-color-text);
@@ -20,13 +20,13 @@
   line-height: 1.5;
 }
 .questions-form fieldset {
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   padding: var(--apex-space-5);
   min-width: 0;
 }
 .questions-form legend {
   padding-inline: var(--apex-space-3);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .questions-context {
   display: grid;
@@ -34,7 +34,7 @@
   margin-top: var(--apex-space-5);
 }
 .question-context-disclosure {
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .question-context-disclosure fieldset {
   margin-bottom: 0;
@@ -46,10 +46,10 @@
   gap: var(--apex-space-5);
   flex-wrap: wrap;
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .question-form-actions .button--primary {
-  min-width: 10rem;
+  min-width: var(--apex-size-ui-question-action-min-width);
 }
 .question-result-view {
   display: grid;
@@ -60,13 +60,13 @@
   display: grid;
   gap: var(--apex-space-3);
   padding-bottom: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .question-result-label {
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   letter-spacing: var(--apex-type-kicker-tracking);
   text-transform: uppercase;
 }
@@ -113,8 +113,8 @@
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: var(--apex-type-section-weight);
+  letter-spacing: var(--apex-type-kicker-tracking);
   text-transform: uppercase;
 }
 .question-result-suggestion p {
@@ -132,7 +132,7 @@
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   letter-spacing: var(--apex-type-kicker-tracking);
   text-transform: uppercase;
 }
@@ -149,7 +149,7 @@
   margin-top: var(--apex-space-2);
 }
 .question-disclosure {
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .question-disclosure-summary {
   display: flex;
@@ -160,7 +160,7 @@
   color: var(--apex-color-text);
   cursor: pointer;
   font: inherit;
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   list-style: none;
 }
 .question-disclosure-summary::-webkit-details-marker {
@@ -182,7 +182,7 @@
 .question-disclosure-indicator::before {
   content: "+";
   color: var(--apex-color-accent);
-  font-size: 1.1rem;
+  font-size: var(--apex-type-section-size);
   line-height: 1;
 }
 .question-disclosure[open] .question-disclosure-indicator::before {
@@ -199,10 +199,10 @@
 }
 .question-values > div {
   display: grid;
-  grid-template-columns: minmax(8rem, 0.4fr) minmax(0, 1fr);
+  grid-template-columns: minmax(var(--apex-size-ui-question-label-min-width), 0.4fr) minmax(0, 1fr);
   gap: var(--apex-space-5);
   padding-block: var(--apex-space-4);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .question-values dt {
   color: var(--apex-color-muted);

@@ -1,4 +1,5 @@
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
+import { DriverIdentity } from "../../../components/DriverIdentity";
 
 export function buildRecentResultsModel(race) {
   return (race?.results || race?.podium || []).slice(0, 5);
@@ -23,7 +24,7 @@ function ResultRow({ result, year }) {
         {result.position}
       </span>
       <div className="analytics-recent-result-driver">
-        <strong>{result.driverName || "Driver not supplied"}</strong>
+        <DriverIdentity stackOnMobile presentation="record" name={result.driverName || "Driver not supplied"} number={result.number} />
         <small><ConstructorIdentity constructor={{ id: result.constructorId, displayName: result.constructorName }} year={year} /></small>
       </div>
       <div className="analytics-recent-result-outcome">

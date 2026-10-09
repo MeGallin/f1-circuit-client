@@ -1,6 +1,20 @@
 # Trust surfaces — 21 September 2026
 
-## Current review status — 6 October 2026
+## Current trust boundary — 8 October 2026
+
+Evidence links resolve the selected record and assertion index, not the first row;
+missing records/fields are explicit. Human leaf labels precede complete technical
+assertions. Event attribution requires returned detail containing that record's
+session/event, not merely matching URL parameters; missing context leaves points
+and sources intact without guessing a race. Back paths reject protocol-relative,
+backslash and control-character navigation. Custom chart tooltip text is escaped.
+Coverage/source-only verification is not an independent factual accuracy guarantee.
+[Current review](SENIOR-REVIEW-2026-10-08.md) records normal browser proof and completed
+460/44 client plus12 focused/2files,163 API/Newman114/192 checks. No tests rerun
+for this prose update; no new deployment is verified. The7 October API TLS release
+supersedes the old Actions-connectivity pending claim, not broader live checks.
+
+## Historical review status — 6 October 2026
 
 Local logs confirm client `fb7cbd0` and API `734a4ed`; both pushes are user-confirmed. Deployment and production/live smoke verification for these commits are **PENDING**. The race-refresh review passed 141 client tests, lint/build and 133 API tests, lint/format/contract verification, Newman 114 requests / 192 assertions. Actions secrets/dispatch and real PostgreSQL multi-process locking are unverified. See [current validation](FUNCTIONALITY-VALIDATION.md) and [season refresh/provenance behavior](SEASON-SLICE.md). The route and deployed-question observations below describe the 21 September checkpoint and were not live-rechecked for this review.
 

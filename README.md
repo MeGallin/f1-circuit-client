@@ -1,6 +1,31 @@
 # F1 Circuit Client
 
-## Current uncommitted senior review — 8 October 2026
+## Latest uncommitted review — 9 October 2026
+
+[Current findings, checks and limits](docs/SENIOR-REVIEW-2026-10-09.md) supersedes
+the execution totals below. Approved Home geometry/40×30 flags are preserved;
+no new deployment is verified. Earlier checkpoints remain dated evidence.
+
+## Site-wide UI handoff checkpoint — 8 October 2026
+
+[Binding UI contract and route inventory](docs/UI-CONSISTENCY.md): shared semantic
+identities, padded bodies, heading/action hierarchy and responsive controls now
+apply across record/detail routes, preserving Home. Final589 tests/55files,
+lint/build/token/assets passed; final sampled parent browser matrix is recorded.
+Parent live Ask now answered19 wins in2023; earlier transient failures were not
+reproduced, with unknown cause. No API change or new deployment is claimed.
+
+## Current approved Home Option3 — 8 October 2026
+
+Home now has a combined left race header/podium and simultaneous top-three Drivers/
+Constructors with one pinned View standings link each, race-results-only inline
+expansion and source-owned bundled country flags.
+Countdown and approved Season races controls remain; no Previous event band.
+[Current reference, TDD and measured browser proof](docs/HOME-REFERENCE-FIDELITY.md) owns
+this local uncommitted handoff; final checks are recorded there. No new deployment
+is verified. Earlier senior-review checks below remain dated evidence.
+
+## Historical completed senior review — 8 October 2026 (before Option3)
 
 [Review findings, current checks and external evidence inventory](docs/SENIOR-REVIEW-2026-10-08.md)
 supersede earlier audit/Home check totals below. Source-context, metric, time and
@@ -8,14 +33,24 @@ chart-tooltip guards are strengthened; keyed Apex generation preserves approved
 dimensions. The reusable QA fixture stays in tests, outside the production entry.
 Raw execution captures are archived outside both repositories, not shipped.
 
-## Current Home followup — 8 October 2026
+Recorded coding-review checks: client460 tests/44 files plus12 focused/2files
+after whitespace-only generator cleanup; API163 tests, Newman114 requests/
+192 assertions. All twelve browser gates and Home amendments are accepted locally.
+The62-file/265,860-byte archive is SHA-256 verified. This documentation pass
+reruns no tests/builds; no new commit, push or deployment is verified.
+
+Final local HEAD observed:9b5c3a9; implementation is locally committed, while this
+documentation alignment remains dirty. This is not remote/push/deployment evidence;
+the review agent made no commit. Earlier uncommitted wording below is dated history.
+
+## Historical Home followup — 8 October 2026 (before senior review)
 
 The redundant Previous event band is removed on all devices by user approval;
 the approved Season races ribbon/history/details and next-event/countdown remain.
 [Scoped verification and browser proof](docs/HOME-PREVIOUS-EVENT-REMOVAL.md).
 No API change or deployment; existing local edits remain uncommitted.
 
-## Accepted audit handoff — 8 October 2026 (before Home followup)
+## Historical accepted audit handoff — 8 October 2026 (before Home followup)
 
 All twelve UI/UX audit gates are implemented and parent-browser accepted.
 Final client `npm run check` passed lint,436 tests/43 files, keyed ribbon tokens,

@@ -3,6 +3,7 @@ import {
   FlagCheckeredIcon,
   TrophyIcon,
 } from "@phosphor-icons/react";
+import { APEX_ICONS, APEX_SIZES } from "../../../design-system/apex.tokens";
 
 const insightIcons = [TrophyIcon, ChartLineUpIcon, FlagCheckeredIcon];
 
@@ -154,7 +155,7 @@ export default function AnalyticsSessionReadout({
             <h3>{model.race.title}</h3>
             <p className="muted">{model.race.context}</p>
           </div>
-          <FlagCheckeredIcon size={24} aria-hidden />
+          <FlagCheckeredIcon size={APEX_SIZES.iconLarge} aria-hidden />
         </div>
         <dl className="analytics-readout-values">
           <ReadoutValue
@@ -233,13 +234,13 @@ export default function AnalyticsSessionReadout({
             <h3>What the archive says</h3>
             <p className="muted">A concise readout from this selection.</p>
           </div>
-          <ChartLineUpIcon size={24} aria-hidden />
+          <ChartLineUpIcon size={APEX_SIZES.iconLarge} aria-hidden />
         </div>
         {model.insights.length ? (
           <ul className="analytics-key-insights">
             {model.insights.map(({ text, Icon }) => (
               <li key={text}>
-                <Icon size={18} aria-hidden />
+                <Icon size={APEX_ICONS.action} aria-hidden />
                 <span>{text}</span>
               </li>
             ))}

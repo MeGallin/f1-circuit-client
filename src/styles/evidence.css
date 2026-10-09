@@ -11,7 +11,7 @@
   padding: var(--apex-space-6);
 }
 .evidence-technical {
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .evidence-technical summary {
   min-height: var(--apex-size-target);
@@ -19,7 +19,7 @@
   cursor: pointer;
 }
 .evidence-publication {
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--apex-size-ui-menu-min-width)), 1fr));
 }
 .evidence-facts dt {
   color: var(--apex-color-muted);
@@ -39,7 +39,7 @@
   display: grid;
   gap: var(--apex-space-5);
   padding: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .evidence-field:first-child {
   border-top: 0;
@@ -60,7 +60,7 @@
 }
 .evidence-field details {
   padding-top: var(--apex-space-4);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .evidence-field summary {
   cursor: pointer;

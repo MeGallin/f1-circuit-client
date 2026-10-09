@@ -316,8 +316,9 @@
     "calendarDateColumn": 145,
     "calendarStatusColumn": 120
   },
-  "containerBreakpoints": {
-    "constructorIdentityCompact": 520
+  "homeFidelity": {
+    "desktopMinWidth": 900,
+    "championshipPreviewRowMinHeight": 80
   },
   "auditLayout": {
     "analyticsFilterMinWidth": "12rem",
@@ -389,7 +390,39 @@
     "heatmapRowHeight": 18,
     "chartVerticalPadding": 96
   },
+  "uiConsistency": {
+    "mobileThemeMaxWidth": "125px",
+    "dialogMaxHeight": "48rem",
+    "menuMaxHeight": "18rem",
+    "menuMinWidth": "12rem",
+    "driverBadgeMinWidth": "2.1rem",
+    "circuitImageMaxHeight": "12rem",
+    "questionActionMinWidth": "10rem",
+    "questionLabelMinWidth": "8rem",
+    "analyticsStatMinHeight": "7rem",
+    "analyticsMetricMinHeight": "7.5rem",
+    "analyticsMarkerSize": "2rem",
+    "analyticsResultMinHeight": "3rem",
+    "analyticsEmptyMinHeight": "15rem",
+    "analyticsEvidenceMinHeight": "5.25rem",
+    "analyticsContextColumnWidth": "18rem",
+    "analyticsWeekendMinWidth": "11rem",
+    "analyticsWeekendMinHeight": "10.5rem",
+    "analyticsMobileMetricMinHeight": "5.75rem",
+    "analyticsMobileStatMinHeight": "6rem",
+    "analyticsComparisonControlMinHeight": "40px",
+    "selectionBorderWidth": "2px",
+    "metadataTracking": "0.06em",
+    "pageEyebrowTracking": "0.12em",
+    "statusIconGap": "0.35em"
+  },
   "chart": {
+    "homeMiniPlot": {
+      "width": 280,
+      "height": 84,
+      "padding": 12
+    },
+    "axisNameGap": 32,
     "grid": {
       "left": 48,
       "right": 24,

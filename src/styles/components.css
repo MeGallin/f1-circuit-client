@@ -10,7 +10,7 @@
 .topbar {
   min-height: var(--apex-layout-topbar-height);
   padding: var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,7 +22,7 @@
   line-height: var(--apex-type-mobile-brand-line);
   color: var(--apex-color-text);
   text-decoration: none;
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .topbar-context {
   display: none;
@@ -37,10 +37,6 @@
   padding: var(--apex-space-8) var(--apex-page-gutter);
 }
 .page-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
   gap: var(--apex-space-6);
   padding-bottom: var(--apex-space-9);
 }
@@ -63,7 +59,7 @@
   font-family: var(--apex-font-numeric);
   color: var(--apex-color-link);
   font-size: var(--apex-type-caption-size);
-  letter-spacing: 0.12em;
+  letter-spacing: var(--apex-size-ui-page-eyebrow-tracking);
 }
 .page-description {
   margin-top: var(--apex-space-5);
@@ -90,11 +86,11 @@
   justify-content: center;
   gap: var(--apex-space-4);
   padding: var(--apex-space-4) var(--apex-space-6);
-  border: 1px solid transparent;
+  border: var(--apex-shape-border) solid transparent;
   border-radius: var(--apex-shape-radius);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   font-size: var(--apex-type-control-size);
-  line-height: 1.4;
+  line-height: var(--apex-type-control-line);
   text-decoration: none;
   /* Swap theme text and background together to preserve contrast during theme changes. */
 }
@@ -132,7 +128,7 @@
   display: inline-flex;
   align-items: center;
   min-height: var(--apex-size-target);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
 }
 .panel {
   border: var(--apex-shape-border) solid var(--apex-color-line);
@@ -143,11 +139,7 @@
 }
 .panel-heading {
   padding: var(--apex-space-6);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: var(--apex-space-5);
-  flex-wrap: wrap;
   border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .panel-heading h2 {
@@ -221,7 +213,7 @@
   z-index: var(--apex-layer-dropdown);
   inset: calc(100% + var(--apex-space-2)) 0 auto;
   display: grid;
-  max-height: 18rem;
+  max-height: var(--apex-size-ui-menu-max-height);
   overflow: auto;
   border: var(--apex-shape-border) solid var(--apex-color-control-border);
   border-radius: var(--apex-shape-radius);
@@ -274,7 +266,7 @@
   min-height: var(--apex-size-control-tall);
   background: none;
   color: var(--apex-color-muted);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   white-space: nowrap;
   padding: var(--apex-space-4);
 }
@@ -285,7 +277,7 @@
 .status {
   display: inline-block;
   padding: var(--apex-space-2) var(--apex-space-4);
-  border: 1px solid var(--apex-color-line);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
   border-radius: var(--apex-shape-radius);
   font-size: var(--apex-type-caption-size);
   color: var(--apex-color-muted);
@@ -300,7 +292,7 @@
 .race-status {
   display: inline-flex;
   align-items: center;
-  gap: 0.35em;
+  gap: var(--apex-size-ui-status-icon-gap);
 }
 .race-status-icon {
   display: block;
@@ -330,12 +322,12 @@
 }
 .driver-number {
   display: inline-flex;
-  min-width: 2.1rem;
+  min-width: var(--apex-size-ui-driver-badge-min-width);
   align-items: center;
   justify-content: center;
   padding: var(--apex-space-1) var(--apex-space-2);
-  border: 1px solid var(--apex-color-line);
-  color: var(--apex-color-accent-text);
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  color: var(--apex-color-text);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-eyebrow-size);
   line-height: 1;
@@ -343,13 +335,13 @@
 .country-flag {
   display: inline-flex;
   align-items: center;
-  min-width: 1.5rem;
-  min-height: 1.5rem;
+  min-width: var(--apex-size-icon-large);
+  min-height: var(--apex-size-icon-large);
   justify-content: center;
   color: var(--apex-color-text);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
-  font-weight: 700;
+  font-weight: var(--apex-type-section-weight);
   line-height: 1;
   vertical-align: middle;
 }
@@ -359,7 +351,7 @@
   color: var(--apex-color-muted);
   font-family: var(--apex-font-numeric);
   font-size: var(--apex-type-caption-size);
-  line-height: 1.4;
+  line-height: var(--apex-type-control-line);
   text-align: left;
 }
 .circuit-silhouette {
@@ -383,7 +375,7 @@
 .circuit-silhouette img {
   display: block;
   width: 100%;
-  max-height: 12rem;
+  max-height: var(--apex-size-ui-circuit-image-max-height);
   object-fit: contain;
   object-position: center;
 }
@@ -397,10 +389,10 @@
 .circuit-silhouette-source {
   margin-top: var(--apex-space-3);
   font-size: var(--apex-type-caption-size);
-  line-height: 1.4;
+  line-height: var(--apex-type-control-line);
 }
 .circuit-silhouette-source summary {
-  min-height: 32px;
+  min-height: var(--apex-space-9);
   color: var(--apex-color-link);
   cursor: pointer;
 }
@@ -412,7 +404,7 @@
   margin-top: var(--apex-space-2);
 }
 .circuit-silhouette--fallback {
-  min-height: 4rem;
+  min-height: var(--apex-space-12);
   display: grid;
   place-items: center;
   font-size: var(--apex-type-caption-size);
@@ -482,7 +474,7 @@ caption {
 th,
 td {
   padding: var(--apex-space-5) var(--apex-space-6);
-  border-bottom: 1px solid var(--apex-color-line);
+  border-bottom: var(--apex-shape-border) solid var(--apex-color-line);
   text-align: left;
 }
 thead {
@@ -490,12 +482,12 @@ thead {
 }
 thead th {
   font-size: var(--apex-type-table-header-size);
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--apex-type-table-header-tracking);
 }
 tbody th {
-  font-weight: 400;
+  font-weight: var(--apex-type-body-weight);
 }
 tbody tr:hover {
   background: var(--apex-color-hover);
@@ -516,7 +508,7 @@ tbody tr:last-child > * {
   color: var(--apex-color-muted);
   margin-block: var(--apex-space-8);
   padding-top: var(--apex-space-6);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
 }
 .source-summary {
   display: flex;
@@ -526,16 +518,17 @@ tbody tr:last-child > * {
 }
 summary {
   cursor: pointer;
-  min-height: 44px;
+  min-height: var(--apex-size-target);
   padding-block: var(--apex-space-5);
 }
 .footer {
-  padding: var(--apex-space-8) var(--apex-page-gutter) var(--apex-layout-mobile-footer-space);
+  padding: var(--apex-space-8) var(--apex-page-gutter)
+    var(--apex-layout-mobile-footer-space);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--apex-space-5);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
   font-size: var(--apex-type-caption-size);
   color: var(--apex-color-muted);
 }
@@ -549,13 +542,13 @@ summary {
   right: 0;
   z-index: var(--apex-layer-sticky);
   background: var(--apex-color-surface);
-  border-top: 1px solid var(--apex-color-line);
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   padding-bottom: env(safe-area-inset-bottom);
 }
 .mobile-nav a {
-  padding: var(--apex-space-5) var(--apex-space-3);
+  padding-block: var(--apex-space-5);
   display: grid;
   justify-items: center;
   gap: var(--apex-space-2);
@@ -577,7 +570,7 @@ summary {
   display: grid;
   justify-items: center;
   gap: var(--apex-space-2);
-  padding: var(--apex-space-5) var(--apex-space-3);
+  padding-block: var(--apex-space-5);
   border: 0;
   background: transparent;
   color: var(--apex-color-muted);
@@ -595,7 +588,7 @@ summary {
   position: absolute;
   right: 0;
   bottom: calc(100% + var(--apex-space-3));
-  min-width: 12rem;
+  min-width: var(--apex-size-ui-menu-min-width);
   padding: var(--apex-space-3);
   display: grid;
   gap: var(--apex-space-2);
@@ -663,7 +656,7 @@ summary {
     line-height: var(--apex-type-brand-line);
     color: var(--apex-color-text);
     text-decoration: none;
-    font-weight: 700;
+    font-weight: var(--apex-type-section-weight);
   }
   .brand > svg {
     color: var(--apex-color-accent);
@@ -676,7 +669,7 @@ summary {
   .rail-caption {
     font-family: var(--apex-font-numeric);
     font-size: var(--apex-type-eyebrow-size);
-    letter-spacing: 0.06em;
+    letter-spacing: var(--apex-size-ui-metadata-tracking);
     color: var(--apex-color-muted);
     margin-block: var(--apex-space-6) var(--apex-space-10);
   }
@@ -726,7 +719,7 @@ summary {
   .topbar-context {
     display: block;
     font-family: var(--apex-font-numeric);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--apex-type-kicker-tracking);
     font-size: var(--apex-type-eyebrow-size);
     color: var(--apex-color-muted);
   }
@@ -742,7 +735,7 @@ summary {
   }
 }
 .mobile-theme {
-  max-width: 125px;
+  max-width: var(--apex-size-ui-mobile-theme-max-width);
 }
 .topbar-note {
   display: none;

@@ -2,6 +2,7 @@ import { APEX_SIZES } from "../../../design-system/apex.tokens";
 import { ChartLineUpIcon, GaugeIcon, TrophyIcon } from "@phosphor-icons/react";
 import AnalyticsRaceBreakdown from "./AnalyticsRaceBreakdown";
 import { ConstructorIdentity } from "../../../components/ConstructorIdentity";
+import { DriverIdentity } from "../../../components/DriverIdentity";
 
 export function buildDriverSpotlightModel(leader) {
   return {
@@ -48,15 +49,15 @@ export default function AnalyticsPerformanceSnapshot({
           <div>
             <p className="eyebrow">DRIVER SPOTLIGHT</p>
             <div className="analytics-spotlight-identity">
-              {spotlight.number && (
-                <span
-                  className="driver-number"
-                  aria-label={`Driver number ${spotlight.number}`}
-                >
-                  {spotlight.number}
-                </span>
-              )}
-              <h3>{leader?.driverName || "Leader not supplied"}</h3>
+              <h3>
+                <DriverIdentity
+                  inline
+                  stackOnMobile
+                  presentation="heading"
+                  name={spotlight.name}
+                  number={spotlight.number}
+                />
+              </h3>
             </div>
             <p className="muted">
               <ConstructorIdentity
