@@ -1,6 +1,70 @@
 # Site-wide Apex consistency
 
+## Mandatory completion gate — 13 October 2026
+
+Every UI-affecting assignment must pass this gate without another user reminder.
+Functional correctness and visual consistency are separate requirements: passing
+tests or reusing a shell is not enough to call UI work finished.
+
+1. **Reference before code.** Inspect the closest approved rendered application
+   pattern or mock-up and its source. Record references and the shared components/
+   Apex tokens to reuse. Ask when the intended direction is materially ambiguous;
+   do not invent a competing design system or assume an unsuitable skill applies.
+2. **Match the complete pattern.** Check font family/size/weight/line height,
+   heading hierarchy, padding/gaps, dividers, alignment, control sizing/ownership/
+   placement, density and reflow. Avoid redundant controls and unexplained empty
+   space. Essential result conditions stay visible; long optional explanations use
+   consistent disclosures. Reuse components/tokens and add genuinely missing
+   reusable values to the design system, never ad hoc decorative numbers. Remove
+   confirmed dead overrides/state.
+3. **Inspect actual rendering.** Define an affected-state matrix: desktop, actual
+   CSS390/320 widths, Light/Dark and relevant loading, empty, error, unavailable,
+   expanded and long-content states. Shared changes need representative affected
+   consumers. Check clipping/wrapping, alignment, usable space, discoverability and
+   keyboard/focus. Dialogs need reachable close controls, contained scrolling and
+   restored focus/background scrolling. Page scroll width alone cannot prove no
+   clipping; fixture tests and browser samples remain distinct evidence.
+4. **Compare, correct, recheck.** Compare against the named approved reference and
+   surrounding application, not memory or test snapshots alone. Fix discrepancies
+   and recheck affected states after the final visual edit. Do not claim pixel
+   identity, full accessibility or exhaustive coverage without supporting evidence.
+5. **Explicit acceptance before completion.** Cody supplies implementation/test
+   evidence and the review matrix; the parent currently owns browser inspection.
+   The parent must explicitly accept the visual result before either agent calls
+   UI work finished. Until then report implementation ready for visual review or
+   verification pending. Missing access/references or failed checks must have a
+   concrete limitation reported, never an implicit waiver.
+6. **Evidence in the handoff.** Record references, reused components/tokens, actual
+   CSS viewports/themes/states, external screenshot paths, functional checks run,
+   visual acceptance and remaining deviations in the checkpoint/handoff. Keep raw
+   images/logs outside Git. Genuinely non-UI work records a specific N/A reason;
+   application tests are not rerun solely for documentation edits.
+
+This is a mandatory instruction/review gate, not an automated CI certification or
+a guarantee that future defects are impossible. The orchestrator must enforce it.
+
+Standings [Title outlook](STANDING-SCENARIOS.md) uses one outlined action at the
+right of the existing cutoff-note row below Refresh, not inside the metrics. Its
+name matches the dialog; no duplicate Title scenarios control/summary title.
+Compact Apex status/hero/condition rows and two scenario cards replace prose walls;
+reasoning and provenance belong to one closed modal-bottom disclosure. Critical
+partial-coverage conditions and all-challenger hypotheses remain visible.
+Only possible next-clinch paths display conditions; unproven paths show one blocker
+and keep full conditions in details. Same next/earliest dates are deduplicated;
+winning patterns require each scoring session. Title header matches Panel18px/700
+body-family and spacing6; event headers are unaffected.
+Page notes stay in the single closed bottom disclosure.
+Existing event-dialog layout is preserved; title-only sticky header and shared
+saved/restored background scroll lock retain accessible close/focus behavior.
+
 ## Binding presentation contract
+
+Standings' latest [13 October presentation amendment](STANDING-PRESENTATION.md)
+uses shared padded/metric components and Home's Apex eyebrow before the data.
+All calculation, podium and publication/source explanations belong to one closed
+footer disclosure after the rows/pagination. The inline SourceNote variant keeps
+provenance/rights accessible without a nested source dropdown; other routes retain
+the default. Preserve the short accessible Gap label and four-stat row layout.
 
 Home's latest scoped [championship graphics amendment](HOME-CHAMPIONSHIP-GRAPHICS.md)
 uses shared Apex chart primitives and full-width stacked cards below900px.

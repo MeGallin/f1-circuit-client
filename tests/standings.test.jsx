@@ -4,12 +4,89 @@ import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { MemoryRouter } from "react-router-dom";
-import Standings, { StandingRows, validRound } from "../src/pages/Standings";
+import Standings, {
+  StandingRows,
+  StandingCalculationDetails,
+  validRound,
+} from "../src/pages/Standings";
 import { archiveApi } from "../src/api/archiveApi";
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
+
+test.each([
+  ["complete", 0, "0", "2 of 2 races have all three podium positions verified"],
+  [
+    "partial",
+    0,
+    "0 observed",
+    "1 of 2 races have all three podium positions verified",
+  ],
+  [
+    "partial",
+    3,
+    "3 observed",
+    "1 of 2 races have all three podium positions verified",
+  ],
+  ["unavailable", null, "Not supplied", "Podium evidence unavailable"],
+])(
+  "podium %s coverage stays distinct from overall source coverage",
+  (coverage, podiums, label, note) => {
+    render(
+      <MemoryRouter>
+        <StandingRows
+          kind="drivers"
+          year={2024}
+          rows={[
+            {
+              id: "podium",
+              entity: { id: "driver:fixture", displayName: "Fixture" },
+              constructors: [],
+              podiums,
+              podiumCoverage: {
+                coverage,
+                throughRound: 2,
+                expectedRaces: 2,
+                verifiedRaces:
+                  coverage === "complete" ? 2 : coverage === "partial" ? 1 : 0,
+                observedRaces: 1,
+                snapshotId: "pin",
+                evidenceIds: [],
+              },
+            },
+          ]}
+        />
+        <StandingCalculationDetails
+          kind="drivers"
+          data={{
+            items: [
+              {
+                podiumCoverage: {
+                  coverage,
+                  throughRound: 2,
+                  expectedRaces: 2,
+                  verifiedRaces:
+                    coverage === "complete"
+                      ? 2
+                      : coverage === "partial"
+                        ? 1
+                        : 0,
+                },
+              },
+            ],
+          }}
+        />
+      </MemoryRouter>,
+    );
+    const stat = screen.getByText("Podiums").nextElementSibling;
+    expect(stat).toHaveTextContent(label);
+    expect(stat).not.toHaveAttribute("title");
+    expect(
+      screen.getByText(new RegExp(note)).closest("details"),
+    ).not.toHaveAttribute("open");
+  },
+);
 
 test.each([
   "",
@@ -89,7 +166,7 @@ test.each([
         .querySelector("svg"),
     ).toHaveAttribute("width", "1em");
     const explanation = screen
-      .getByText("Publication and ranking details")
+      .getByText("Calculation and source details")
       .closest("details");
     expect(explanation).not.toHaveAttribute("open");
     expect(explanation).toHaveTextContent(

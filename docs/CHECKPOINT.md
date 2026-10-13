@@ -1,5 +1,79 @@
 # Client checkpoints
 
+## Comprehensive senior review — 13 October 2026
+
+[Current cross-repository review](SENIOR-REVIEW-2026-10-13.md) records all uncommitted
+client inventory, compiled API/contract findings, bounded fixes and fail-first logs.
+Full client720/65/lint/build, API300/check/Newman117/197, actual built assets,
+design/contract idempotence and diff checks passed after functional freeze.
+Parent explicitly accepted the precise desktop/CSS390/320/Light/Dark/historical/
+Sprint/shared-event-dialog matrix; empty/error/loading browser coverage is not
+claimed. No outstanding assigned finding. Ready for manual commits, none performed.
+Earlier checkpoints below remain dated evidence, not the current final gate.
+
+## Title outlook presentation tidy — 13 October 2026
+
+[Current presentation](STANDING-SCENARIOS.md): unified context-row action below
+Refresh, compact shared cards/status/conditions, one closed modal technical footer.
+Four failure observations ->17 affected tests ->50 focused/six files for the initial
+tidy; final density/font refinements add five tests and six red assertion observations.
+Final55 focused/six files, lint/build/assets/diff passed. API unchanged/not rerun.
+Parent accepted final desktop density, Panel typography, same-event dedup, per-session
+wording, constructor blocker/earliest date and retained Enter-toggle evidence.
+Parent final mobile390/320/theme/historical/keyboard/sticky/focus/scroll-restoration
+QA passed; screenshot inventory is in the linked checkpoint. Normal2026DriversLatest/
+System/closed restored. No API rerun for client-only presentation. Previous
+counts below are historical; initial modal appearance was rejected.
+
+## Title scenarios — 13 October 2026
+
+[Current scenario contract and evidence](STANDING-SCENARIOS.md): publication-grounded
+dialog, shared modal lifecycle, unchanged page footer/metrics; verified rules only.
+Full API269/Newman117/197; final focused client47/six files plus lint/build/assets.
+Earlier counts below remain historical; no full client or deployment claim.
+
+## Standings compact metrics and single footer — 13 October 2026
+
+[Current presentation contract/evidence](STANDING-PRESENTATION.md) supersedes the
+initial outlook's exposed explanatory copy and multiple dropdowns. Shared Apex
+PanelBody/Metric/Home eyebrow give a compact leader hierarchy; one closed native
+footer below rows/pagination contains every calculation/podium/publication/source
+detail. SourceNote defaults remain intact elsewhere. Parent measured106.5px versus
+244.969px summary, verified390/320 containment and native Enter/Space toggles.
+Math/transport/API are unchanged; API tests not rerun. Final client gate is in the
+linked record; earlier numeric checkpoints below remain dated evidence.
+Final48 focused tests/six files, lint/build and49 constructor/30 flag checks passed.
+Existing Vite large-chunk warning remains; full client suite not rerun. Parent
+restored normal2026 Drivers/System/closed disclosure; external proofs use
+`site-wide/standing-presentation-2026-10-13-{desktop,mobile,details}.jpg`.
+
+## Standings gap and title outlook — 13 October 2026
+
+[Current implementation/evidence](STANDING-OUTLOOK.md) adds score gaps and one
+compact leader-only title summary,2026 approved scoring/affirmative Sprint evidence,
+explicit historical unavailability and conditional sufficient-target wording.
+Actual standings transport retains/validates the outlook; HTTP no-cache requests
+revalidate without disabling ETags. Apex retains shared tokens and short accessible
+Gap labels. Parent latest150/49 and258/125, R1 team1036/1021 and historical gaps,
+390/320/source-disclosure samples are recorded with verification limits. Final
+API/client totals and changed paths are in the linked API checkpoint; earlier
+podium totals below remain dated. No commit/push/deploy/import/live write.
+Final API257 tests/check/Newman117/197, client49 tests/five files/lint/build passed.
+Final390/320 short Gap labels19.801px and aligned row values/no overflow; parent
+restored2026 Drivers Latest/System/normal viewport/disclosure closed. Existing
+Vite large-chunk warning remains; full client suite not rerun.
+
+## Standings podiums — 13 October 2026
+
+[Current podium contract and evidence](STANDING-PODIUMS.md): server batch-derived,
+publication/round-pinned driver and per-car constructor podiums; complete podium
+slots remain usable despite partial source labels. Explicit observed/unavailable
+coverage, original row layout and pagination are retained. Four initial client
+coverage failures; final40 tests/four files, lint/build/assets passed. Parent all23
+drivers/all11 teams matched independent51-slot oracle; latest/round1/2000/mobile
+browser samples passed, cached nulls recovered after API ETag fix. Full client
+suite not rerun; no commit/push/deploy/import/live write.
+
 ## Latest cross-repository review — 9 October 2026
 
 [Current review and exact verification boundary](SENIOR-REVIEW-2026-10-09.md)

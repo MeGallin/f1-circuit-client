@@ -575,7 +575,7 @@ export function Pagination({
     </nav>
   );
 }
-export function SourceNote({ meta, inset = false }) {
+export function SourceNote({ meta, inset = false, collapsible = true }) {
   if (!meta) return null;
   const coverageLabels = {
     complete: "Complete coverage",
@@ -592,6 +592,24 @@ export function SourceNote({ meta, inset = false }) {
   const coverage = coverageLabels[meta.coverage] || "Coverage not supplied";
   const verification =
     verificationLabels[meta.verification] || "Verification not supplied";
+  const sourceDetails = (
+    <>
+      <p>
+        Retrieved:{" "}
+        {meta.lastSuccessfulRetrieval
+          ? new Date(meta.lastSuccessfulRetrieval).toLocaleString("en-GB", {
+              timeZone: "UTC",
+            }) + " UTC"
+          : "Not available"}
+      </p>
+      {meta.sources?.map((s) => (
+        <p key={s.id}>{s.attribution || s.name}</p>
+      ))}
+      {meta.warnings?.map((w, i) => (
+        <p key={i}>{w.message}</p>
+      ))}
+    </>
+  );
   return (
     <aside
       className={`source-note${inset ? " source-note--inset" : ""}`}
@@ -603,23 +621,14 @@ export function SourceNote({ meta, inset = false }) {
         {freshnessLabel(meta) && <span>{freshnessLabel(meta)}</span>}
         <TextLink to="/sources">About the data</TextLink>
       </div>
-      <details>
-        <summary>Source details</summary>
-        <p>
-          Retrieved:{" "}
-          {meta.lastSuccessfulRetrieval
-            ? new Date(meta.lastSuccessfulRetrieval).toLocaleString("en-GB", {
-                timeZone: "UTC",
-              }) + " UTC"
-            : "Not available"}
-        </p>
-        {meta.sources?.map((s) => (
-          <p key={s.id}>{s.attribution || s.name}</p>
-        ))}
-        {meta.warnings?.map((w, i) => (
-          <p key={i}>{w.message}</p>
-        ))}
-      </details>
+      {collapsible ? (
+        <details>
+          <summary>Source details</summary>
+          {sourceDetails}
+        </details>
+      ) : (
+        <div>{sourceDetails}</div>
+      )}
     </aside>
   );
 }

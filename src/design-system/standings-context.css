@@ -9,6 +9,162 @@
 .standing-refresh {
   gap: var(--apex-space-3);
 }
+.standing-context-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--apex-space-6);
+  padding: var(--apex-space-6);
+}
+.standing-context-note .standing-note {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  flex: 1;
+}
+.standing-outlook-trigger {
+  flex-shrink: 0;
+  gap: var(--apex-space-3);
+  font-size: var(--apex-type-caption-size);
+}
+.standing-page .standing-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.standing-title-outlook {
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+}
+.standing-title-layout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.standing-title-heading {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: var(--apex-space-3);
+}
+.standing-title-heading > * {
+  margin: 0;
+}
+.title-outlook-content {
+  display: grid;
+  gap: var(--apex-space-6);
+}
+.title-scenario-header {
+  padding: var(--apex-space-6);
+  position: sticky;
+  top: 0;
+  z-index: var(--apex-layer-dialog);
+  background: var(--apex-color-surface);
+}
+.title-scenario {
+  min-width: 0;
+}
+.title-scenario-header h2,
+.title-scenario h3 {
+  font-size: var(--apex-type-section-size);
+}
+.title-scenario-header h2 {
+  font-family: var(--apex-font-body);
+  font-weight: var(--apex-type-section-weight);
+  margin-top: var(--apex-space-3);
+}
+.title-scenario-header .event-dialog-meta {
+  margin-top: var(--apex-space-3);
+}
+.title-outlook-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--apex-space-4);
+  align-items: center;
+  font-size: var(--apex-type-caption-size);
+}
+.title-outlook-labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--apex-space-4);
+}
+.title-outlook-hero,
+.title-scenario-card {
+  min-width: 0;
+  border: var(--apex-shape-border) solid var(--apex-color-line);
+  border-radius: var(--apex-shape-radius);
+  background: linear-gradient(
+    to bottom right,
+    var(--apex-color-canvas),
+    var(--apex-color-surface)
+  );
+}
+.title-outlook-hero .panel-body,
+.title-scenario-card .panel-body {
+  gap: var(--apex-space-4);
+}
+.title-outlook-content p,
+.title-outlook-content h3,
+.title-outlook-content h4 {
+  margin: 0;
+}
+.title-outlook-conditions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.title-outlook-conditions li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--apex-space-3) var(--apex-space-5);
+  padding-block: var(--apex-space-4);
+}
+.title-outlook-conditions li + li {
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+}
+.title-outlook-conditions li span {
+  font-family: var(--apex-font-numeric);
+}
+.title-outlook-conditions small {
+  display: block;
+  font-family: var(--apex-font-body);
+  font-size: var(--apex-type-caption-size);
+  color: var(--apex-color-muted);
+}
+.title-outlook-qualifier {
+  font-size: var(--apex-type-caption-size);
+  color: var(--apex-color-muted);
+}
+.title-outlook-partial,
+.title-outlook-earliest {
+  border-top: var(--apex-shape-border) solid var(--apex-color-line);
+  padding-top: var(--apex-space-4);
+}
+.title-outlook-earliest {
+  display: grid;
+  gap: var(--apex-space-3);
+}
+.title-outlook-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--apex-space-5);
+}
+.title-outlook-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--apex-space-4);
+}
+.title-outlook-metrics .metric,
+.title-scenario-card .metric {
+  min-width: 0;
+}
+.title-outlook-metrics .metric strong {
+  font-size: var(--apex-type-section-size);
+}
+.title-outlook-details summary {
+  cursor: pointer;
+  min-height: var(--apex-size-target);
+}
+.title-outlook-details {
+  overflow-wrap: anywhere;
+}
 @media (max-width: 767px) {
   .standing-page .page-heading {
     padding-bottom: var(--apex-space-6);
@@ -35,5 +191,55 @@
   .standing-note {
     margin: 0;
     padding-block: var(--apex-space-5);
+  }
+
+  .title-outlook-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .standing-context-note {
+    flex-wrap: wrap;
+    gap: var(--apex-space-4);
+  }
+  .standing-outlook-trigger {
+    margin-left: auto;
+  }
+}
+.title-scenario p,
+.title-scenario li,
+.title-scenario-source p {
+  overflow-wrap: anywhere;
+}
+.title-scenario-source {
+  color: var(--apex-color-muted);
+  font-size: var(--apex-type-caption-size);
+}
+.standing-title-unavailable {
+  font-size: var(--apex-type-caption-size);
+  font-weight: var(--apex-type-body-weight);
+  color: var(--apex-color-muted);
+}
+.standing-title-leader {
+  font-family: var(--apex-font-display);
+  font-size: var(--apex-type-title-narrow-size);
+  font-weight: var(--apex-type-section-weight);
+  line-height: var(--apex-type-subheading-line);
+  overflow-wrap: anywhere;
+}
+.standing-title-layout .metric {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+  min-width: 0;
+}
+.standing-title-layout .metric > strong {
+  overflow-wrap: anywhere;
+}
+@media (min-width: 768px) {
+  .standing-title-layout {
+    grid-template-columns: minmax(0, 1.3fr) repeat(2, minmax(0, 1fr));
+  }
+  .standing-title-heading {
+    grid-column: auto;
+    grid-row: span 2;
   }
 }

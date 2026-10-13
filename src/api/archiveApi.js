@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { apiBase } from "./config";
+import { validatedTitleScenarios } from "./titleScenarios";
 import { publishedCollection } from "./publishedCollection";
 
 export const publicApiBase = apiBase(import.meta.env.VITE_API_BASE_URL);
@@ -257,9 +258,10 @@ export const archiveApi = createApi({
         standingSnapshotId,
       }) => ({
         url: `/seasons/${year}/standings/${kind}`,
+        cache: "no-cache",
         params: { round, cursor, snapshotId, standingSnapshotId, limit: 50 },
       }),
-      transformResponse: collectionResponse,
+      transformResponse: standingsResponse,
       providesTags: (_r, _e, { year }) => [{ type: "Season", id: year }],
     }),
     getEvent: builder.query({
@@ -558,6 +560,98 @@ export const archiveApi = createApi({
     }),
   }),
 });
+export function standingsResponse(response) {
+  const collection = collectionResponse(response);
+  const outlook = response.data.titleOutlook;
+  if (outlook == null) return { ...collection, titleOutlook: null };
+  const nullableText = (value) => value === null || typeof value === "string";
+  const decimal = (value) =>
+    value === null ||
+    (typeof value === "string" && /^(0|[1-9]\d*)(\.\d+)?$/.test(value));
+  const count = (value) =>
+    value === null ||
+    (Number.isSafeInteger(value) && value >= 0 && value <= 64);
+  const conditional = outlook.coverage === "conditional";
+  if (
+    typeof outlook !== "object" ||
+    !["conditional", "unavailable"].includes(outlook.coverage) ||
+    outlook.snapshotId !== collection.meta.snapshotId ||
+    !Number.isSafeInteger(outlook.year) ||
+    outlook.year < 1950 ||
+    !count(outlook.round) ||
+    outlook.round === 0 ||
+    (outlook.standingSnapshotId !== null &&
+      outlook.standingSnapshotId !==
+        `standing:${outlook.year}:${outlook.round}`) ||
+    ![
+      outlook.leaderId,
+      outlook.leaderName,
+      outlook.reasonCode,
+      outlook.ruleVersion,
+    ].every(nullableText) ||
+    ![outlook.remainingMaximum, outlook.sufficientAdditional].every(decimal) ||
+    !(
+      outlook.rivalCeiling === null ||
+      (typeof outlook.rivalCeiling === "string" &&
+        /^-?(0|[1-9]\d*)(\.\d+)?$/.test(outlook.rivalCeiling))
+    ) ||
+    ![outlook.remainingRaces, outlook.remainingSprints].every(count) ||
+    !(
+      outlook.targetWithinAvailablePoints === null ||
+      typeof outlook.targetWithinAvailablePoints === "boolean"
+    ) ||
+    !Array.isArray(outlook.assumptions) ||
+    !outlook.assumptions.every((value) => typeof value === "string") ||
+    !Array.isArray(outlook.sourceUrls) ||
+    !outlook.sourceUrls.every(
+      (value) => typeof value === "string" && /^https:\/\//.test(value),
+    ) ||
+    (conditional &&
+      [
+        outlook.leaderId,
+        outlook.leaderName,
+        outlook.round,
+        outlook.remainingMaximum,
+        outlook.sufficientAdditional,
+        outlook.rivalCeiling,
+        outlook.remainingRaces,
+        outlook.remainingSprints,
+        outlook.ruleVersion,
+        outlook.targetWithinAvailablePoints,
+      ].some((value) => value === null))
+  )
+    throw new Error("Unexpected standings outlook");
+  const keys = [
+    "year",
+    "round",
+    "snapshotId",
+    "standingSnapshotId",
+    "coverage",
+    "reasonCode",
+    "leaderId",
+    "leaderName",
+    "remainingMaximum",
+    "sufficientAdditional",
+    "rivalCeiling",
+    "targetWithinAvailablePoints",
+    "remainingRaces",
+    "remainingSprints",
+    "ruleVersion",
+    "sourceUrls",
+    "assumptions",
+  ];
+  return {
+    ...collection,
+    titleOutlook: {
+      ...Object.fromEntries(keys.map((key) => [key, outlook[key]])),
+      ...(outlook.scenarios === undefined
+        ? {}
+        : {
+            scenarios: validatedTitleScenarios(outlook.scenarios, outlook),
+          }),
+    },
+  };
+}
 export function collectionResponse(response) {
   if (
     !Array.isArray(response?.data?.items) ||
