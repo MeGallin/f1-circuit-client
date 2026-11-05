@@ -11519,6 +11519,42 @@
                     "type": "null"
                   }
                 ]
+              },
+              "entitySelections": {
+                "type": "object",
+                "properties": {
+                  "driverName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "comparisonDriverName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "constructorName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "constructor0": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "constructor1": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "circuitName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  }
+                },
+                "additionalProperties": false
               }
             },
             "required": [
@@ -11680,6 +11716,42 @@
                               "type": "null"
                             }
                           ]
+                        },
+                        "entitySelections": {
+                          "type": "object",
+                          "properties": {
+                            "driverName": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 160
+                            },
+                            "comparisonDriverName": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 160
+                            },
+                            "constructorName": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 160
+                            },
+                            "constructor0": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 160
+                            },
+                            "constructor1": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 160
+                            },
+                            "circuitName": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 160
+                            }
+                          },
+                          "additionalProperties": false
                         }
                       },
                       "required": [

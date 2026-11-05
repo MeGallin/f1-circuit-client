@@ -1,16 +1,64 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Questions from "../src/pages/Questions";
+import ArchiveQuestionResult from "../src/components/ArchiveQuestionResult";
 import { archiveApi } from "../src/api/archiveApi";
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
+});
+
+test("archive details use readable championship and coverage labels", async () => {
+  render(
+    <MemoryRouter>
+      <ArchiveQuestionResult
+        result={{
+          status: "answered",
+          values: {
+            answer: "Michael Schumacher won the championship.",
+            championshipStatus: "final",
+            champion: "Michael Schumacher",
+            points: "108",
+            coverageNote: "Finality corroborated by the published calendar.",
+            coverage: "partial",
+            missingYears: [{ year: 2021 }],
+            missingEvents: [{ event: "Example race" }],
+            comparisonFromYear: 2022,
+            comparisonToYear: 2023,
+          },
+          evidenceIds: [],
+        }}
+      />
+    </MemoryRouter>,
+  );
+  await userEvent.click(screen.getByText("Archive details"));
+  for (const label of [
+    "Championship status",
+    "Champion",
+    "Points",
+    "Coverage note",
+    "Coverage",
+    "Missing seasons",
+    "Missing races",
+    "Compared from year",
+    "Compared to year",
+  ])
+    expect(screen.getByText(label)).toBeVisible();
+  for (const raw of [
+    "championshipStatus",
+    "coverageNote",
+    "missingYears",
+    "missingEvents",
+    "comparisonFromYear",
+    "comparisonToYear",
+  ])
+    expect(screen.queryByText(raw)).not.toBeInTheDocument();
 });
 
 function mount() {
@@ -200,6 +248,51 @@ test("question capability is available before any submission", () => {
   ).toBeInTheDocument();
 });
 
+test("clarification choices preserve the submitted wording and send only canonical context", async () => {
+  const bodies = [];
+  const context = {
+    year: null,
+    eventId: null,
+    sessionId: null,
+    driverId: null,
+    constructorId: null,
+    entitySelections: { comparisonDriverName: "driver:michael" },
+  };
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (request) => {
+      bodies.push(await request.json());
+      return new Response(
+        JSON.stringify({
+          data: {
+            questionResult: {
+              status: "clarification",
+              message: "Which driver do you mean?",
+              choices: [{ label: "Michael Schumacher", context }],
+            },
+          },
+          meta: { sources: [], coverage: "partial" },
+        }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }),
+  );
+  mount();
+  expect(screen.getByText(/Each question is independent/)).toBeInTheDocument();
+  await userEvent.type(
+    screen.getByLabelText("Question"),
+    "When was Schumacher's last race?",
+  );
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  await userEvent.click(
+    await screen.findByRole("button", { name: "Michael Schumacher" }),
+  );
+  expect(bodies.at(-1)).toEqual({
+    text: "When was Schumacher's last race?",
+    context,
+  });
+});
+
 test("example selector fills the composer without submitting", async () => {
   vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   const fetchMock = vi.fn();
@@ -294,6 +387,70 @@ test("loading switches to a focused result view with a clear action", async () =
   );
 });
 
+test("clearing a pending question aborts its request and restores composer focus", async () => {
+  let requestSignal;
+  vi.stubGlobal("fetch", vi.fn((request) => {
+    requestSignal = request.signal;
+    return new Promise((resolve) => {
+      request.signal.addEventListener("abort", () => resolve(new Response("{}")));
+    });
+  }));
+  mount();
+  await userEvent.type(screen.getByLabelText("Question"), "Who won in 2023?");
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  await waitFor(() => expect(requestSignal).toBeDefined());
+  await userEvent.click(screen.getByRole("button", { name: "Clear question" }));
+  expect(requestSignal.aborted).toBe(true);
+  expect(screen.getByLabelText("Question")).toHaveFocus();
+  expect(screen.getByLabelText("Question")).toHaveValue("");
+});
+
+test("transport retry retains the original question and submitted optional year", async () => {
+  const bodies = [];
+  vi.stubGlobal("fetch", vi.fn(async (request) => {
+    bodies.push(await request.json());
+    return new Response(JSON.stringify({ message: "unavailable" }), {
+      status: 503, headers: { "Content-Type": "application/json" },
+    });
+  }));
+  mount();
+  await userEvent.type(screen.getByLabelText("Question"), "How many wins for Verstappen?");
+  await userEvent.click(screen.getByText("Add context"));
+  await userEvent.type(screen.getByLabelText("Season year"), "2023");
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  await userEvent.click(await screen.findByRole("button", { name: "Try again" }));
+  await waitFor(() => expect(bodies).toHaveLength(2));
+  expect(bodies[1]).toEqual(bodies[0]);
+  expect(bodies[1].text).toBe("How many wins for Verstappen?");
+  expect(bodies[1].context.year).toBe(2023);
+  await userEvent.click(screen.getByRole("button", { name: "Clear question" }));
+  expect(screen.getByLabelText("Season year")).toHaveValue(null);
+});
+
+test("a late cleared response cannot replace the next question", async () => {
+  let releaseOld;
+  const response = (answer) => new Response(JSON.stringify({ data: { questionResult: {
+    status: "answered", values: { answer }, evidenceIds: [],
+  } }, meta: { snapshotId: "fixture" } }), { headers: { "Content-Type": "application/json" } });
+  let calls = 0;
+  vi.stubGlobal("fetch", vi.fn(() => {
+    calls++;
+    return calls === 1 ? new Promise((resolve) => { releaseOld = resolve; }) : Promise.resolve(response("New answer"));
+  }));
+  mount();
+  await userEvent.type(screen.getByLabelText("Question"), "Old question");
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  await waitFor(() => expect(releaseOld).toBeDefined());
+  await userEvent.click(screen.getByRole("button", { name: "Clear question" }));
+  await userEvent.type(screen.getByLabelText("Question"), "New question");
+  await userEvent.click(screen.getByRole("button", { name: "Ask question" }));
+  expect(await screen.findByText("New answer")).toBeInTheDocument();
+  releaseOld(response("Stale answer"));
+  await waitFor(() => expect(screen.getByText("New answer")).toBeInTheDocument());
+  expect(screen.queryByText("Stale answer")).not.toBeInTheDocument();
+  expect(screen.getByText("New question")).toBeInTheDocument();
+});
+
 test("request errors switch to the result view and can be cleared", async () => {
   vi.stubEnv("VITE_ENABLE_QUESTION_LAYER", "true");
   vi.stubGlobal(
@@ -378,10 +535,11 @@ test("failed answers show a concrete rewording suggestion", async () => {
             data: {
               questionResult: {
                 status: "unsupported",
-                message: "That question is not supported by the archive query layer yet.",
+                message:
+                  "That question is not supported by the archive query layer yet.",
                 reasonCode: "QUESTION_INTENT_UNSUPPORTED",
                 suggestion:
-                  'Try rewording it as: “Which circuit hosted the 2022 Italian Grand Prix?”',
+                  "Try rewording it as: “Which circuit hosted the 2022 Italian Grand Prix?”",
               },
             },
             meta: {
@@ -407,7 +565,7 @@ test("failed answers show a concrete rewording suggestion", async () => {
   ).toBeInTheDocument();
   expect(
     screen.getByText(
-      'Try rewording it as: “Which circuit hosted the 2022 Italian Grand Prix?”',
+      "Try rewording it as: “Which circuit hosted the 2022 Italian Grand Prix?”",
     ),
   ).toBeInTheDocument();
 });

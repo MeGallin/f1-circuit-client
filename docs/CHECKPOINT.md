@@ -1,14 +1,26 @@
 # Client checkpoints
 
+## Committed and user-confirmed pushed — 13 October 2026
+
+Local Git verified client HEAD `c231f8b43de6df97dbabefd1180b6928b634cb86` and API
+HEAD `990d58757bcc6794825569dce4bb6e26f92ee77a`. Both actual commit subjects are
+`feat(standings): add evidence-aware title outlook dialog and championship metrics`.
+Both repositories were clean before this documentation update. The user confirmed
+both pushes; remote refs were not independently verified. No deployment, build/upload
+or live API verification was performed. Tests/build/browser evidence below remains
+dated previous-run evidence, not rerun for this update. New documentation edits
+remain local/uncommitted; Cody performed no commit/push or application code changes.
+
 ## Comprehensive senior review — 13 October 2026
 
-[Current cross-repository review](SENIOR-REVIEW-2026-10-13.md) records all uncommitted
+[Completed cross-repository review](SENIOR-REVIEW-2026-10-13.md) records the pre-commit
 client inventory, compiled API/contract findings, bounded fixes and fail-first logs.
 Full client720/65/lint/build, API300/check/Newman117/197, actual built assets,
 design/contract idempotence and diff checks passed after functional freeze.
 Parent explicitly accepted the precise desktop/CSS390/320/Light/Dark/historical/
 Sprint/shared-event-dialog matrix; empty/error/loading browser coverage is not
-claimed. No outstanding assigned finding. Ready for manual commits, none performed.
+claimed. No outstanding assigned finding. The then-ready-for-manual-commit code
+checkpoint is now committed, with user-confirmed pushes as recorded above.
 Earlier checkpoints below remain dated evidence, not the current final gate.
 
 ## Title outlook presentation tidy — 13 October 2026

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChatCircleTextIcon } from "@phosphor-icons/react";
 import { useAskQuestionMutation, useGetEventQuery } from "../api/archiveApi";
 import ArchiveQuestionResult from "../components/ArchiveQuestionResult";
@@ -103,6 +103,21 @@ export default function Questions() {
   const [contextLabels, setContextLabels] = useState({});
   const [text, setText] = useState(() => params.get("q") || "");
   const [ask, query] = useAskQuestionMutation();
+  const pendingRequest = useRef(null);
+  const composer = useRef(null);
+  const restoreComposerFocus = useRef(false);
+  useEffect(() => () => pendingRequest.current?.abort(), []);
+  useEffect(() => {
+    if (query.isUninitialized && restoreComposerFocus.current) {
+      composer.current?.focus();
+      restoreComposerFocus.current = false;
+    }
+  }, [query.isUninitialized]);
+  const request = (body) => {
+    pendingRequest.current?.abort();
+    pendingRequest.current = ask(body);
+    return pendingRequest.current;
+  };
   const submit = async (event, selectedContext = context) => {
     event?.preventDefault();
     const form = event ? new FormData(event.currentTarget) : null;
@@ -111,14 +126,16 @@ export default function Questions() {
     if (!nextText || nextText.length > 500) return;
     setText(nextText);
     setContext(nextContext);
-    await ask({ text: nextText, context: nextContext });
+    await request({ text: nextText, context: nextContext });
   };
   const handleChoice = (choice) => {
     setContext(choice.context);
-    const suffix = choice.label ? ` ${choice.label.toLowerCase()}` : "";
-    void ask({ text: `${text}${suffix}`, context: choice.context });
+    void request({ text, context: choice.context });
   };
   const clearQuestion = () => {
+    pendingRequest.current?.abort();
+    pendingRequest.current = null;
+    restoreComposerFocus.current = true;
     setText("");
     setContext(initialContext);
     setContextLabels({});
@@ -137,6 +154,10 @@ export default function Questions() {
               : "The optional question layer is not enabled. Use the archive’s direct, source-backed journeys instead."}
             <span className="question-coverage-note">
               Questions use published archive data and show its source coverage.
+            </span>
+            <span className="question-coverage-note">
+              Each question is independent. Include the names and period you
+              need; use the choices to clarify this question.
             </span>
           </>
         }
@@ -165,6 +186,7 @@ export default function Questions() {
             <div className="field questions-form__text">
               <label htmlFor="question-text">Question</label>
               <textarea
+                ref={composer}
                 id="question-text"
                 name="text"
                 value={text}
@@ -308,7 +330,7 @@ export default function Questions() {
               ) : query.isError ? (
                 <ErrorState
                   status={query.error?.status}
-                  onRetry={() => void ask({ text, context })}
+                  onRetry={() => void request({ text, context })}
                 />
               ) : (
                 <ArchiveQuestionResult

@@ -1,5 +1,14 @@
 # Site-wide Apex consistency
 
+## Ask acceptance — 4 November 2026
+
+[Current Ask checkpoint](ASK-PIPELINE-2026-11-04.md) records explicit parent acceptance:
+17 question texts/18 final checks, actual desktop1097/client1084, CSS390/client376Dark
+and CSS320/client306Light, existing Apex controls/styles, readable details, no observed
+root/field clipping and keyboard choice/disclosure/Clear flows. Full client721/65,
+then authorized labels-only10 focused/lint/build; API536/Newman117/197. Earlier Ask
+failures below remain historical evidence, not the current accepted checkpoint.
+
 ## Mandatory completion gate — 13 October 2026
 
 Every UI-affecting assignment must pass this gate without another user reminder.

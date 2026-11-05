@@ -2,7 +2,20 @@
 
 Current outcome: all approved findings closed, full client720 tests/65 files and
 API300/check/Newman117/197 green, explicit parent visual acceptance received for
-the frozen sampled matrix. Ready for manual commits; no commit was performed.
+the frozen sampled matrix. This completed code-review checkpoint has subsequently
+been committed by the user.
+
+## Commit and push checkpoint — 13 October 2026
+
+Local Git verified client HEAD `c231f8b43de6df97dbabefd1180b6928b634cb86` and API
+HEAD `990d58757bcc6794825569dce4bb6e26f92ee77a`, both with the actual subject
+`feat(standings): add evidence-aware title outlook dialog and championship metrics`.
+Both repositories were clean before this documentation update. Both pushes are
+user-confirmed, not independently remote-ref verified. No deployment, build/upload
+or live API verification was performed for this checkpoint. All checks and browser
+evidence below are dated previous runs; none were rerun for these documentation-only
+edits. These edits remain local/uncommitted; Cody performed no commit or push.
+The visual gate is N/A for this update: no rendered application content changed.
 
 ## Initial findings and approved phase 2
 
@@ -126,12 +139,14 @@ API: `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/api/`:
 Shared memory: `C:/xampp/htdocs/WebSitesDesigns/developments/f1-circuit/memory.md`.
 Other existing dirty work is preserved; this is not a claim of ownership over it.
 
-## Suggested manual commit messages (not executed)
+## Historical suggested manual commit messages (not executed by Cody)
 
 API: `feat(standings): derive publication-pinned podiums and title outlooks`
 
 Client: `feat(standings): present evidence-aware championship outlooks`
 
-Include reviewed regression/contract/documentation changes in the appropriate
-repository. Root memory/AGENTS and personal role configuration are outside both
-repositories and need separate preservation. User retains staging/commit control.
+These were review-handoff suggestions, not the actual subsequent commit subjects;
+the verified subjects and user-confirmed push status are recorded above. Root
+memory/AGENTS and personal role configuration are outside both repositories and
+need separate preservation. User retains staging/commit control, including these
+new documentation-only edits.
